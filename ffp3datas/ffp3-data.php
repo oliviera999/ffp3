@@ -4,16 +4,14 @@ require_once __DIR__ . '/vendor/autoload.php';
 // Inclusion du fichier de compatibilité avec l'ancien code
 require_once __DIR__ . '/legacy_bridge.php';
 
-// Réglage du fuseau horaire sur Casablanca
-date_default_timezone_set('Africa/Casablanca');
+// Charge les variables d'environnement (inclut la configuration du timezone)
+\App\Config\Env::load();
 
-// Fonction pour ajuster une date/heure (string) de Paris à Casablanca (soustrait 1h)
+// Fonction pour ajuster une date/heure (legacy - désormais ne fait rien car le timezone est unifié)
 function adjust_to_casablanca($datetime_str) {
-    if (empty($datetime_str)) return '';
-    $timestamp = strtotime($datetime_str);
-    if ($timestamp === false) return $datetime_str;
-    $timestamp -= 3600; // Décalage -1h
-    return date('Y-m-d H:i:s', $timestamp);
+    // Cette fonction est conservée pour compatibilité legacy mais ne fait plus d'ajustement
+    // car le timezone est maintenant unifié à Europe/Paris dans toute l'application
+    return $datetime_str;
 }
 
 // Fonction utilitaire pour sécuriser et récupérer une valeur du POST

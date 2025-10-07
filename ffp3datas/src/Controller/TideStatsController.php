@@ -15,6 +15,7 @@ class TideStatsController
 
     public function __construct()
     {
+        // Le timezone est configuré centralement via Env::load() dans Database::getConnection()
         $pdo = Database::getConnection();
         $readRepo = new SensorReadRepository($pdo);
         $this->tideService = new TideAnalysisService($readRepo);

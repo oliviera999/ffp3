@@ -16,9 +16,7 @@ class AquaponieController
 
     public function __construct()
     {
-        // Force le fuseau horaire applicatif (configurable via .env)
-        date_default_timezone_set($_ENV['APP_TIMEZONE'] ?? 'Europe/Paris');
-
+        // Le timezone est maintenant configuré centralement via Env::load() dans Database::getConnection()
         $pdo = Database::getConnection();
         $this->sensorReadRepo = new SensorReadRepository($pdo);
         $this->statsService   = new SensorStatisticsService($pdo);
