@@ -8,10 +8,6 @@ Thumbs.db
 error_log
 **/error_log
 
-# Fichiers de configuration sensible
-.env
-**/.env
-
 # Fichiers Cursor/IDE
 .cursor/
 .vscode/
