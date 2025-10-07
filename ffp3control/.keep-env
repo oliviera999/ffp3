@@ -1,0 +1,9 @@
+# .keep-env
+
+Ce fichier sert de rappel explicite que dans ce projet, 
+le fichier .env EST versionné dans Git (contrairement à la pratique habituelle).
+
+Raison : Configuration cohérente sur tous les déploiements.
+
+⚠️ Ne pas ajouter .env au .gitignore
+

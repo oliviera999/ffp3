@@ -1,0 +1,15 @@
+{
+    "name": "olution/ffp3control",
+    "description": "Module de contrôle à distance pour FarmFlow3",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "vlucas/phpdotenv": "^5.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "FFP3Control\\Config\\": "config/"
+        }
+    }
+}
+
