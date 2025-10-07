@@ -15,7 +15,7 @@
     <h1>Dashboard des capteurs</h1>
 
     <h2>Période analysée</h2>
-    <p>{{ startDate }} &nbsp;→&nbsp; {{ endDate }}</p>
+    <p>Du {{ startDate|date('d/m/Y H:i:s') }} au {{ endDate|date('d/m/Y H:i:s') }}</p>
     <p>Durée : {{ duration }} — Nombre de mesures : {{ readingsCount }}</p>
 
     <h2>Dernière lecture</h2>

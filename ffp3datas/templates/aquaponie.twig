@@ -57,7 +57,7 @@
                         <hr />
                     </header>
 
-                    <h2>Synthèse des mesures du {{ start_date|date('d/m/Y') }} au {{ end_date|date('d/m/Y') }}</h2>
+                    <h2>Synthèse des mesures du {{ start_date|date('d/m/Y H:i:s') }} au {{ end_date|date('d/m/Y H:i:s') }}</h2>
 
                     <!-- TABLEAUX & JAUGES NIVEAUX EAU -->
                     <!-- Début du contenu migré depuis l'ancien template PHP -->
@@ -275,7 +275,7 @@
                         </form>
                     </center>
 
-                    <h6 style="text-align: center">du {{ start_date }} au {{ end_date }} ({{ measure_count }} enregistrements analysés sur {{ first_reading_begin }})</h6>
+                    <h6 style="text-align: center">Du {{ start_date|date('d/m/Y H:i:s') }} au {{ end_date|date('d/m/Y H:i:s') }} ({{ measure_count }} enregistrements analysés sur {{ first_reading_begin }})</h6>
                     <h6 style="text-align: center">durée depuis le début du fonctionnement : {{ timepastbegin }}j (premier enregistrement le {{ first_reading_time_begin }})</h6>
 
                     <form method="POST">
