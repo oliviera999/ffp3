@@ -8,6 +8,7 @@ use App\Controller\DashboardController;
 use App\Controller\ExportController;
 use App\Controller\PostDataController;
 use App\Controller\AquaponieController;
+use App\Controller\OutputController;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Factory\AppFactory;
@@ -112,6 +113,100 @@ $app->get('/export-data-test', function (Request $request, Response $response) {
     TableConfig::setEnvironment('test');
     (new ExportController())->downloadCsv();
     return $response;
+});
+
+// -----------------------------------------------------------------------------
+// Routes CONTRÔLE OUTPUTS - PRODUCTION (ffp3Outputs)
+// -----------------------------------------------------------------------------
+
+// Interface de contrôle PROD
+$app->get('/control', function (Request $request, Response $response) {
+    TableConfig::setEnvironment('prod');
+    (new OutputController())->showInterface();
+    return $response;
+});
+
+// API : États GPIO pour board (ESP32)
+$app->get('/api/outputs/states/{board}', function (Request $request, Response $response, array $args) {
+    TableConfig::setEnvironment('prod');
+    return (new OutputController())->getStatesApi($request, $response, $args);
+});
+
+// API : Mettre à jour un output
+$app->post('/api/outputs/{id}/state', function (Request $request, Response $response, array $args) {
+    TableConfig::setEnvironment('prod');
+    return (new OutputController())->updateOutputApi($request, $response, $args);
+});
+
+// API : Toggle un output
+$app->post('/api/outputs/{id}/toggle', function (Request $request, Response $response, array $args) {
+    TableConfig::setEnvironment('prod');
+    return (new OutputController())->toggleOutputApi($request, $response, $args);
+});
+
+// API : Mettre à jour configuration système
+$app->post('/api/system/config', function (Request $request, Response $response) {
+    TableConfig::setEnvironment('prod');
+    return (new OutputController())->updateConfigApi($request, $response);
+});
+
+// API : Supprimer un output
+$app->delete('/api/outputs/{id}', function (Request $request, Response $response, array $args) {
+    TableConfig::setEnvironment('prod');
+    return (new OutputController())->deleteOutputApi($request, $response, $args);
+});
+
+// API : Informations boards
+$app->get('/api/boards', function (Request $request, Response $response) {
+    TableConfig::setEnvironment('prod');
+    return (new OutputController())->getAllBoardsApi($request, $response);
+});
+
+// -----------------------------------------------------------------------------
+// Routes CONTRÔLE OUTPUTS - TEST (ffp3Outputs2)
+// -----------------------------------------------------------------------------
+
+// Interface de contrôle TEST
+$app->get('/control-test', function (Request $request, Response $response) {
+    TableConfig::setEnvironment('test');
+    (new OutputController())->showInterface();
+    return $response;
+});
+
+// API : États GPIO pour board TEST (ESP32)
+$app->get('/api/outputs-test/states/{board}', function (Request $request, Response $response, array $args) {
+    TableConfig::setEnvironment('test');
+    return (new OutputController())->getStatesApi($request, $response, $args);
+});
+
+// API : Mettre à jour un output TEST
+$app->post('/api/outputs-test/{id}/state', function (Request $request, Response $response, array $args) {
+    TableConfig::setEnvironment('test');
+    return (new OutputController())->updateOutputApi($request, $response, $args);
+});
+
+// API : Toggle un output TEST
+$app->post('/api/outputs-test/{id}/toggle', function (Request $request, Response $response, array $args) {
+    TableConfig::setEnvironment('test');
+    return (new OutputController())->toggleOutputApi($request, $response, $args);
+});
+
+// API : Mettre à jour configuration système TEST
+$app->post('/api/system-test/config', function (Request $request, Response $response) {
+    TableConfig::setEnvironment('test');
+    return (new OutputController())->updateConfigApi($request, $response);
+});
+
+// API : Supprimer un output TEST
+$app->delete('/api/outputs-test/{id}', function (Request $request, Response $response, array $args) {
+    TableConfig::setEnvironment('test');
+    return (new OutputController())->deleteOutputApi($request, $response, $args);
+});
+
+// API : Informations boards TEST
+$app->get('/api/boards-test', function (Request $request, Response $response) {
+    TableConfig::setEnvironment('test');
+    return (new OutputController())->getAllBoardsApi($request, $response);
 });
 
 // -----------------------------------------------------------------------------
