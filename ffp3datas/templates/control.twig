@@ -1,0 +1,388 @@
+{# Template de contrôle des outputs (GPIO/relais) #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title|default('Contrôle FFP3') }} - olution IoT</title>
+    <link rel="stylesheet" href="https://iot.olution.info/assets/css/main.css" />
+    <link rel="shortcut icon" type="image/png" href="https://iot.olution.info/images/favico.png"/>
+    <style>
+        /* Styles pour les switches */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Styles pour la configuration */
+        .config-form {
+            max-width: 800px;
+            margin: 2em auto;
+            padding: 2em;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        .config-group {
+            margin-bottom: 1.5em;
+        }
+        .config-group label {
+            display: block;
+            margin-bottom: 0.5em;
+            font-weight: bold;
+        }
+        .config-group input,
+        .config-group select {
+            width: 100%;
+            padding: 0.5em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.9);
+            color: #000;
+        }
+        
+        /* Board status */
+        .board-status {
+            padding: 1em;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            margin-bottom: 2em;
+        }
+        .board-status.active {
+            border-left: 4px solid #4CAF50;
+        }
+        .board-status.inactive {
+            border-left: 4px solid #f44336;
+        }
+        
+        /* Messages d'alerte */
+        .alert {
+            padding: 1em;
+            margin: 1em 0;
+            border-radius: 4px;
+            display: none;
+        }
+        .alert.success {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .alert.error {
+            background-color: #f44336;
+            color: white;
+        }
+        .alert.show {
+            display: block;
+        }
+        
+        /* Output card */
+        .output-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1em;
+            margin-bottom: 1em;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        .output-name {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid #2196F3;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 10px;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading .spinner {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="is-preload">
+    <!-- Wrapper -->
+    <div id="wrapper" class="fade-in">
+        <!-- Header -->
+        <header id="header">
+            <a href="/index.php" class="logo">olution IoT datas</a>
+        </header>
+
+        <!-- Nav -->
+        <nav id="nav">
+            <ul class="links">
+                <li><a href="https://iot.olution.info/index.php">olution</a></li>
+                <li><a href="https://iot.olution.info/ffp3/ffp3datas/public/aquaponie">le prototype farmflow 3</a></li>
+                <li class="active"><a href="#">contrôle</a></li>
+            </ul>
+            <ul class="icons">
+                <li><a href="https://olution.info/course/view.php?id=511" class="icon solid fa-leaf"><span class="label">olution</span></a></li>
+                <li><a href="https://farmflow.marout.org/" class="icon solid fa-fish"><span class="label">farmflow</span></a></li>
+            </ul>
+        </nav>
+
+        <!-- Main -->
+        <div id="main">
+            <article class="post featured">
+                <header class="major">
+                    <h2>{{ page_title }}</h2>
+                    <p>Contrôle à distance des actionneurs du système aquaponique</p>
+                    <p class="warning" style="color: #f44336; font-weight: bold;">⚠️ À manipuler avec précaution !</p>
+                    
+                    <!-- Statut du board -->
+                    {% if board_info %}
+                    <div class="board-status {{ board_info.is_active ? 'active' : 'inactive' }}">
+                        <h4>Board #{{ board_info.board }}</h4>
+                        <p>
+                            Dernière requête : {{ board_info.last_request|date('d/m/Y H:i:s') }}
+                            (il y a {{ board_info.minutes_since_last_request }} minutes)
+                        </p>
+                        <p>Statut : <strong>{{ board_info.is_active ? '🟢 Actif' : '🔴 Inactif' }}</strong></p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Messages d'alerte -->
+                    <div id="alert-success" class="alert success"></div>
+                    <div id="alert-error" class="alert error"></div>
+                </header>
+
+                <!-- Section Outputs Principaux -->
+                <section>
+                    <h3>Contrôles Principaux</h3>
+                    {% for output in main_outputs %}
+                    <div class="output-card">
+                        <div>
+                            <div class="output-name">{{ output.name }}</div>
+                            <small>GPIO: {{ output.gpio }} | Board: {{ output.board }}</small>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" 
+                                   id="output-{{ output.id }}" 
+                                   data-id="{{ output.id }}"
+                                   {% if output.state == 1 %}checked{% endif %}
+                                   onchange="updateOutput(this)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    {% else %}
+                    <p>Aucun output disponible.</p>
+                    {% endfor %}
+                </section>
+
+                <!-- Section Configuration Système -->
+                <section>
+                    <h3>Configuration Système</h3>
+                    <form class="config-form" id="config-form" onsubmit="return updateConfig(event);">
+                        {% for config in system_config %}
+                        <div class="config-group">
+                            <label for="gpio-{{ config.gpio }}">{{ config.label }}</label>
+                            {% if config.type == 'checkbox' %}
+                                <select id="gpio-{{ config.gpio }}" name="gpio-{{ config.gpio }}">
+                                    <option value="checked" {% if config.value == 'checked' %}selected{% endif %}>Oui</option>
+                                    <option value="false" {% if config.value == 'false' %}selected{% endif %}>Non</option>
+                                </select>
+                            {% elseif config.type == 'email' %}
+                                <input type="email" 
+                                       id="gpio-{{ config.gpio }}" 
+                                       name="gpio-{{ config.gpio }}" 
+                                       value="{{ config.value }}"
+                                       placeholder="email@exemple.com">
+                            {% else %}
+                                <input type="number" 
+                                       id="gpio-{{ config.gpio }}" 
+                                       name="gpio-{{ config.gpio }}" 
+                                       value="{{ config.value }}"
+                                       min="0"
+                                       step="1">
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        
+                        <button type="submit" class="button primary large" id="submit-config">
+                            Mettre à jour la configuration
+                            <span class="spinner"></span>
+                        </button>
+                    </form>
+                </section>
+
+                <!-- Liens utiles -->
+                <footer style="text-align: center; margin-top: 3em;">
+                    <a href="/ffp3/ffp3datas/public/aquaponie" class="button">Retour aux données</a>
+                    <a href="/ffp3/ffp3datas/public/dashboard" class="button">Dashboard</a>
+                </footer>
+            </article>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://iot.olution.info/assets/js/jquery.min.js"></script>
+    <script>
+        /**
+         * Affiche un message d'alerte
+         */
+        function showAlert(type, message) {
+            const alertId = type === 'success' ? '#alert-success' : '#alert-error';
+            const alert = document.querySelector(alertId);
+            alert.textContent = message;
+            alert.classList.add('show');
+            
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+
+        /**
+         * Met à jour l'état d'un output
+         */
+        function updateOutput(element) {
+            const id = element.dataset.id;
+            const state = element.checked ? 1 : 0;
+            
+            // Désactiver le switch pendant la requête
+            element.disabled = true;
+            
+            fetch(`/ffp3/ffp3datas/public/api/outputs/${id}/state`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ state: state })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('success', 'État mis à jour avec succès');
+                } else {
+                    showAlert('error', data.error || 'Erreur lors de la mise à jour');
+                    // Rétablir l'état précédent
+                    element.checked = !element.checked;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('error', 'Erreur de connexion au serveur');
+                // Rétablir l'état précédent
+                element.checked = !element.checked;
+            })
+            .finally(() => {
+                element.disabled = false;
+            });
+        }
+
+        /**
+         * Met à jour la configuration système
+         */
+        function updateConfig(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('config-form');
+            const submitBtn = document.getElementById('submit-config');
+            const formData = new FormData(form);
+            
+            // Construire l'objet de configuration
+            const config = {};
+            for (let [key, value] of formData.entries()) {
+                // Extraire le numéro GPIO du nom (gpio-100 -> 100)
+                const gpio = key.replace('gpio-', '');
+                config[gpio] = value;
+            }
+            
+            // Afficher le spinner
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            fetch('/ffp3/ffp3datas/public/api/system/config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(config)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('success', 'Configuration mise à jour avec succès');
+                } else {
+                    showAlert('error', data.error || data.message || 'Erreur lors de la mise à jour');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('error', 'Erreur de connexion au serveur');
+            })
+            .finally(() => {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            });
+            
+            return false;
+        }
+
+        // Confirmation avant de quitter la page avec des changements non sauvegardés
+        let formChanged = false;
+        document.getElementById('config-form').addEventListener('change', () => {
+            formChanged = true;
+        });
+        document.getElementById('config-form').addEventListener('submit', () => {
+            formChanged = false;
+        });
+        window.addEventListener('beforeunload', (e) => {
+            if (formChanged) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+    <script src="https://iot.olution.info/assets/js/jquery.scrollex.min.js"></script>
+    <script src="https://iot.olution.info/assets/js/jquery.scrolly.min.js"></script>
+    <script src="https://iot.olution.info/assets/js/browser.min.js"></script>
+    <script src="https://iot.olution.info/assets/js/breakpoints.min.js"></script>
+    <script src="https://iot.olution.info/assets/js/util.js"></script>
+    <script src="https://iot.olution.info/assets/js/main.js"></script>
+</body>
+</html>
+
