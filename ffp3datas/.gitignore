@@ -1,8 +1,4 @@
-# Dépendances PHP
-/vendor/
-
 # Logs
-*.log
 error_log
 cronlog.txt
 
@@ -13,5 +9,4 @@ cronlog.txt
 # IDE / OS
 .DS_Store
 .idea/
-.vscode/ 
- *.lock 
+.vscode/
