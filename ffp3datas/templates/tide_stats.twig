@@ -29,6 +29,14 @@
                     <li>Variation globale réserve : <strong>{{ reserve_var|number_format(1, ',', ' ') }} cm</strong></li>
                 </ul>
 
+                <h3>Statistiques DiffMaree</h3>
+                <ul>
+                    <li>Différence marée moyenne : <strong>{{ diff_maree.moyenne is not null ? diff_maree.moyenne|number_format(2, ',', ' ') ~ ' cm' : 'n/a' }}</strong></li>
+                    <li>Différence marée minimum : <strong>{{ diff_maree.min is not null ? diff_maree.min|number_format(2, ',', ' ') ~ ' cm' : 'n/a' }}</strong></li>
+                    <li>Différence marée maximum : <strong>{{ diff_maree.max is not null ? diff_maree.max|number_format(2, ',', ' ') ~ ' cm' : 'n/a' }}</strong></li>
+                    <li>Écart-type : <strong>{{ diff_maree.ecart_type is not null ? diff_maree.ecart_type|number_format(2, ',', ' ') ~ ' cm' : 'n/a' }}</strong></li>
+                </ul>
+
                 <hr/>
 
                 <h3>Evolution sur les 6 derniers mois (moyenne hebdomadaire)</h3>
@@ -38,6 +46,11 @@
                 <canvas id="chartReservePos" height="120"></canvas>
                 <canvas id="chartReserveNeg" height="120"></canvas>
                 <canvas id="chartReserveVar" height="120"></canvas>
+                
+                <h4>Évolution DiffMaree</h4>
+                <canvas id="chartDiffMareeMoyenne" height="120"></canvas>
+                <canvas id="chartDiffMareeMin" height="120"></canvas>
+                <canvas id="chartDiffMareeMax" height="120"></canvas>
 
                 <script>
                 const weeklyStats = {{ weekly_stats_json|raw }};
@@ -72,6 +85,11 @@
                 lineChart('chartReservePos', 'Variation positive réserve (cm)', weeklyStats.reserve_pos, 'rgba(75, 192, 192, 1)');
                 lineChart('chartReserveNeg', 'Variation négative réserve (cm)', weeklyStats.reserve_neg, 'rgba(255, 159, 64, 1)');
                 lineChart('chartReserveVar', 'Variation globale réserve (cm)', weeklyStats.reserve_var, 'rgba(153, 102, 255, 1)');
+                
+                // Graphiques DiffMaree
+                lineChart('chartDiffMareeMoyenne', 'DiffMaree moyenne (cm)', weeklyStats.diff_maree_moyenne, 'rgba(255, 206, 86, 1)');
+                lineChart('chartDiffMareeMin', 'DiffMaree minimum (cm)', weeklyStats.diff_maree_min, 'rgba(75, 192, 192, 1)');
+                lineChart('chartDiffMareeMax', 'DiffMaree maximum (cm)', weeklyStats.diff_maree_max, 'rgba(255, 99, 132, 1)');
                 </script>
 
                 <hr/>

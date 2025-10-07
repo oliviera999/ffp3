@@ -92,6 +92,30 @@ class TideAnalysisService
         }
         $reserveGlobal = $reserveLevels[$len - 1] - $reserveLevels[0];
 
+        // ------------------------------------------------------------
+        // Statistiques sur diffMaree
+        // ------------------------------------------------------------
+        $diffMareeLevels = array_column($rows, 'diffMaree');
+        $diffMareeValid = array_filter($diffMareeLevels, function($value) {
+            return $value !== null && $value !== '';
+        });
+        
+        $diffMareeStats = [
+            'moyenne' => count($diffMareeValid) > 0 ? array_sum($diffMareeValid) / count($diffMareeValid) : null,
+            'min' => count($diffMareeValid) > 0 ? min($diffMareeValid) : null,
+            'max' => count($diffMareeValid) > 0 ? max($diffMareeValid) : null,
+            'ecart_type' => null
+        ];
+        
+        // Calcul de l'écart-type
+        if (count($diffMareeValid) > 1) {
+            $mean = $diffMareeStats['moyenne'];
+            $variance = array_sum(array_map(function($x) use ($mean) {
+                return pow($x - $mean, 2);
+            }, $diffMareeValid)) / count($diffMareeValid);
+            $diffMareeStats['ecart_type'] = sqrt($variance);
+        }
+
         return [
             'marnage_moyen'    => $averageRange,
             'frequence_marees' => $frequency,
@@ -99,6 +123,7 @@ class TideAnalysisService
             'reserve_pos'      => $reservePos,
             'reserve_neg'      => $reserveNeg,
             'reserve_var'      => $reserveGlobal,
+            'diff_maree'       => $diffMareeStats,
         ];
     }
 
@@ -118,6 +143,9 @@ class TideAnalysisService
         $reservePosArr = [];
         $reserveNegArr = [];
         $reserveVarArr = [];
+        $diffMareeMoyenneArr = [];
+        $diffMareeMinArr = [];
+        $diffMareeMaxArr = [];
 
         while ($currentStart <= $overallEnd) {
             // Calculate end of the current week (Sunday 23:59:59)
@@ -135,6 +163,9 @@ class TideAnalysisService
             $reservePosArr[] = $stats['reserve_pos'];
             $reserveNegArr[] = $stats['reserve_neg'];
             $reserveVarArr[] = $stats['reserve_var'];
+            $diffMareeMoyenneArr[] = $stats['diff_maree']['moyenne'];
+            $diffMareeMinArr[] = $stats['diff_maree']['min'];
+            $diffMareeMaxArr[] = $stats['diff_maree']['max'];
 
             // Move to next week
             $currentStart = (clone $currentStart)->modify('+7 days');
@@ -147,6 +178,9 @@ class TideAnalysisService
             'reserve_pos'       => $reservePosArr,
             'reserve_neg'       => $reserveNegArr,
             'reserve_var'       => $reserveVarArr,
+            'diff_maree_moyenne' => $diffMareeMoyenneArr,
+            'diff_maree_min'    => $diffMareeMinArr,
+            'diff_maree_max'    => $diffMareeMaxArr,
         ];
     }
 } 

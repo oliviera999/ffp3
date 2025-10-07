@@ -1,0 +1,17 @@
+# Dépendances PHP
+/vendor/
+
+# Logs
+*.log
+error_log
+cronlog.txt
+
+# Fichiers temporaires / exports
+*.csv
+/tmp/
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/ 
+ *.lock 

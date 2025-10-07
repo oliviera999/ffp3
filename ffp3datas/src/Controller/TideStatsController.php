@@ -51,6 +51,7 @@ class TideStatsController
             'reserve_pos'      => $stats['reserve_pos'],
             'reserve_neg'      => $stats['reserve_neg'],
             'reserve_var'      => $stats['reserve_var'],
+            'diff_maree'       => $stats['diff_maree'],
 
             // Nouveaux graphiques
             'weekly_stats_json' => $weeklyStatsJson,
