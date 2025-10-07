@@ -1,272 +1,347 @@
 <?php
-$servername = "localhost";
+/**
+ * Fonctions de gestion des Outputs et Boards - TEST
+ * Version sécurisée avec prepared statements
+ * Utilise ffp3Outputs2 (TEST)
+ */
 
-// REPLACE with your Database name
-$dbname = "oliviera_iot";
-// REPLACE with Database user
-$username = "oliviera_iot";
-// REPLACE with Database user password
-$password = "Iot#Olution1";
+require_once __DIR__ . '/autoload.php';
 
-    function createOutput($mail, $mailNotif, $aqThr, $taThr, $tempsRemplissageSec, $limFlood, $chauff, $bouffeMat, $bouffeMid, $bouffeSoir, $tempsGros, $tempsPetits, $WakeUp, $FreqWakeUp) {
-        global $servername, $username, $password, $dbname;
+use FFP3Control\Config\Database;
 
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+// Forcer l'environnement TEST
+Database::setEnvironment('test');
 
-        $sql = "UPDATE ffp3Outputs2 SET state = '" . $mail . "' WHERE gpio= '100';
-        UPDATE ffp3Outputs2 SET state = '" . $mailNotif . "' WHERE gpio= '101';
-        UPDATE ffp3Outputs2 SET state = '" . $aqThr . "' WHERE gpio= '102';
-        UPDATE ffp3Outputs2 SET state = '" . $taThr . "' WHERE gpio= '103';
-        UPDATE ffp3Outputs2 SET state = '" . $tempsRemplissageSec . "' WHERE gpio= '113';
-        UPDATE ffp3Outputs2 SET state = '" . $limFlood . "' WHERE gpio= '114';
-        UPDATE ffp3Outputs2 SET state = '" . $chauff . "' WHERE gpio= '104';
-        UPDATE ffp3Outputs2 SET state = '" . $bouffeMat . "' WHERE gpio= '105';
-        UPDATE ffp3Outputs2 SET state = '" . $bouffeMid . "' WHERE gpio= '106';
-        UPDATE ffp3Outputs2 SET state = '" . $bouffeSoir . "' WHERE gpio= '107';
-        UPDATE ffp3Outputs2 SET state = '" . $tempsGros . "' WHERE gpio= '111';
-        UPDATE ffp3Outputs2 SET state = '" . $tempsPetits . "' WHERE gpio= '112';
-        UPDATE ffp3Outputs2 SET state = '" . $WakeUp . "' WHERE gpio= '115';
-        UPDATE ffp3Outputs2 SET state = '" . $FreqWakeUp . "' WHERE gpio= '116';
-
-        ";
+/**
+ * Met à jour plusieurs outputs (configuration système)
+ * 
+ * @param string $mail Email pour notifications
+ * @param string $mailNotif Activation notifications (checked/false)
+ * @param int $aqThr Limite niveau aquarium
+ * @param int $taThr Limite niveau réserve
+ * @param int $tempsRemplissageSec Temps remplissage aquarium (secondes)
+ * @param int $limFlood Limite débordement
+ * @param int $chauff Seuil température chauffage
+ * @param int $bouffeMat Heure alimentation matin
+ * @param int $bouffeMid Heure alimentation midi
+ * @param int $bouffeSoir Heure alimentation soir
+ * @param int $tempsGros Durée nourrissage gros poissons (sec)
+ * @param int $tempsPetits Durée nourrissage petits poissons (sec)
+ * @param int $WakeUp Forçage éveil
+ * @param int $FreqWakeUp Fréquence forçage éveil
+ * @return string Message de succès ou erreur
+ */
+function createOutput($mail, $mailNotif, $aqThr, $taThr, $tempsRemplissageSec, $limFlood, $chauff, $bouffeMat, $bouffeMid, $bouffeSoir, $tempsGros, $tempsPetits, $WakeUp, $FreqWakeUp) {
+    try {
+        $pdo = Database::getConnection();
+        $table = Database::getOutputsTable();
         
-       if ($conn->multi_query($sql) === TRUE) {
-            return "New output created successfully";
+        // Préparer les mises à jour en une seule transaction
+        $pdo->beginTransaction();
+        
+        $sql = "UPDATE {$table} SET state = :state WHERE gpio = :gpio";
+        $stmt = $pdo->prepare($sql);
+        
+        // Tableau des GPIO à mettre à jour
+        $updates = [
+            ['gpio' => 100, 'state' => $mail],
+            ['gpio' => 101, 'state' => $mailNotif],
+            ['gpio' => 102, 'state' => $aqThr],
+            ['gpio' => 103, 'state' => $taThr],
+            ['gpio' => 113, 'state' => $tempsRemplissageSec],
+            ['gpio' => 114, 'state' => $limFlood],
+            ['gpio' => 104, 'state' => $chauff],
+            ['gpio' => 105, 'state' => $bouffeMat],
+            ['gpio' => 106, 'state' => $bouffeMid],
+            ['gpio' => 107, 'state' => $bouffeSoir],
+            ['gpio' => 111, 'state' => $tempsGros],
+            ['gpio' => 112, 'state' => $tempsPetits],
+            ['gpio' => 115, 'state' => $WakeUp],
+            ['gpio' => 116, 'state' => $FreqWakeUp],
+        ];
+        
+        foreach ($updates as $update) {
+            $stmt->execute([
+                ':gpio' => $update['gpio'],
+                ':state' => $update['state']
+            ]);
         }
-        else {
-            return "Error: " . $sql . "<br>" . $conn->error;
+        
+        $pdo->commit();
+        return "New output created successfully";
+        
+    } catch (PDOException $e) {
+        if (isset($pdo) && $pdo->inTransaction()) {
+            $pdo->rollBack();
         }
-        $conn->close();
+        return "Error: " . $e->getMessage();
     }
-    
-    function deleteOutput($id) {
-        global $servername, $username, $password, $dbname;
+}
 
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        $sql = "DELETE FROM ffp3Outputs2 WHERE id='". $id .  "'";
-
-       if ($conn->query($sql) === TRUE) {
+/**
+ * Supprime un output
+ * 
+ * @param int $id ID de l'output
+ * @return string Message de succès ou erreur
+ */
+function deleteOutput($id) {
+    try {
+        $pdo = Database::getConnection();
+        $table = Database::getOutputsTable();
+        
+        $sql = "DELETE FROM {$table} WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        
+        if ($stmt->rowCount() > 0) {
             return "Output deleted successfully";
+        } else {
+            return "No output found with ID: {$id}";
         }
-        else {
-            return "Error: " . $sql . "<br>" . $conn->error;
-        }
-        $conn->close();
+        
+    } catch (PDOException $e) {
+        return "Error: " . $e->getMessage();
     }
+}
 
-    function updateOutput($id, $state) {
-        global $servername, $username, $password, $dbname;
-
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        $sql = "UPDATE ffp3Outputs2 SET state='" . $state . "' WHERE id='". $id .  "'";
-
-       if ($conn->query($sql) === TRUE) {
+/**
+ * Met à jour l'état d'un output
+ * 
+ * @param int $id ID de l'output
+ * @param int $state Nouvel état (0 ou 1)
+ * @return string Message de succès ou erreur
+ */
+function updateOutput($id, $state) {
+    try {
+        $pdo = Database::getConnection();
+        $table = Database::getOutputsTable();
+        
+        $sql = "UPDATE {$table} SET state = :state WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':state' => $state,
+            ':id' => $id
+        ]);
+        
+        if ($stmt->rowCount() > 0) {
             return "Output state updated successfully";
+        } else {
+            return "No output found with ID: {$id}";
         }
-        else {
-            return "Error: " . $sql . "<br>" . $conn->error;
-        }
-        $conn->close();
+        
+    } catch (PDOException $e) {
+        return "Error: " . $e->getMessage();
     }
+}
 
-    function getAllOutputs() {
-        global $servername, $username, $password, $dbname;
-
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        $sql = "SELECT id, name, board, gpio, state FROM ffp3Outputs2 ORDER BY id";
-        if ($result = $conn->query($sql)) {
-            return $result;
-        }
-        else {
-            return false;
-        }
-        $conn->close();
+/**
+ * Récupère tous les outputs
+ * 
+ * @return mysqli_result|false Résultat ou false
+ */
+function getAllOutputs() {
+    try {
+        $pdo = Database::getConnection();
+        $table = Database::getOutputsTable();
+        
+        $sql = "SELECT id, name, board, gpio, state FROM {$table} ORDER BY id";
+        $stmt = $pdo->query($sql);
+        
+        return $stmt;
+        
+    } catch (PDOException $e) {
+        error_log("getAllOutputs error: " . $e->getMessage());
+        return false;
     }
-    
-    function getPartOutputs() {
-        global $servername, $username, $password, $dbname;
+}
 
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        $sql = "SELECT id, name, board, gpio, state FROM ffp3Outputs2 ORDER BY id limit 7";
-        if ($result = $conn->query($sql)) {
-            return $result;
-        }
-        else {
-            return false;
-        }
-        $conn->close();
+/**
+ * Récupère les N premiers outputs
+ * 
+ * @param int $limit Nombre d'outputs à récupérer (défaut: 7)
+ * @return PDOStatement|false Résultat ou false
+ */
+function getPartOutputs($limit = 7) {
+    try {
+        $pdo = Database::getConnection();
+        $table = Database::getOutputsTable();
+        
+        $sql = "SELECT id, name, board, gpio, state FROM {$table} ORDER BY id LIMIT :limit";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt;
+        
+    } catch (PDOException $e) {
+        error_log("getPartOutputs error: " . $e->getMessage());
+        return false;
     }
+}
 
-    function getAllOutputStates($board) {
-        global $servername, $username, $password, $dbname;
-
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        $sql = "SELECT gpio, state FROM ffp3Outputs2 WHERE board='" . $board . "'";
-        if ($result = $conn->query($sql)) {
-            return $result;
-        }
-        else {
-            return false;
-        }
-        $conn->close();
+/**
+ * Récupère les états de tous les GPIO d'un board
+ * Utilisé par ESP32 pour récupérer les états
+ * 
+ * @param string $board Nom du board
+ * @return PDOStatement|false Résultat ou false
+ */
+function getAllOutputStates($board) {
+    try {
+        $pdo = Database::getConnection();
+        $table = Database::getOutputsTable();
+        
+        $sql = "SELECT gpio, state FROM {$table} WHERE board = :board";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':board' => $board]);
+        
+        return $stmt;
+        
+    } catch (PDOException $e) {
+        error_log("getAllOutputStates error: " . $e->getMessage());
+        return false;
     }
+}
 
-    function getOutputBoardById($id) {
-        global $servername, $username, $password, $dbname;
-
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        $sql = "SELECT board FROM ffp3Outputs2 WHERE id='" . $id . "'";
-        if ($result = $conn->query($sql)) {
-            return $result;
-        }
-        else {
-            return false;
-        }
-        $conn->close();
+/**
+ * Récupère le board d'un output par son ID
+ * 
+ * @param int $id ID de l'output
+ * @return PDOStatement|false Résultat ou false
+ */
+function getOutputBoardById($id) {
+    try {
+        $pdo = Database::getConnection();
+        $table = Database::getOutputsTable();
+        
+        $sql = "SELECT board FROM {$table} WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        
+        return $stmt;
+        
+    } catch (PDOException $e) {
+        error_log("getOutputBoardById error: " . $e->getMessage());
+        return false;
     }
+}
 
-    function updateLastBoardTime($board) {
-        global $servername, $username, $password, $dbname;
-
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
+/**
+ * Met à jour la dernière requête d'un board
+ * 
+ * @param string $board Nom du board
+ * @return string Message de succès ou erreur
+ */
+function updateLastBoardTime($board) {
+    try {
+        $pdo = Database::getConnection();
+        $table = Database::getBoardsTable();
+        
+        $sql = "UPDATE {$table} SET last_request = NOW() WHERE board = :board";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':board' => $board]);
+        
+        if ($stmt->rowCount() > 0) {
+            return "Board time updated successfully";
+        } else {
+            return "No board found: {$board}";
         }
-
-        $sql = "UPDATE Boards SET last_request=now() WHERE board='". $board .  "'";
-
-       if ($conn->query($sql) === TRUE) {
-            return "Output state updated successfully";
-        }
-        else {
-            return "Error: " . $sql . "<br>" . $conn->error;
-        }
-        $conn->close();
+        
+    } catch (PDOException $e) {
+        return "Error: " . $e->getMessage();
     }
+}
 
-    function getAllBoards($board) {
-        global $servername, $username, $password, $dbname;
-
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        $sql = "SELECT board, last_request FROM Boards WHERE board='" . $board . "'";
-        if ($result = $conn->query($sql)) {
-            return $result;
-        }
-        else {
-            return false;
-        }
-        $conn->close();
+/**
+ * Récupère tous les boards (utilisé avec un paramètre spécifique)
+ * 
+ * @param string $board Nom du board
+ * @return PDOStatement|false Résultat ou false
+ */
+function getAllBoards($board) {
+    try {
+        $pdo = Database::getConnection();
+        $table = Database::getBoardsTable();
+        
+        $sql = "SELECT board, last_request FROM {$table} WHERE board = :board";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':board' => $board]);
+        
+        return $stmt;
+        
+    } catch (PDOException $e) {
+        error_log("getAllBoards error: " . $e->getMessage());
+        return false;
     }
+}
 
-    function getBoard($board) {
-        global $servername, $username, $password, $dbname;
-
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        $sql = "SELECT board, last_request FROM Boards WHERE board='" . $board . "'";
-        if ($result = $conn->query($sql)) {
-            return $result;
-        }
-        else {
-            return false;
-        }
-        $conn->close();
+/**
+ * Récupère un board par son nom
+ * 
+ * @param string $board Nom du board
+ * @return PDOStatement|false Résultat ou false
+ */
+function getBoard($board) {
+    try {
+        $pdo = Database::getConnection();
+        $table = Database::getBoardsTable();
+        
+        $sql = "SELECT board, last_request FROM {$table} WHERE board = :board";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':board' => $board]);
+        
+        return $stmt;
+        
+    } catch (PDOException $e) {
+        error_log("getBoard error: " . $e->getMessage());
+        return false;
     }
+}
 
-    function createBoard($board) {
-        global $servername, $username, $password, $dbname;
-
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        $sql = "INSERT INTO Boards (board) VALUES ('" . $board . "')";
-
-       if ($conn->query($sql) === TRUE) {
-            return "New board created successfully";
-        }
-        else {
-            return "Error: " . $sql . "<br>" . $conn->error;
-        }
-        $conn->close();
+/**
+ * Crée un nouveau board
+ * 
+ * @param string $board Nom du board
+ * @return string Message de succès ou erreur
+ */
+function createBoard($board) {
+    try {
+        $pdo = Database::getConnection();
+        $table = Database::getBoardsTable();
+        
+        $sql = "INSERT INTO {$table} (board) VALUES (:board)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':board' => $board]);
+        
+        return "New board created successfully";
+        
+    } catch (PDOException $e) {
+        return "Error: " . $e->getMessage();
     }
+}
 
-    function deleteBoard($board) {
-        global $servername, $username, $password, $dbname;
-
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        $sql = "DELETE FROM Boards WHERE board='". $board .  "'";
-
-       if ($conn->query($sql) === TRUE) {
+/**
+ * Supprime un board
+ * 
+ * @param string $board Nom du board
+ * @return string Message de succès ou erreur
+ */
+function deleteBoard($board) {
+    try {
+        $pdo = Database::getConnection();
+        $table = Database::getBoardsTable();
+        
+        $sql = "DELETE FROM {$table} WHERE board = :board";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':board' => $board]);
+        
+        if ($stmt->rowCount() > 0) {
             return "Board deleted successfully";
+        } else {
+            return "No board found: {$board}";
         }
-        else {
-            return "Error: " . $sql . "<br>" . $conn->error;
-        }
-        $conn->close();
+        
+    } catch (PDOException $e) {
+        return "Error: " . $e->getMessage();
     }
-
-?>
+}
