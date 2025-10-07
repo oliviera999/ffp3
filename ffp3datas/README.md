@@ -71,12 +71,15 @@ $ nano .env        # hote BD, user, pass, clés API…
 
 ## Configuration `.env`
 
+⚠️ **IMPORTANT** : Dans ce projet, le fichier `.env` est **versionné dans Git** (contrairement à la pratique habituelle). Cela permet d'assurer une configuration cohérente sur tous les déploiements. Assurez-vous que les informations sensibles sont protégées par d'autres moyens si nécessaire.
+
 | Variable | Rôle |
 |----------|------|
 | `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` | Connexion MySQL |
 | `API_KEY` | Clé API legacy (ESP32) |
 | `API_SIG_SECRET` | Secret HMAC SHA-256 |
 | `SIG_VALID_WINDOW` | Fenêtre en secondes (déf. 300) |
+| `APP_TIMEZONE` | Fuseau horaire de l'application (déf. `Europe/Paris`) |
 | `GPIO_POMPE_AQUA`, `GPIO_POMPE_TANK`, `GPIO_RESET_MODE` | # GPIO (int) |
 | `AQUA_LOW_LEVEL_THRESHOLD` | Seuil niveau eau (cm/%) |
 | `TIDE_STDDEV_THRESHOLD` | Seuil écart-type marées |
