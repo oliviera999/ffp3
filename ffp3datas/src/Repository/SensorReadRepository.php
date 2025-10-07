@@ -6,6 +6,8 @@ namespace App\Repository;
 
 
 
+use App\Config\TableConfig;
+
 use DateTimeInterface;
 
 use PDO;
@@ -75,14 +77,15 @@ class SensorReadRepository
 
 
         // Requête SQL multi-colonnes, triée par date décroissante
+        $table = TableConfig::getDataTable();
 
-        $sql = <<<'SQL'
+        $sql = <<<SQL
 
             SELECT id, TempAir, Humidite, TempEau, EauPotager, EauAquarium, EauReserve, diffMaree, Luminosite,
 
                    etatPompeAqua, etatPompeTank, etatHeat, etatUV, bouffePetits, bouffeGros, reading_time
 
-            FROM ffp3Data
+            FROM {$table}
 
             WHERE reading_time BETWEEN :start AND :end
 
@@ -125,8 +128,9 @@ class SensorReadRepository
     public function getLastReadingDate(): ?string
 
     {
+        $table = TableConfig::getDataTable();
 
-        $sql   = 'SELECT MAX(reading_time) AS last_date FROM ffp3Data';
+        $sql   = "SELECT MAX(reading_time) AS last_date FROM {$table}";
 
         $stmt  = $this->pdo->query($sql);
 
@@ -215,8 +219,9 @@ class SensorReadRepository
     public function getLastReadings(int $limit = 1): array
 
     {
+        $table = TableConfig::getDataTable();
 
-        $sql = 'SELECT * FROM ffp3Data ORDER BY reading_time DESC LIMIT :limit';
+        $sql = "SELECT * FROM {$table} ORDER BY reading_time DESC LIMIT :limit";
 
 
 

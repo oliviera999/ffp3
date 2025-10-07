@@ -3,6 +3,7 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use App\Config\Env;
+use App\Config\TableConfig;
 use App\Controller\DashboardController;
 use App\Controller\ExportController;
 use App\Controller\PostDataController;
@@ -77,6 +78,39 @@ $app->get('/export-data.php', function (Request $request, Response $response) {
 // Page statistiques marée (GET + POST pour formulaire)
 $app->map(['GET', 'POST'], '/tide-stats', function (Request $request, Response $response) {
     (new \App\Controller\TideStatsController())->show();
+    return $response;
+});
+
+// -----------------------------------------------------------------------------
+// Routes TEST (utilisent ffp3Data2, ffp3Outputs2)
+// -----------------------------------------------------------------------------
+$app->get('/dashboard-test', function (Request $request, Response $response) {
+    TableConfig::setEnvironment('test');
+    (new DashboardController())->show();
+    return $response;
+});
+
+$app->map(['GET', 'POST'], '/aquaponie-test', function (Request $request, Response $response) {
+    TableConfig::setEnvironment('test');
+    (new AquaponieController())->show();
+    return $response;
+});
+
+$app->post('/post-data-test', function (Request $request, Response $response) {
+    TableConfig::setEnvironment('test');
+    (new PostDataController())->handle();
+    return $response;
+});
+
+$app->map(['GET', 'POST'], '/tide-stats-test', function (Request $request, Response $response) {
+    TableConfig::setEnvironment('test');
+    (new \App\Controller\TideStatsController())->show();
+    return $response;
+});
+
+$app->get('/export-data-test', function (Request $request, Response $response) {
+    TableConfig::setEnvironment('test');
+    (new ExportController())->downloadCsv();
     return $response;
 });
 
