@@ -249,9 +249,61 @@
                             padding: 5px;
                             width: 100%;
                         }
+                        .period-buttons {
+                            display: flex;
+                            gap: 10px;
+                            margin-bottom: 20px;
+                            flex-wrap: wrap;
+                            justify-content: center;
+                        }
+                        .period-buttons button {
+                            padding: 10px 20px;
+                            background-color: #007E61;
+                            color: white;
+                            border: none;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            transition: background-color 0.3s;
+                        }
+                        .period-buttons button:hover {
+                            background-color: #00B794;
+                        }
                     </style>
 
                     <center>
+                        <div class="period-buttons">
+                            <button onclick="setPeriod(1, 'hours')">1 heure</button>
+                            <button onclick="setPeriod(6, 'hours')">6 heures</button>
+                            <button onclick="setPeriod(1, 'days')">1 jour</button>
+                            <button onclick="setPeriod(7, 'days')">1 semaine</button>
+                            <button onclick="setPeriod(30, 'days')">1 mois</button>
+                        </div>
+
+                        <script>
+                            function setPeriod(value, unit) {
+                                const now = new Date();
+                                const start = new Date();
+                                
+                                if (unit === 'hours') {
+                                    start.setHours(now.getHours() - value);
+                                } else if (unit === 'days') {
+                                    start.setDate(now.getDate() - value);
+                                }
+                                
+                                // Format dates for inputs
+                                const formatDate = (date) => date.toISOString().split('T')[0];
+                                const formatTime = (date) => date.toTimeString().slice(0, 5);
+                                
+                                document.getElementById('start_date').value = formatDate(start);
+                                document.getElementById('start_time').value = formatTime(start);
+                                document.getElementById('end_date').value = formatDate(now);
+                                document.getElementById('end_time').value = formatTime(now);
+                                
+                                // Submit form automatically
+                                document.querySelector('form').submit();
+                            }
+                        </script>
+
                         <form method="POST" action="">
                             <div class="form-container">
                                 <div>
