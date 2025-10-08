@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Config\Database;
+use App\Config\TableConfig;
 use App\Repository\OutputRepository;
 use App\Repository\BoardRepository;
 use App\Service\OutputService;
@@ -43,12 +44,20 @@ class OutputController
             // Récupérer les boards actifs (board 1 par défaut)
             $boardInfo = $this->outputService->getBoardInfo('1');
             
+            // Déterminer l'environnement actuel
+            $environment = TableConfig::getEnvironment();
+            $apiPrefix = $environment === 'test' ? '/api/outputs-test' : '/api/outputs';
+            $systemApiPrefix = $environment === 'test' ? '/api/system-test' : '/api/system';
+            
             // Préparer les données pour le template
             $templateData = [
                 'main_outputs' => $data['main_outputs'],
                 'system_config' => $data['system_config'],
                 'board_info' => $boardInfo,
-                'page_title' => 'Contrôle du FFP3'
+                'page_title' => 'Contrôle du FFP3' . ($environment === 'test' ? ' (TEST)' : ''),
+                'environment' => $environment,
+                'api_prefix' => $apiPrefix,
+                'system_api_prefix' => $systemApiPrefix
             ];
             
             // Rendre le template

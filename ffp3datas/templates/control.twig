@@ -156,7 +156,7 @@
         <nav id="nav">
             <ul class="links">
                 <li><a href="https://iot.olution.info/index.php">olution</a></li>
-                <li><a href="https://iot.olution.info/ffp3/ffp3datas/public/aquaponie">le prototype farmflow 3</a></li>
+                <li><a href="https://iot.olution.info/ffp3/ffp3datas/aquaponie">le prototype farmflow 3</a></li>
                 <li class="active"><a href="#">contrôle</a></li>
             </ul>
             <ul class="icons">
@@ -251,8 +251,8 @@
 
                 <!-- Liens utiles -->
                 <footer style="text-align: center; margin-top: 3em;">
-                    <a href="/ffp3/ffp3datas/public/aquaponie" class="button">Retour aux données</a>
-                    <a href="/ffp3/ffp3datas/public/dashboard" class="button">Dashboard</a>
+                    <a href="/ffp3/ffp3datas/aquaponie" class="button">Retour aux données</a>
+                    <a href="/ffp3/ffp3datas/dashboard" class="button">Dashboard</a>
                 </footer>
             </article>
         </div>
@@ -261,6 +261,11 @@
     <!-- Scripts -->
     <script src="https://iot.olution.info/assets/js/jquery.min.js"></script>
     <script>
+        // Configuration de l'environnement et des URLs API
+        const API_PREFIX = '{{ api_prefix|default("/api/outputs") }}';
+        const SYSTEM_API_PREFIX = '{{ system_api_prefix|default("/api/system") }}';
+        const BASE_PATH = '/ffp3/ffp3datas';
+        
         /**
          * Affiche un message d'alerte
          */
@@ -285,7 +290,7 @@
             // Désactiver le switch pendant la requête
             element.disabled = true;
             
-            fetch(`/ffp3/ffp3datas/public/api/outputs/${id}/state`, {
+            fetch(`${BASE_PATH}${API_PREFIX}/${id}/state`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -335,7 +340,7 @@
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
             
-            fetch('/ffp3/ffp3datas/public/api/system/config', {
+            fetch(`${BASE_PATH}${SYSTEM_API_PREFIX}/config`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
