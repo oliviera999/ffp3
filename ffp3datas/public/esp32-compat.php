@@ -12,6 +12,11 @@
 // Déterminer le chemin base (sans /public/ car Slim gère le routing)
 $basePath = '/ffp3/ffp3datas';
 
+// URL complète pour les requêtes curl internes
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? 'iot.olution.info';
+$fullBaseUrl = $protocol . '://' . $host . $basePath;
+
 // Récupérer l'action
 $action = $_GET['action'] ?? '';
 
@@ -29,16 +34,27 @@ if ($action === 'outputs_state') {
     
     if ($id && $state !== '') {
         // Transformer GET en POST avec JSON
-        $ch = curl_init($basePath . '/api/outputs/' . urlencode($id) . '/state');
+        $targetUrl = $fullBaseUrl . '/api/outputs/' . urlencode($id) . '/state';
+        $ch = curl_init($targetUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['state' => (int) $state]));
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json'
         ]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         
         $result = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        
+        if ($result === false) {
+            $error = curl_error($ch);
+            curl_close($ch);
+            http_response_code(500);
+            echo json_encode(['error' => 'Erreur curl: ' . $error]);
+            exit;
+        }
+        
         curl_close($ch);
         
         http_response_code($httpCode);
@@ -51,12 +67,23 @@ if ($action === 'outputs_state') {
     $id = $_GET['id'] ?? '';
     
     if ($id) {
-        $ch = curl_init($basePath . '/api/outputs/' . urlencode($id));
+        $targetUrl = $fullBaseUrl . '/api/outputs/' . urlencode($id);
+        $ch = curl_init($targetUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         
         $result = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        
+        if ($result === false) {
+            $error = curl_error($ch);
+            curl_close($ch);
+            http_response_code(500);
+            echo json_encode(['error' => 'Erreur curl: ' . $error]);
+            exit;
+        }
+        
         curl_close($ch);
         
         http_response_code($httpCode);

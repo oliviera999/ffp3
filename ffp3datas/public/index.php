@@ -22,10 +22,15 @@ Env::load();
 $app = AppFactory::create();
 
 // Forcer le chemin base pour être identique à l'ancien (dossier parent de /public)
+// Si SCRIPT_NAME = /ffp3/ffp3datas/public/index.php
+// alors dirname(dirname(...)) = /ffp3/ffp3datas
 $basePath = str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME'])));
 if ($basePath !== '/' && $basePath !== '') {
     $app->setBasePath($basePath);
 }
+
+// Debug basePath (décommenter si nécessaire)
+// error_log("[Slim] BasePath configuré: " . $basePath . " (SCRIPT_NAME: " . $_SERVER['SCRIPT_NAME'] . ")");
 
 // -----------------------------------------------------------------------------
 // Définition des routes principales
