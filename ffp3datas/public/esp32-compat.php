@@ -6,11 +6,11 @@
  * Ce fichier redirige vers les nouvelles API modernes.
  * 
  * ANCIEN: /ffp3/ffp3control/ffp3-outputs-action.php?action=outputs_state&board=1
- * NOUVEAU: /ffp3/ffp3datas/public/api/outputs/states/1
+ * NOUVEAU: /ffp3/ffp3datas/api/outputs/states/1
  */
 
-// Déterminer le chemin base
-$basePath = '/ffp3/ffp3datas/public';
+// Déterminer le chemin base (sans /public/ car Slim gère le routing)
+$basePath = '/ffp3/ffp3datas';
 
 // Récupérer l'action
 $action = $_GET['action'] ?? '';
