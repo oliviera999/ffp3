@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Config\Database;
+use App\Config\Version;
 use App\Repository\SensorReadRepository;
 use App\Service\TemplateRenderer;
 use App\Service\TideAnalysisService;
@@ -56,6 +57,10 @@ class TideStatsController
 
             // Nouveaux graphiques
             'weekly_stats_json' => $weeklyStatsJson,
+
+            // Version
+            'version'       => Version::getFormatted(),
+            'version_info'  => Version::getInfo(),
         ]);
     }
 } 

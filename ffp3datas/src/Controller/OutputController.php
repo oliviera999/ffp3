@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Config\Database;
 use App\Config\TableConfig;
+use App\Config\Version;
 use App\Repository\OutputRepository;
 use App\Repository\BoardRepository;
 use App\Service\OutputService;
@@ -57,7 +58,9 @@ class OutputController
                 'page_title' => 'Contrôle du FFP3' . ($environment === 'test' ? ' (TEST)' : ''),
                 'environment' => $environment,
                 'api_prefix' => $apiPrefix,
-                'system_api_prefix' => $systemApiPrefix
+                'system_api_prefix' => $systemApiPrefix,
+                'version' => Version::getFormatted(),
+                'version_info' => Version::getInfo()
             ];
             
             // Rendre le template

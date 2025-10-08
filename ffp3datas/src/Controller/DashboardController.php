@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Config\Database;
+use App\Config\Version;
 use App\Repository\SensorReadRepository;
 use App\Service\SensorStatisticsService;
 use App\Service\TemplateRenderer;
@@ -79,6 +80,8 @@ class DashboardController
                 'readingsCount' => $readingsCount,
                 'lastReading'   => $lastReading,
                 'stats'         => $stats,
+                'version'       => Version::getFormatted(),
+                'version_info'  => Version::getInfo(),
             ]);
         }
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Config\Database;
+use App\Config\Version;
 use App\Repository\SensorReadRepository;
 use App\Service\SensorStatisticsService;
 use App\Service\TemplateRenderer;
@@ -261,7 +262,9 @@ class AquaponieController
                 'first_reading_begin'=> $first_reading_begin,
                 'timepastbegin'=> $timepastbegin,
                 'first_reading_time_begin'=> $first_reading_time_begin,
-                // ... on peut passer le reste si besoin
+                // Version
+                'version'       => Version::getFormatted(),
+                'version_info'  => Version::getInfo(),
             ]);
         }
     }

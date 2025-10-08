@@ -4,6 +4,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use App\Config\Env;
 use App\Config\TableConfig;
+use App\Config\Version;
 use App\Controller\DashboardController;
 use App\Controller\ExportController;
 use App\Controller\PostDataController;
@@ -212,6 +213,21 @@ $app->delete('/api/outputs-test/{id}', function (Request $request, Response $res
 $app->get('/api/boards-test', function (Request $request, Response $response) {
     TableConfig::setEnvironment('test');
     return (new OutputController())->getAllBoardsApi($request, $response);
+});
+
+// -----------------------------------------------------------------------------
+// Route API Version
+// -----------------------------------------------------------------------------
+$app->get('/api/version', function (Request $request, Response $response) {
+    $versionInfo = Version::getInfo();
+    $response->getBody()->write(json_encode([
+        'success' => true,
+        'version' => Version::get(),
+        'version_formatted' => Version::getFormatted(),
+        'build_date' => $versionInfo['build_date'],
+        'environment' => $versionInfo['environment']
+    ]));
+    return $response->withHeader('Content-Type', 'application/json');
 });
 
 // -----------------------------------------------------------------------------
