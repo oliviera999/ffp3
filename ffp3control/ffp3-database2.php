@@ -31,7 +31,7 @@ Database::setEnvironment('test');
  * @param int $FreqWakeUp Fréquence forçage éveil
  * @return string Message de succès ou erreur
  */
-function createOutput($mail, $mailNotif, $aqThr, $taThr, $tempsRemplissageSec, $limFlood, $chauff, $bouffeMat, $bouffeMid, $bouffeSoir, $tempsGros, $tempsPetits, $WakeUp, $FreqWakeUp) {
+    function createOutput($mail, $mailNotif, $aqThr, $taThr, $tempsRemplissageSec, $limFlood, $chauff, $bouffeMat, $bouffeMid, $bouffeSoir, $tempsGros, $tempsPetits, $WakeUp, $FreqWakeUp) {
     try {
         $pdo = Database::getConnection();
         $table = Database::getOutputsTable();
@@ -84,7 +84,7 @@ function createOutput($mail, $mailNotif, $aqThr, $taThr, $tempsRemplissageSec, $
  * @param int $id ID de l'output
  * @return string Message de succès ou erreur
  */
-function deleteOutput($id) {
+    function deleteOutput($id) {
     try {
         $pdo = Database::getConnection();
         $table = Database::getOutputsTable();
@@ -111,7 +111,7 @@ function deleteOutput($id) {
  * @param int $state Nouvel état (0 ou 1)
  * @return string Message de succès ou erreur
  */
-function updateOutput($id, $state) {
+    function updateOutput($id, $state) {
     try {
         $pdo = Database::getConnection();
         $table = Database::getOutputsTable();
@@ -139,7 +139,7 @@ function updateOutput($id, $state) {
  * 
  * @return mysqli_result|false Résultat ou false
  */
-function getAllOutputs() {
+    function getAllOutputs() {
     try {
         $pdo = Database::getConnection();
         $table = Database::getOutputsTable();
@@ -151,8 +151,8 @@ function getAllOutputs() {
         
     } catch (PDOException $e) {
         error_log("getAllOutputs error: " . $e->getMessage());
-        return false;
-    }
+            return false;
+        }
 }
 
 /**
@@ -175,8 +175,8 @@ function getPartOutputs($limit = 7) {
         
     } catch (PDOException $e) {
         error_log("getPartOutputs error: " . $e->getMessage());
-        return false;
-    }
+            return false;
+        }
 }
 
 /**
@@ -186,7 +186,7 @@ function getPartOutputs($limit = 7) {
  * @param string $board Nom du board
  * @return PDOStatement|false Résultat ou false
  */
-function getAllOutputStates($board) {
+    function getAllOutputStates($board) {
     try {
         $pdo = Database::getConnection();
         $table = Database::getOutputsTable();
@@ -199,8 +199,8 @@ function getAllOutputStates($board) {
         
     } catch (PDOException $e) {
         error_log("getAllOutputStates error: " . $e->getMessage());
-        return false;
-    }
+            return false;
+        }
 }
 
 /**
@@ -209,7 +209,7 @@ function getAllOutputStates($board) {
  * @param int $id ID de l'output
  * @return PDOStatement|false Résultat ou false
  */
-function getOutputBoardById($id) {
+    function getOutputBoardById($id) {
     try {
         $pdo = Database::getConnection();
         $table = Database::getOutputsTable();
@@ -222,8 +222,8 @@ function getOutputBoardById($id) {
         
     } catch (PDOException $e) {
         error_log("getOutputBoardById error: " . $e->getMessage());
-        return false;
-    }
+            return false;
+        }
 }
 
 /**
@@ -232,7 +232,7 @@ function getOutputBoardById($id) {
  * @param string $board Nom du board
  * @return string Message de succès ou erreur
  */
-function updateLastBoardTime($board) {
+    function updateLastBoardTime($board) {
     try {
         $pdo = Database::getConnection();
         $table = Database::getBoardsTable();
@@ -258,7 +258,7 @@ function updateLastBoardTime($board) {
  * @param string $board Nom du board
  * @return PDOStatement|false Résultat ou false
  */
-function getAllBoards($board) {
+    function getAllBoards($board) {
     try {
         $pdo = Database::getConnection();
         $table = Database::getBoardsTable();
@@ -271,8 +271,8 @@ function getAllBoards($board) {
         
     } catch (PDOException $e) {
         error_log("getAllBoards error: " . $e->getMessage());
-        return false;
-    }
+            return false;
+        }
 }
 
 /**
@@ -281,7 +281,7 @@ function getAllBoards($board) {
  * @param string $board Nom du board
  * @return PDOStatement|false Résultat ou false
  */
-function getBoard($board) {
+    function getBoard($board) {
     try {
         $pdo = Database::getConnection();
         $table = Database::getBoardsTable();
@@ -294,8 +294,8 @@ function getBoard($board) {
         
     } catch (PDOException $e) {
         error_log("getBoard error: " . $e->getMessage());
-        return false;
-    }
+            return false;
+        }
 }
 
 /**
@@ -304,7 +304,7 @@ function getBoard($board) {
  * @param string $board Nom du board
  * @return string Message de succès ou erreur
  */
-function createBoard($board) {
+    function createBoard($board) {
     try {
         $pdo = Database::getConnection();
         $table = Database::getBoardsTable();
@@ -326,7 +326,7 @@ function createBoard($board) {
  * @param string $board Nom du board
  * @return string Message de succès ou erreur
  */
-function deleteBoard($board) {
+    function deleteBoard($board) {
     try {
         $pdo = Database::getConnection();
         $table = Database::getBoardsTable();
