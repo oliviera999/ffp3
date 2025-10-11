@@ -75,12 +75,12 @@ VÉRIFICATIONS POST-DÉPLOIEMENT
 
 3. Test endpoint ESP32:
 
-   curl https://iot.olution.info/ffp3/ffp3datas/api/outputs/state
+   curl https://iot.olution.info/ffp3/api/outputs/state
    # Doit retourner JSON avec états GPIO
 
 4. Dans le navigateur:
 
-   https://iot.olution.info/ffp3/ffp3datas/
+   https://iot.olution.info/ffp3/
    
    Vérifier:
    ✅ Page se charge (pas erreur 500)
@@ -119,7 +119,7 @@ Après déploiement, vous devriez voir:
 ✅ vendor/minishlink/ existe  
 ✅ vendor/bacon/ existe
 ✅ php -r "require 'vendor/autoload.php';" → Pas d'erreur
-✅ https://iot.olution.info/ffp3/ffp3datas/ → Page charge
+✅ https://iot.olution.info/ffp3/ → Page charge
 ✅ Badge LIVE → Devient vert
 ✅ Dashboard système → Affiche uptime, lectures, etc.
 ✅ ESP32 → Continue de fonctionner sans changement

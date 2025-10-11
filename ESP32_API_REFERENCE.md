@@ -197,26 +197,21 @@ String crcHex = String(crc, HEX).toUpperCase();
 
 ### 3️⃣ **Récupération État des GPIO** ⭐ PRINCIPAL
 
-#### **Endpoint PROD (Legacy)** :
-```
-GET https://iot.olution.info/ffp3/ffp3control/ffp3-outputs-action.php?action=outputs_state&board=ESP32-Main
-```
-
-#### **Endpoint TEST (Legacy)** :
-```
-GET https://iot.olution.info/ffp3/ffp3control/ffp3-outputs-action2.php?action=outputs_state&board=ESP32-Main
-```
-
-#### **Endpoint Moderne (v4.0.0)** :
+#### **Endpoint PROD** ⭐ ACTUEL :
 ```
 GET https://iot.olution.info/ffp3/api/outputs/state
 ```
 
-#### **Endpoint Moderne Compatible ESP32** (avec compatibilité .htaccess) :
+#### **Endpoint TEST** :
 ```
-GET https://iot.olution.info/ffp3/ffp3datas/api/outputs/state
+GET https://iot.olution.info/ffp3/api/outputs-test/state
 ```
-⚡ Réécrit automatiquement vers `/ffp3/api/outputs/state`
+
+#### **Endpoint Legacy** (ancien, toujours fonctionnel) :
+```
+GET https://iot.olution.info/ffp3/ffp3control/ffp3-outputs-action.php?action=outputs_state&board=ESP32-Main
+```
+⚠️ Ancien système, fonctionne mais non recommandé
 
 #### **Fréquence** : Toutes les **2-3 minutes** (synchronisé avec envoi données)
 
@@ -246,7 +241,7 @@ GET https://iot.olution.info/ffp3/ffp3datas/api/outputs/state
 
 ```cpp
 HTTPClient http;
-http.begin("https://iot.olution.info/ffp3/ffp3control/ffp3-outputs-action.php?action=outputs_state&board=ESP32-Main");
+http.begin("https://iot.olution.info/ffp3/api/outputs/state");
 int httpCode = http.GET();
 
 if (httpCode == 200) {
@@ -593,7 +588,7 @@ void loop() {
         http.end();
         
         // 3. RÉCUPÉRER l'état des GPIO depuis le serveur
-        http.begin("https://iot.olution.info/ffp3/ffp3datas/api/outputs/state");
+        http.begin("https://iot.olution.info/ffp3/api/outputs/state");
         httpCode = http.GET();
         
         if (httpCode == 200) {
@@ -639,10 +634,10 @@ void loop() {
 
 Grâce à la règle `.htaccess` de compatibilité, **tous vos endpoints existants continuent de fonctionner** :
 
-| Ancien Endpoint ESP32 | Statut | Action Requise |
+| Endpoint ESP32 Actuel | Statut | Action Requise |
 |----------------------|--------|----------------|
 | `POST /public/post-data` | ✅ Fonctionne | Aucune |
-| `GET /ffp3datas/api/outputs/state` | ✅ Fonctionne (réécrit) | Aucune |
+| `GET /api/outputs/state` | ✅ Fonctionne | Aucune |
 | `POST /heartbeat.php` | ✅ Fonctionne | Aucune |
 | `GET /ota/metadata.json` | ✅ Fonctionne | Aucune |
 
@@ -652,21 +647,17 @@ Grâce à la règle `.htaccess` de compatibilité, **tous vos endpoints existant
 
 Si vous mettez à jour le firmware ESP32, vous **pouvez** utiliser :
 
-#### **Au lieu de** :
-```cpp
-GET /ffp3control/ffp3-outputs-action.php?action=outputs_state&board=ESP32-Main
-```
-
-#### **Utiliser** :
+#### **Endpoint Moderne** (actuellement utilisé) :
 ```cpp
 GET /ffp3/api/outputs/state
 ```
 
-**Avantages** :
-- ✅ Plus court
-- ✅ Plus moderne (REST)
+**Avantages par rapport à l'ancien système** :
+- ✅ Plus court et plus clair
+- ✅ Architecture REST moderne
 - ✅ Compatible PROD/TEST automatiquement
 - ✅ Pas besoin du paramètre `board`
+- ✅ JSON propre et simple
 
 ---
 

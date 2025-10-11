@@ -7,7 +7,7 @@ RewriteEngine On
 # la route /post-ffp3-data.php est gérée directement par l'application.
 # RewriteRule ^post-ffp3-data\.php$ post-data [R=308,L]
 
-# Ancien endpoint d'export CSV → nouvelle route interne
+# Ancien endpoint d’export CSV → nouvelle route interne
 RewriteRule ^export-data\.php$ /ffp3/ffp3datas/export-data [R=308,L]
 
 # Ancienne page publique legacy → nouvelle route interne
