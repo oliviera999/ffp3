@@ -32,6 +32,21 @@ class CleanDataCommand
      */
     public function execute(): void
     {
+        // -----------------------------------------------------------------
+        // Mécanisme de verrouillage pour empêcher deux crons concurrents ----
+        // -----------------------------------------------------------------
+        $lockPath = sys_get_temp_dir() . '/clean_data_command.lock';
+        $lockHandle = fopen($lockPath, 'c');
+        if ($lockHandle === false || !flock($lockHandle, LOCK_EX | LOCK_NB)) {
+            // Impossible d’obtenir le verrou → une instance tourne déjà
+            $this->logger->warning('CleanDataCommand déjà en cours, sortie.');
+            return;
+        }
+
+        // Écriture PID pour debug
+        ftruncate($lockHandle, 0);
+        fwrite($lockHandle, (string) getmypid());
+
         $this->logger->addEvent("Démarrage nettoyage des données");
 
         // Vérifier l'état des pompes
@@ -50,6 +65,10 @@ class CleanDataCommand
         $this->checkWaterLevels();
 
         $this->logger->addEvent("Fin du nettoyage des données");
+
+        // Libération du verrou
+        flock($lockHandle, LOCK_UN);
+        fclose($lockHandle);
     }
 
     /**
@@ -78,14 +97,14 @@ class CleanDataCommand
      */
     private function checkWaterLevels(): void
     {
-        // Calculer la période pour les statistiques
-        $end = date('Y-m-d H:i:s');
-        $start = date('Y-m-d H:i:s', strtotime('-1 hour'));
-
-        // Obtenir le dernier niveau d'eau de l'aquarium
-        $lastWaterLevel = $this->statsService->min('EauAquarium', $start, $end);
+        // Obtenir le dernier niveau d'eau de l'aquarium (dernière lecture réelle, pas le minimum)
+        $pdo = \App\Config\Database::getConnection();
+        $sensorReadRepo = new \App\Repository\SensorReadRepository($pdo);
+        $lastReading = $sensorReadRepo->getLastReadings();
+        $lastWaterLevel = $lastReading['EauAquarium'] ?? null;
+        
         $this->logger->addName("Dernier niveau d'eau aquarium: ");
-        $this->logger->addTask($lastWaterLevel);
+        $this->logger->addTask((string)$lastWaterLevel);
 
         // Seuil configurable (AQUA_LOW_LEVEL_THRESHOLD, défaut 7)
         $lowThreshold = (float) ($_ENV['AQUA_LOW_LEVEL_THRESHOLD'] ?? 7);
@@ -103,9 +122,11 @@ class CleanDataCommand
             );
         }
 
-        // Vérifier la déviation standard des mesures d'eau de l'aquarium
+        // Vérifier la déviation standard des mesures d'eau de l'aquarium (dernière heure)
+        $end = date('Y-m-d H:i:s');
+        $start = date('Y-m-d H:i:s', strtotime('-1 hour'));
         $stddev = $this->statsService->stddev('EauAquarium', $start, $end);
         $this->logger->addName("Déviation standard niveau eau aquarium: ");
-        $this->logger->addTask($stddev);
+        $this->logger->addTask((string)$stddev);
     }
 } 

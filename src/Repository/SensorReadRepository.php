@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Config\TableConfig;
 use DateTimeInterface;
 use PDO;
 
@@ -37,10 +38,11 @@ class SensorReadRepository
         }
 
         // Requête SQL multi-colonnes, triée par date décroissante
-        $sql = <<<'SQL'
-            SELECT id, TempAir, Humidite, TempEau, EauPotager, EauAquarium, EauReserve, Luminosite,
+        $table = TableConfig::getDataTable();
+        $sql = <<<SQL
+            SELECT id, TempAir, Humidite, TempEau, EauPotager, EauAquarium, EauReserve, diffMaree, Luminosite,
                    etatPompeAqua, etatPompeTank, etatHeat, etatUV, bouffePetits, bouffeGros, reading_time
-            FROM ffp3Data
+            FROM {$table}
             WHERE reading_time BETWEEN :start AND :end
             ORDER BY reading_time DESC
         SQL;
@@ -62,7 +64,8 @@ class SensorReadRepository
      */
     public function getLastReadingDate(): ?string
     {
-        $sql   = 'SELECT MAX(reading_time) AS last_date FROM ffp3Data';
+        $table = TableConfig::getDataTable();
+        $sql   = "SELECT MAX(reading_time) AS last_date FROM {$table}";
         $stmt  = $this->pdo->query($sql);
         $value = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -103,11 +106,12 @@ class SensorReadRepository
      * @param int $limit Nombre de lignes à remonter (1 par défaut).
      *                  Si $limit vaut 1, un tableau associatif représentant la ligne est renvoyé.
      *                  Sinon, un tableau de tableaux est retourné.
-     * @return array<string, mixed>|array<int, array<string, mixed>> Tableau(s) des dernières lectures.
+     * @return array<string, mixed>|array<int, array<string, mixed>> Tableau(x) des dernières lectures.
      */
     public function getLastReadings(int $limit = 1): array
     {
-        $sql = 'SELECT * FROM ffp3Data ORDER BY reading_time DESC LIMIT :limit';
+        $table = TableConfig::getDataTable();
+        $sql = "SELECT * FROM {$table} ORDER BY reading_time DESC LIMIT :limit";
 
         $stmt = $this->pdo->prepare($sql);
         // PARAM_INT garantit l'utilisation d'un entier (pas d'injection SQL possible)
@@ -121,4 +125,49 @@ class SensorReadRepository
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-} 
+
+    /**
+     * Récupère toutes les lectures depuis une date donnée
+     *
+     * @param string $sinceDate Date au format 'Y-m-d H:i:s'
+     * @return array<array<string, mixed>> Tableau de lectures
+     */
+    public function getReadingsSince(string $sinceDate): array
+    {
+        $table = TableConfig::getDataTable();
+        $sql = <<<SQL
+            SELECT id, TempAir, Humidite, TempEau, EauPotager, EauAquarium, EauReserve, diffMaree, Luminosite,
+                   etatPompeAqua, etatPompeTank, etatHeat, etatUV, bouffePetits, bouffeGros, reading_time
+            FROM {$table}
+            WHERE reading_time > :since_date
+            ORDER BY reading_time ASC
+        SQL;
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':since_date' => $sinceDate]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Compte le nombre de lectures entre deux dates
+     *
+     * @param string $start Date de début au format 'Y-m-d H:i:s'
+     * @param string $end Date de fin au format 'Y-m-d H:i:s'
+     * @return int Nombre de lectures
+     */
+    public function countReadingsBetween(string $start, string $end): int
+    {
+        $table = TableConfig::getDataTable();
+        $sql = "SELECT COUNT(*) as count FROM {$table} WHERE reading_time BETWEEN :start AND :end";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':start' => $start,
+            ':end' => $end,
+        ]);
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)($result['count'] ?? 0);
+    }
+}

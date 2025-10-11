@@ -1,0 +1,126 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use App\Config\Database;
+use App\Config\TableConfig;
+use App\Config\Version;
+use App\Service\OutputService;
+use App\Service\TemplateRenderer;
+use App\Repository\OutputRepository;
+use App\Repository\BoardRepository;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+
+/**
+ * Contrôleur pour l'interface de contrôle des GPIO/outputs
+ * 
+ * Gère l'affichage et les actions (toggle, update) sur les outputs
+ */
+class OutputController
+{
+    private OutputService $outputService;
+    private TemplateRenderer $renderer;
+
+    public function __construct()
+    {
+        $pdo = Database::getConnection();
+        $outputRepo = new OutputRepository($pdo);
+        $boardRepo = new BoardRepository($pdo);
+        $this->outputService = new OutputService($outputRepo, $boardRepo);
+        $this->renderer = new TemplateRenderer();
+    }
+
+    /**
+     * Affiche l'interface de contrôle
+     */
+    public function showInterface(Request $request, Response $response): Response
+    {
+        // Récupérer tous les outputs
+        $outputs = $this->outputService->getAllOutputs();
+        
+        // Récupérer uniquement les boards actives pour cet environnement
+        $boards = $this->outputService->getActiveBoardsForCurrentEnvironment();
+        
+        // Déterminer l'environnement
+        $environment = TableConfig::getEnvironment();
+        
+        // Préparer les données pour le template
+        $data = [
+            'outputs' => $outputs,
+            'boards' => $boards,
+            'title' => 'Contrôle du ffp3',
+            'environment' => $environment,
+            'version' => Version::getWithPrefix(),
+        ];
+        
+        // Rendre le template Twig et écrire dans la réponse
+        $html = $this->renderer->render('control.twig', $data);
+        $response->getBody()->write($html);
+        return $response;
+    }
+
+    /**
+     * API: Toggle un output (change son état)
+     */
+    public function toggleOutput(Request $request, Response $response): Response
+    {
+        $params = $request->getQueryParams();
+        
+        $id = (int)($params['id'] ?? 0);
+        $state = (int)($params['state'] ?? 0);
+        
+        if ($id === 0) {
+            $response->getBody()->write('ERROR: ID missing');
+            return $response->withStatus(400);
+        }
+        
+        // Déléguer au service
+        $success = $this->outputService->updateStateById($id, $state);
+        
+        if ($success) {
+            $response->getBody()->write('OK');
+            return $response->withStatus(200);
+        } else {
+            $response->getBody()->write('ERROR: Failed to update output');
+            return $response->withStatus(500);
+        }
+    }
+
+    /**
+     * API: Met à jour plusieurs paramètres depuis un formulaire
+     */
+    public function updateParameters(Request $request, Response $response): Response
+    {
+        $params = $request->getParsedBody();
+        
+        try {
+            $updated = $this->outputService->updateMultipleParameters($params);
+            
+            $response->getBody()->write("OK: {$updated} parameters updated");
+            return $response->withStatus(200);
+        } catch (\Exception $e) {
+            $response->getBody()->write("ERROR: " . $e->getMessage());
+            return $response->withStatus(500);
+        }
+    }
+
+    /**
+     * API: Récupère l'état actuel de tous les outputs (pour ESP32)
+     */
+    public function getOutputsState(Request $request, Response $response): Response
+    {
+        $outputs = $this->outputService->getAllOutputs();
+        
+        // Format simple pour ESP32
+        $result = [];
+        foreach ($outputs as $output) {
+            $result[$output['gpio']] = $output['state'];
+        }
+        
+        $response->getBody()->write(json_encode($result));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+}

@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Config\TableConfig;
 use DateTimeInterface;
 use PDO;
 
@@ -85,7 +86,8 @@ class SensorStatisticsService
             $end = $end->format('Y-m-d H:i:s');
         }
 
-        $sql  = sprintf('SELECT %s(%s) AS val FROM ffp3Data WHERE reading_time BETWEEN :start AND :end', $func, $column);
+        $table = TableConfig::getDataTable();
+        $sql  = sprintf('SELECT %s(%s) AS val FROM %s WHERE reading_time BETWEEN :start AND :end', $func, $column, $table);
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':start' => $start, ':end' => $end]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -109,11 +111,13 @@ class SensorStatisticsService
         if ($limit < 1) {
             $limit = 1;
         }
+        
+        $table = TableConfig::getDataTable();
         $sql = <<<SQL
             SELECT STDDEV(sub.$column) as stddev_amount
             FROM (
                 SELECT $column
-                FROM ffp3Data
+                FROM {$table}
                 ORDER BY reading_time DESC
                 LIMIT $limit
             ) as sub
@@ -125,4 +129,4 @@ class SensorStatisticsService
 
         return $result && $result['stddev_amount'] !== null ? (float)$result['stddev_amount'] : null;
     }
-} 
+}

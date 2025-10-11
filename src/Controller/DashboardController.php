@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Config\Database;
+use App\Config\Version;
 use App\Repository\SensorReadRepository;
 use App\Service\SensorStatisticsService;
+use App\Service\TemplateRenderer;
 
 class DashboardController
 {
@@ -13,6 +15,7 @@ class DashboardController
 
     public function __construct()
     {
+        // Le timezone est configuré centralement via Env::load() dans Database::getConnection()
         $pdo = Database::getConnection();
         $this->sensorReadRepo = new SensorReadRepository($pdo);
         $this->statsService = new SensorStatisticsService($pdo);
@@ -62,12 +65,24 @@ class DashboardController
         if (isset($_POST['export_csv'])) {
             $this->exportCsv($startDate, $endDate);
         }
-        
-        // Inclure le template de vue
-        $startDate = $startDate; // alias pour le template
-        $endDate   = $endDate;   // alias
-        $readingsCount = $readingsCount;
-        include __DIR__ . '/../../templates/dashboard.php';
+
+        // Sélection du template : legacy ou Twig
+        $useLegacy = isset($_GET['legacy']);
+        if ($useLegacy) {
+            $startDate = $startDate; $endDate = $endDate; // alias pour template PHP
+            $readingsCount = $readingsCount;
+            include __DIR__ . '/../../templates/dashboard.php';
+        } else {
+            echo TemplateRenderer::render('dashboard.twig', [
+                'startDate'     => $startDate,
+                'endDate'       => $endDate,
+                'duration'      => $duration,
+                'readingsCount' => $readingsCount,
+                'lastReading'   => $lastReading,
+                'stats'         => $stats,
+                'version'       => Version::getWithPrefix(),
+            ]);
+        }
     }
     
     /**

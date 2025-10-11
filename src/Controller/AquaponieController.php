@@ -5,19 +5,27 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Config\Database;
+use App\Config\TableConfig;
+use App\Config\Version;
 use App\Repository\SensorReadRepository;
-use App\Service\SensorStatisticsService;
+use App\Service\ChartDataService;
+use App\Service\StatisticsAggregatorService;
+use App\Service\TemplateRenderer;
 
 class AquaponieController
 {
     private SensorReadRepository $sensorReadRepo;
-    private SensorStatisticsService $statsService;
+    private StatisticsAggregatorService $statsAggregator;
+    private ChartDataService $chartDataService;
 
-    public function __construct()
-    {
-        $pdo = Database::getConnection();
-        $this->sensorReadRepo = new SensorReadRepository($pdo);
-        $this->statsService   = new SensorStatisticsService($pdo);
+    public function __construct(
+        SensorReadRepository $sensorReadRepo,
+        StatisticsAggregatorService $statsAggregator,
+        ChartDataService $chartDataService
+    ) {
+        $this->sensorReadRepo = $sensorReadRepo;
+        $this->statsAggregator = $statsAggregator;
+        $this->chartDataService = $chartDataService;
     }
 
     /**
@@ -25,157 +33,150 @@ class AquaponieController
      */
     public function show(): void
     {
-        // ------------------------------------------------------------
+        // Support des redirections legacy avec transfert de session
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        if (isset($_SESSION['post_data_transfer'])) {
+            $_POST = array_merge($_POST, $_SESSION['post_data_transfer']);
+            unset($_SESSION['post_data_transfer']);
+            session_write_close();
+        }
+        
         // Période d'analyse
-        // ------------------------------------------------------------
-        $lastDate        = $this->sensorReadRepo->getLastReadingDate();
-        $defaultEndDate  = $lastDate ?: date('Y-m-d H:i:s');
+        $lastDate = $this->sensorReadRepo->getLastReadingDate();
+        $defaultEndDate = $lastDate ?: date('Y-m-d H:i:s');
         $defaultStartDate = date('Y-m-d H:i:s', strtotime($defaultEndDate . ' -1 day'));
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $startDate = $_POST['start_date'] . ' ' . ($_POST['start_time'] ?? '00:00:00');
-            $endDate   = $_POST['end_date']   . ' ' . ($_POST['end_time']   ?? '23:59:59');
-        } else {
-            $startDate = $defaultStartDate;
-            $endDate   = $defaultEndDate;
-        }
+        // Récupération des paramètres de période (nouveau format datetime-local ou ancien format séparé)
+        [$startDate, $endDate] = $this->extractDateRange($defaultStartDate, $defaultEndDate);
 
-        // ------------------------------------------------------------
-        // Récupération des enregistrements & préparation des séries
-        // ------------------------------------------------------------
-        $readings      = $this->sensorReadRepo->fetchBetween($startDate, $endDate);
+        // Récupération des enregistrements
+        $readings = $this->sensorReadRepo->fetchBetween($startDate, $endDate);
         $measure_count = count($readings);
 
-        // Utilitaires internes
-        $col = static fn(array $rows, string $key): array => array_column($rows, $key);
-        $encode = static fn(array $values): string => json_encode(array_reverse($values), JSON_NUMERIC_CHECK);
+        // Préparation des séries pour Highcharts
+        $chartSeries = $this->chartDataService->prepareSeriesData($readings);
+        $reading_time = $this->chartDataService->prepareTimestamps($readings);
 
-        // Séries pour Highcharts (ordre chronologique inversé comme legacy)
-        $EauAquarium  = $encode($col($readings, 'EauAquarium'));
-        $EauReserve   = $encode($col($readings, 'EauReserve'));
-        $EauPotager   = $encode($col($readings, 'EauPotager'));
-        $TempAir      = $encode($col($readings, 'TempAir'));
-        $TempEau      = $encode($col($readings, 'TempEau'));
-        $Humidite     = $encode($col($readings, 'Humidite'));
-        $Luminosite   = $encode($col($readings, 'Luminosite'));
-        $etatPompeAqua = $encode($col($readings, 'etatPompeAqua'));
-        $etatPompeTank = $encode($col($readings, 'etatPompeTank'));
-        $etatHeat      = $encode($col($readings, 'etatHeat'));
-        $etatUV        = $encode($col($readings, 'etatUV'));
-        $bouffePetits  = $encode($col($readings, 'bouffePetits'));
-        $bouffeGros    = $encode($col($readings, 'bouffeGros'));
-
-        // Horodatages (ms epoch) +1 h comme dans le script legacy
-        $reading_time_ts = array_map(static fn($ts) => (strtotime($ts . ' +1 hours')) * 1000, $col(array_reverse($readings), 'reading_time'));
-        $reading_time    = json_encode($reading_time_ts, JSON_NUMERIC_CHECK);
-
-        // ------------------------------------------------------------
         // Dernière lecture (pour jauges)
-        // ------------------------------------------------------------
-        $lastReading                = $this->sensorReadRepo->getLastReadings();
-        $last_reading_tempair       = $lastReading['TempAir']       ?? 0;
-        $last_reading_tempeau       = $lastReading['TempEau']       ?? 0;
-        $last_reading_humi          = $lastReading['Humidite']      ?? 0;
-        $last_reading_lumi          = $lastReading['Luminosite']    ?? 0;
-        $last_reading_eauaqua       = $lastReading['EauAquarium']   ?? 0;
-        $last_reading_eaureserve    = $lastReading['EauReserve']    ?? 0;
-        $last_reading_eaupota       = $lastReading['EauPotager']    ?? 0;
-        $last_reading_time          = $lastReading['reading_time']  ?? $defaultEndDate;
+        $lastReading = $this->sensorReadRepo->getLastReadings();
+        $lastReadingExtracted = $this->chartDataService->extractLastReadings($lastReading);
 
-        // ------------------------------------------------------------
-        // Statistiques
-        // ------------------------------------------------------------
-        $stats = fn(string $col) => [
-            'min'    => $this->statsService->min($col, $startDate, $endDate),
-            'max'    => $this->statsService->max($col, $startDate, $endDate),
-            'avg'    => $this->statsService->avg($col, $startDate, $endDate),
-            'stddev' => $this->statsService->stddev($col, $startDate, $endDate),
-        ];
+        // Statistiques agrégées
+        $allStats = $this->statsAggregator->aggregateAllStats($startDate, $endDate);
+        $statsFlattened = $this->statsAggregator->flattenForLegacy($allStats);
 
-        $sTempAir    = $stats('TempAir');
-        $sTempEau    = $stats('TempEau');
-        $sHumidite   = $stats('Humidite');
-        $sLuminosite = $stats('Luminosite');
-        $sEauAquarium = $stats('EauAquarium');
-        $sEauReserve  = $stats('EauReserve');
-        $sEauPotager  = $stats('EauPotager');
+        // Calcul de la durée
+        $duration = $this->calculateDuration($startDate, $endDate);
 
-        $min_tempair   = $sTempAir['min'];
-        $max_tempair   = $sTempAir['max'];
-        $avg_tempair   = $sTempAir['avg'];
-        $stddev_tempair = $sTempAir['stddev'];
-
-        $min_tempeau   = $sTempEau['min'];
-        $max_tempeau   = $sTempEau['max'];
-        $avg_tempeau   = $sTempEau['avg'];
-        $stddev_tempeau = $sTempEau['stddev'];
-
-        $min_humi     = $sHumidite['min'];
-        $max_humi     = $sHumidite['max'];
-        $avg_humi     = $sHumidite['avg'];
-        $stddev_humi  = $sHumidite['stddev'];
-
-        $min_lumi     = $sLuminosite['min'];
-        $max_lumi     = $sLuminosite['max'];
-        $avg_lumi     = $sLuminosite['avg'];
-        $stddev_lumi  = $sLuminosite['stddev'];
-
-        $min_eauaqua   = $sEauAquarium['min'];
-        $max_eauaqua   = $sEauAquarium['max'];
-        $avg_eauaqua   = $sEauAquarium['avg'];
-        $stddev_eauaqua = $sEauAquarium['stddev'];
-
-        $min_eaureserve   = $sEauReserve['min'];
-        $max_eaureserve   = $sEauReserve['max'];
-        $avg_eaureserve   = $sEauReserve['avg'];
-        $stddev_eaureserve = $sEauReserve['stddev'];
-
-        $min_eaupota   = $sEauPotager['min'];
-        $max_eaupota   = $sEauPotager['max'];
-        $avg_eaupota   = $sEauPotager['avg'];
-        $stddev_eaupota = $sEauPotager['stddev'];
-
-        // ------------------------------------------------------------
-        // Périodes complémentaires pour l'affichage texte
-        // ------------------------------------------------------------
-        $duration_seconds = strtotime($endDate) - strtotime($startDate);
-        $days    = (int) floor($duration_seconds / 86400);
-        $hours   = (int) floor(($duration_seconds % 86400) / 3600);
-        $minutes = (int) floor(($duration_seconds % 3600) / 60);
-        $duration_str = "$days jours, $hours heures, $minutes minutes";
-
-        // Ancienne métrique first_reading_begin (nombre total d'enregistrements)
+        // Métriques supplémentaires legacy
         $pdo = Database::getConnection();
-        $firstReadingRow = $pdo->query('SELECT MIN(reading_time) AS min_time FROM ffp3Data')->fetch(\PDO::FETCH_ASSOC);
+        $table = TableConfig::getDataTable();
+        
+        $firstReadingRow = $pdo->query("SELECT MIN(reading_time) AS min_time FROM {$table}")->fetch(\PDO::FETCH_ASSOC);
         $first_reading_time_begin = $firstReadingRow['min_time'] ?? $defaultStartDate;
+        $timepastbegin = round((strtotime($lastReadingExtracted['time']) - strtotime($first_reading_time_begin)) / 86400, 1);
 
-        $timepastbegin = round((strtotime($last_reading_time) - strtotime($first_reading_time_begin)) / 86400, 1);
+        $rowMaxId = $pdo->query("SELECT MAX(id) AS max_amount2 FROM {$table}")->fetch(\PDO::FETCH_ASSOC);
+        $first_reading_begin = $rowMaxId['max_amount2'] ?? 0;
 
-        // ------------------------------------------------------------
         // Export CSV si demandé
-        // ------------------------------------------------------------
         if (isset($_POST['export_csv'])) {
-            // Reuse repository exportCsv
-            $tmpFile = sys_get_temp_dir() . '/sensor_export_' . time() . '.csv';
-            $this->sensorReadRepo->exportCsv($startDate, $endDate, $tmpFile);
-            header('Content-Type: text/csv; charset=utf-8');
-            header('Content-Disposition: attachment; filename="sensor_data_' . date('YmdHis') . '.csv"');
-            readfile($tmpFile);
-            unlink($tmpFile);
+            $this->exportCsv($startDate, $endDate);
+            return;
+        }
+
+        // Injection dans le template
+        if (isset($_GET['legacy'])) {
+            // Mode legacy non supporté, rediriger vers Twig
+            header('Location: /aquaponie');
             exit;
         }
 
-        // Legacy compatibilité : variables de nommage identiques au script initial
-        $start_date = $startDate;
-        $end_date   = $endDate;
-
-        // Nombre total d'enregistrements (max id)
-        $rowMaxId = $pdo->query('SELECT MAX(id) AS max_amount2 FROM ffp3Data')->fetch(\PDO::FETCH_ASSOC);
-        $first_reading_begin = $rowMaxId['max_amount2'] ?? 0;
-
-        // ------------------------------------------------------------
-        // Injection dans le template (scope local)
-        // ------------------------------------------------------------
-        include __DIR__ . '/../../templates/ffp3-data.php';
+        echo TemplateRenderer::render('aquaponie.twig', array_merge([
+            'start_date' => $startDate,
+            'end_date'   => $endDate,
+            'reading_time' => $reading_time,
+            'measure_count' => $measure_count,
+            'duration_str' => $duration,
+            'first_reading_begin' => $first_reading_begin,
+            'timepastbegin' => $timepastbegin,
+            'first_reading_time_begin' => $first_reading_time_begin,
+            'version' => Version::getWithPrefix(),
+        ], $chartSeries, [
+            'last_reading_tempair' => $lastReadingExtracted['tempair'],
+            'last_reading_tempeau' => $lastReadingExtracted['tempeau'],
+            'last_reading_humi' => $lastReadingExtracted['humi'],
+            'last_reading_lumi' => $lastReadingExtracted['lumi'],
+            'last_reading_eauaqua' => $lastReadingExtracted['eauaqua'],
+            'last_reading_eaureserve' => $lastReadingExtracted['eaureserve'],
+            'last_reading_eaupota' => $lastReadingExtracted['eaupota'],
+        ], $statsFlattened));
     }
-} 
+
+    /**
+     * Extrait la plage de dates depuis les paramètres POST
+     */
+    private function extractDateRange(string $defaultStart, string $defaultEnd): array
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return [$defaultStart, $defaultEnd];
+        }
+
+        // Nouveau format : datetime-local
+        $startDatetimePost = filter_input(INPUT_POST, 'start_datetime');
+        $endDatetimePost = filter_input(INPUT_POST, 'end_datetime');
+        
+        if ($startDatetimePost && $endDatetimePost) {
+            return [
+                str_replace('T', ' ', $startDatetimePost) . ':00',
+                str_replace('T', ' ', $endDatetimePost) . ':00',
+            ];
+        }
+
+        // Ancien format : date + time séparés
+        $startDatePost = filter_input(INPUT_POST, 'start_date');
+        $endDatePost = filter_input(INPUT_POST, 'end_date');
+        $startTimePost = filter_input(INPUT_POST, 'start_time');
+        $endTimePost = filter_input(INPUT_POST, 'end_time');
+        
+        if ($startDatePost && $endDatePost) {
+            return [
+                $startDatePost . ' ' . ($startTimePost ?: '00:00:00'),
+                $endDatePost . ' ' . ($endTimePost ?: '23:59:59'),
+            ];
+        }
+
+        return [$defaultStart, $defaultEnd];
+    }
+
+    /**
+     * Calcule la durée lisible entre deux dates
+     */
+    private function calculateDuration(string $start, string $end): string
+    {
+        $duration_seconds = strtotime($end) - strtotime($start);
+        $days = (int) floor($duration_seconds / 86400);
+        $hours = (int) floor(($duration_seconds % 86400) / 3600);
+        $minutes = (int) floor(($duration_seconds % 3600) / 60);
+        
+        return "$days jours, $hours heures, $minutes minutes";
+    }
+
+    /**
+     * Gère l'export CSV
+     */
+    private function exportCsv(string $start, string $end): void
+    {
+        $tmpFile = sys_get_temp_dir() . '/sensor_export_' . time() . '.csv';
+        $this->sensorReadRepo->exportCsv($start, $end, $tmpFile);
+        
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="sensor_data_' . date('YmdHis') . '.csv"');
+        readfile($tmpFile);
+        unlink($tmpFile);
+        exit;
+    }
+}

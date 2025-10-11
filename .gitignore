@@ -1,0 +1,16 @@
+# Logs
+error_log
+cronlog.txt
+
+# Fichiers temporaires / exports
+*.csv
+/tmp/
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/
+desktop.ini
+
+# Cache
+/var/cache/

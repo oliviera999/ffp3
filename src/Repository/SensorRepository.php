@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Config\TableConfig;
 use App\Domain\SensorData;
 use PDO;
 
@@ -26,7 +27,8 @@ class SensorRepository
      */
     public function insert(SensorData $data): void
     {
-        $sql = "INSERT INTO ffp3Data (
+        $table = TableConfig::getDataTable();
+        $sql = "INSERT INTO {$table} (
             sensor, version, TempAir, Humidite, TempEau, EauPotager, EauAquarium, EauReserve,
             diffMaree, Luminosite, etatPompeAqua, etatPompeTank, etatHeat, etatUV,
             bouffeMatin, bouffeMidi, bouffePetits, bouffeGros,

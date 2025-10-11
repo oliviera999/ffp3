@@ -1,126 +1,170 @@
-# Projet Aquaponie – Documentation complète
+# FFP3 Datas – Plate-forme Aquaponie & IoT
 
-Cette documentation décrit le rôle fonctionnel et technique de chaque fichier se trouvant dans le dépôt. Elle est organisée par répertoire en suivant l’arborescence du projet.
+Une petite application PHP 8 dédiée au suivi d’un système d’aquaponie : collecte des mesures via ESP32, supervision depuis un tableau de bord et tâches CRON pour l’entretien automatique.
 
----
-## Racine du dépôt
-
-| Fichier | Description détaillée |
-|---------|----------------------|
-| **composer.json** | Déclare les dépendances PHP du projet (Monolog, vlucas/phpdotenv, etc.) et l’autoload PSR-4 (`App\\`). Sert de source principale à `composer install/update`. |
-| **composer.lock** | Instantané versionné des dépendances effectives. Garantit la reproductibilité des installations. |
-| **env.dist** | Exemple de fichier `.env` listant toutes les variables d’environnement attendues (DB_HOST, API_KEY, etc.). À copier/renommer en `.env` pour une installation locale. |
-| **.htaccess** | Règles Apache : redirection vers `public/`, protection de certains fichiers, désactivation de l’indexation. |
-| **index.php** | Redirection HTTP 301 vers l’URL publique officielle de suivi (`…/ffp3-data.php`). Conserve la compatibilité avec l’adresse racine historique. |
-| **ffp3-config.php** | Ancien script procédural (≈900 lignes) contenant : chargement du `.env`, connexion MySQL, utilitaires GPIO, fonctions statistiques, export CSV, maintenance. Conservé pour la compatibilité mais la logique est portée dans `src/`. |
-| **ffp3-data.php** | Page Web monolithique (≈1 100 lignes) générant le tableau de bord historique (jauges, tableaux, graphiques). Remplacée par `AquaponieController` mais laissée pour compatibilité. |
-| **legacy_bridge.php** | Pont de compatibilité qui redirige les appels legacy vers les nouvelles classes (`SensorReadRepository`, `SensorStatisticsService`). |
-| **post-ffp3-data.php** | Point d’API legacy (POST) appelé par l’ESP32. Vérifie la clé API, insère dans `ffp3Data` et met à jour `ffp3Outputs`. |
-| **cronpompe.php** | Script CRON hérité (≈230 lignes) : nettoie les valeurs aberrantes, pilote les pompes, écrit dans `cronlog.txt`, envoie des alertes. |
-| **run-cron.php** | Lanceur CLI moderne. Exécute `App\Command\ProcessTasksCommand` et renvoie un code Unix. |
-| **cronlog.txt** / **error_log** | Fichiers de journalisation legacy et Apache. |
-| **.cursorignore**, **.gitattributes**, **test** | Fichiers utilitaires (IDE, Git, placeholder). |
+> Framework : **Slim 4** – Rendu : **Twig** – Logs : **Monolog** – Tests : **PHPUnit**
 
 ---
-## Répertoire `public/`
 
-| Fichier | Rôle |
-|---------|------|
-| **index.php** | Mini front-controller. Charge l’autoloader, les variables d’environnement puis route vers les contrôleurs (`Dashboard`, `Export`, `PostData`, `Aquaponie`). |
-| **export-data.php** | Export CSV autonome : valide `start`/`end`, utilise `SensorReadRepository`, streame le fichier, journalise. |
-| **post-data.php** | API moderne pour l’ESP32 : vérifie la clé, instancie `SensorData`, insère via `SensorRepository`, logge. |
-| **.htaccess** | Force `index.php` comme front-controller, désactive le listing, compression GZip. |
+## Sommaire
 
----
-## Répertoire `src/Config`
-
-| Fichier | Description |
-|---------|-------------|
-| **Env.php** | Helper statique pour charger `.env` une seule fois sans écraser l’environnement. |
-| **Database.php** | Singleton PDO : charge DB_* depuis `.env`, crée la connexion MySQL UTF-8. |
+1. [Fonctionnalités](#fonctionnalités)  
+2. [Structure du projet](#structure-du-projet)  
+3. [Installation rapide](#installation-rapide)  
+4. [Configuration `.env`](#configuration-env)  
+5. [Lancement](#lancement)  
+6. [Tâches CRON](#tâches-cron)  
+7. [Tests & Qualité](#tests--qualité)  
+8. [Roadmap & Idées](#roadmap--idées)  
+9. [Licence](#licence)
 
 ---
-## Répertoire `src/Domain`
 
-| Fichier | Description |
-|---------|-------------|
-| **SensorData.php** | DTO représentant une ligne complète de la table `ffp3Data` (25 champs). |
+## Fonctionnalités
 
----
-## Répertoire `src/Repository`
+* **API POST sécurisée** : Clé API + signature HMAC-SHA256 pour enregistrer les relevés capteurs
+* **Tableau de bord interactif** : Highcharts / Twig –– filtrage par période, export CSV
+* **Supervision avancée** : Détection niveau d'eau, panne marée, système offline
+* **Injection de dépendances** : PHP-DI v7 pour une architecture modulaire et testable
+* **Services métier** :
+  - `ChartDataService` : Préparation données Highcharts
+  - `StatisticsAggregatorService` : Agrégation stats multi-capteurs
+  - `SensorStatisticsService` : Calculs min/max/avg/stddev
+  - `PumpService` : Contrôle GPIO des pompes
+  - `NotificationService` : Alertes e-mail
+  - `TideAnalysisService` : Analyse cycles marée
+* **Middleware Slim** : Gestion erreurs, environnements PROD/TEST
+* **CRONs PHP** : `CleanDataCommand`, `ProcessTasksCommand`, `RestartPumpCommand` verrouillés par *flock*
+* **Tests unitaires** : PHPUnit avec mocks et couverture >50%
 
-| Fichier | Fonction |
-|---------|----------|
-| **SensorRepository.php** | Écriture : insère un `SensorData` dans `ffp3Data`. |
-| **SensorReadRepository.php** | Lecture / export : fetch entre dates, dernières lectures, export CSV. |
+## Structure du projet
 
----
-## Répertoire `src/Service`
+```
+├── public/              # Front-controller Slim
+│   └── index.php
+├── src/
+│   ├── Config/          # Chargement .env, connexion PDO
+│   ├── Controller/      # Endpoints HTTP (Slim callbacks)
+│   ├── Domain/          # DTO métier
+│   ├── Repository/      # Accès BD (PDO)
+│   ├── Service/         # Log, Statistiques, Pompes, Notifications…
+│   └── Command/         # Jobs CRON exécutables via `php`
+├── templates/           # Vues Twig (Bootstrap 5)
+├── tests/               # PHPUnit
+├── .env.dist            # Exemple de configuration
+└── composer.json
+```
 
-| Fichier | Responsabilité |
-|---------|----------------|
-| **LogService.php** | Encapsule Monolog, format `[date] [LEVEL] message`, écrit par défaut `cronlog.txt`. |
-| **NotificationService.php** | Envoi d’e-mails, méthodes `notifyMareesProblem`, `notifyFloodRisk`, etc. |
-| **PumpService.php** | Abstraction GPIO : lit/écrit `ffp3Outputs`, méthodes `stopPompeAqua`, `runPompeTank`, etc. |
-| **SensorDataService.php** | Nettoyage des données (valeurs aberrantes) selon seuils définis dans `.env`. |
-| **SensorStatisticsService.php** | Agrégats SQL (`MIN`, `MAX`, `AVG`, `STDDEV`) et écart-type sur N dernières mesures. |
-| **SystemHealthService.php** | Supervision du système : online/offline, niveau réservoir, notifications. |
+## Installation rapide
 
----
-## Répertoire `src/Command`
+### Pré-requis
+- PHP ≥ 8.1 avec extensions : PDO, PDO_MySQL, JSON, mbstring
+- Composer 2.x
+- MySQL / MariaDB ≥ 5.7
 
-| Fichier | Actions |
-|---------|---------|
-| **CleanDataCommand.php** | Version objet du cron : vérifie pompes, nettoie données, contrôle niveaux, logge. |
-| **ProcessTasksCommand.php** | Orchestrateur CRON principal : nettoie, détecte risques (inondation, marées), vérifie santé, notifie. |
+### Installation
 
----
-## Répertoire `src/Controller`
+```bash
+# 1. Clonage
+$ git clone https://github.com/<org>/ffp3datas.git
+$ cd ffp3datas
 
-| Fichier | Route / Vue |
-|---------|-------------|
-| **DashboardController.php** | `/dashboard` : page synthétique, statistiques, template `dashboard.php`. |
-| **AquaponieController.php** | `/aquaponie` : réécriture objet de la page historique `ffp3-data.php`. |
-| **ExportController.php** | `/export-data` : génération CSV streaming. |
-| **PostDataController.php** | `/post-data` : réception POST, insertion base, réponse HTTP. |
+# 2. Installation des dépendances
+$ composer install --no-dev   # Production
+$ composer install            # Développement (avec PHPUnit)
 
----
-## Répertoire `templates/`
+# 3. Configuration
+$ cp .env.dist .env
+$ nano .env        # Configurer : DB, API keys, timezone, seuils...
 
-| Template | Contenu |
-|----------|---------|
-| **dashboard.php** | Vue minimaliste (tableaux + graphiques). |
-| **ffp3-data.php** | Gabarit complet (jauges CSS, Highcharts, formulaires). |
+# 4. Créer les dossiers de cache
+$ mkdir -p var/cache/twig var/cache/di
 
----
-## Répertoire `tests/`
+# 5. Base de données
+# Créez la base et les tables (exemple SQL dans database/ffp3_schema.sql)
+```
 
-Suites PHPUnit couvrant :
-* `Repository/` – tests des requêtes de lecture.
-* `Service/` – tests de log, pompes, nettoyage, statistiques, santé système.
+### Vérification
 
----
-## Répertoire `vendor/`
+```bash
+# Tester la configuration
+$ php -r "require 'vendor/autoload.php'; \App\Config\Env::load(); echo 'OK';"
 
-Dépendances tierces installées par Composer (Monolog, phpdotenv…). Aucun code applicatif.
+# Lancer les tests
+$ ./vendor/bin/phpunit
+```
 
----
-## Vue d’ensemble architecturale
+## Configuration `.env`
 
-1. **Legacy vs Modern**  
-   – Pile legacy : scripts procéduraux (`ffp3-config.php`, `ffp3-data.php`, etc.).  
-   – Pile moderne : code PSR-4 sous `src/`, front-controller `public/`, commandes objets.
+⚠️ **IMPORTANT** : Dans ce projet, le fichier `.env` est **versionné dans Git** (contrairement à la pratique habituelle). Cela permet d'assurer une configuration cohérente sur tous les déploiements. Assurez-vous que les informations sensibles sont protégées par d'autres moyens si nécessaire.
 
-2. **Flux de données**  
-   1. L’ESP32 envoie ses mesures (`/post-data`).  
-   2. Les repositories écrivent `ffp3Data` & `ffp3Outputs`.  
-   3. Les contrôleurs web lisent et affichent le tableau de bord.  
-   4. Un CRON (`ProcessTasksCommand`) nettoie et surveille périodiquement.
+| Variable | Rôle |
+|----------|------|
+| `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` | Connexion MySQL |
+| `API_KEY` | Clé API legacy (ESP32) |
+| `API_SIG_SECRET` | Secret HMAC SHA-256 |
+| `SIG_VALID_WINDOW` | Fenêtre en secondes (déf. 300) |
+| `APP_TIMEZONE` | Fuseau horaire de l'application (déf. `Europe/Paris`) |
+| `GPIO_POMPE_AQUA`, `GPIO_POMPE_TANK`, `GPIO_RESET_MODE` | # GPIO (int) |
+| `AQUA_LOW_LEVEL_THRESHOLD` | Seuil niveau eau (cm/%) |
+| `TIDE_STDDEV_THRESHOLD` | Seuil écart-type marées |
+| `LOG_FILE_PATH` | Fichier de log Monolog (déf. `cronlog.txt`) |
+| `NOTIF_EMAIL_RECIPIENT` | Destinataire alertes |
+| `MAIL_FROM` | Adresse expéditeur |
 
-3. **Configuration**  
-   – Toutes les constantes (DB, API_KEY, seuils) sont centralisées dans `.env` et chargées via `Env::load()` ou `Database::getConnection()`.
+## Lancement
 
----
-### Licence
+```bash
+# Dev : serveur PHP intégré
+$ php -S localhost:8080 -t public
 
-Ce projet est livré tel quel. Les dépendances tierces conservent leur propre licence (voir répertoire `vendor/`).
+# Production : vhost Apache/Nginx pointant vers public/
+```
+
+Routes principales :
+
+* `GET  /` ou `/dashboard` – Tableau de bord général
+* `GET|POST /aquaponie` – Page Aquaponie + export CSV
+* `POST /post-data` – Point d’ingestion capteurs (voir API ci-dessous)
+
+### API POST `/post-data`
+
+Corps `application/x-www-form-urlencoded` attend les champs décrits dans `SensorData`.  
+Authentification : `api_key` **et/ou** `timestamp + signature` (HMAC-SHA256).  
+Réponse : *text/plain* (200 OK ou 40x/500).
+
+## Tâches CRON
+
+```
+*/5 * * * * php /var/www/ffp3datas/bin/clean-data.php
+0 * * * *   php /var/www/ffp3datas/bin/process-tasks.php
+```
+
+*Les scripts wrapper dans `bin/` appellent respectivement `CleanDataCommand` et `ProcessTasksCommand`.*
+Chaque commande écrit son PID dans `/tmp/*.lock` afin d’éviter un chevauchement.
+
+## Tests & Qualité
+
+```bash
+# Exécution des tests
+$ composer require --dev phpunit/phpunit
+$ ./vendor/bin/phpunit
+
+# Analyse statique (optionnel)
+$ composer require --dev phpstan/phpstan
+$ ./vendor/bin/phpstan analyse src
+```
+
+CI : un fichier `ci.yml` GitHub Actions est recommandé pour lancer PHPUnit + PHPStan automatiquement.
+
+## Roadmap & Idées
+
+* Remplacer `mail()` par **Symfony Mailer** ou **PHPMailer** + SMTP.
+* Ajouter **PHPStan niveau 6**, **Psalm** et un *pre-commit hook*.
+* Conteneur DI (Slim-Psr11, PHP-DI ou Symfony Container) pour éliminer les `new` manuels.
+* Spécification **OpenAPI/Swagger** de l’API `/post-data` + client Postman.
+* Dockerfile + docker-compose avec MariaDB & MailHog pour faciliter la démo.
+
+## Licence
+
+MIT – © 2024 O-Lution – utilisation libre sous réserve de conserver ce fichier de licence.

@@ -1,118 +1,269 @@
-<?php
+{% extends 'base.twig' %}
 
-declare(strict_types=1);
+{% block title %}Aquaponie - {{ parent() }}{% endblock %}
 
-use App\Config\Database;
-use App\Repository\SensorReadRepository;
-use App\Service\SensorStatisticsService;
+{% block content %}
+    <h1>Aquaponie</h1>
 
-/**
- * Pont de compatibilité pour le script legacy ffp3-data.php.
- * Toutes les fonctions ci-dessous imitent l'API historique mais délèguent aux
- * nouvelles classes (Repository et Services) -> aucun identifiant n'est codé en clair.
- */
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Données des capteurs</h2>
+        <a href="{{ path('ffp3_data') }}" class="btn btn-primary">Voir le graphique</a>
+    </div>
 
-if (!function_exists('legacyRepo')) {
-    function legacyPdo(): \PDO
-    {
-        static $pdo = null;
-        if ($pdo === null) {
-            $pdo = Database::getConnection();
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Dernières lectures</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Température</th>
+                        <th>Humidité</th>
+                        <th>pH</th>
+                        <th>Conductivité</th>
+                        <th>Oxygène</th>
+                        <th>Poids</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reading in last_readings %}
+                        <tr>
+                            <td>{{ reading.reading_time|date('H:i:s') }}</td>
+                            <td>{{ reading.temperature }}</td>
+                            <td>{{ reading.humidity }}</td>
+                            <td>{{ reading.ph }}</td>
+                            <td>{{ reading.conductivity }}</td>
+                            <td>{{ reading.oxygen }}</td>
+                            <td>{{ reading.weight }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Statistiques</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Température</h4>
+                    <p>Min: {{ min_temperature }}°C</p>
+                    <p>Max: {{ max_temperature }}°C</p>
+                    <p>Moyenne: {{ avg_temperature }}°C</p>
+                    <p>Écart-type: {{ stddev_temperature }}°C</p>
+                </div>
+                <div class="col-md-6">
+                    <h4>Humidité</h4>
+                    <p>Min: {{ min_humidity }}%</p>
+                    <p>Max: {{ max_humidity }}%</p>
+                    <p>Moyenne: {{ avg_humidity }}%</p>
+                    <p>Écart-type: {{ stddev_humidity }}%</p>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h4>pH</h4>
+                    <p>Min: {{ min_ph }}</p>
+                    <p>Max: {{ max_ph }}</p>
+                    <p>Moyenne: {{ avg_ph }}</p>
+                    <p>Écart-type: {{ stddev_ph }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h4>Conductivité</h4>
+                    <p>Min: {{ min_conductivity }} µS/cm</p>
+                    <p>Max: {{ max_conductivity }} µS/cm</p>
+                    <p>Moyenne: {{ avg_conductivity }} µS/cm</p>
+                    <p>Écart-type: {{ stddev_conductivity }} µS/cm</p>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h4>Oxygène</h4>
+                    <p>Min: {{ min_oxygen }} mg/L</p>
+                    <p>Max: {{ max_oxygen }} mg/L</p>
+                    <p>Moyenne: {{ avg_oxygen }} mg/L</p>
+                    <p>Écart-type: {{ stddev_oxygen }} mg/L</p>
+                </div>
+                <div class="col-md-6">
+                    <h4>Poids</h4>
+                    <p>Min: {{ min_weight }} kg</p>
+                    <p>Max: {{ max_weight }} kg</p>
+                    <p>Moyenne: {{ avg_weight }} kg</p>
+                    <p>Écart-type: {{ stddev_weight }} kg</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Commandes</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-danger" onclick="stopPompeAqua()">Arrêter la pompe Aqua</button>
+                    <button class="btn btn-success" onclick="runPompeAqua()">Démarrer la pompe Aqua</button>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-danger" onclick="stopPompeTank()">Arrêter la pompe Tank</button>
+                    <button class="btn btn-success" onclick="runPompeTank()">Démarrer la pompe Tank</button>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <button class="btn btn-warning" onclick="rebootEsp()">Redémarrer l'ESP</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>États des GPIO</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>Pompe Aqua: {{ etatPompeAqua.state }}</p>
+                    <p>Pompe Tank: {{ etatPompeTank.state }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p>Mode Reset: {{ etatResetMode.state }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Données brutes ({{ start_date|date('d/m/Y') }} … {{ end_date|date('d/m/Y') }})</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Température</th>
+                        <th>Humidité</th>
+                        <th>pH</th>
+                        <th>Conductivité</th>
+                        <th>Oxygène</th>
+                        <th>Poids</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reading in sensor_data %}
+                        <tr>
+                            <td>{{ reading.reading_time|date('H:i:s') }}</td>
+                            <td>{{ reading.temperature }}</td>
+                            <td>{{ reading.humidity }}</td>
+                            <td>{{ reading.ph }}</td>
+                            <td>{{ reading.conductivity }}</td>
+                            <td>{{ reading.oxygen }}</td>
+                            <td>{{ reading.weight }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Export des données</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{{ path('export_sensor_data') }}">
+                <div class="form-group">
+                    <label for="start_date">Date de début:</label>
+                    <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date|date('Y-m-d') }}">
+                </div>
+                <div class="form-group">
+                    <label for="end_date">Date de fin:</label>
+                    <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date|date('Y-m-d') }}">
+                </div>
+                <button type="submit" class="btn btn-primary">Exporter les données</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function stopPompeAqua() {
+            fetch('{{ path('stop_pompe_aqua') }}', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Pompe Aqua arrêtée avec succès.');
+                    // Mettre à jour l'état de la pompe
+                    document.querySelector('.btn-danger').textContent = 'Arrêter la pompe Aqua';
+                    document.querySelector('.btn-success').textContent = 'Démarrer la pompe Aqua';
+                })
+                .catch(error => {
+                    alert('Erreur lors de l\'arrêt de la pompe Aqua: ' + error);
+                });
         }
-        return $pdo;
-    }
 
-    function legacyRepo(): SensorReadRepository
-    {
-        static $repo = null;
-        if ($repo === null) {
-            $repo = new SensorReadRepository(legacyPdo());
+        function runPompeAqua() {
+            fetch('{{ path('run_pompe_aqua') }}', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Pompe Aqua démarrée avec succès.');
+                    // Mettre à jour l'état de la pompe
+                    document.querySelector('.btn-danger').textContent = 'Arrêter la pompe Aqua';
+                    document.querySelector('.btn-success').textContent = 'Démarrer la pompe Aqua';
+                })
+                .catch(error => {
+                    alert('Erreur lors du démarrage de la pompe Aqua: ' + error);
+                });
         }
-        return $repo;
-    }
 
-    function legacyStats(): SensorStatisticsService
-    {
-        static $stats = null;
-        if ($stats === null) {
-            $stats = new SensorStatisticsService(legacyPdo());
+        function stopPompeTank() {
+            fetch('{{ path('stop_pompe_tank') }}', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Pompe Tank arrêtée avec succès.');
+                    // Mettre à jour l'état de la pompe
+                    document.querySelector('.btn-danger').textContent = 'Arrêter la pompe Tank';
+                    document.querySelector('.btn-success').textContent = 'Démarrer la pompe Tank';
+                })
+                .catch(error => {
+                    alert('Erreur lors de l\'arrêt de la pompe Tank: ' + error);
+                });
         }
-        return $stats;
-    }
 
-    // ------------------------------------------------------------------
-    // Fonctions attendues par ffp3-data.php
-    // ------------------------------------------------------------------
-    function getLastReadingDate(): ?string
-    {
-        return legacyRepo()->getLastReadingDate();
-    }
+        function runPompeTank() {
+            fetch('{{ path('run_pompe_tank') }}', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Pompe Tank démarrée avec succès.');
+                    // Mettre à jour l'état de la pompe
+                    document.querySelector('.btn-danger').textContent = 'Arrêter la pompe Tank';
+                    document.querySelector('.btn-success').textContent = 'Démarrer la pompe Tank';
+                })
+                .catch(error => {
+                    alert('Erreur lors du démarrage de la pompe Tank: ' + error);
+                });
+        }
 
-    function getSensorData(string $start, string $end): array
-    {
-        return legacyRepo()->fetchBetween($start, $end);
-    }
-
-    function exportSensorData(string $start, string $end): void
-    {
-        $tmp = sys_get_temp_dir() . '/sensor_export_' . time() . '.csv';
-        legacyRepo()->exportCsv($start, $end, $tmp);
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename=données_capteurs.csv');
-        readfile($tmp);
-        unlink($tmp);
-        exit;
-    }
-
-    /**
-     * Compatibilité : l'ancien script appelle getLastReadings($start, $end) alors
-     * que seule la limite était réellement utilisée. On accepte un nombre
-     * variable d'arguments.
-     */
-    function getLastReadings(mixed ...$args): array
-    {
-        // Si le premier paramètre est un int, on suppose que c'est la limite.
-        // Sinon, on récupère 1 seule ligne (comportement historique).
-        $limit = (isset($args[0]) && is_int($args[0])) ? $args[0] : 1;
-        return legacyRepo()->getLastReadings($limit);
-    }
-
-    function getAllReadings(): array|false
-    {
-        $stmt = legacyPdo()->query('SELECT MAX(id) AS max_amount2 FROM ffp3Data');
-        return $stmt ? $stmt->fetch(\PDO::FETCH_ASSOC) : false;
-    }
-
-    function getFirstReadings(int $limit): array|false
-    {
-        $sql = 'SELECT reading_time AS min_amount2 FROM (SELECT reading_time FROM ffp3Data ORDER BY reading_time DESC LIMIT :limit) as t ORDER BY reading_time ASC LIMIT 1';
-        $stmt = legacyPdo()->prepare($sql);
-        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: false;
-    }
-
-    function getFirstReadingsBegin(): array|false
-    {
-        $stmt = legacyPdo()->query('SELECT MIN(reading_time) AS min_amount3 FROM ffp3Data');
-        return $stmt ? $stmt->fetch(\PDO::FETCH_ASSOC) : false;
-    }
-
-    // Statistiques -------------------------------------------------------
-    function minReading(string $start, string $end, string $column): ?float
-    {
-        return legacyStats()->min($column, $start, $end);
-    }
-    function maxReading(string $start, string $end, string $column): ?float
-    {
-        return legacyStats()->max($column, $start, $end);
-    }
-    function avgReading(string $start, string $end, string $column): ?float
-    {
-        return legacyStats()->avg($column, $start, $end);
-    }
-    function stddevReading(string $start, string $end, string $column): ?float
-    {
-        return legacyStats()->stddev($column, $start, $end);
-    }
-} 
+        function rebootEsp() {
+            if (confirm('Êtes-vous sûr de vouloir redémarrer l\'ESP ? Cela peut perturber le système.')) {
+                fetch('{{ path('reboot_esp') }}', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('Redémarrage de l\'ESP effectué avec succès.');
+                    })
+                    .catch(error => {
+                        alert('Erreur lors du redémarrage de l\'ESP: ' + error);
+                    });
+            }
+        }
+    </script>
+{% endblock %} 

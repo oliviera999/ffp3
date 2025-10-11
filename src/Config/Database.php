@@ -4,7 +4,7 @@ namespace App\Config;
 
 use PDO;
 use PDOException;
-use Dotenv\Dotenv;
+use App\Config\Env;
 
 class Database
 {
@@ -13,21 +13,14 @@ class Database
     public static function getConnection(): PDO
     {
         if (self::$instance === null) {
-            // Charger les variables d'environnement
-            $root = dirname(__DIR__, 2);
-            if (!file_exists($root . '/.env')) {
-                throw new \RuntimeException("Le fichier .env est introuvable. Assurez-vous qu'il existe à la racine du projet.");
-            }
-            // Utiliser un dépôt mutable pour que les variables du fichier .env
-            // puissent écraser d'éventuelles variables déjà définies par l'environnement
-            $dotenv = Dotenv::createMutable($root);
-            $dotenv->load();
+            // Charge les variables d'environnement une seule fois (si .env existe)
+            Env::load();
 
-            // Valider que les variables nécessaires sont présentes
-            try {
-                $dotenv->required(['DB_HOST', 'DB_NAME', 'DB_USER', 'DB_PASS']);
-            } catch (\Dotenv\Exception\ValidationException $e) {
-                throw new \RuntimeException("Erreur de validation des variables d'environnement : " . $e->getMessage());
+            // Vérification de la présence des variables indispensables
+            foreach (['DB_HOST', 'DB_NAME', 'DB_USER', 'DB_PASS'] as $var) {
+                if (!isset($_ENV[$var]) || $_ENV[$var] === '') {
+                    throw new \RuntimeException("La variable d'environnement '{$var}' est manquante ou vide. Veuillez l'ajouter dans votre .env ou l'environnement serveur.");
+                }
             }
 
             $host = $_ENV['DB_HOST'];
@@ -48,4 +41,4 @@ class Database
 
         return self::$instance;
     }
-} 
+}

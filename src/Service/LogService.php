@@ -17,10 +17,12 @@ class LogService
      * Nom du fichier de log par défaut (modifiable via .env)
      */
     private const DEFAULT_LOG_FILE = 'cronlog.txt';
+
     /**
      * Chemin du fichier de log utilisé
      */
     private string $logFile;
+
     /**
      * Instance Monolog configurée
      */
@@ -87,13 +89,14 @@ class LogService
      */
     public function addName(string $event): void
     {
-        // Pas de saut de ligne pour rester compatible, mais journalisons également côté Monolog
-        file_put_contents($this->logFile, $event, FILE_APPEND);
+        // Utiliser Monolog pour la cohérence
         $this->logger->debug($event);
     }
     
     /**
      * Envoie un email d'alerte en cas de problème critique
+     * 
+     * @deprecated Devrait être déplacé dans NotificationService
      */
     public function sendAlertEmail(string $subject, string $message, array $params = []): bool
     {
@@ -120,4 +123,4 @@ class LogService
     public function warning(string $message, array $context = []): void  { $this->log(Logger::WARNING, $message, $context); }
     public function error(string $message, array $context = []): void    { $this->log(Logger::ERROR, $message, $context); }
     public function critical(string $message, array $context = []): void { $this->log(Logger::CRITICAL, $message, $context); }
-} 
+}

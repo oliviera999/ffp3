@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>olution iot datas</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#008B74" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
+    <link rel="stylesheet" href="/ffp3/ffp3control/ffp3-style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="assets/css/realtime-styles.css" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="shortcut icon" type="image/png" href="https://iot.olution.info/images/favico.png"/>
+    <style>
+        /* Reset et fix total pour éviter les conflits CSS */
+        article.post.featured {
+            overflow: visible !important;
+        }
+        
+        .control-grid {
+            display: block !important;
+            width: 100% !important;
+            clear: both !important;
+            overflow: visible !important;
+            position: relative !important;
+        }
+        
+        .control-grid * {
+            box-sizing: border-box !important;
+        }
+        
+        /* Layout optimisé pour desktop */
+        @media (min-width: 1200px) {
+            .control-grid {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                gap: 20px !important;
+            }
+            
+            .control-grid .left-column {
+                flex: 1 1 48% !important;
+                min-width: 0 !important;
+                display: block !important;
+            }
+            
+            .control-grid .right-column {
+                flex: 1 1 48% !important;
+                min-width: 0 !important;
+                display: block !important;
+            }
+        }
+        
+        /* Responsive pour tablettes et mobile */
+        @media (max-width: 1199px) {
+            .control-grid .left-column,
+            .control-grid .right-column {
+                width: 100% !important;
+                display: block !important;
+            }
+        }
+        
+        /* Sections */
+        .compact-section {
+            padding: 15px !important;
+            margin-bottom: 20px !important;
+            display: block !important;
+            overflow: visible !important;
+        }
+        
+        .compact-section h3 {
+            font-size: 1.1em !important;
+            margin-bottom: 10px !important;
+            display: block !important;
+        }
+        
+        .compact-section h4 {
+            font-size: 1em !important;
+            margin: 10px 0 8px 0 !important;
+            display: block !important;
+        }
+        
+        /* Icônes pour les switches */
+        .switch-icon {
+            font-size: 1.3em;
+            margin-right: 10px;
+            width: 30px;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        /* Formulaires compacts - TOUS les types d'inputs */
+        .compact-form input[type="number"],
+        .compact-form input[type="text"],
+        .compact-form input[type="email"],
+        .compact-form select {
+            padding: 6px 10px !important;
+            margin: 3px 0 !important;
+            font-size: 0.9em !important;
+            width: 100% !important;
+            display: block !important;
+            box-sizing: border-box !important;
+            line-height: 1.2 !important;
+            background: white !important;
+            border: 1px solid #ccc !important;
+            border-radius: 4px !important;
+        }
+        
+        .compact-form input:focus {
+            border-color: #008B74 !important;
+            outline: none !important;
+        }
+        
+        .compact-form label {
+            font-size: 0.9em !important;
+            margin-bottom: 2px !important;
+            display: block !important;
+        }
+        
+        /* Fix pour les divs inline qui causent des problèmes */
+        .control-grid div[style*="display: grid"],
+        .control-grid div[style*="display: flex"] {
+            min-height: 1px !important;
+            overflow: visible !important;
+        }
+        
+        /* Grilles de paramètres */
+        .param-grid {
+            display: grid !important;
+            gap: 10px !important;
+            width: 100% !important;
+        }
+        
+        .param-grid-2 {
+            grid-template-columns: 1fr 1fr !important;
+        }
+        
+        .param-grid-3 {
+            grid-template-columns: 1fr 1fr 1fr !important;
+        }
+        
+        .param-box {
+            background: #f8f9fa !important;
+            padding: 15px !important;
+            border-radius: 6px !important;
+            margin-bottom: 15px !important;
+            display: block !important;
+            overflow: visible !important;
+        }
+        
+        .param-box h4 {
+            margin-top: 0 !important;
+            color: #008B74 !important;
+            font-size: 0.95em !important;
+            margin-bottom: 10px !important;
+        }
+        
+        /* Retirer le background des div enfants pour éviter cadres gris emboîtés */
+        .param-grid > div {
+            background: transparent !important;
+        }
+        
+        /* Inputs plus larges et lisibles */
+        .param-grid input[type="number"] {
+            min-width: 60px !important;
+            text-align: center !important;
+            font-size: 1em !important;
+        }
+        
+        /* Override des styles qui causent problème */
+        .control-grid section * {
+            max-width: 100% !important;
+        }
+    </style>
+</head>
+<body class="is-preload">
+
+    <!-- Wrapper -->
+    <div id="wrapper" class="fade-in">
+        
+        <!-- Header -->
+        <header id="header">
+            <a href="https://iot.olution.info/index.html" class="logo">n3 iot datas</a>
+        </header>
+
+        <!-- Nav -->
+        <nav id="nav">
+            <ul class="links">
+                <li><a href="https://iot.olution.info/index.html">Accueil</a></li>
+                <li class="active"><a href="https://iot.olution.info/ffp3/ffp3datas/aquaponie{{ environment == 'test' ? '-test' : '' }}">L'aquaponie (FFP3)</a></li>
+                <li><a href="https://iot.olution.info/msp1/msp1datas/msp1-data.php">Le potager</a></li>
+                <li><a href="https://iot.olution.info/n3pp/n3ppdatas/n3pp-data.php">L'élevage d'insectes</a></li>
+            </ul>
+            <ul class="icons">
+                <li><a href="https://olution.info/course/view.php?id=511" class="icon solid fa-leaf"><span class="label">olution</span></a></li>
+                <li><a href="https://farmflow.marout.org/" class="icon solid fa-fish"><span class="label">farmflow</span></a></li>
+            </ul>
+        </nav>
+
+        <!-- Main -->
+        <div id="main">
+            <!-- Featured Post -->
+            <article class="post featured">
+                <header class="major">
+                    <h2>🎛️ Contrôle du FFP3 {% if environment == 'test' %}<span style="color: orange;">(TEST)</span>{% endif %}</h2>
+                    <p>Il est possible d'agir à distance sur différents actionneurs du système.</p>
+                    <p style="color: #ff6b6b; font-weight: bold;">⚠️ À manipuler avec la plus grande des précautions !</p>
+                    
+                    {# Dernières requêtes boards #}
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                        <h4 style="margin-top: 0;">📡 État des connexions</h4>
+                        {% for board in boards %}
+                            <p style="margin: 5px 0;"><strong>Board {{ board.board }}:</strong> Dernière requête le {{ board.last_request }}</p>
+                        {% endfor %}
+                    </div>
+                </header>
+                
+                {# Grid 2 colonnes sur desktop #}
+                <div class="control-grid">
+                    {# Colonne gauche : Actionneurs #}
+                    <div class="left-column">
+                        <section class="compact-section" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <h3 style="color: #008B74; border-bottom: 2px solid #008B74; padding-bottom: 8px; margin-bottom: 15px;">
+                                <i class="fas fa-bolt"></i> Actions
+                            </h3>
+                            
+                            {# Préparation des outputs avec icônes - Ajouter GPIO 101 (mailNotif) et 115 (WakeUp) #}
+                            {% set physical_outputs = outputs|filter(o => (o.gpio < 100 or o.gpio == 101 or o.gpio == 108 or o.gpio == 109 or o.gpio == 110 or o.gpio == 115) and o.name is not empty) %}
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                                {% for output in physical_outputs %}
+                                    {% set clean_name = output.name|replace({
+                                        '(stopp&#233;s si relais activ&#233;)': '',
+                                        '(stopp&#233;e si relais activ&#233;)': '',
+                                        '(stoppés si relais activé)': '',
+                                        '(stoppée si relais activé)': '',
+                                        ' (stopp&#233;s si relais activ&#233;)': '',
+                                        ' (stopp&#233;e si relais activ&#233;)': '',
+                                        ' (stoppés si relais activé)': '',
+                                        ' (stoppée si relais activé)': ''
+                                    })|trim %}
+                                    
+                                    {# Déterminer l'icône selon le GPIO pour être sûr #}
+                                    {% set icon = 'fa-circle' %}
+                                    {% if output.gpio == 101 %}
+                                        {% set icon = 'fa-bell' %}
+                                        {% set clean_name = 'Notifications' %}
+                                    {% elseif output.gpio == 115 %}
+                                        {% set icon = 'fa-alarm-clock' %}
+                                        {% set clean_name = 'Forçage réveil' %}
+                                    {% elseif output.gpio == 108 %}
+                                        {% set icon = 'fa-fish' %}
+                                        {% set clean_name = 'Nourrir petits poissons' %}
+                                    {% elseif output.gpio == 109 %}
+                                        {% set icon = 'fa-fish-fins' %}
+                                        {% set clean_name = 'Nourrir gros poissons' %}
+                                    {% elseif output.gpio == 110 %}
+                                        {% set icon = 'fa-rotate' %}
+                                        {% set clean_name = 'Reset ESP' %}
+                                    {% elseif clean_name|lower matches '/pompe aqua/' %}
+                                        {% set icon = 'fa-water' %}
+                                    {% elseif clean_name|lower matches '/pompe.*r.*serve/' %}
+                                        {% set icon = 'fa-droplet' %}
+                                    {% elseif clean_name|lower matches '/radiateur/' %}
+                                        {% set icon = 'fa-temperature-high' %}
+                                    {% elseif clean_name|lower matches '/lumi.*re/' %}
+                                        {% set icon = 'fa-lightbulb' %}
+                                    {% endif %}
+                                    
+                                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="font-weight: 500; font-size: 0.95em;">
+                                            <i class="fas {{ icon }} switch-icon" style="color: #008B74;"></i>{{ clean_name|raw }}
+                                        </span>
+                                        <label class="switch" style="transform: scale(0.8);">
+                                            <input type="checkbox" 
+                                                   onchange="updateOutput(this)" 
+                                                   id="{{ output.id }}" 
+                                                   data-id="{{ output.id }}"
+                                                   data-gpio="{{ output.gpio }}"
+                                                   {{ output.state == 1 ? 'checked' : '' }}>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    </div>
+                    
+                    {# Colonne droite : Paramètres #}
+                    <div class="right-column">
+                        <section class="compact-section compact-form" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <h3 style="color: #008B74; border-bottom: 2px solid #008B74; padding-bottom: 8px; margin-bottom: 15px;">
+                                <i class="fas fa-cog"></i> Paramètres du système
+                            </h3>
+                    
+                    {% set params = {} %}
+                    {% for output in outputs %}
+                        {% if output.gpio == 100 %}{% set params = params|merge({'mail': output.state}) %}{% endif %}
+                        {% if output.gpio == 101 %}{% set params = params|merge({'mailNotif': output.state}) %}{% endif %}
+                        {% if output.gpio == 102 %}{% set params = params|merge({'aqThr': output.state}) %}{% endif %}
+                        {% if output.gpio == 103 %}{% set params = params|merge({'taThr': output.state}) %}{% endif %}
+                        {% if output.gpio == 104 %}{% set params = params|merge({'chauff': output.state}) %}{% endif %}
+                        {% if output.gpio == 105 %}{% set params = params|merge({'bouffeMat': output.state}) %}{% endif %}
+                        {% if output.gpio == 106 %}{% set params = params|merge({'bouffeMid': output.state}) %}{% endif %}
+                        {% if output.gpio == 107 %}{% set params = params|merge({'bouffeSoir': output.state}) %}{% endif %}
+                        {% if output.gpio == 111 %}{% set params = params|merge({'tempsGros': output.state}) %}{% endif %}
+                        {% if output.gpio == 112 %}{% set params = params|merge({'tempsPetits': output.state}) %}{% endif %}
+                        {% if output.gpio == 113 %}{% set params = params|merge({'tempsRemplissageSec': output.state}) %}{% endif %}
+                        {% if output.gpio == 114 %}{% set params = params|merge({'limFlood': output.state}) %}{% endif %}
+                        {% if output.gpio == 115 %}{% set params = params|merge({'WakeUp': output.state}) %}{% endif %}
+                        {% if output.gpio == 116 %}{% set params = params|merge({'FreqWakeUp': output.state}) %}{% endif %}
+                    {% endfor %}
+                    
+                            <form onsubmit="return createOutput();">
+                                {# Email de notification #}
+                                <div class="param-box" style="background: #e8f5e9 !important; margin-bottom: 12px !important; padding: 12px !important;">
+                                    <h4><i class="fas fa-envelope"></i> Email de notification</h4>
+                                    <label for="mail">Adresse email pour les alertes</label>
+                                    <input type="email" name="mail" id="mail" value="{{ params.mail|default('') }}" placeholder="email@exemple.com" style="padding: 6px 10px !important; margin: 3px 0 !important; height: auto !important;">
+                                </div>
+                        
+                                {# Gestion de l'eau #}
+                                <div class="param-box" style="background: #e3f2fd !important; margin-bottom: 12px !important; padding: 12px !important;">
+                                    <h4><i class="fas fa-tint"></i> Gestion de l'eau</h4>
+                                    <label for="aqThr">Aquarium bas (cm)</label>
+                                    <input type="number" name="aqThr" min="0" id="aqThr" value="{{ params.aqThr|default(0) }}">
+                                    
+                                    <label for="taThr">Réserve basse (cm)</label>
+                                    <input type="number" name="taThr" min="0" id="taThr" value="{{ params.taThr|default(0) }}">
+                                    
+                                    <label for="tempsRemplissageSec">Remplissage (s)</label>
+                                    <input type="number" name="tempsRemplissageSec" min="0" id="tempsRemplissageSec" value="{{ params.tempsRemplissageSec|default(0) }}">
+                                    
+                                    <label for="limFlood">Débordement (cm)</label>
+                                    <input type="number" name="limFlood" min="0" id="limFlood" value="{{ params.limFlood|default(0) }}">
+                                </div>
+                        
+                                {# Chauffage #}
+                                <div class="param-box" style="background: #fff3e0 !important; margin-bottom: 12px !important; padding: 12px !important;">
+                                    <h4><i class="fas fa-temperature-half"></i> Chauffage</h4>
+                                    <label for="chauff">Température min. (°C)</label>
+                                    <input type="number" name="chauff" min="0" step="0.1" id="chauff" value="{{ params.chauff|default(0) }}">
+                                </div>
+                        
+                                {# Nourrissage #}
+                                <div class="param-box" style="background: #fff9c4 !important; margin-bottom: 12px !important; padding: 12px !important;">
+                                    <h4><i class="fas fa-bowl-food"></i> Nourrissage automatique</h4>
+                                    
+                                    <p style="margin: 8px 0 5px 0; font-weight: 500; font-size: 0.9em;">Horaires (heure 0-23)</p>
+                                    <label for="bouffeMat">Matin</label>
+                                    <input type="number" name="bouffeMat" min="0" max="23" id="bouffeMat" value="{{ params.bouffeMat|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                    
+                                    <label for="bouffeMid">Midi</label>
+                                    <input type="number" name="bouffeMid" min="0" max="23" id="bouffeMid" value="{{ params.bouffeMid|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                    
+                                    <label for="bouffeSoir">Soir</label>
+                                    <input type="number" name="bouffeSoir" min="0" max="23" id="bouffeSoir" value="{{ params.bouffeSoir|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                    
+                                    <p style="margin: 15px 0 5px 0; font-weight: 500; font-size: 0.9em;">Durées (secondes)</p>
+                                    <label for="tempsGros">Gros poissons</label>
+                                    <input type="number" name="tempsGros" min="0" id="tempsGros" value="{{ params.tempsGros|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                    
+                                    <label for="tempsPetits">Petits poissons</label>
+                                    <input type="number" name="tempsPetits" min="0" id="tempsPetits" value="{{ params.tempsPetits|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                </div>
+                        
+                                {# Système #}
+                                <div class="param-box" style="background: #f3e5f5 !important; margin-bottom: 12px !important; padding: 12px !important;">
+                                    <h4><i class="fas fa-microchip"></i> Système</h4>
+                                    <label for="FreqWakeUp">Fréquence WakeUp (secondes)</label>
+                                    <input type="number" name="FreqWakeUp" min="0" id="FreqWakeUp" value="{{ params.FreqWakeUp|default(0) }}">
+                                </div>
+                                
+                                <div style="text-align: center;">
+                                    <input type="submit" value="💾 Enregistrer" style="width: 100%; font-size: 1em; padding: 14px 20px; line-height: 1; vertical-align: middle;">
+                                </div>
+                            </form>
+                        </section>
+                    </div>
+                </div>
+                
+                {# Section Actions rapides (compacte) #}
+                <section style="background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center;">
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; align-items: center;">
+                        <a href="/ffp3/ffp3datas/cronpompe.php" style="margin: 0; padding: 8px 16px; font-size: 0.9em; background: #008B74; color: white; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-gears"></i> Cron manuel</a>
+                        <a href="/ffp3/ffp3datas/cronlog.txt" style="margin: 0; padding: 8px 16px; font-size: 0.9em; background: #008B74; color: white; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-file-lines"></i> Journal du cron</a>
+                        <a href="/ffp3/ffp3datas/aquaponie{{ environment == 'test' ? '-test' : '' }}" style="margin: 0; padding: 8px 16px; font-size: 0.9em; background: #008B74; color: white; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-chart-line"></i> Retour aux données</a>
+                    </div>
+                </section>
+            </article>
+        </div>
+        
+        <!-- Footer avec version -->
+        <footer id="footer" style="text-align: center; padding: 20px 0; color: #999; font-size: 0.9em;">
+            <p>{{ version }} | Système d'aquaponie FFP3 | © 2025 olution</p>
+        </footer>
+    </div>
+
+<script>
+    const API_BASE = '/ffp3/ffp3datas/api/outputs{{ environment == "test" ? "-test" : "" }}';
+    
+    function updateOutput(element) {
+        var id = element.getAttribute('data-id');
+        var gpio = element.getAttribute('data-gpio');
+        var state = element.checked ? 1 : 0;
+        var url = API_BASE + "/toggle?id=" + id + "&state=" + state;
+        
+        console.log("Toggle ID " + id + " (GPIO " + gpio + ") to state " + state);
+        console.log("URL: " + url);
+        
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (this.readyState === XMLHttpRequest.DONE) {
+                console.log("Response status: " + this.status);
+                console.log("Response: " + this.responseText);
+                if (this.status !== 200) {
+                    console.error("Toggle failed!");
+                    alert("Erreur lors du changement d'état (ID " + id + ")");
+                }
+            }
+        };
+        xhr.open("GET", url, true);
+        xhr.send();
+    }
+
+    function createOutput() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", API_BASE + "/parameters", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.onreadystatechange = function() {
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                alert("Changement pris en compte");
+                // Délai de 1,5 secondes pour s'assurer que la BDD est bien à jour
+                setTimeout(function(){ window.location.reload(true); }, 1500);
+            }
+            else if (this.readyState === XMLHttpRequest.DONE) {
+                alert("Changement non pris en compte !");
+            }
+        }
+        
+        var mail = document.getElementById("mail").value;
+        var aqThr = document.getElementById("aqThr").value;
+        var taThr = document.getElementById("taThr").value;
+        var tempsRemplissageSec = document.getElementById("tempsRemplissageSec").value;
+        var limFlood = document.getElementById("limFlood").value;
+        var chauff = document.getElementById("chauff").value;
+        var bouffeMat = document.getElementById("bouffeMat").value;
+        var bouffeMid = document.getElementById("bouffeMid").value;
+        var bouffeSoir = document.getElementById("bouffeSoir").value;
+        var tempsGros = document.getElementById("tempsGros").value;
+        var tempsPetits = document.getElementById("tempsPetits").value;
+        var FreqWakeUp = document.getElementById("FreqWakeUp").value;
+
+        // Note: mailNotif (GPIO 101) et WakeUp (GPIO 115) sont maintenant gérés par les switches de la section Actions
+        var httpRequestData = "mail="+mail+"&aqThr="+aqThr+"&tempsRemplissageSec="+tempsRemplissageSec+"&limFlood="+limFlood+"&taThr="+taThr+"&chauff="+chauff+"&bouffeMat="+bouffeMat+"&bouffeMid="+bouffeMid+"&bouffeSoir="+bouffeSoir+"&tempsGros="+tempsGros+"&tempsPetits="+tempsPetits+"&FreqWakeUp="+FreqWakeUp;
+        xhr.send(httpRequestData);
+        
+        return false; // Empêcher la soumission normale du formulaire
+    }
+</script>
+
+<!-- Scripts -->
+<script src="https://iot.olution.info/assets/js/jquery.min.js"></script>
+<script src="https://iot.olution.info/assets/js/jquery.scrollex.min.js"></script>
+<script src="https://iot.olution.info/assets/js/jquery.scrolly.min.js"></script>
+<script src="https://iot.olution.info/assets/js/browser.min.js"></script>
+<script src="https://iot.olution.info/assets/js/breakpoints.min.js"></script>
+<script src="https://iot.olution.info/assets/js/util.js"></script>
+<script src="https://iot.olution.info/assets/js/main.js"></script>
+</body>
+</html>

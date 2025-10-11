@@ -47,6 +47,19 @@ class ProcessTasksCommand
      */
     public function execute(): void
     {
+        // -----------------------------------------------------------------
+        // Verrou d’exécution pour éviter les crons simultanés --------------
+        // -----------------------------------------------------------------
+        $lockPath = sys_get_temp_dir() . '/process_tasks_command.lock';
+        $lockHandle = fopen($lockPath, 'c');
+        if ($lockHandle === false || !flock($lockHandle, LOCK_EX | LOCK_NB)) {
+            $this->logger->warning('ProcessTasksCommand déjà en cours, sortie.');
+            return;
+        }
+
+        ftruncate($lockHandle, 0);
+        fwrite($lockHandle, (string) getmypid());
+
         $this->logger->info('--- Début du traitement des tâches CRON ---');
 
         // 1. Nettoyage des données aberrantes
@@ -65,6 +78,9 @@ class ProcessTasksCommand
         $this->healthService->checkTankLevel();
 
         $this->logger->info('--- Fin du traitement des tâches CRON ---');
+
+        flock($lockHandle, LOCK_UN);
+        fclose($lockHandle);
     }
 
     /**
@@ -84,17 +100,21 @@ class ProcessTasksCommand
 
     /**
      * Vérifie si le système de marée fonctionne correctement en analysant la déviation standard.
-     * Si la déviation est trop faible, la pompe est redémarrée.
+     * Si la déviation est trop faible, la pompe est arrêtée et un flag est créé pour le redémarrage.
      */
     private function checkTideSystem(): void
     {
         $stddev = $this->statsService->stddevOnLastReadings('EauAquarium');
 
         if ($stddev !== null && $stddev < $this->stddevThreshold) {
-            $this->logger->warning("Problème de marée détecté (stddev: {$stddev}). Redémarrage de la pompe de l'aquarium.");
+            $this->logger->warning("Problème de marée détecté (stddev: {$stddev}). Arrêt de la pompe de l'aquarium.");
             $this->pumpService->stopPompeAqua();
-            sleep(300); // Pause de 5 minutes
-            $this->pumpService->runPompeAqua();
+            
+            // Créer un flag file pour indiquer qu'un redémarrage est programmé dans 5 minutes
+            $flagFile = sys_get_temp_dir() . '/pump_restart_scheduled.flag';
+            file_put_contents($flagFile, time());
+            
+            $this->logger->info('Pompe aquarium arrêtée. Redémarrage programmé dans 5 minutes via prochain CRON.');
             $this->notifier->notifyMareesProblem();
         }
     }

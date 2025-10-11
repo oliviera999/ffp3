@@ -40,6 +40,13 @@ class SystemHealthService
         }
 
         $lastReadingTimestamp = strtotime($lastReadingDateStr);
+        if ($lastReadingTimestamp === false) {
+            // Format inattendu : on log et on considère le système offline
+            $this->logger->error('Format de date invalide pour la dernière lecture', ['value' => $lastReadingDateStr]);
+            $this->notifier->notifySystemOffline();
+            return;
+        }
+
         $now = time();
 
         if (($now - $lastReadingTimestamp) > $maxOfflineSeconds) {

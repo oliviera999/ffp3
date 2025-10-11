@@ -1,0 +1,262 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#008B74" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Dashboard Capteurs - n3 iot datas</title>
+    <link rel="stylesheet" href="https://iot.olution.info/assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="https://iot.olution.info/assets/css/noscript.css" /></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="assets/css/realtime-styles.css" />
+    <link rel="shortcut icon" type="image/png" href="https://iot.olution.info/images/favico.png"/>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+    
+    <style>
+        /* Cartes de statistiques modernes */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,139,116,0.15);
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid rgba(0,139,116,0.1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0,139,116,0.25);
+        }
+        
+        .stat-card-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            display: block;
+            color: #008B74;
+        }
+        
+        .stat-card-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+        
+        .stat-card-label {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-card-unit {
+            font-size: 0.6em;
+            color: #95a5a6;
+        }
+        
+        /* Section headers */
+        .section-header {
+            display: flex !important;
+            align-items: center !important;
+            gap: 15px !important;
+            margin: 30px 0 20px 0 !important;
+            padding-bottom: 10px !important;
+            border-bottom: 3px solid #008B74 !important;
+        }
+        
+        .section-header h3 {
+            margin: 0 !important;
+            color: #008B74 !important;
+            font-size: 1.5em !important;
+        }
+        
+        .section-header i {
+            font-size: 1.8em !important;
+            color: #008B74 !important;
+            display: inline-block !important;
+        }
+        
+        /* Tableau moderne */
+        .modern-table {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        
+        .modern-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .modern-table th {
+            background: linear-gradient(135deg, #007E61 0%, #00B794 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        .modern-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .modern-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .modern-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        /* Bannière info */
+        .info-banner {
+            background: linear-gradient(135deg, #007E61 0%, #00B794 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .info-banner-title {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .info-banner-value {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="is-preload">
+    <div id="wrapper" class="fade-in">
+        <!-- Header -->
+        <header id="header">
+            <a href="https://iot.olution.info/index.html" class="logo">n3 iot datas</a>
+        </header>
+
+        <!-- Nav -->
+        <nav id="nav">
+            <ul class="links">
+                <li><a href="https://iot.olution.info/index.html">Accueil</a></li>
+                <li class="active"><a href="https://iot.olution.info/ffp3/ffp3datas/aquaponie">L'aquaponie (FFP3)</a></li>
+                <li><a href="https://iot.olution.info/msp1/msp1datas/msp1-data.php">Le potager</a></li>
+                <li><a href="https://iot.olution.info/n3pp/n3ppdatas/n3pp-data.php">L'élevage d'insectes</a></li>
+            </ul>
+            <ul class="icons">
+                <li><a href="https://olution.info/course/view.php?id=511" class="icon solid fa-leaf"><span class="label">olution</span></a></li>
+                <li><a href="https://farmflow.marout.org/" class="icon solid fa-fish"><span class="label">farmflow</span></a></li>
+            </ul>
+        </nav>
+
+        <!-- Main -->
+        <div id="main">
+            <article class="post featured">
+                <header class="major">
+                    <h2>
+                        <i class="icon solid fa-chart-line"></i>
+                        Dashboard des capteurs
+                        <i class="icon solid fa-chart-line"></i>
+                    </h2>
+                    <p>Vue d'ensemble des données collectées par les capteurs ESP32</p>
+                    <hr />
+                </header>
+
+                <!-- Bannière période -->
+                <div class="info-banner">
+                    <div class="info-banner-title">📊 Période analysée</div>
+                    <div class="info-banner-value">
+                        Du {{ startDate|date('d/m/Y H:i:s') }} au {{ endDate|date('d/m/Y H:i:s') }}
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.95em;">
+                        Durée : <strong>{{ duration }}</strong> • Mesures : <strong>{{ readingsCount }}</strong>
+                    </div>
+                </div>
+
+                <!-- Section Dernière lecture -->
+                <div class="section-header">
+                    <i class="fas fa-clock"></i>
+                    <h3>Dernière lecture</h3>
+                </div>
+
+    {% if lastReading %}
+                    <div class="modern-table">
+        <table>
+            <thead>
+                <tr>
+                    {% for k in lastReading.keys %}<th>{{ k }}</th>{% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                                    {% for v in lastReading.values %}<td><strong>{{ v }}</strong></td>{% endfor %}
+                </tr>
+            </tbody>
+        </table>
+                    </div>
+    {% else %}
+                    <p style="text-align: center; color: #7f8c8d; padding: 30px;">Aucune donnée disponible.</p>
+    {% endif %}
+
+                <!-- Section Statistiques -->
+                <div class="section-header">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Statistiques par capteur</h3>
+                </div>
+
+                <div class="modern-table">
+    <table>
+        <thead>
+            <tr>
+                                <th>Capteur</th><th>Minimum</th><th>Maximum</th><th>Moyenne</th><th>Écart-type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sensor, s in stats %}
+                <tr>
+                                    <td><strong>{{ sensor }}</strong></td>
+                    <td>{{ s.min }}</td>
+                    <td>{{ s.max }}</td>
+                    <td>{{ s.avg }}</td>
+                    <td>{{ s.stddev }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+                </div>
+            </article>
+        </div>
+    
+    <!-- Footer avec version -->
+        <footer id="footer" style="text-align: center; padding: 20px 0; color: #999; font-size: 0.9em;">
+        <p>{{ version }} | Système d'aquaponie FFP3 | © 2025 olution</p>
+    </footer>
+    </div>
+</body>
+</html> 
