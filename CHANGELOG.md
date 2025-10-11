@@ -7,6 +7,17 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.4.4] - 2025-10-11 🔧 Fix Service Worker Asset Paths
+
+### 🐛 Corrigé
+- **Service Worker**: Correction des chemins dans `service-worker.js`
+  - Ligne 15-18 : `/ffp3/public/assets/*` → `/ffp3/assets/*`
+  - Ligne 144-145 : Chemins des icônes PWA corrigés
+  - Résout l'erreur "Failed to cache assets" lors de l'installation du Service Worker
+  - Cache désormais correctement tous les assets pour le mode offline
+
+---
+
 ## [4.4.3] - 2025-10-11 🔧 Fix Asset Paths with Symbolic Links
 
 ### 🐛 Corrigé

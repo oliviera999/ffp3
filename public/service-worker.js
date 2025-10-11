@@ -12,10 +12,10 @@ const STATIC_ASSETS = [
     '/ffp3/dashboard',
     '/ffp3/aquaponie',
     '/ffp3/control',
-    '/ffp3/public/assets/css/realtime-styles.css',
-    '/ffp3/public/assets/js/toast-notifications.js',
-    '/ffp3/public/assets/js/realtime-updater.js',
-    '/ffp3/public/manifest.json',
+    '/ffp3/assets/css/realtime-styles.css',
+    '/ffp3/assets/js/toast-notifications.js',
+    '/ffp3/assets/js/realtime-updater.js',
+    '/ffp3/manifest.json',
     'https://code.highcharts.com/stock/highstock.js',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
     'https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js'
@@ -141,8 +141,8 @@ self.addEventListener('push', event => {
     const title = data.title || 'FFP3 Aquaponie';
     const options = {
         body: data.body || 'Nouvelle notification',
-        icon: '/ffp3/public/assets/icons/icon-192.png',
-        badge: '/ffp3/public/assets/icons/icon-72.png',
+        icon: '/ffp3/assets/icons/icon-192.png',
+        badge: '/ffp3/assets/icons/icon-72.png',
         vibrate: [200, 100, 200],
         tag: data.tag || 'general',
         requireInteraction: data.requireInteraction || false,
