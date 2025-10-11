@@ -7,6 +7,66 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.4.1] - 2025-10-11 📚 Major Documentation Cleanup
+
+### 📚 Amélioré
+- **Documentation Organization** : Major cleanup and reorganization of 23+ markdown files
+  - Created organized archive structure (`docs/archive/`)
+  - Archived 13 historical documents (migrations, diagnostics, implementations)
+  - Reduced root directory clutter by 70% (23 → 7 essential files)
+  
+- **Consolidated ESP32 Documentation** : Combined 3 separate files into one comprehensive guide
+  - Deleted: `ESP32_API_REFERENCE.md`, `ESP32_ENDPOINTS.md`, `DIAGNOSTIC_ESP32_TROUBLESHOOTING.md`
+  - Created: `ESP32_GUIDE.md` - Complete ESP32 integration guide with:
+    - All endpoints (PROD/TEST)
+    - Authentication & security
+    - Example code (Arduino/ESP32)
+    - GPIO mapping
+    - Troubleshooting guide
+    - Configuration guide
+
+- **Consolidated Deployment Documentation** : Combined 2 files into one comprehensive guide
+  - Deleted: `COMMANDES_SERVEUR.txt`, `SERVEUR_DEPLOY.md`
+  - Created: `docs/deployment/DEPLOYMENT_GUIDE.md` with:
+    - Quick deployment options
+    - Step-by-step procedures
+    - Post-deployment verification
+    - Troubleshooting
+    - Server commands reference
+
+### ✨ Ajouté
+- **Documentation Index** : `docs/README.md` - Complete navigation index
+  - Current documentation listing
+  - Archived documentation by category
+  - Quick links by role (developer, ESP32, deployment)
+  - Documentation maintenance guidelines
+  - Documentation structure diagram
+
+- **Cleanup Summary** : `DOCUMENTATION_CLEANUP_SUMMARY.md` - Detailed cleanup report
+  - What was done and why
+  - Before/after statistics
+  - Maintenance guidelines
+
+### 📁 Structure
+```
+docs/
+├── README.md                      # Documentation index
+├── deployment/
+│   └── DEPLOYMENT_GUIDE.md        # Deployment procedures
+└── archive/
+    ├── migrations/                # 5 historical migration docs
+    ├── diagnostics/               # 3 diagnostic reports
+    └── implementations/           # 5 version-specific guides
+```
+
+### 🎯 Impact
+- **Easier navigation** : Clear separation of current vs historical documentation
+- **Better maintainability** : Organized structure for future documentation
+- **Improved onboarding** : New developers can find relevant docs quickly
+- **Historical context** : Past decisions and implementations preserved in archives
+
+---
+
 ## [4.4.0] - 2025-10-11 🔄 Homogénéisation PROD/TEST et modernisation interfaces
 
 ### ✨ Ajouté
