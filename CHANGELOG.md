@@ -7,6 +7,89 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.4.0] - 2025-10-11 🔄 Homogénéisation PROD/TEST et modernisation interfaces
+
+### ✨ Ajouté
+- **Endpoint Heartbeat TEST** : Nouvelle route `/heartbeat-test` pour l'environnement TEST
+  - Contrôleur unifié `HeartbeatController` gérant PROD et TEST
+  - Support des tables `ffp3Heartbeat` (PROD) et `ffp3Heartbeat2` (TEST)
+  - Validation CRC32 pour l'intégrité des données
+  - Logs structurés avec environnement
+
+- **Modernisation du Dashboard** (`templates/dashboard.twig`)
+  - Badge LIVE temps réel (connecting, online, offline, error, warning, paused)
+  - System Health Panel avec 4 indicateurs :
+    - Statut du système (en ligne/hors ligne)
+    - Dernière réception de données
+    - Uptime sur 30 jours
+    - Nombre de lectures aujourd'hui
+  - Cartes statistiques modernes avec icônes Font Awesome
+  - Hover effects et animations
+  - Support PWA complet (manifest, service worker, apple touch icons)
+  - Scripts temps réel (toast-notifications.js, realtime-updater.js, pwa-init.js)
+
+- **Modernisation Tide Stats** (`templates/tide_stats.twig`)
+  - Badge LIVE temps réel
+  - Scripts temps réel intégrés
+  - Support PWA complet
+  - Polling automatique toutes les 30 secondes
+
+### 🔧 Amélioré
+- **API Paths dynamiques** : Tous les templates utilisent le bon chemin API selon l'environnement
+  - PROD : `/ffp3/api/realtime`
+  - TEST : `/ffp3/api/realtime-test`
+  - Gestion automatique via variable Twig `{{ environment }}`
+
+- **Contrôleurs** : Ajout de la variable `environment` dans tous les contrôleurs
+  - `AquaponieController`
+  - `DashboardController`
+  - `TideStatsController`
+  - Transmission systématique aux templates Twig
+
+- **Interface unifiée** : Toutes les pages (aquaponie, dashboard, tide-stats, control) ont maintenant :
+  - Le même niveau de modernité
+  - Le même système temps réel
+  - Le même support PWA
+  - La même charte graphique
+
+### 📡 Endpoints ESP32 consolidés
+
+**PRODUCTION**
+- `POST /post-data` - Ingestion données capteurs
+- `POST /post-ffp3-data.php` - Alias legacy
+- `GET /api/outputs/state` - État GPIO/outputs
+- `POST /heartbeat` - Heartbeat
+- `POST /heartbeat.php` - Alias legacy heartbeat
+
+**TEST**
+- `POST /post-data-test` - Ingestion données TEST
+- `GET /api/outputs-test/state` - État GPIO/outputs TEST
+- `POST /heartbeat-test` - Heartbeat TEST
+- `POST /heartbeat-test.php` - Alias legacy heartbeat TEST
+
+### 🎨 Design
+- Cartes statistiques avec couleurs par type de capteur :
+  - Eau : `#008B74` (vert aqua)
+  - Température : `#d35400` (orange)
+  - Humidité : `#2980b9` (bleu)
+  - Luminosité : `#f39c12` (jaune/or)
+- Hover effects uniformes sur toutes les cartes
+- Transitions fluides (transform, box-shadow)
+- Headers de section avec icônes et bordures colorées
+
+### 🐛 Corrigé
+- Absence de route heartbeat pour l'environnement TEST
+- Incohérence des interfaces entre PROD et TEST
+- Absence de système temps réel sur dashboard et tide-stats
+- Chemins API codés en dur sans gestion de l'environnement
+
+### 🔐 Sécurité
+- Sanitisation des données dans `HeartbeatController`
+- Validation CRC32 obligatoire pour heartbeat
+- Gestion appropriée des erreurs HTTP (400, 500)
+
+---
+
 ## [4.3.1] - 2025-10-11 📱 Amélioration de l'affichage mobile de la page de contrôle
 
 ### 🐛 Corrigé

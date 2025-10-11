@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Config\Database;
+use App\Config\TableConfig;
 use App\Config\Version;
 use App\Repository\SensorReadRepository;
 use App\Service\SensorStatisticsService;
@@ -69,6 +70,9 @@ class DashboardController
         // Récupérer la version du firmware ESP32
         $firmwareVersion = $this->sensorReadRepo->getFirmwareVersion();
 
+        // Environnement actuel
+        $environment = TableConfig::getEnvironment();
+
         // Sélection du template : legacy ou Twig
         $useLegacy = isset($_GET['legacy']);
         if ($useLegacy) {
@@ -85,6 +89,7 @@ class DashboardController
                 'stats'         => $stats,
                 'version'       => Version::getWithPrefix(),
                 'firmware_version' => $firmwareVersion,
+                'environment'   => $environment,
             ]);
         }
     }

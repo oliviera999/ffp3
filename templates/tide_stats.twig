@@ -8,6 +8,9 @@
     <noscript><link rel="stylesheet" href="https://iot.olution.info/assets/css/noscript.css" /></noscript>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="shortcut icon" type="image/png" href="https://iot.olution.info/images/favico.png"/>
+    <link rel="stylesheet" href="/ffp3/public/assets/css/realtime-styles.css" />
+    <link rel="manifest" href="/ffp3/public/manifest.json" />
+    <link rel="apple-touch-icon" href="/ffp3/public/assets/icons/icon-192.png" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
@@ -539,5 +542,36 @@
             <p>{{ version }} | Système d'aquaponie FFP3 | © 2025 olution</p>
         </footer>
     </div>
+
+    <!-- Badge LIVE pour indicateur temps réel -->
+    <div id="live-badge" class="badge badge-secondary">
+        <i class="fas fa-circle"></i> INITIALISATION...
+    </div>
+
+    <!-- Scripts PWA et Temps Réel -->
+    <script src="/ffp3/public/assets/js/toast-notifications.js"></script>
+    <script src="/ffp3/public/assets/js/realtime-updater.js"></script>
+    <script src="/ffp3/public/assets/js/pwa-init.js"></script>
+    
+    <script>
+        // Initialiser le système temps réel
+        document.addEventListener('DOMContentLoaded', function() {
+            // Utiliser le bon path API selon l'environnement
+            const apiBasePath = '{{ environment == "test" ? "/ffp3/api/realtime-test" : "/ffp3/api/realtime" }}';
+            
+            // Démarrer le polling automatique (30 secondes pour les stats marées)
+            initRealtimeUpdater({
+                apiBasePath: apiBasePath,
+                pollInterval: 30000, // 30 secondes (moins critique que page principale)
+                enabled: true,
+                onNewData: function(data) {
+                    console.log('[Tide Stats] New sensor data received:', data);
+                },
+                onHealthUpdate: function(health) {
+                    console.log('[Tide Stats] System health updated:', health);
+                }
+            });
+        });
+    </script>
 </body>
 </html> 

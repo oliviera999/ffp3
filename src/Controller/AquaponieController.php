@@ -105,6 +105,9 @@ class AquaponieController
         // Calcul du bilan hydrique
         $waterBalance = $this->waterBalanceService->computeBalance($startDate, $endDate);
 
+        // Environnement actuel
+        $environment = TableConfig::getEnvironment();
+
         echo TemplateRenderer::render('aquaponie.twig', array_merge([
             'start_date' => $startDate,
             'end_date'   => $endDate,
@@ -116,6 +119,7 @@ class AquaponieController
             'first_reading_time_begin' => $first_reading_time_begin,
             'version' => Version::getWithPrefix(),
             'firmware_version' => $firmwareVersion,
+            'environment' => $environment,
         ], $chartSeries, [
             'last_reading_tempair' => $lastReadingExtracted['tempair'],
             'last_reading_tempeau' => $lastReadingExtracted['tempeau'],

@@ -6,6 +6,7 @@ use App\Config\Env;
 use App\Controller\AquaponieController;
 use App\Controller\DashboardController;
 use App\Controller\ExportController;
+use App\Controller\HeartbeatController;
 use App\Controller\OutputController;
 use App\Controller\PostDataController;
 use App\Controller\RealtimeApiController;
@@ -78,6 +79,12 @@ $app->get('/api/realtime/system/health', [RealtimeApiController::class, 'getSyst
 $app->get('/api/realtime/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
 
 // ====================================================================
+// Heartbeat ESP32 PROD
+// ====================================================================
+$app->post('/heartbeat', [HeartbeatController::class, 'handle']);
+$app->post('/heartbeat.php', [HeartbeatController::class, 'handle']); // Alias legacy
+
+// ====================================================================
 // Groupe de routes TEST (avec middleware EnvironmentMiddleware)
 // ====================================================================
 $app->group('', function ($group) {
@@ -108,6 +115,10 @@ $app->group('', function ($group) {
     $group->get('/api/realtime-test/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
     $group->get('/api/realtime-test/system/health', [RealtimeApiController::class, 'getSystemHealth']);
     $group->get('/api/realtime-test/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
+    
+    // Heartbeat ESP32 TEST
+    $group->post('/heartbeat-test', [HeartbeatController::class, 'handle']);
+    $group->post('/heartbeat-test.php', [HeartbeatController::class, 'handle']); // Alias legacy
     
 })->add(new EnvironmentMiddleware('test'));
 

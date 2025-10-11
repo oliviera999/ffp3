@@ -43,7 +43,6 @@
             font-size: 2.5em;
             margin-bottom: 10px;
             display: block;
-            color: #008B74;
         }
         
         .stat-card-value {
@@ -65,6 +64,34 @@
             color: #95a5a6;
         }
         
+        .stat-card-details {
+            font-size: 0.75em;
+            color: #7f8c8d;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+        
+        /* Couleurs par type de capteur */
+        .stat-card.water { 
+            border-top: 4px solid #008B74;
+        }
+        .stat-card.water .stat-card-icon { color: #008B74; }
+        
+        .stat-card.temp { 
+            border-top: 4px solid #d35400;
+        }
+        .stat-card.temp .stat-card-icon { color: #d35400; }
+        
+        .stat-card.humidity { 
+            border-top: 4px solid #2980b9;
+        }
+        .stat-card.humidity .stat-card-icon { color: #2980b9; }
+        
+        .stat-card.light { 
+            border-top: 4px solid #f39c12;
+        }
+        .stat-card.light .stat-card-icon { color: #f39c12; }
+        
         /* Section headers */
         .section-header {
             display: flex !important;
@@ -85,6 +112,29 @@
             font-size: 1.8em !important;
             color: #008B74 !important;
             display: inline-block !important;
+        }
+        
+        /* Bannière info */
+        .info-banner {
+            background: linear-gradient(135deg, #007E61 0%, #00B794 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .info-banner-title {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .info-banner-value {
+            font-size: 1.3em;
+            font-weight: bold;
         }
         
         /* Tableau moderne */
@@ -122,29 +172,6 @@
         
         .modern-table tbody tr:hover {
             background: #f8f9fa;
-        }
-        
-        /* Bannière info */
-        .info-banner {
-            background: linear-gradient(135deg, #007E61 0%, #00B794 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin: 20px 0;
-            text-align: center;
-        }
-        
-        .info-banner-title {
-            font-size: 0.9em;
-            opacity: 0.9;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .info-banner-value {
-            font-size: 1.3em;
-            font-weight: bold;
         }
         
         @media (max-width: 768px) {
@@ -199,35 +226,126 @@
                     </div>
                 </div>
 
+                <!-- Panneau d'état du système (temps réel) -->
+                <div class="system-health-panel">
+                    <h3>
+                        <i class="fas fa-heartbeat"></i>
+                        État du système
+                        <span class="refresh-spinner" id="health-spinner">
+                            <i class="fas fa-sync-alt"></i>
+                        </span>
+                    </h3>
+                    
+                    <div class="health-grid">
+                        <div class="health-item">
+                            <div class="health-item-label">Statut</div>
+                            <div id="system-status-indicator" class="status-indicator status-online">
+                                <i class="fas fa-check-circle"></i> En ligne
+                            </div>
+                        </div>
+                        
+                        <div class="health-item">
+                            <div class="health-item-label">Dernière réception</div>
+                            <div class="health-item-value" id="last-reading-time">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="health-item">
+                            <div class="health-item-label">Uptime (30j)</div>
+                            <div class="health-item-value" id="system-uptime">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="health-item">
+                            <div class="health-item-label">Lectures aujourd'hui</div>
+                            <div class="health-item-value" id="readings-today">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="next-update-countdown" id="next-update-info">
+                        Prochaine mise à jour dans <strong id="countdown-seconds">15</strong> secondes
+                    </div>
+                </div>
+
                 <!-- Section Dernière lecture -->
                 <div class="section-header">
                     <i class="fas fa-clock"></i>
                     <h3>Dernière lecture</h3>
                 </div>
 
-    {% if lastReading %}
-                    <div class="modern-table">
-        <table>
-            <thead>
-                <tr>
-                    {% for k in lastReading.keys %}<th>{{ k }}</th>{% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                                    {% for v in lastReading.values %}<td><strong>{{ v }}</strong></td>{% endfor %}
-                </tr>
-            </tbody>
-        </table>
-                    </div>
-    {% else %}
-                    <p style="text-align: center; color: #7f8c8d; padding: 30px;">Aucune donnée disponible.</p>
-    {% endif %}
+{% if lastReading %}
+                <div class="modern-table">
+    <table>
+        <thead>
+            <tr>
+                {% for k in lastReading|keys %}<th>{{ k }}</th>{% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                                {% for v in lastReading %}<td><strong>{{ v }}</strong></td>{% endfor %}
+            </tr>
+        </tbody>
+    </table>
+                </div>
+{% else %}
+                <p style="text-align: center; color: #7f8c8d; padding: 30px;">Aucune donnée disponible.</p>
+{% endif %}
 
-                <!-- Section Statistiques -->
+                <!-- Section Statistiques avec cartes modernes -->
                 <div class="section-header">
                     <i class="fas fa-chart-bar"></i>
                     <h3>Statistiques par capteur</h3>
+                </div>
+
+                <div class="stats-grid">
+{% for sensor, s in stats %}
+    {% set iconClass = 'fa-circle' %}
+    {% set cardClass = '' %}
+    
+    {% if sensor == 'TempAir' or sensor == 'TempEau' %}
+        {% set iconClass = 'fa-temperature-half' %}
+        {% set cardClass = 'temp' %}
+    {% elseif sensor == 'Humidite' %}
+        {% set iconClass = 'fa-droplet' %}
+        {% set cardClass = 'humidity' %}
+    {% elseif sensor == 'Luminosite' %}
+        {% set iconClass = 'fa-lightbulb' %}
+        {% set cardClass = 'light' %}
+    {% elseif sensor matches '/Eau/' %}
+        {% set iconClass = 'fa-water' %}
+        {% set cardClass = 'water' %}
+    {% endif %}
+    
+                    <div class="stat-card {{ cardClass }}">
+                        <i class="fas {{ iconClass }} stat-card-icon"></i>
+                        <div class="stat-card-label">{{ sensor }}</div>
+                        <div class="stat-card-value">
+                            {{ s.avg|number_format(1, ',', ' ') }}
+                            <span class="stat-card-unit">
+                                {% if sensor matches '/Temp/' %}°C
+                                {% elseif sensor == 'Humidite' %}%
+                                {% elseif sensor == 'Luminosite' %}UA
+                                {% elseif sensor matches '/Eau/' %}cm
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="stat-card-details">
+                            <div>Min: {{ s.min }} | Max: {{ s.max }}</div>
+                            <div>ET: {{ s.stddev|number_format(2, ',', ' ') }}</div>
+                        </div>
+                    </div>
+{% endfor %}
+                </div>
+
+                <!-- Tableau détaillé (version moderne) -->
+                <div class="section-header">
+                    <i class="fas fa-table"></i>
+                    <h3>Vue détaillée</h3>
                 </div>
 
                 <div class="modern-table">
@@ -258,5 +376,47 @@
         <p>{{ version }} | Firmware ESP32: v{{ firmware_version }} | Système d'aquaponie FFP3 | © 2025 olution</p>
     </footer>
     </div>
+
+    <!-- Badge LIVE pour indicateur temps réel -->
+    <div id="live-badge" class="badge badge-secondary">
+        <i class="fas fa-circle"></i> INITIALISATION...
+    </div>
+
+    <!-- Scripts PWA et Temps Réel -->
+    <script src="/ffp3/public/assets/js/toast-notifications.js"></script>
+    <script src="/ffp3/public/assets/js/realtime-updater.js"></script>
+    <script src="/ffp3/public/assets/js/pwa-init.js"></script>
+    
+    <script>
+        // Initialiser le système temps réel
+        document.addEventListener('DOMContentLoaded', function() {
+            // Utiliser le bon path API selon l'environnement
+            const apiBasePath = '{{ environment == "test" ? "/ffp3/api/realtime-test" : "/ffp3/api/realtime" }}';
+            
+            // Démarrer le polling automatique (15 secondes)
+            initRealtimeUpdater({
+                apiBasePath: apiBasePath,
+                pollInterval: 15000,
+                enabled: true,
+                onNewData: function(data) {
+                    console.log('[Dashboard] New sensor data received:', data);
+                    // Optionnel: recharger la page pour afficher les nouvelles données
+                    // window.location.reload();
+                },
+                onHealthUpdate: function(health) {
+                    console.log('[Dashboard] System health updated:', health);
+                }
+            });
+        });
+    </script>
+
+    <!-- Scripts navigation -->
+    <script src="https://iot.olution.info/assets/js/jquery.min.js"></script>
+    <script src="https://iot.olution.info/assets/js/jquery.scrollex.min.js"></script>
+    <script src="https://iot.olution.info/assets/js/jquery.scrolly.min.js"></script>
+    <script src="https://iot.olution.info/assets/js/browser.min.js"></script>
+    <script src="https://iot.olution.info/assets/js/breakpoints.min.js"></script>
+    <script src="https://iot.olution.info/assets/js/util.js"></script>
+    <script src="https://iot.olution.info/assets/js/main.js"></script>
 </body>
-</html> 
+</html>

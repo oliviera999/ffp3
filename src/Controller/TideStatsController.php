@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Config\Database;
+use App\Config\TableConfig;
 use App\Config\Version;
 use App\Repository\SensorReadRepository;
 use App\Service\TemplateRenderer;
@@ -44,6 +45,9 @@ class TideStatsController
 
         $weeklyStatsJson = json_encode($weeklyStats, JSON_THROW_ON_ERROR);
 
+        // Environnement actuel
+        $environment = TableConfig::getEnvironment();
+
         echo TemplateRenderer::render('tide_stats.twig', [
             'start_date' => $startDate,
             'end_date'   => $endDate,
@@ -60,6 +64,7 @@ class TideStatsController
             
             // Version du projet
             'version' => Version::getWithPrefix(),
+            'environment' => $environment,
         ]);
     }
 } 

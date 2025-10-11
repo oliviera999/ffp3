@@ -1691,22 +1691,26 @@
         <script src="/ffp3/public/assets/js/realtime-updater.js"></script>
         <script src="/ffp3/public/assets/js/pwa-init.js"></script>
         
-        <script>
-            // Initialiser le système temps réel
-            document.addEventListener('DOMContentLoaded', function() {
-                // Démarrer le polling automatique (15 secondes)
-                initRealtimeUpdater({
-                    pollInterval: 15000,
-                    enabled: true,
-                    onNewData: function(data) {
-                        console.log('[Aquaponie] New sensor data received:', data);
-                        // TODO: Mettre à jour les graphiques avec nouvelles données
-                    },
-                    onHealthUpdate: function(health) {
-                        console.log('[Aquaponie] System health updated:', health);
-                    }
-                });
+    <script>
+        // Initialiser le système temps réel
+        document.addEventListener('DOMContentLoaded', function() {
+            // Démarrer le polling automatique (15 secondes)
+            // Utiliser le bon path API selon l'environnement
+            const apiBasePath = '{{ environment == "test" ? "/ffp3/api/realtime-test" : "/ffp3/api/realtime" }}';
+            
+            initRealtimeUpdater({
+                apiBasePath: apiBasePath,
+                pollInterval: 15000,
+                enabled: true,
+                onNewData: function(data) {
+                    console.log('[Aquaponie] New sensor data received:', data);
+                    // TODO: Mettre à jour les graphiques avec nouvelles données
+                },
+                onHealthUpdate: function(health) {
+                    console.log('[Aquaponie] System health updated:', health);
+                }
             });
-        </script>
+        });
+    </script>
     </body>
 </html>
