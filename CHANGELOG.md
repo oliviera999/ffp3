@@ -7,6 +7,60 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.2.1] - 2025-10-11 🎨 Amélioration visuelle des graphiques
+
+### 🔧 Modifié
+- **Graphiques des paramètres physiques** : Ajout d'un effet d'ombrage (area fill) pour les courbes de température (eau et air), humidité et luminosité
+  - Type de graphique changé de `line` à `areaspline` pour les séries concernées
+  - Ajout de dégradés colorés sous les courbes avec `fillColor` (opacité de 0.3 à 0.05)
+  - Configuration `fillOpacity: 0.3` ajoutée dans les `plotOptions` pour cohérence
+  - Harmonisation visuelle avec les graphiques des niveaux d'eau qui avaient déjà cet effet
+
+### 🎯 Impact
+- Meilleure lisibilité et esthétique des graphiques
+- Interface utilisateur plus cohérente et moderne
+- Aucun impact sur les performances ou les données
+
+---
+
+## [4.2.0] - 2025-10-11 🔄 Synchronisation temps réel de l'interface de contrôle
+
+### ✨ Ajouté
+- **Synchronisation temps réel pour l'interface de contrôle** : L'interface `/control` se met maintenant à jour automatiquement pour refléter les changements côté serveur
+  - Nouveau fichier JavaScript `public/assets/js/control-sync.js` avec la classe `ControlSync`
+  - Polling automatique de l'état des GPIO toutes les 10 secondes
+  - Détection automatique des changements d'état effectués par d'autres utilisateurs ou l'ESP32
+  - Mise à jour automatique des switches (toggles) sans rechargement de page
+  - **Badge LIVE** en haut à droite indiquant l'état de la synchronisation :
+    - 🟢 **SYNC** : Synchronisation active et fonctionnelle
+    - 🟠 **CONNEXION...** : Connexion en cours (animation pulse)
+    - 🔴 **HORS LIGNE** : Perte de connexion
+    - 🟡 **RECONNEXION...** : Tentative de reconnexion après erreur
+    - 🔵 **PAUSE** : Synchronisation en pause (onglet inactif)
+    - ⚠️ **ERREUR** : Échec après plusieurs tentatives
+  - **Animation flash** sur les switches qui changent d'état (fond jaune pendant 1s)
+  - **Notifications toast** lors de la détection de changements
+  - Gestion intelligente de la visibilité de la page (pause automatique si onglet inactif)
+  - Système de retry avec backoff exponentiel (max 5 tentatives)
+  - Logs détaillés dans la console pour le debugging
+
+### 🔧 Modifié
+- **Template `control.twig`** : Ajout du badge LIVE, styles CSS pour les animations, et initialisation automatique de la synchronisation au chargement
+- Fonction `updateOutput()` modifiée pour forcer une synchronisation immédiate après un toggle manuel (délai 500ms)
+
+### 📚 Documentation
+- Cette fonctionnalité était prévue dans `TODO_AMELIORATIONS_CONTROL.md` et `IMPLEMENTATION_REALTIME_PWA.md`
+- Permet une expérience collaborative : plusieurs utilisateurs peuvent contrôler le système simultanément
+- Utile pour voir en temps réel les actions automatiques de l'ESP32 (ex: activation automatique du chauffage)
+
+### 🎯 Technique
+- API utilisée : `GET /api/outputs/state` (existante)
+- Intervalle de polling : 10 secondes (configurable)
+- Pas de surcharge serveur : requêtes légères (JSON simple avec paires GPIO/state)
+- Compatible mobile : badge responsive et optimisé tactile
+
+---
+
 ## [4.1.0] - 2025-10-11 ✨ Affichage version firmware ESP32
 
 ### ✨ Ajouté

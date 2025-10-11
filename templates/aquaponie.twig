@@ -1249,6 +1249,10 @@
                                     valueDecimals: 1
                                 },
                                 plotOptions: {
+                                    areaspline: {
+                                        fillOpacity: 0.3,
+                                        marker: { enabled: false, radius: 2 }
+                                    },
                                     series: {
                                         showInNavigator: true
                                     },
@@ -1263,33 +1267,53 @@
                                 series: [
                                     { 
                                         name: 'Température eau', 
+                                        type: 'areaspline',
                                         data: TempEau, 
                                         yAxis: 0, 
                                         color: '#00B794',
+                                        fillColor: {
+                                            linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+                                            stops: [[0, 'rgba(0,183,148,0.3)'], [1, 'rgba(0,183,148,0.05)']]
+                                        },
                                         lineWidth: 2,
                                         tooltip: { valueSuffix: '°C' } 
                                     },
                                     { 
                                         name: 'Température air', 
+                                        type: 'areaspline',
                                         data: TempAir, 
                                         yAxis: 0, 
                                         color: '#007E61',
+                                        fillColor: {
+                                            linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+                                            stops: [[0, 'rgba(0,126,97,0.3)'], [1, 'rgba(0,126,97,0.05)']]
+                                        },
                                         lineWidth: 2,
                                         tooltip: { valueSuffix: '°C' } 
                                     },
                                     { 
                                         name: 'Humidité', 
+                                        type: 'areaspline',
                                         data: Humidite, 
                                         yAxis: 1, 
                                         color: '#2980b9',
+                                        fillColor: {
+                                            linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+                                            stops: [[0, 'rgba(41,128,185,0.3)'], [1, 'rgba(41,128,185,0.05)']]
+                                        },
                                         lineWidth: 2,
                                         tooltip: { valueSuffix: '%' } 
                                     },
                                     { 
                                         name: 'Luminosité', 
+                                        type: 'areaspline',
                                         data: Luminosite, 
                                         yAxis: 2, 
                                         color: '#FF6300',
+                                        fillColor: {
+                                            linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+                                            stops: [[0, 'rgba(255,99,0,0.3)'], [1, 'rgba(255,99,0,0.05)']]
+                                        },
                                         lineWidth: 2,
                                         tooltip: { valueSuffix: ' UA' } 
                                     },
