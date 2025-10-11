@@ -7,6 +7,21 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.4.2] - 2025-10-11 🔧 Fix Asset Paths
+
+### 🐛 Corrigé
+- **Asset Paths**: Correction des chemins des fichiers statiques dans tous les templates
+  - Avant : `/ffp3/public/assets/` (404 errors)
+  - Après : `/ffp3/assets/` (correct paths)
+  - Fichiers corrigés : `aquaponie.twig`, `dashboard.twig`, `tide_stats.twig`, `control.twig`
+  - Impact : Résolution des erreurs 404 pour CSS/JS (realtime-styles.css, realtime-updater.js, etc.)
+  - 22 occurrences corrigées au total
+
+### 📝 Contexte
+Le serveur web pointe déjà vers le dossier `public/` comme document root, donc les URLs ne doivent pas inclure `/public/` dans le chemin.
+
+---
+
 ## [4.4.1] - 2025-10-11 📚 Major Documentation Cleanup
 
 ### 📚 Amélioré
