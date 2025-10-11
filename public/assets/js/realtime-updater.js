@@ -5,7 +5,7 @@
 class RealtimeUpdater {
     constructor(options = {}) {
         this.pollInterval = options.pollInterval || 15000; // 15 secondes par défaut
-        this.apiBasePath = options.apiBasePath || '/ffp3/ffp3datas/api/realtime';
+        this.apiBasePath = options.apiBasePath || '/ffp3/api/realtime';
         this.enabled = options.enabled !== false;
         this.lastTimestamp = Math.floor(Date.now() / 1000);
         this.pollTimer = null;

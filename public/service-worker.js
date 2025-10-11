@@ -8,14 +8,14 @@ const RUNTIME_CACHE = 'ffp3-runtime';
 
 // Assets à mettre en cache lors de l'installation
 const STATIC_ASSETS = [
-    '/ffp3/ffp3datas/',
-    '/ffp3/ffp3datas/dashboard',
-    '/ffp3/ffp3datas/aquaponie',
-    '/ffp3/ffp3datas/control',
-    '/ffp3/ffp3datas/assets/css/realtime-styles.css',
-    '/ffp3/ffp3datas/assets/js/toast-notifications.js',
-    '/ffp3/ffp3datas/assets/js/realtime-updater.js',
-    '/ffp3/ffp3datas/manifest.json',
+    '/ffp3/',
+    '/ffp3/dashboard',
+    '/ffp3/aquaponie',
+    '/ffp3/control',
+    '/ffp3/public/assets/css/realtime-styles.css',
+    '/ffp3/public/assets/js/toast-notifications.js',
+    '/ffp3/public/assets/js/realtime-updater.js',
+    '/ffp3/public/manifest.json',
     'https://code.highcharts.com/stock/highstock.js',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
     'https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js'
@@ -141,13 +141,13 @@ self.addEventListener('push', event => {
     const title = data.title || 'FFP3 Aquaponie';
     const options = {
         body: data.body || 'Nouvelle notification',
-        icon: '/ffp3/ffp3datas/assets/icons/icon-192.png',
-        badge: '/ffp3/ffp3datas/assets/icons/icon-72.png',
+        icon: '/ffp3/public/assets/icons/icon-192.png',
+        badge: '/ffp3/public/assets/icons/icon-72.png',
         vibrate: [200, 100, 200],
         tag: data.tag || 'general',
         requireInteraction: data.requireInteraction || false,
         data: {
-            url: data.url || '/ffp3/ffp3datas/',
+            url: data.url || '/ffp3/',
             timestamp: Date.now()
         },
         actions: data.actions || [
@@ -174,7 +174,7 @@ self.addEventListener('notificationclick', event => {
     }
     
     // Ouvrir ou focus sur l'application
-    const urlToOpen = event.notification.data.url || '/ffp3/ffp3datas/';
+    const urlToOpen = event.notification.data.url || '/ffp3/';
     
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true })
@@ -213,7 +213,7 @@ async function syncDataWithServer() {
         console.log('[SW] Syncing data with server...');
         
         // Récupérer les dernières données
-        const response = await fetch('/ffp3/ffp3datas/api/realtime/sensors/latest');
+        const response = await fetch('/ffp3/api/realtime/sensors/latest');
         
         if (response.ok) {
             const data = await response.json();

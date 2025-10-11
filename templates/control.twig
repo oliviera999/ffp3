@@ -11,9 +11,9 @@
     <noscript><link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
     <link rel="stylesheet" href="/ffp3/ffp3control/ffp3-style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="assets/css/realtime-styles.css" />
-    <link rel="manifest" href="manifest.json" />
-    <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+    <link rel="stylesheet" href="/ffp3/public/assets/css/realtime-styles.css" />
+    <link rel="manifest" href="/ffp3/public/manifest.json" />
+    <link rel="apple-touch-icon" href="/ffp3/public/assets/icons/icon-192.png" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="shortcut icon" type="image/png" href="https://iot.olution.info/images/favico.png"/>
     <style>
@@ -401,7 +401,7 @@
     </div>
 
 <script>
-    const API_BASE = '/ffp3/ffp3datas/api/outputs{{ environment == "test" ? "-test" : "" }}';
+    const API_BASE = '/ffp3/api/outputs{{ environment == "test" ? "-test" : "" }}';
     
     function updateOutput(element) {
         var id = element.getAttribute('data-id');
