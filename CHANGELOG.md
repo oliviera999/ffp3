@@ -7,6 +7,20 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.4.3] - 2025-10-11 🔧 Fix Asset Paths with .htaccess Rewrite Rules
+
+### 🐛 Corrigé
+- **Asset Routing**: Ajout de règles de réécriture Apache dans `.htaccess`
+  - Redirige automatiquement `/assets/*` vers `/public/assets/*`
+  - Redirige `/manifest.json` et `/service-worker.js` vers `/public/`
+  - Solution propre et permanente sans duplication de fichiers
+  - Garde la structure standard du projet (fichiers publics dans `public/`)
+
+### 📝 Contexte
+Suite aux erreurs 404 persistantes malgré la correction des chemins en v4.4.2, ajout de règles de réécriture Apache pour mapper correctement les URLs vers le dossier `public/`.
+
+---
+
 ## [4.4.2] - 2025-10-11 🔧 Fix Asset Paths
 
 ### 🐛 Corrigé
