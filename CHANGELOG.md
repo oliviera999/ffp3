@@ -7,6 +7,20 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.1.0] - 2025-10-11 ✨ Affichage version firmware ESP32
+
+### ✨ Ajouté
+- **Affichage version firmware ESP32** : La version du firmware utilisée par l'ESP32 est maintenant affichée dans le pied de page
+  - Nouvelle méthode `SensorReadRepository::getFirmwareVersion()` pour récupérer la version depuis la base de données
+  - Ajout de la version firmware dans `AquaponieController` et `DashboardController`
+  - Affichage dans le footer des templates `aquaponie.twig` et `dashboard.twig`
+  - Format d'affichage : "v4.1.0 | Firmware ESP32: v10.90 | Système d'aquaponie FFP3 | © 2025 olution"
+
+### 🔧 Modifié
+- Mise à jour du pied de page pour inclure la version du firmware ESP32 à côté de la version de l'application web
+
+---
+
 ## [4.0.0] - 2025-10-11 🚀 MAJOR RELEASE - Temps Réel & PWA
 
 ### 💥 Breaking Changes

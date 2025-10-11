@@ -95,6 +95,9 @@ class AquaponieController
             exit;
         }
 
+        // Récupérer la version du firmware ESP32
+        $firmwareVersion = $this->sensorReadRepo->getFirmwareVersion();
+
         echo TemplateRenderer::render('aquaponie.twig', array_merge([
             'start_date' => $startDate,
             'end_date'   => $endDate,
@@ -105,6 +108,7 @@ class AquaponieController
             'timepastbegin' => $timepastbegin,
             'first_reading_time_begin' => $first_reading_time_begin,
             'version' => Version::getWithPrefix(),
+            'firmware_version' => $firmwareVersion,
         ], $chartSeries, [
             'last_reading_tempair' => $lastReadingExtracted['tempair'],
             'last_reading_tempeau' => $lastReadingExtracted['tempeau'],

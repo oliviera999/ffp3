@@ -66,6 +66,9 @@ class DashboardController
             $this->exportCsv($startDate, $endDate);
         }
 
+        // Récupérer la version du firmware ESP32
+        $firmwareVersion = $this->sensorReadRepo->getFirmwareVersion();
+
         // Sélection du template : legacy ou Twig
         $useLegacy = isset($_GET['legacy']);
         if ($useLegacy) {
@@ -81,6 +84,7 @@ class DashboardController
                 'lastReading'   => $lastReading,
                 'stats'         => $stats,
                 'version'       => Version::getWithPrefix(),
+                'firmware_version' => $firmwareVersion,
             ]);
         }
     }

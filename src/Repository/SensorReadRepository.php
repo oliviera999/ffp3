@@ -170,4 +170,20 @@ class SensorReadRepository
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return (int)($result['count'] ?? 0);
     }
+
+    /**
+     * Récupère la version du firmware de la dernière mesure enregistrée
+     *
+     * @return string Version du firmware (ex: "10.90") ou "N/A" si aucune donnée
+     */
+    public function getFirmwareVersion(): string
+    {
+        $table = TableConfig::getDataTable();
+        $sql = "SELECT version FROM {$table} ORDER BY reading_time DESC LIMIT 1";
+        
+        $stmt = $this->pdo->query($sql);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $result['version'] ?? 'N/A';
+    }
 }
