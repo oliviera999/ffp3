@@ -1,3 +1,7 @@
+# Composer
+/vendor/
+composer.phar
+
 # Logs
 error_log
 cronlog.txt
