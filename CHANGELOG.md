@@ -7,6 +7,74 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.3.1] - 2025-10-11 📱 Amélioration de l'affichage mobile de la page de contrôle
+
+### 🐛 Corrigé
+- **Problème d'affichage sur smartphone** : Les boutons et actionneurs ne dépassent plus de leur container sur petits écrans
+- **Grille des actionneurs** : Passage automatique en une seule colonne sur mobile (≤768px) au lieu de forcer une largeur minimale de 200px
+- **Switches** : Réduction de la taille des interrupteurs sur mobile (scale 0.7) et très petits écrans (scale 0.6 pour <400px)
+- **Boutons d'actions rapides** : Les 3 boutons (Cron manuel, Journal, Retour) s'empilent verticalement sur mobile pour une meilleure ergonomie
+- **Padding et marges** : Réduction générale des espacements sur mobile pour optimiser l'espace disponible
+- **Icônes** : Ajustement de la taille des icônes sur mobile pour maintenir une bonne lisibilité
+
+### 🎨 Amélioré
+- **Design responsive** : Meilleure harmonisation de l'interface sur tous les formats d'écran
+- **Lisibilité** : Tailles de police adaptatives sur très petits écrans (<400px)
+- **Esthétique** : Interface plus propre et professionnelle sur smartphone
+
+---
+
+## [4.3.0] - 2025-10-11 💧 Ajout du bloc Bilan Hydrique
+
+### ✨ Ajouté
+- **Nouveau bloc "Bilan Hydrique"** sur la page d'affichage des données d'aquaponie
+  - Section dédiée affichant les statistiques avancées de consommation et ravitaillement d'eau
+  - Deux cartes distinctes :
+    - **Carte Réserve d'eau** avec :
+      - Consommation totale (somme des baisses de niveau, en cm)
+      - Ravitaillement total (somme des montées de niveau, en cm)
+      - Bilan net (ravitaillement - consommation)
+    - **Carte Cycles de marée** avec :
+      - Marnage moyen de l'aquarium avec écart-type (amplitude des cycles en cm)
+      - Fréquence des marées avec écart-type (nombre de cycles par heure)
+      - Nombre total de cycles détectés
+      - Consommation moyenne de l'aquarium par cycle
+  - **Filtrage des incertitudes de mesure** : Les variations ≤ 1 cm sont automatiquement ignorées dans les calculs
+  - Design moderne et responsive avec icônes distinctives et couleurs adaptées
+  - Note explicative sur le filtrage des incertitudes
+
+### 🔧 Backend
+- **Nouveau service `WaterBalanceService`** (`src/Service/WaterBalanceService.php`)
+  - Calcul de la consommation et du ravitaillement de la réserve avec filtrage des variations d'incertitude
+  - Détection automatique des cycles de marée (changements de direction montée/descente)
+  - Calcul du marnage moyen et de son écart-type
+  - Calcul de la fréquence des marées (cycles/heure) et de son écart-type
+  - Calcul de la consommation moyenne de l'aquarium
+  - Gestion des cas vides (pas de données)
+- **Modification du contrôleur `AquaponieController`**
+  - Injection du nouveau service `WaterBalanceService`
+  - Calcul des données de bilan hydrique pour chaque période analysée
+  - Transmission des données au template Twig
+- **Enregistrement du service dans le conteneur de dépendances** (`config/dependencies.php`)
+
+### 🎨 Frontend
+- **Nouveau template dans `aquaponie.twig`**
+  - Section "Bilan Hydrique" avec header stylisé
+  - Grille responsive pour les cartes de statistiques (2 colonnes desktop, 1 colonne mobile)
+  - Styles CSS dédiés pour les cartes de bilan (`.balance-card`, `.balance-stat`, etc.)
+  - Indicateurs visuels colorés (vert pour ravitaillement, rouge pour consommation, bleu pour bilan)
+  - Animation au survol des cartes
+  - Affichage conditionnel des écarts-types
+  - Responsive design pour mobile
+
+### 🎯 Impact
+- Meilleure visibilité sur la gestion de l'eau du système aquaponique
+- Détection précise des cycles de marée et de leur régularité
+- Aide à l'analyse des consommations et au dimensionnement du système
+- Filtrage intelligent des bruits de mesure pour des statistiques plus fiables
+
+---
+
 ## [4.2.1] - 2025-10-11 🎨 Amélioration visuelle des graphiques
 
 ### 🔧 Modifié

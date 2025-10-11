@@ -11,21 +11,25 @@ use App\Repository\SensorReadRepository;
 use App\Service\ChartDataService;
 use App\Service\StatisticsAggregatorService;
 use App\Service\TemplateRenderer;
+use App\Service\WaterBalanceService;
 
 class AquaponieController
 {
     private SensorReadRepository $sensorReadRepo;
     private StatisticsAggregatorService $statsAggregator;
     private ChartDataService $chartDataService;
+    private WaterBalanceService $waterBalanceService;
 
     public function __construct(
         SensorReadRepository $sensorReadRepo,
         StatisticsAggregatorService $statsAggregator,
-        ChartDataService $chartDataService
+        ChartDataService $chartDataService,
+        WaterBalanceService $waterBalanceService
     ) {
         $this->sensorReadRepo = $sensorReadRepo;
         $this->statsAggregator = $statsAggregator;
         $this->chartDataService = $chartDataService;
+        $this->waterBalanceService = $waterBalanceService;
     }
 
     /**
@@ -98,6 +102,9 @@ class AquaponieController
         // Récupérer la version du firmware ESP32
         $firmwareVersion = $this->sensorReadRepo->getFirmwareVersion();
 
+        // Calcul du bilan hydrique
+        $waterBalance = $this->waterBalanceService->computeBalance($startDate, $endDate);
+
         echo TemplateRenderer::render('aquaponie.twig', array_merge([
             'start_date' => $startDate,
             'end_date'   => $endDate,
@@ -117,7 +124,7 @@ class AquaponieController
             'last_reading_eauaqua' => $lastReadingExtracted['eauaqua'],
             'last_reading_eaureserve' => $lastReadingExtracted['eaureserve'],
             'last_reading_eaupota' => $lastReadingExtracted['eaupota'],
-        ], $statsFlattened));
+        ], $statsFlattened, $waterBalance));
     }
 
     /**

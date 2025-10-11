@@ -252,6 +252,242 @@
                         </div>
                     </div>
 
+                    <!-- Section Bilan Hydrique -->
+                    <div class="section-header">
+                        <i class="fas fa-water"></i>
+                        <h3>Bilan Hydrique</h3>
+                    </div>
+
+                    <style>
+                        .water-balance-grid {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                            gap: 20px;
+                            margin: 20px 0;
+                        }
+                        
+                        .balance-card {
+                            background: white;
+                            border-radius: 12px;
+                            padding: 20px;
+                            box-shadow: 0 2px 8px rgba(0,139,116,0.15);
+                            transition: transform 0.2s, box-shadow 0.2s;
+                            border: 1px solid rgba(0,139,116,0.1);
+                        }
+                        
+                        .balance-card:hover {
+                            transform: translateY(-4px);
+                            box-shadow: 0 6px 16px rgba(0,139,116,0.25);
+                        }
+                        
+                        .balance-card.reserve { 
+                            border-top: 4px solid #008B74;
+                        }
+                        
+                        .balance-card.aquarium { 
+                            border-top: 4px solid #FF6300;
+                        }
+                        
+                        .balance-card-header {
+                            display: flex;
+                            align-items: center;
+                            gap: 12px;
+                            margin-bottom: 15px;
+                            padding-bottom: 12px;
+                            border-bottom: 2px solid #f0f0f0;
+                        }
+                        
+                        .balance-card-icon {
+                            font-size: 2em;
+                            color: #008B74;
+                        }
+                        
+                        .balance-card.aquarium .balance-card-icon {
+                            color: #FF6300;
+                        }
+                        
+                        .balance-card-title {
+                            font-size: 1.1em;
+                            font-weight: bold;
+                            color: #2c3e50;
+                            margin: 0;
+                        }
+                        
+                        .balance-stat {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            padding: 10px 0;
+                            border-bottom: 1px solid #f5f5f5;
+                        }
+                        
+                        .balance-stat:last-child {
+                            border-bottom: none;
+                        }
+                        
+                        .balance-stat-label {
+                            font-size: 0.9em;
+                            color: #7f8c8d;
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                        }
+                        
+                        .balance-stat-value {
+                            font-size: 1.2em;
+                            font-weight: bold;
+                            color: #2c3e50;
+                        }
+                        
+                        .balance-stat-value.positive {
+                            color: #27ae60;
+                        }
+                        
+                        .balance-stat-value.negative {
+                            color: #e74c3c;
+                        }
+                        
+                        .balance-stat-value.neutral {
+                            color: #3498db;
+                        }
+                        
+                        .balance-stat-unit {
+                            font-size: 0.8em;
+                            color: #95a5a6;
+                            margin-left: 4px;
+                        }
+                        
+                        .balance-note {
+                            margin-top: 15px;
+                            padding: 12px;
+                            background: #f8f9fa;
+                            border-radius: 8px;
+                            font-size: 0.85em;
+                            color: #6c757d;
+                            line-height: 1.5;
+                        }
+                        
+                        .balance-note i {
+                            color: #008B74;
+                            margin-right: 6px;
+                        }
+
+                        @media (max-width: 768px) {
+                            .water-balance-grid {
+                                grid-template-columns: 1fr;
+                            }
+                        }
+                    </style>
+
+                    <div class="water-balance-grid">
+                        <!-- Carte Réserve -->
+                        <div class="balance-card reserve">
+                            <div class="balance-card-header">
+                                <i class="fas fa-droplet balance-card-icon"></i>
+                                <h4 class="balance-card-title">Réserve d'eau</h4>
+                            </div>
+                            
+                            <div class="balance-stat">
+                                <span class="balance-stat-label">
+                                    <i class="fas fa-arrow-down" style="color: #e74c3c;"></i>
+                                    Consommation totale
+                                </span>
+                                <span class="balance-stat-value negative">
+                                    {{ reserve_consumption|default(0)|round(1) }}
+                                    <span class="balance-stat-unit">cm</span>
+                                </span>
+                            </div>
+                            
+                            <div class="balance-stat">
+                                <span class="balance-stat-label">
+                                    <i class="fas fa-arrow-up" style="color: #27ae60;"></i>
+                                    Ravitaillement total
+                                </span>
+                                <span class="balance-stat-value positive">
+                                    {{ reserve_refill|default(0)|round(1) }}
+                                    <span class="balance-stat-unit">cm</span>
+                                </span>
+                            </div>
+                            
+                            <div class="balance-stat">
+                                <span class="balance-stat-label">
+                                    <i class="fas fa-balance-scale" style="color: #3498db;"></i>
+                                    Bilan net
+                                </span>
+                                <span class="balance-stat-value {% if reserve_balance|default(0) > 0 %}positive{% elseif reserve_balance|default(0) < 0 %}negative{% else %}neutral{% endif %}">
+                                    {% if reserve_balance|default(0) > 0 %}+{% endif %}{{ reserve_balance|default(0)|round(1) }}
+                                    <span class="balance-stat-unit">cm</span>
+                                </span>
+                            </div>
+                            
+                            <div class="balance-note">
+                                <i class="fas fa-info-circle"></i>
+                                <strong>Note :</strong> Les variations ≤ 1 cm sont considérées comme des incertitudes de mesure et ne sont pas prises en compte.
+                            </div>
+                        </div>
+                        
+                        <!-- Carte Aquarium - Marées -->
+                        <div class="balance-card aquarium">
+                            <div class="balance-card-header">
+                                <i class="fas fa-water balance-card-icon"></i>
+                                <h4 class="balance-card-title">Cycles de marée</h4>
+                            </div>
+                            
+                            <div class="balance-stat">
+                                <span class="balance-stat-label">
+                                    <i class="fas fa-arrows-alt-v"></i>
+                                    Marnage moyen
+                                </span>
+                                <span class="balance-stat-value neutral">
+                                    {{ tide_marnage|default(0)|round(2) }}
+                                    <span class="balance-stat-unit">cm</span>
+                                    {% if tide_marnage_stddev is not null %}
+                                        <span style="font-size: 0.7em; color: #95a5a6;">
+                                            ± {{ tide_marnage_stddev|round(2) }}
+                                        </span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            
+                            <div class="balance-stat">
+                                <span class="balance-stat-label">
+                                    <i class="fas fa-clock"></i>
+                                    Fréquence des marées
+                                </span>
+                                <span class="balance-stat-value neutral">
+                                    {{ tide_frequency|default(0)|round(2) }}
+                                    <span class="balance-stat-unit">/heure</span>
+                                    {% if tide_frequency_stddev is not null %}
+                                        <span style="font-size: 0.7em; color: #95a5a6;">
+                                            ± {{ tide_frequency_stddev|round(2) }}
+                                        </span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            
+                            <div class="balance-stat">
+                                <span class="balance-stat-label">
+                                    <i class="fas fa-repeat"></i>
+                                    Nombre de cycles
+                                </span>
+                                <span class="balance-stat-value neutral">
+                                    {{ tide_cycles|default(0) }}
+                                </span>
+                            </div>
+                            
+                            <div class="balance-stat">
+                                <span class="balance-stat-label">
+                                    <i class="fas fa-chart-line"></i>
+                                    Consommation moyenne
+                                </span>
+                                <span class="balance-stat-value neutral">
+                                    {{ aquarium_consumption|default(0)|round(2) }}
+                                    <span class="balance-stat-unit">cm</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
                     <hr />
 
                     <!-- Graphiques Stock Navigator + Aires colorées -->

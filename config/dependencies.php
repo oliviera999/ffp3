@@ -19,6 +19,7 @@ use App\Service\StatisticsAggregatorService;
 use App\Service\SystemHealthService;
 use App\Service\TemplateRenderer;
 use App\Service\TideAnalysisService;
+use App\Service\WaterBalanceService;
 use Psr\Container\ContainerInterface;
 
 return [
@@ -69,6 +70,10 @@ return [
 
     TideAnalysisService::class => function (ContainerInterface $c) {
         return new TideAnalysisService($c->get(SensorReadRepository::class));
+    },
+
+    WaterBalanceService::class => function (ContainerInterface $c) {
+        return new WaterBalanceService($c->get(SensorReadRepository::class));
     },
 
     PumpService::class => function (ContainerInterface $c) {
