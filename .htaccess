@@ -14,22 +14,13 @@ RewriteRule ^export-data\.php$ /ffp3/ffp3datas/export-data [R=308,L]
 RewriteRule ^ffp3-data\.php$ /ffp3/ffp3datas/aquaponie [R=308,L] 
 
 # -----------------------------------------------------------------------------
-# Réécriture des assets : /assets/* → /public/assets/*
-# Permet d'accéder aux fichiers CSS/JS/images via /ffp3/assets/ au lieu de /ffp3/public/assets/
-# -----------------------------------------------------------------------------
-RewriteCond %{REQUEST_URI} ^/assets/(.*)$
-RewriteCond %{DOCUMENT_ROOT}/ffp3/public/assets/%1 -f [OR]
-RewriteCond %{DOCUMENT_ROOT}/ffp3/public/assets/%1 -d
-RewriteRule ^assets/(.*)$ public/assets/$1 [L]
-
-# Réécriture du manifest.json et service-worker.js
-RewriteCond %{REQUEST_URI} ^/(manifest\.json|service-worker\.js)$
-RewriteCond %{DOCUMENT_ROOT}/ffp3/public/%1 -f
-RewriteRule ^(.*)$ public/$1 [L]
-
-# -----------------------------------------------------------------------------
 # Router générique : toute requête qui ne correspond pas à un fichier ou dossier
 # existant est orientée vers le front-controller public/index.php
+# -----------------------------------------------------------------------------
+# Note: Les assets sont accessibles via des liens symboliques créés à la racine :
+#   assets -> public/assets
+#   manifest.json -> public/manifest.json
+#   service-worker.js -> public/service-worker.js
 # -----------------------------------------------------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

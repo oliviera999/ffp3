@@ -10,7 +10,7 @@
 #
 
 echo "=========================================="
-echo "🚀 DÉPLOIEMENT FFP3 v4.0.0"
+echo "🚀 DÉPLOIEMENT FFP3"
 echo "=========================================="
 echo ""
 
@@ -25,7 +25,7 @@ echo "📍 Dossier: $(pwd)"
 echo ""
 
 # Étape 1: Pull depuis GitHub
-echo "📥 [1/5] Pull depuis GitHub..."
+echo "📥 [1/6] Pull depuis GitHub..."
 git fetch origin
 git pull origin main
 
@@ -41,7 +41,7 @@ echo "✅ Code mis à jour"
 echo ""
 
 # Étape 2: Supprimer vendor/ corrompu
-echo "🗑️  [2/5] Suppression vendor/ existant..."
+echo "🗑️  [2/6] Suppression vendor/ existant..."
 if [ -d "vendor" ]; then
     rm -rf vendor/
     echo "✅ vendor/ supprimé"
@@ -51,7 +51,7 @@ fi
 echo ""
 
 # Étape 3: Installer les dépendances
-echo "📦 [3/5] Installation des dépendances Composer..."
+echo "📦 [3/6] Installation des dépendances Composer..."
 echo "Cela peut prendre 1-2 minutes..."
 composer update --no-dev --optimize-autoloader
 
@@ -67,8 +67,30 @@ fi
 echo "✅ Dépendances installées"
 echo ""
 
-# Étape 4: Vérifications
-echo "🔍 [4/5] Vérifications..."
+# Étape 4: Créer les liens symboliques pour les assets
+echo "🔗 [4/6] Création des liens symboliques..."
+
+# Supprimer d'abord s'ils existent déjà
+rm -f assets manifest.json service-worker.js 2>/dev/null
+
+# Créer les liens symboliques
+ln -s public/assets assets
+ln -s public/manifest.json manifest.json
+ln -s public/service-worker.js service-worker.js
+
+if [ $? -eq 0 ]; then
+    echo "✅ Liens symboliques créés:"
+    echo "   assets -> public/assets"
+    echo "   manifest.json -> public/manifest.json"
+    echo "   service-worker.js -> public/service-worker.js"
+else
+    echo "⚠️  Erreur lors de la création des liens symboliques"
+    echo "   (peut nécessiter des permissions spéciales)"
+fi
+echo ""
+
+# Étape 5: Vérifications
+echo "🔍 [5/6] Vérifications..."
 
 # PHP-DI
 if [ -d "vendor/php-di" ]; then
@@ -82,14 +104,14 @@ fi
 if [ -d "vendor/minishlink" ]; then
     echo "  ✅ web-push installé"
 else
-    echo "  ❌ web-push MANQUANT !"
+    echo "  ⚠️  web-push manquant (optionnel)"
 fi
 
 # bacon-qr-code
 if [ -d "vendor/bacon" ]; then
     echo "  ✅ bacon-qr-code installé"
 else
-    echo "  ❌ bacon-qr-code MANQUANT !"
+    echo "  ⚠️  bacon-qr-code manquant (optionnel)"
 fi
 
 # Test autoload
@@ -103,8 +125,8 @@ fi
 
 echo ""
 
-# Étape 5: Vérifier version
-echo "📌 [5/5] Version déployée:"
+# Étape 6: Vérifier version
+echo "📌 [6/6] Version déployée:"
 cat VERSION
 echo ""
 
@@ -114,35 +136,18 @@ chmod -R 775 var/cache/ 2>/dev/null || true
 
 echo ""
 echo "=========================================="
-echo "🎉 DÉPLOIEMENT v4.0.0 RÉUSSI !"
+echo "🎉 DÉPLOIEMENT RÉUSSI !"
 echo "=========================================="
 echo ""
 echo "🧪 TESTEZ MAINTENANT:"
 echo ""
 echo "  1. Ouvrir navigateur:"
-echo "     https://iot.olution.info/ffp3/ffp3datas/"
+echo "     https://iot.olution.info/ffp3/aquaponie"
 echo ""
-echo "  2. Vérifier:"
-echo "     ✅ Pas d'erreur 500"
-echo "     ✅ Badge LIVE visible en haut à droite"
-echo "     ✅ Dashboard 'État du système' affiche métriques"
-echo ""
-echo "  3. Tester API:"
-echo "     curl https://iot.olution.info/ffp3/ffp3datas/api/outputs/state"
-echo "     (doit retourner JSON avec états GPIO)"
-echo ""
-echo "  4. Console navigateur (F12):"
-echo "     Chercher logs [RealtimeUpdater]"
-echo "     Badge devrait passer à 'LIVE' (vert) après 15s"
-echo ""
-echo "📚 Documentation:"
-echo "   - ESP32_API_REFERENCE.md (endpoints ESP32)"
-echo "   - QUICKSTART_V4.md (démarrage rapide)"
-echo "   - IMPLEMENTATION_REALTIME_PWA.md (guide technique)"
-echo ""
-echo "✨ Prochaines étapes:"
-echo "   - Générer icônes PWA (voir public/assets/icons/README.md)"
-echo "   - Tester installation PWA sur mobile"
+echo "  2. Vérifier (F12 Console):"
+echo "     ✅ Pas d'erreur 404 pour CSS/JS"
+echo "     ✅ Badge LIVE devient vert après 15s"
+echo "     ✅ Section 'Bilan Hydrique' visible"
+echo "     ✅ Footer affiche 'Firmware ESP32: vX.X'"
 echo ""
 echo "=========================================="
-
