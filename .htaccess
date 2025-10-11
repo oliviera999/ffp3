@@ -1,13 +1,18 @@
 # Activation du moteur de réécriture
 RewriteEngine On
 
+# Compatibilité ESP32 : Réécriture transparente /ffp3datas/api/* → /api/*
+# L'ESP32 appelle /ffp3/ffp3datas/api/outputs/state
+# On redirige en interne vers /ffp3/api/outputs/state (sans redirection HTTP)
+RewriteRule ^ffp3datas/api/(.*)$ api/$1 [L]
+
 # Redirections permanentes (308) afin de préserver la méthode HTTP et le corps de la requête
 # Ancien endpoint POST du microcontrôleur → nouvelle route interne
 # désactivé : l'ESP32 ne gère pas les redirections 308 ;
 # la route /post-ffp3-data.php est gérée directement par l'application.
 # RewriteRule ^post-ffp3-data\.php$ post-data [R=308,L]
 
-# Ancien endpoint d’export CSV → nouvelle route interne
+# Ancien endpoint d'export CSV → nouvelle route interne
 RewriteRule ^export-data\.php$ /ffp3/ffp3datas/export-data [R=308,L]
 
 # Ancienne page publique legacy → nouvelle route interne
