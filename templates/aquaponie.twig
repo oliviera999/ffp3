@@ -1325,7 +1325,7 @@
                                         { type: 'month', count: 1, text: '1m' },
                                         { type: 'all', text: 'Tout' }
                                     ],
-                                    selected: 3,
+                                    selected: 1,
                                     inputEnabled: true
                                 },
                                 title: { text: null },
@@ -1448,7 +1448,7 @@
                                         { type: 'month', count: 1, text: '1m' },
                                         { type: 'all', text: 'Tout' }
                                     ],
-                                    selected: 3,
+                                    selected: 1,
                                     inputEnabled: true
                                 },
                                 title: { text: null },
@@ -1681,35 +1681,220 @@
             </footer>
         </div>
 
-        <!-- Badge LIVE pour indicateur temps réel -->
-        <div id="live-badge" class="badge badge-secondary">
-            <i class="fas fa-circle"></i> INITIALISATION...
-        </div>
+    <!-- Badge LIVE pour indicateur temps réel -->
+    <div id="live-badge" class="badge badge-secondary">
+        <i class="fas fa-circle"></i> INITIALISATION...
+    </div>
 
-        <!-- Scripts PWA et Temps Réel -->
-        <script src="/ffp3/assets/js/toast-notifications.js"></script>
-        <script src="/ffp3/assets/js/realtime-updater.js"></script>
-        <script src="/ffp3/assets/js/pwa-init.js"></script>
+    <!-- Panneau de contrôles mode live -->
+    <div id="live-controls-panel" class="live-controls-panel">
+        <!-- Mode Live ON/OFF -->
+        <div class="live-control-group">
+            <span class="live-control-label">Mode Live</span>
+            <label class="live-toggle-switch">
+                <input type="checkbox" id="live-mode-toggle" checked>
+                <span class="live-toggle-slider"></span>
+            </label>
+        </div>
+        
+        <!-- Auto-scroll -->
+        <div class="live-control-group">
+            <span class="live-control-label">Auto-scroll</span>
+            <label class="live-toggle-switch">
+                <input type="checkbox" id="auto-scroll-toggle" checked>
+                <span class="live-toggle-slider"></span>
+            </label>
+        </div>
+        
+        <!-- Intervalle de mise à jour -->
+        <div class="live-control-group">
+            <span class="live-control-label">Intervalle</span>
+            <select id="update-interval-selector" class="live-interval-selector">
+                <option value="5000">5s</option>
+                <option value="10000">10s</option>
+                <option value="15000" selected>15s</option>
+                <option value="30000">30s</option>
+                <option value="60000">60s</option>
+            </select>
+        </div>
+        
+        <!-- Statistiques -->
+        <div class="live-control-group">
+            <div class="live-stats-display">
+                <i class="fas fa-chart-line"></i>
+                <span id="new-readings-count" class="live-stats-value">0</span>
+                <span>nouvelles données</span>
+            </div>
+        </div>
+        
+        <!-- Bouton rafraîchir -->
+        <div class="live-control-group">
+            <button id="force-refresh-button" class="live-refresh-button">
+                <i class="fas fa-sync-alt"></i>
+                Rafraîchir
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts PWA et Temps Réel -->
+    <script src="/ffp3/assets/js/toast-notifications.js"></script>
+    <script src="/ffp3/assets/js/chart-updater.js"></script>
+    <script src="/ffp3/assets/js/stats-updater.js"></script>
+    <script src="/ffp3/assets/js/realtime-updater.js"></script>
+    <script src="/ffp3/assets/js/pwa-init.js"></script>
         
     <script>
+        // Variables globales pour les modules
+        let chartUpdater = null;
+        let statsUpdater = null;
+        let realtimeUpdater = null;
+        let newReadingsCount = 0;
+        
+        // Charger les préférences depuis localStorage
+        function loadLivePreferences() {
+            const prefs = {
+                enabled: localStorage.getItem('liveMode.enabled') !== 'false', // true par défaut
+                autoScroll: localStorage.getItem('liveMode.autoScroll') !== 'false',
+                interval: parseInt(localStorage.getItem('liveMode.interval')) || 15000,
+                maxPoints: parseInt(localStorage.getItem('liveMode.maxPoints')) || 10000
+            };
+            return prefs;
+        }
+        
+        // Sauvegarder les préférences
+        function saveLivePreferences(prefs) {
+            localStorage.setItem('liveMode.enabled', prefs.enabled);
+            localStorage.setItem('liveMode.autoScroll', prefs.autoScroll);
+            localStorage.setItem('liveMode.interval', prefs.interval);
+            localStorage.setItem('liveMode.maxPoints', prefs.maxPoints);
+        }
+        
         // Initialiser le système temps réel
         document.addEventListener('DOMContentLoaded', function() {
-            // Démarrer le polling automatique (15 secondes)
+            const prefs = loadLivePreferences();
+            
+            // Initialiser ChartUpdater
+            chartUpdater = new ChartUpdater({
+                maxPoints: prefs.maxPoints,
+                autoScroll: prefs.autoScroll
+            });
+            
+            // Attendre que les graphiques soient créés (après createVersionD())
+            setTimeout(() => {
+                const initialized = chartUpdater.init();
+                if (initialized) {
+                    console.log('[Aquaponie] ChartUpdater initialized successfully');
+                } else {
+                    console.warn('[Aquaponie] ChartUpdater initialization failed');
+                }
+            }, 500);
+            
+            // Initialiser StatsUpdater
+            statsUpdater = new StatsUpdater({
+                sensors: ['EauAquarium', 'EauReserve', 'EauPotager', 'TempEau', 'TempAir', 'Humidite', 'Luminosite']
+            });
+            
+            setTimeout(() => {
+                const initialized = statsUpdater.init();
+                if (initialized) {
+                    console.log('[Aquaponie] StatsUpdater initialized successfully');
+                } else {
+                    console.warn('[Aquaponie] StatsUpdater initialization failed');
+                }
+            }, 500);
+            
+            // Exposer globalement
+            window.chartUpdater = chartUpdater;
+            window.statsUpdater = statsUpdater;
+            
             // Utiliser le bon path API selon l'environnement
             const apiBasePath = '{{ environment == "test" ? "/ffp3/api/realtime-test" : "/ffp3/api/realtime" }}';
             
-            initRealtimeUpdater({
+            // Initialiser RealtimeUpdater
+            realtimeUpdater = initRealtimeUpdater({
                 apiBasePath: apiBasePath,
-                pollInterval: 15000,
-                enabled: true,
-                onNewData: function(data) {
-                    console.log('[Aquaponie] New sensor data received:', data);
-                    // TODO: Mettre à jour les graphiques avec nouvelles données
+                pollInterval: prefs.interval,
+                enabled: prefs.enabled,
+                onNewData: function(readings) {
+                    console.log('[Aquaponie] New sensor data received:', readings);
+                    newReadingsCount += readings.length;
+                    updateReadingsCounter();
                 },
                 onHealthUpdate: function(health) {
                     console.log('[Aquaponie] System health updated:', health);
                 }
             });
+            
+            // Appliquer les préférences aux contrôles UI
+            document.getElementById('live-mode-toggle').checked = prefs.enabled;
+            document.getElementById('auto-scroll-toggle').checked = prefs.autoScroll;
+            document.getElementById('update-interval-selector').value = prefs.interval;
+            
+            // Event listeners pour les contrôles
+            
+            // Toggle Mode Live
+            document.getElementById('live-mode-toggle').addEventListener('change', function(e) {
+                if (e.target.checked) {
+                    realtimeUpdater.start();
+                    console.log('[Aquaponie] Live mode enabled');
+                } else {
+                    realtimeUpdater.stop();
+                    console.log('[Aquaponie] Live mode disabled');
+                }
+                prefs.enabled = e.target.checked;
+                saveLivePreferences(prefs);
+            });
+            
+            // Toggle Auto-scroll
+            document.getElementById('auto-scroll-toggle').addEventListener('change', function(e) {
+                if (chartUpdater) {
+                    chartUpdater.enableAutoScroll(e.target.checked);
+                    console.log('[Aquaponie] Auto-scroll ' + (e.target.checked ? 'enabled' : 'disabled'));
+                }
+                prefs.autoScroll = e.target.checked;
+                saveLivePreferences(prefs);
+            });
+            
+            // Changement d'intervalle
+            document.getElementById('update-interval-selector').addEventListener('change', function(e) {
+                const newInterval = parseInt(e.target.value);
+                if (realtimeUpdater) {
+                    realtimeUpdater.setInterval(newInterval);
+                    console.log('[Aquaponie] Update interval changed to ' + newInterval + 'ms');
+                }
+                prefs.interval = newInterval;
+                saveLivePreferences(prefs);
+            });
+            
+            // Bouton rafraîchir maintenant
+            document.getElementById('force-refresh-button').addEventListener('click', function() {
+                if (realtimeUpdater) {
+                    console.log('[Aquaponie] Force refresh triggered');
+                    realtimeUpdater.poll();
+                    
+                    // Animation du bouton
+                    const btn = this;
+                    const icon = btn.querySelector('i');
+                    icon.classList.add('fa-spin');
+                    setTimeout(() => icon.classList.remove('fa-spin'), 1000);
+                }
+            });
+            
+            // Fonction pour mettre à jour le compteur de nouvelles lectures
+            function updateReadingsCounter() {
+                const counter = document.getElementById('new-readings-count');
+                if (counter) {
+                    counter.textContent = newReadingsCount;
+                }
+            }
+            
+            // Réinitialiser le compteur toutes les heures
+            setInterval(() => {
+                newReadingsCount = 0;
+                updateReadingsCounter();
+            }, 3600000); // 1 heure
+            
+            console.log('[Aquaponie] Live update system initialized');
         });
     </script>
     </body>

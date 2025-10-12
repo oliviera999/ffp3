@@ -88,11 +88,29 @@ class RealtimeUpdater {
         if (this.isPaused) return;
 
         try {
-            // Récupérer les dernières données
-            const latestResponse = await fetch(`${this.apiBasePath}/sensors/latest`);
-            if (!latestResponse.ok) throw new Error(`HTTP ${latestResponse.status}`);
+            // Récupérer les nouvelles données depuis le dernier timestamp
+            // Si c'est le premier poll, récupérer juste la dernière lecture
+            let newReadings = [];
             
-            const latestData = await latestResponse.json();
+            if (this.lastTimestamp > 0) {
+                // Polling incrémental : récupérer toutes les nouvelles lectures
+                const sinceResponse = await fetch(`${this.apiBasePath}/sensors/since/${this.lastTimestamp}`);
+                if (!sinceResponse.ok) throw new Error(`HTTP ${sinceResponse.status}`);
+                
+                const sinceData = await sinceResponse.json();
+                newReadings = sinceData.readings || [];
+            } else {
+                // Premier poll : récupérer juste la dernière lecture
+                const latestResponse = await fetch(`${this.apiBasePath}/sensors/latest`);
+                if (!latestResponse.ok) throw new Error(`HTTP ${latestResponse.status}`);
+                
+                const latestData = await latestResponse.json();
+                
+                if (latestData.timestamp) {
+                    this.lastTimestamp = latestData.timestamp;
+                    newReadings = [latestData];
+                }
+            }
             
             // Récupérer le statut système
             const healthResponse = await fetch(`${this.apiBasePath}/system/health`);
@@ -104,19 +122,34 @@ class RealtimeUpdater {
             this.retryCount = 0;
             this.updateBadge('online');
 
-            // Vérifier s'il y a de nouvelles données
-            if (latestData.timestamp && latestData.timestamp > this.lastTimestamp) {
-                console.log('[RealtimeUpdater] New data received!', latestData);
-                this.lastTimestamp = latestData.timestamp;
+            // Traiter les nouvelles données
+            if (newReadings.length > 0) {
+                console.log(`[RealtimeUpdater] ${newReadings.length} new reading(s) received!`);
                 
-                // Callback
-                if (this.callbacks.onNewData) {
-                    this.callbacks.onNewData(latestData);
+                // Mettre à jour le timestamp avec la dernière lecture
+                const lastReading = newReadings[newReadings.length - 1];
+                if (lastReading.timestamp > this.lastTimestamp) {
+                    this.lastTimestamp = lastReading.timestamp;
                 }
                 
-                // Notification toast
-                if (typeof toastManager !== 'undefined') {
-                    toastManager.showInfo('Nouvelles données reçues', 3000);
+                // Callback générique
+                if (this.callbacks.onNewData) {
+                    this.callbacks.onNewData(newReadings);
+                }
+                
+                // Mettre à jour les graphiques
+                if (window.chartUpdater) {
+                    window.chartUpdater.addNewReadings(newReadings);
+                }
+                
+                // Mettre à jour les statistiques avec la dernière lecture
+                if (window.statsUpdater && lastReading.sensors) {
+                    window.statsUpdater.updateAllStats(lastReading.sensors);
+                }
+                
+                // Notification toast (seulement si plusieurs nouvelles données)
+                if (typeof toastManager !== 'undefined' && newReadings.length > 1) {
+                    toastManager.showInfo(`${newReadings.length} nouvelles lectures reçues`, 3000);
                 }
             }
 

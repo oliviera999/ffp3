@@ -7,6 +7,126 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.1] - 2025-10-12 🎨 Amélioration UX - Boutons actions rapides responsives
+
+### 🎨 Amélioré
+- **Refonte complète des boutons d'actions rapides de la page de contrôle**
+  - Design moderne avec cards en gradient colorées
+  - Grandes icônes dans des cercles avec fond semi-transparent
+  - Descriptions sous chaque bouton pour plus de clarté
+  - Animations élégantes : effet lift au hover + shine effect
+  - 3 variantes de couleur (primary, secondary, success)
+
+### 📱 Responsive amélioré
+- **Desktop (> 1024px)** : 3 boutons côte à côte en grille auto-fit
+- **Tablette (768px - 1024px)** : 2 colonnes + 3ème bouton centré en bas
+- **Mobile (< 768px)** : 1 colonne, boutons empilés verticalement
+- **Très petits écrans (< 400px)** : Disposition en colonne avec icônes centrées
+- **Mode paysage mobile** : 3 colonnes compactes avec layout optimisé
+
+### 🎯 Impact utilisateur
+- Meilleure lisibilité sur tous les formats d'écran
+- Clics plus faciles sur mobile (zones tactiles plus grandes)
+- Interface plus moderne et professionnelle
+- Expérience utilisateur cohérente entre desktop et mobile
+
+### 📝 Fichiers modifiés
+- `templates/control.twig` : Lignes 552-587 (HTML) + 341-580 (CSS)
+
+---
+
+## [4.5.0] - 2025-10-12 🎬 Mode Live - Mise à jour temps réel des graphiques
+
+### ✨ Ajouté
+- **Mode live avec mise à jour automatique des graphiques en temps réel**
+  - Les graphiques Highcharts se mettent à jour automatiquement sans rafraîchir la page
+  - Mise à jour dynamique des cartes de statistiques (niveaux d'eau, températures, humidité, luminosité)
+  - **Nouveau module `chart-updater.js`** : Gère la mise à jour des graphiques Highcharts
+  - **Nouveau module `stats-updater.js`** : Gère la mise à jour des cartes de statistiques
+  - Limite configurable du nombre de points en mémoire (10 000 par défaut, ~21 jours de données)
+
+- **Panneau de contrôle du mode live**
+  - Toggle ON/OFF du mode live
+  - Toggle auto-scroll des graphiques pour suivre les dernières données
+  - Sélecteur d'intervalle de mise à jour (5s, 10s, 15s, 30s, 60s)
+  - Compteur des nouvelles données reçues
+  - Bouton "Rafraîchir maintenant" pour forcer une mise à jour immédiate
+  - Sauvegarde des préférences utilisateur dans localStorage
+
+- **Animations et feedback visuel**
+  - Animation flash sur les valeurs mises à jour
+  - Animation des barres de progression
+  - Badge LIVE avec états (connexion, en ligne, erreur, pause)
+  - Styles CSS dédiés dans `realtime-styles.css`
+
+### 🔧 Amélioré
+- **`realtime-updater.js` étendu**
+  - Utilisation de l'API `/sensors/since/{timestamp}` pour polling incrémental
+  - Intégration automatique avec `chartUpdater` et `statsUpdater`
+  - Optimisation : récupère uniquement les nouvelles données depuis le dernier timestamp
+  - Gestion intelligente du premier poll (dernière lecture) vs polls suivants (lectures incrémentielles)
+
+- **Badge LIVE maintenant pertinent**
+  - Indique l'état réel de la synchronisation des graphiques
+  - États : INITIALISATION, LIVE (vert), CONNEXION (orange), ERREUR (rouge), PAUSE (gris)
+  - Animation pulse sur l'état LIVE
+
+- **Performances optimisées**
+  - Batch updates pour réduire les redraws Highcharts
+  - Désactivation automatique des animations si > 100 points à ajouter
+  - Limitation du nombre de points par série (évite la saturation mémoire)
+  - Suppression automatique des points les plus anciens quand la limite est atteinte
+
+### 📝 Fichiers créés
+- `public/assets/js/chart-updater.js` (324 lignes)
+- `public/assets/js/stats-updater.js` (291 lignes)
+
+### 📝 Fichiers modifiés
+- `public/assets/js/realtime-updater.js` : Polling incrémental + intégration modules
+- `templates/aquaponie.twig` : Panneau contrôles + initialisation modules (lines 1684-1899)
+- `templates/dashboard.twig` : Intégration stats-updater
+- `public/assets/css/realtime-styles.css` : +213 lignes (animations + contrôles)
+
+### 🎯 Résultat utilisateur
+Les utilisateurs peuvent maintenant :
+- ✅ Voir les nouvelles données apparaître automatiquement sur les graphiques toutes les 15 secondes (configurable)
+- ✅ Observer les cartes de statistiques se mettre à jour en temps réel
+- ✅ Activer/désactiver le mode live selon leurs besoins
+- ✅ Configurer l'intervalle de mise à jour (5s à 60s)
+- ✅ Voir les graphiques suivre automatiquement les dernières données (auto-scroll)
+- ✅ Garder la page ouverte en permanence comme un vrai dashboard temps réel
+- ✅ Avoir leurs préférences sauvegardées entre les sessions
+
+### ⚙️ Configuration
+- **Intervalle par défaut** : 15 secondes
+- **Auto-scroll** : Activé par défaut
+- **Max points** : 10 000 points (~21 jours à 3 min/lecture)
+- **Mode live** : Activé par défaut
+- Toutes les préférences sont sauvegardées dans localStorage
+
+### 🔄 Compatibilité
+- Fonctionne en environnements PROD et TEST (routes API adaptées automatiquement)
+- Compatible mobile (panneau de contrôles responsive)
+- Gestion de la pause automatique quand l'onglet est en arrière-plan
+- Highcharts Boost déjà chargé pour supporter les grandes séries de données
+
+---
+
+## [4.4.7] - 2025-10-12 ⚙️ Amélioration UX - Période par défaut
+
+### 🔧 Amélioré
+- **Période d'analyse par défaut réduite à 6 heures**
+  - `AquaponieController` : Période par défaut changée de `-1 day` à `-6 hours`
+  - Graphiques Highcharts : Sélection par défaut changée de "1 semaine" à "6 heures"
+  - **Impact** : Chargement plus rapide de la page et affichage plus pertinent des données récentes
+  - Les utilisateurs peuvent toujours sélectionner d'autres périodes (1h, 1j, 1s, 1m, Tout) via les boutons de filtrage
+
+### 📝 Fichiers modifiés
+- `src/Controller/AquaponieController.php` : Ligne 54
+- `templates/aquaponie.twig` : Lignes 1328 et 1451
+
+---
+
 ## [4.4.6] - 2025-10-12 🔧 Audit & Corrections Critiques
 
 ### 🚨 Corrigé (CRITIQUE)

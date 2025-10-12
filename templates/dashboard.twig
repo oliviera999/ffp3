@@ -384,22 +384,44 @@
 
     <!-- Scripts PWA et Temps Réel -->
     <script src="/ffp3/assets/js/toast-notifications.js"></script>
+    <script src="/ffp3/assets/js/stats-updater.js"></script>
     <script src="/ffp3/assets/js/realtime-updater.js"></script>
     <script src="/ffp3/assets/js/pwa-init.js"></script>
     
     <script>
+        // Variables globales
+        let statsUpdater = null;
+        let realtimeUpdater = null;
+        
         // Initialiser le système temps réel
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialiser StatsUpdater pour le dashboard
+            statsUpdater = new StatsUpdater({
+                sensors: ['EauAquarium', 'EauReserve', 'EauPotager', 'TempEau', 'TempAir', 'Humidite', 'Luminosite']
+            });
+            
+            setTimeout(() => {
+                const initialized = statsUpdater.init();
+                if (initialized) {
+                    console.log('[Dashboard] StatsUpdater initialized successfully');
+                } else {
+                    console.warn('[Dashboard] StatsUpdater initialization failed');
+                }
+            }, 500);
+            
+            // Exposer globalement
+            window.statsUpdater = statsUpdater;
+            
             // Utiliser le bon path API selon l'environnement
             const apiBasePath = '{{ environment == "test" ? "/ffp3/api/realtime-test" : "/ffp3/api/realtime" }}';
             
             // Démarrer le polling automatique (15 secondes)
-            initRealtimeUpdater({
+            realtimeUpdater = initRealtimeUpdater({
                 apiBasePath: apiBasePath,
                 pollInterval: 15000,
                 enabled: true,
-                onNewData: function(data) {
-                    console.log('[Dashboard] New sensor data received:', data);
+                onNewData: function(readings) {
+                    console.log('[Dashboard] New sensor data received:', readings);
                     // Optionnel: recharger la page pour afficher les nouvelles données
                     // window.location.reload();
                 },
@@ -407,6 +429,8 @@
                     console.log('[Dashboard] System health updated:', health);
                 }
             });
+            
+            console.log('[Dashboard] Live update system initialized');
         });
     </script>
 

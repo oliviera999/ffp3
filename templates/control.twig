@@ -337,6 +337,246 @@
         .control-grid section * {
             max-width: 100% !important;
         }
+        
+        /* ========================================
+           STYLES ACTIONS RAPIDES MODERNES
+           ======================================== */
+        
+        .quick-actions-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-top: 4px solid #008B74;
+        }
+        
+        .quick-actions-title {
+            color: #008B74;
+            font-size: 1.3em;
+            margin: 0 0 20px 0;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quick-actions-title i {
+            font-size: 1.2em;
+        }
+        
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 0;
+        }
+        
+        .quick-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .quick-action-btn:hover::before {
+            left: 100%;
+        }
+        
+        .quick-action-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .quick-action-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        /* Variantes de couleurs */
+        .quick-action-btn.btn-primary {
+            background: linear-gradient(135deg, #008B74 0%, #00B794 100%);
+            color: white;
+        }
+        
+        .quick-action-btn.btn-primary:hover {
+            background: linear-gradient(135deg, #007563 0%, #00a080 100%);
+        }
+        
+        .quick-action-btn.btn-secondary {
+            background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+            color: white;
+        }
+        
+        .quick-action-btn.btn-secondary:hover {
+            background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+        }
+        
+        .quick-action-btn.btn-success {
+            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+            color: white;
+        }
+        
+        .quick-action-btn.btn-success:hover {
+            background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+        }
+        
+        .btn-icon {
+            font-size: 2em;
+            flex-shrink: 0;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-action-btn:hover .btn-icon {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .btn-content {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .btn-label {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 3px;
+            line-height: 1.2;
+        }
+        
+        .btn-description {
+            font-size: 0.85em;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        /* Responsive Tablette (768px - 1024px) */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .quick-actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .quick-action-btn:last-child {
+                grid-column: 1 / -1;
+                max-width: 50%;
+                margin: 0 auto;
+            }
+        }
+        
+        /* Responsive Mobile (< 768px) */
+        @media (max-width: 768px) {
+            .quick-actions-section {
+                padding: 20px 15px;
+            }
+            
+            .quick-actions-title {
+                font-size: 1.1em;
+                margin-bottom: 15px;
+            }
+            
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .quick-action-btn {
+                padding: 15px;
+                gap: 12px;
+            }
+            
+            .btn-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.6em;
+            }
+            
+            .btn-label {
+                font-size: 1em;
+            }
+            
+            .btn-description {
+                font-size: 0.8em;
+            }
+        }
+        
+        /* Très petits écrans (< 400px) */
+        @media (max-width: 400px) {
+            .quick-actions-section {
+                padding: 15px 10px;
+            }
+            
+            .quick-action-btn {
+                padding: 12px;
+                gap: 10px;
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .btn-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.4em;
+            }
+            
+            .btn-content {
+                text-align: center;
+            }
+            
+            .btn-label {
+                font-size: 0.95em;
+            }
+            
+            .btn-description {
+                font-size: 0.75em;
+            }
+        }
+        
+        /* Mode paysage mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .quick-actions-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .quick-action-btn {
+                flex-direction: column;
+                text-align: center;
+                padding: 12px;
+            }
+            
+            .btn-content {
+                text-align: center;
+            }
+            
+            .btn-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5em;
+            }
+        }
     </style>
 </head>
 <body class="is-preload">
@@ -548,12 +788,41 @@
                     </div>
                 </div>
                 
-                {# Section Actions rapides (compacte) #}
-                <section style="background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center;">
-                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; align-items: center;">
-                        <a href="/ffp3/cronpompe.php" style="margin: 0; padding: 8px 16px; font-size: 0.9em; background: #008B74; color: white; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-gears"></i> Cron manuel</a>
-                        <a href="/ffp3/cronlog.txt" style="margin: 0; padding: 8px 16px; font-size: 0.9em; background: #008B74; color: white; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-file-lines"></i> Journal du cron</a>
-                        <a href="/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}" style="margin: 0; padding: 8px 16px; font-size: 0.9em; background: #008B74; color: white; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-chart-line"></i> Retour aux données</a>
+                {# Section Actions rapides (moderne et responsive) #}
+                <section class="quick-actions-section">
+                    <h3 class="quick-actions-title">
+                        <i class="fas fa-rocket"></i> Actions rapides
+                    </h3>
+                    <div class="quick-actions-grid">
+                        <a href="/ffp3/cronpompe.php" class="quick-action-btn btn-primary">
+                            <div class="btn-icon">
+                                <i class="fas fa-gears"></i>
+                            </div>
+                            <div class="btn-content">
+                                <div class="btn-label">Cron manuel</div>
+                                <div class="btn-description">Exécuter le CRON</div>
+                            </div>
+                        </a>
+                        
+                        <a href="/ffp3/cronlog.txt" class="quick-action-btn btn-secondary">
+                            <div class="btn-icon">
+                                <i class="fas fa-file-lines"></i>
+                            </div>
+                            <div class="btn-content">
+                                <div class="btn-label">Journal</div>
+                                <div class="btn-description">Logs du système</div>
+                            </div>
+                        </a>
+                        
+                        <a href="/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}" class="quick-action-btn btn-success">
+                            <div class="btn-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="btn-content">
+                                <div class="btn-label">Données</div>
+                                <div class="btn-description">Voir les graphiques</div>
+                            </div>
+                        </a>
                     </div>
                 </section>
             </article>
