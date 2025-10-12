@@ -7,6 +7,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.4.5] - 2025-10-12 🔗 Fix Navigation Links
+
+### 🐛 Corrigé
+- **Navigation**: Correction de tous les liens de navigation dans les templates
+  - Liens "L'aquaponie (FFP3)" corrigés : `/ffp3/ffp3datas/aquaponie` → `/ffp3/aquaponie`
+  - Liens dynamiques selon environnement : `/ffp3/aquaponie` (PROD) ou `/ffp3/aquaponie-test` (TEST)
+  - Liens dans control.twig corrigés : `cronpompe.php` et `cronlog.txt`
+  - Fichiers modifiés : `aquaponie.twig`, `dashboard.twig`, `tide_stats.twig`, `control.twig`
+  - Résout le problème des "liens morts" lors de la navigation
+
+---
+
 ## [4.4.4] - 2025-10-11 🔧 Fix Service Worker Asset Paths
 
 ### 🐛 Corrigé
