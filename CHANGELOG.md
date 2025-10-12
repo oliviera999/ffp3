@@ -7,6 +7,21 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.3] - 2025-10-12 📝 Documentation - Plan de correction
+
+### 📝 Ajouté
+- **Documentation du plan de correction mode live**
+  - Fichier `mise---jour-temps-r-el.plan.md` créé automatiquement
+  - Documentation détaillée des problèmes identifiés
+  - Plan d'implémentation complet avec exemples de code
+  - Guide de tests détaillé pour validation
+
+### 🔧 Maintenance
+- Incrémentation de version suite à la documentation du plan
+- Aucune modification du code fonctionnel
+
+---
+
 ## [4.5.2] - 2025-10-12 🔧 Correction mode live - Cartes de statistiques complètes
 
 ### 🐛 Corrigé
