@@ -16,6 +16,17 @@ class StatsUpdater {
             'TempEau', 'TempAir', 'Humidite', 'Luminosite'
         ];
         
+        // Mapping explicite des capteurs vers leurs IDs réels dans le DOM
+        this.sensorIdMap = {
+            'EauAquarium': 'eauaqua',
+            'EauReserve': 'eaureserve',
+            'EauPotager': 'eaupota',
+            'TempEau': 'tempeau',
+            'TempAir': 'tempair',
+            'Humidite': 'humi',
+            'Luminosite': 'lumi'
+        };
+        
         // Cache des statistiques actuelles (pour calcul incrémental)
         this.stats = new Map();
         
@@ -35,7 +46,8 @@ class StatsUpdater {
     init() {
         // Scanner les éléments de cartes de statistiques
         this.sensors.forEach(sensor => {
-            const sensorKey = sensor.toLowerCase();
+            // Utiliser le mapping explicite pour obtenir l'ID réel
+            const sensorKey = this.sensorIdMap[sensor] || sensor.toLowerCase();
             
             // Éléments spécifiques aux niveaux d'eau
             if (sensor.startsWith('Eau')) {

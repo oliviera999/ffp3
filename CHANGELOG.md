@@ -7,123 +7,112 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
-## [4.5.3] - 2025-10-12 🐛 Correction des erreurs console PWA & JavaScript
+## [4.5.2] - 2025-10-12 🔧 Correction mode live - Cartes de statistiques complètes
 
 ### 🐛 Corrigé
-- **Erreurs 404 sur les icônes PWA**
-  - Génération de 8 fichiers d'icônes PNG manquants (`icon-72.png` à `icon-512.png`)
-  - Résolution des erreurs console lors du chargement de `manifest.json`
-  - Les icônes sont maintenant disponibles pour l'installation PWA
-  - Utilisation d'un script Python pour créer des icônes placeholder avec branding FFP3
-
-- **Erreur JavaScript "Identifier already declared"**
-  - Correction de conflit avec script externe `js_defer` injecté par le serveur
-  - Variables globales (`chartUpdater`, `statsUpdater`, `realtimeUpdater`, `newReadingsCount`) déclarées de manière défensive
-  - Migration de `let` vers `window.` prefix pour éviter les redéclarations
-  - Mise à jour de toutes les références dans `templates/aquaponie.twig` (lignes 1746-1891)
+- **Mismatch des IDs dans stats-updater.js**
+  - Ajout d'un mapping explicite des capteurs vers leurs IDs réels dans le DOM
+  - EauAquarium : `eauaquarium-display` → `eauaqua-display` ✅
+  - EauPotager : `eaupotager-display` → `eaupota-display` ✅
+  - Les cartes de niveaux d'eau se mettent maintenant à jour correctement en temps réel
 
 ### ✨ Ajouté
-- **Script de génération d'icônes PWA**
-  - `public/assets/icons/generate_icons.py` : Script Python pour générer les icônes
-  - Support PIL/Pillow pour icônes de qualité avec texte
-  - Fallback vers génération de PNG minimaux sans dépendance externe
-  - Couleur de fond #008B74 (vert olution) avec texte "FFP3" blanc
+- **Cartes de statistiques pour paramètres physiques dans aquaponie.twig**
+  - Température eau (TempEau) avec valeur, barre de progression et stats (min/max/moy/ET)
+  - Température air (TempAir) avec valeur, barre de progression et stats
+  - Humidité (Humidite) avec valeur, barre de progression et stats
+  - Luminosité (Luminosite) avec valeur, barre de progression et stats
+  - Section dédiée "Paramètres physiques" avec icônes appropriées
+  - Toutes les cartes s'animent lors des mises à jour en temps réel
+
+- **Module control-values-updater.js pour la page de contrôle**
+  - Mise à jour automatique de l'état des connexions boards
+  - Synchronisation des valeurs des paramètres affichés dans les formulaires
+  - Animation flash lors des changements de valeurs
+  - Support des GPIOs de paramètres (100-116)
+
+### 🔧 Amélioré
+- **Mode live fonctionne maintenant sur TOUTES les cartes de statistiques**
+  - 7 cartes au total : 3 niveaux d'eau + 4 paramètres physiques
+  - Mise à jour automatique toutes les 15 secondes (configurable)
+  - Animations visuelles pour indiquer les changements
+
+- **Mise à jour en temps réel étendue à la page de contrôle**
+  - Les états des boards se mettent à jour automatiquement
+  - Les switches se synchronisent (déjà implémenté v4.5.0)
+  - Les paramètres affichés se mettent à jour
+
+- **Compatible environnements PROD et TEST**
+  - Routes API adaptées automatiquement
+  - Fonctionne sur `/aquaponie` et `/aquaponie-test`
+  - Fonctionne sur `/control` et `/control-test`
 
 ### 📝 Fichiers modifiés
-- `templates/aquaponie.twig` : Lignes 1746-1891 (déclarations JavaScript défensives)
+- `public/assets/js/stats-updater.js` : Ajout mapping IDs explicite (lignes 19-28, 50)
+- `templates/aquaponie.twig` : Ajout section paramètres physiques avec 4 cartes (lignes 255-317)
+- `templates/control.twig` : Intégration control-values-updater (lignes 948-1000)
 
 ### 📝 Fichiers créés
-- `public/assets/icons/icon-72.png`
-- `public/assets/icons/icon-96.png`
-- `public/assets/icons/icon-128.png`
-- `public/assets/icons/icon-144.png`
-- `public/assets/icons/icon-152.png`
-- `public/assets/icons/icon-192.png`
-- `public/assets/icons/icon-384.png`
-- `public/assets/icons/icon-512.png`
-- `public/assets/icons/generate_icons.py` : Script de génération
-
-### 🎯 Impact
-- Console du navigateur sans erreurs sur les pages aquaponie/aquaponie-test
-- PWA installable sans avertissements
-- Système de mise à jour temps réel fonctionnel sans conflits JavaScript
-- Compatibilité améliorée avec scripts injectés par le serveur/CDN
-
-### 🔧 Technique
-- Les icônes actuelles sont des placeholders fonctionnels (fond uni + texte)
-- Pour des icônes professionnelles, utiliser les outils recommandés dans `public/assets/icons/README.md`
-- L'approche défensive `window.` évite les conflits avec `js_defer.I4cHjq6EEP.js` du serveur
-
----
-
-## [4.5.2] - 2025-10-12 🔗 Correction des liens cassés
-
-### 🐛 Corrigé
-- **Lien cassé dans la page de contrôle**
-  - `templates/control.twig` ligne 599 : Correction du lien vers la page aquaponie
-  - Avant : `https://iot.olution.info/ffp3/ffp3datas/aquaponie`
-  - Après : `https://iot.olution.info/ffp3/aquaponie`
-  - Le dossier `ffp3datas` n'existe pas dans le path réel
-
-- **Liens cassés dans les fichiers legacy**
-  - `ffp3control/securecontrol/ffp3-outputs.php` : Correction des liens vers cronpompe, cronlog et aquaponie
-  - `ffp3control/securecontrol/ffp3-outputs2.php` : Correction des liens vers aquaponie-test
-  - `ffp3control/securecontrol/test2/ffp3-outputs.php` : Correction des liens de test
-
-### ✨ Ajouté
-- **Fichier `cronpompe.php`**
-  - Création d'un proxy pour l'exécution manuelle du CRON
-  - Redirige vers `run-cron.php` pour maintenir la compatibilité avec les anciens liens
-  - Résout le lien cassé dans l'interface de contrôle
-
-- **Documentation complète des liens**
-  - `DIAGNOSTIC_LIENS_FFP3.md` : Inventaire exhaustif de tous les liens du site
-  - Liste de 48 routes Slim 4 (PROD + TEST)
-  - Statut de toutes les ressources statiques (CSS, JS, PWA)
-  - Recommandations de maintenance
-
-### 📝 Fichiers modifiés
-- `templates/control.twig` : Ligne 599
-- `ffp3control/securecontrol/ffp3-outputs.php` : Lignes 190-193
-- `ffp3control/securecontrol/ffp3-outputs2.php` : Lignes 190-193
-- `ffp3control/securecontrol/test2/ffp3-outputs.php` : Lignes 164-167
-
-### 📝 Fichiers créés
-- `cronpompe.php` : Proxy pour CRON manuel
-- `DIAGNOSTIC_LIENS_FFP3.md` : Documentation des liens
-
-### 🎯 Impact
-- Tous les liens de navigation fonctionnent correctement
-- L'interface de contrôle affiche les bons liens
-- Documentation claire pour la maintenance future
-
----
-
-## [4.5.1] - 2025-10-12 🎨 Amélioration UX - Boutons actions rapides responsives
-
-### 🎨 Amélioré
-- **Refonte complète des boutons d'actions rapides de la page de contrôle**
-  - Design moderne avec cards en gradient colorées
-  - Grandes icônes dans des cercles avec fond semi-transparent
-  - Descriptions sous chaque bouton pour plus de clarté
-  - Animations élégantes : effet lift au hover + shine effect
-  - 3 variantes de couleur (primary, secondary, success)
-
-### 📱 Responsive amélioré
-- **Desktop (> 1024px)** : 3 boutons côte à côte en grille auto-fit
-- **Tablette (768px - 1024px)** : 2 colonnes + 3ème bouton centré en bas
-- **Mobile (< 768px)** : 1 colonne, boutons empilés verticalement
-- **Très petits écrans (< 400px)** : Disposition en colonne avec icônes centrées
-- **Mode paysage mobile** : 3 colonnes compactes avec layout optimisé
+- `public/assets/js/control-values-updater.js` : Module de mise à jour pour page de contrôle (189 lignes)
 
 ### 🎯 Impact utilisateur
-- Meilleure lisibilité sur tous les formats d'écran
-- Clics plus faciles sur mobile (zones tactiles plus grandes)
-- Interface plus moderne et professionnelle
-- Expérience utilisateur cohérente entre desktop et mobile
+Les utilisateurs peuvent maintenant :
+- ✅ Voir TOUTES les valeurs (eau + températures + humidité + luminosité) se mettre à jour en temps réel
+- ✅ Observer les changements avec des animations visuelles claires
+- ✅ Avoir des informations complètes sur chaque paramètre (valeur actuelle + min/max/moyenne/écart-type)
+- ✅ Utiliser le mode live sur la page d'aquaponie ET sur la page de contrôle
+- ✅ Bénéficier de la mise à jour automatique en environnements PROD et TEST
+
+### 🧪 Tests recommandés
+1. Ouvrir `/aquaponie` → vérifier les 7 cartes (3 eau + 4 physiques)
+2. Attendre 15 secondes → vérifier animations sur TOUTES les cartes
+3. Ouvrir `/control` → vérifier état des boards
+4. Répéter sur `/aquaponie-test` et `/control-test`
+5. Console : vérifier `statsUpdater.getStats()` et `controlValuesUpdater.getStats()`
+
+---
+
+## [4.4.8] - 2025-10-12 🎨 Refonte Design - Boutons de Contrôle
+
+### ✨ Nouveau Design
+- **Boutons d'action entièrement redessinés** dans la page de contrôle
+  - Cartes modernes avec bordures colorées selon le type d'actionneur
+  - Icônes colorées dans des badges circulaires
+  - Switches modernes et animés (nouveau design iOS-like)
+  - Animations au survol et transitions fluides
+  - États visuels clairs (Activé/Désactivé) avec indicateur texte coloré
+
+### 🎨 Améliorations UX
+- **Responsive amélioré** : Adaptation optimale sur tous les formats d'écran
+  - Desktop : Grille multi-colonnes (280px minimum par carte)
+  - Tablette : Grille adaptative (240px minimum par carte)
+  - Mobile : Une seule colonne, boutons pleine largeur
+  - Très petits écrans : Optimisation spéciale (< 400px)
+- **Feedback visuel instantané** lors du changement d'état
+  - Mise à jour immédiate du texte de statut
+  - Changement de couleur du texte (vert pour activé, gris pour désactivé)
+  - Animation de transition sur la bordure de la carte
+
+### 🎨 Système de Couleurs par Actionneur
+- **Pompe aquarium** : Bleu (#3498db)
+- **Pompe réserve** : Cyan (#00bcd4)
+- **Radiateur** : Rouge (#e74c3c)
+- **Lumières** : Jaune (#f39c12)
+- **Notifications** : Violet (#9b59b6)
+- **Réveil** : Orange (#e67e22)
+- **Nourriture** : Rose (#e91e63)
+- **Défaut** : Vert olution (#008B74)
+
+### 🔧 Technique
+- Suppression des anciennes règles CSS complexes
+- Nouveau système de grille CSS Grid moderne
+- Animation CSS3 avec cubic-bezier pour des transitions fluides
+- Media queries simplifiées et plus performantes
+- Mise à jour JavaScript pour feedback visuel immédiat
 
 ### 📝 Fichiers modifiés
-- `templates/control.twig` : Lignes 552-587 (HTML) + 341-580 (CSS)
+- `templates/control.twig` : Refonte complète du HTML et CSS des boutons d'action
+- JavaScript `updateOutput()` : Ajout de mise à jour visuelle instantanée
 
 ---
 

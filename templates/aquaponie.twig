@@ -249,6 +249,70 @@
                                 <div>Moy: {{ avg_eaupota|default(0)|round(1) }} cm | ET: {{ stddev_eaupota|default(0)|round(2) }}</div>
                                 <div>Min: {{ min_eaupota|default(0) }} cm | Max: {{ max_eaupota|default(0) }} cm</div>
                             </div>
+                    </div>
+                </div>
+
+                    <!-- Section Paramètres physiques -->
+                    <div class="section-header">
+                        <i class="fas fa-thermometer-half"></i>
+                        <h3>Paramètres physiques</h3>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <!-- Température eau -->
+                        <div class="stat-card temp">
+                            <i class="fas fa-water stat-card-icon"></i>
+                            <div class="stat-card-label">Température eau</div>
+                            <div class="stat-card-value" id="tempeau-display">{{ last_reading_tempeau|default(0)|round(1) }} <span class="stat-card-unit">°C</span></div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="tempeau-progress" style="width: {{ (last_reading_tempeau|default(0) / 40 * 100)|round(0) }}%;"></div>
+                            </div>
+                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                <div>Moy: {{ avg_tempeau|default(0)|round(1) }} °C | ET: {{ stddev_tempeau|default(0)|round(2) }}</div>
+                                <div>Min: {{ min_tempeau|default(0) }} °C | Max: {{ max_tempeau|default(0) }} °C</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Température air -->
+                        <div class="stat-card temp">
+                            <i class="fas fa-temperature-high stat-card-icon"></i>
+                            <div class="stat-card-label">Température air</div>
+                            <div class="stat-card-value" id="tempair-display">{{ last_reading_tempair|default(0)|round(1) }} <span class="stat-card-unit">°C</span></div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="tempair-progress" style="width: {{ (last_reading_tempair|default(0) / 40 * 100)|round(0) }}%;"></div>
+                            </div>
+                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                <div>Moy: {{ avg_tempair|default(0)|round(1) }} °C | ET: {{ stddev_tempair|default(0)|round(2) }}</div>
+                                <div>Min: {{ min_tempair|default(0) }} °C | Max: {{ max_tempair|default(0) }} °C</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Humidité -->
+                        <div class="stat-card humidity">
+                            <i class="fas fa-droplet stat-card-icon"></i>
+                            <div class="stat-card-label">Humidité</div>
+                            <div class="stat-card-value" id="humi-display">{{ last_reading_humi|default(0)|round(1) }} <span class="stat-card-unit">%</span></div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="humi-progress" style="width: {{ last_reading_humi|default(0) }}%;"></div>
+                            </div>
+                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                <div>Moy: {{ avg_humi|default(0)|round(1) }} % | ET: {{ stddev_humi|default(0)|round(2) }}</div>
+                                <div>Min: {{ min_humi|default(0) }} % | Max: {{ max_humi|default(0) }} %</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Luminosité -->
+                        <div class="stat-card light">
+                            <i class="fas fa-lightbulb stat-card-icon"></i>
+                            <div class="stat-card-label">Luminosité</div>
+                            <div class="stat-card-value" id="lumi-display">{{ last_reading_lumi|default(0)|round(0) }} <span class="stat-card-unit">UA</span></div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="lumi-progress" style="width: {{ (last_reading_lumi|default(0) / 4000 * 100)|round(0) }}%;"></div>
+                            </div>
+                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                <div>Moy: {{ avg_lumi|default(0)|round(0) }} UA | ET: {{ stddev_lumi|default(0)|round(2) }}</div>
+                                <div>Min: {{ min_lumi|default(0) }} UA | Max: {{ max_lumi|default(0) }} UA</div>
+                            </div>
                         </div>
                     </div>
 
@@ -1744,11 +1808,11 @@
     <script src="/ffp3/assets/js/pwa-init.js"></script>
         
     <script>
-        // Variables globales pour les modules (defensive declarations to avoid conflicts with external scripts)
-        window.chartUpdater = window.chartUpdater || null;
-        window.statsUpdater = window.statsUpdater || null;
-        window.realtimeUpdater = window.realtimeUpdater || null;
-        window.newReadingsCount = window.newReadingsCount || 0;
+        // Variables globales pour les modules
+        let chartUpdater = null;
+        let statsUpdater = null;
+        let realtimeUpdater = null;
+        let newReadingsCount = 0;
         
         // Charger les préférences depuis localStorage
         function loadLivePreferences() {
@@ -1774,14 +1838,14 @@
             const prefs = loadLivePreferences();
             
             // Initialiser ChartUpdater
-            window.chartUpdater = new ChartUpdater({
+            chartUpdater = new ChartUpdater({
                 maxPoints: prefs.maxPoints,
                 autoScroll: prefs.autoScroll
             });
             
             // Attendre que les graphiques soient créés (après createVersionD())
             setTimeout(() => {
-                const initialized = window.chartUpdater.init();
+                const initialized = chartUpdater.init();
                 if (initialized) {
                     console.log('[Aquaponie] ChartUpdater initialized successfully');
                 } else {
@@ -1790,12 +1854,12 @@
             }, 500);
             
             // Initialiser StatsUpdater
-            window.statsUpdater = new StatsUpdater({
+            statsUpdater = new StatsUpdater({
                 sensors: ['EauAquarium', 'EauReserve', 'EauPotager', 'TempEau', 'TempAir', 'Humidite', 'Luminosite']
             });
             
             setTimeout(() => {
-                const initialized = window.statsUpdater.init();
+                const initialized = statsUpdater.init();
                 if (initialized) {
                     console.log('[Aquaponie] StatsUpdater initialized successfully');
                 } else {
@@ -1803,17 +1867,21 @@
                 }
             }, 500);
             
+            // Exposer globalement
+            window.chartUpdater = chartUpdater;
+            window.statsUpdater = statsUpdater;
+            
             // Utiliser le bon path API selon l'environnement
             const apiBasePath = '{{ environment == "test" ? "/ffp3/api/realtime-test" : "/ffp3/api/realtime" }}';
             
             // Initialiser RealtimeUpdater
-            window.realtimeUpdater = initRealtimeUpdater({
+            realtimeUpdater = initRealtimeUpdater({
                 apiBasePath: apiBasePath,
                 pollInterval: prefs.interval,
                 enabled: prefs.enabled,
                 onNewData: function(readings) {
                     console.log('[Aquaponie] New sensor data received:', readings);
-                    window.newReadingsCount += readings.length;
+                    newReadingsCount += readings.length;
                     updateReadingsCounter();
                 },
                 onHealthUpdate: function(health) {
@@ -1831,10 +1899,10 @@
             // Toggle Mode Live
             document.getElementById('live-mode-toggle').addEventListener('change', function(e) {
                 if (e.target.checked) {
-                    window.realtimeUpdater.start();
+                    realtimeUpdater.start();
                     console.log('[Aquaponie] Live mode enabled');
                 } else {
-                    window.realtimeUpdater.stop();
+                    realtimeUpdater.stop();
                     console.log('[Aquaponie] Live mode disabled');
                 }
                 prefs.enabled = e.target.checked;
@@ -1843,8 +1911,8 @@
             
             // Toggle Auto-scroll
             document.getElementById('auto-scroll-toggle').addEventListener('change', function(e) {
-                if (window.chartUpdater) {
-                    window.chartUpdater.enableAutoScroll(e.target.checked);
+                if (chartUpdater) {
+                    chartUpdater.enableAutoScroll(e.target.checked);
                     console.log('[Aquaponie] Auto-scroll ' + (e.target.checked ? 'enabled' : 'disabled'));
                 }
                 prefs.autoScroll = e.target.checked;
@@ -1854,8 +1922,8 @@
             // Changement d'intervalle
             document.getElementById('update-interval-selector').addEventListener('change', function(e) {
                 const newInterval = parseInt(e.target.value);
-                if (window.realtimeUpdater) {
-                    window.realtimeUpdater.setInterval(newInterval);
+                if (realtimeUpdater) {
+                    realtimeUpdater.setInterval(newInterval);
                     console.log('[Aquaponie] Update interval changed to ' + newInterval + 'ms');
                 }
                 prefs.interval = newInterval;
@@ -1864,9 +1932,9 @@
             
             // Bouton rafraîchir maintenant
             document.getElementById('force-refresh-button').addEventListener('click', function() {
-                if (window.realtimeUpdater) {
+                if (realtimeUpdater) {
                     console.log('[Aquaponie] Force refresh triggered');
-                    window.realtimeUpdater.poll();
+                    realtimeUpdater.poll();
                     
                     // Animation du bouton
                     const btn = this;
@@ -1880,13 +1948,13 @@
             function updateReadingsCounter() {
                 const counter = document.getElementById('new-readings-count');
                 if (counter) {
-                    counter.textContent = window.newReadingsCount;
+                    counter.textContent = newReadingsCount;
                 }
             }
             
             // Réinitialiser le compteur toutes les heures
             setInterval(() => {
-                window.newReadingsCount = 0;
+                newReadingsCount = 0;
                 updateReadingsCounter();
             }, 3600000); // 1 heure
             

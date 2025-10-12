@@ -19,6 +19,275 @@
     
     <!-- Control Sync - Temps réel -->
     <style>
+        /* ========================================
+           STYLES MODERNES POUR LES BOUTONS D'ACTION
+           ======================================== */
+        
+        /* Grille responsive pour les boutons d'action */
+        .action-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            width: 100%;
+        }
+        
+        /* Carte de bouton d'action moderne */
+        .action-button-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-button-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, currentColor, transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .action-button-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .action-button-card:hover::before {
+            opacity: 1;
+        }
+        
+        /* État activé */
+        .action-button-card[data-state="1"] {
+            border-color: currentColor;
+            background: linear-gradient(135deg, white 0%, rgba(255, 255, 255, 0.95) 100%);
+        }
+        
+        /* Contenu du bouton */
+        .action-button-content {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+        }
+        
+        /* Icône du bouton */
+        .action-button-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            background: currentColor;
+            color: white;
+            transition: transform 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .action-button-card:hover .action-button-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        /* Informations du bouton */
+        .action-button-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .action-button-label {
+            font-weight: 600;
+            font-size: 0.95em;
+            color: #2c3e50;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .action-button-status {
+            font-size: 0.8em;
+            color: #7f8c8d;
+        }
+        
+        /* Switch moderne */
+        .modern-switch {
+            position: relative;
+            display: inline-block;
+            width: 56px;
+            height: 30px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        
+        .modern-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+        
+        .modern-switch-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e0;
+            border-radius: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .modern-switch-button {
+            position: absolute;
+            content: '';
+            height: 24px;
+            width: 24px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modern-switch input:checked + .modern-switch-slider {
+            background-color: currentColor;
+        }
+        
+        .modern-switch input:checked + .modern-switch-slider .modern-switch-button {
+            transform: translateX(26px);
+        }
+        
+        .modern-switch:hover .modern-switch-slider {
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Couleurs par type d'actionneur */
+        .action-button-blue {
+            color: #3498db;
+        }
+        
+        .action-button-cyan {
+            color: #00bcd4;
+        }
+        
+        .action-button-red {
+            color: #e74c3c;
+        }
+        
+        .action-button-yellow {
+            color: #f39c12;
+        }
+        
+        .action-button-purple {
+            color: #9b59b6;
+        }
+        
+        .action-button-orange {
+            color: #e67e22;
+        }
+        
+        .action-button-pink {
+            color: #e91e63;
+        }
+        
+        .action-button-default {
+            color: #008B74;
+        }
+        
+        /* Responsive - Tablettes */
+        @media (max-width: 1024px) {
+            .action-buttons-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 14px;
+            }
+            
+            .action-button-card {
+                padding: 14px;
+            }
+            
+            .action-button-icon {
+                width: 42px;
+                height: 42px;
+                font-size: 1.3em;
+            }
+            
+            .action-button-label {
+                font-size: 0.9em;
+            }
+        }
+        
+        /* Responsive - Mobile */
+        @media (max-width: 768px) {
+            .action-buttons-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .action-button-card {
+                padding: 12px;
+            }
+            
+            .action-button-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2em;
+            }
+            
+            .action-button-label {
+                font-size: 0.85em;
+            }
+            
+            .modern-switch {
+                width: 50px;
+                height: 26px;
+            }
+            
+            .modern-switch-button {
+                height: 20px;
+                width: 20px;
+            }
+            
+            .modern-switch input:checked + .modern-switch-slider .modern-switch-button {
+                transform: translateX(24px);
+            }
+        }
+        
+        /* Très petits écrans */
+        @media (max-width: 400px) {
+            .action-button-content {
+                gap: 10px;
+            }
+            
+            .action-button-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 1.1em;
+                border-radius: 10px;
+            }
+            
+            .action-button-label {
+                font-size: 0.8em;
+            }
+            
+            .action-button-status {
+                font-size: 0.75em;
+            }
+        }
+        
         /* Badge de synchronisation (coin haut-droit) */
         #control-sync-badge {
             position: fixed;
@@ -337,246 +606,6 @@
         .control-grid section * {
             max-width: 100% !important;
         }
-        
-        /* ========================================
-           STYLES ACTIONS RAPIDES MODERNES
-           ======================================== */
-        
-        .quick-actions-section {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            border-top: 4px solid #008B74;
-        }
-        
-        .quick-actions-title {
-            color: #008B74;
-            font-size: 1.3em;
-            margin: 0 0 20px 0;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #e0e0e0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .quick-actions-title i {
-            font-size: 1.2em;
-        }
-        
-        .quick-actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 0;
-        }
-        
-        .quick-action-btn {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 18px 20px;
-            border-radius: 10px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .quick-action-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .quick-action-btn:hover::before {
-            left: 100%;
-        }
-        
-        .quick-action-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        }
-        
-        .quick-action-btn:active {
-            transform: translateY(-2px);
-        }
-        
-        /* Variantes de couleurs */
-        .quick-action-btn.btn-primary {
-            background: linear-gradient(135deg, #008B74 0%, #00B794 100%);
-            color: white;
-        }
-        
-        .quick-action-btn.btn-primary:hover {
-            background: linear-gradient(135deg, #007563 0%, #00a080 100%);
-        }
-        
-        .quick-action-btn.btn-secondary {
-            background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
-            color: white;
-        }
-        
-        .quick-action-btn.btn-secondary:hover {
-            background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
-        }
-        
-        .quick-action-btn.btn-success {
-            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
-            color: white;
-        }
-        
-        .quick-action-btn.btn-success:hover {
-            background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
-        }
-        
-        .btn-icon {
-            font-size: 2em;
-            flex-shrink: 0;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .quick-action-btn:hover .btn-icon {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.1) rotate(5deg);
-        }
-        
-        .btn-content {
-            flex: 1;
-            text-align: left;
-        }
-        
-        .btn-label {
-            font-size: 1.1em;
-            font-weight: 600;
-            margin-bottom: 3px;
-            line-height: 1.2;
-        }
-        
-        .btn-description {
-            font-size: 0.85em;
-            opacity: 0.9;
-            font-weight: 400;
-        }
-        
-        /* Responsive Tablette (768px - 1024px) */
-        @media (max-width: 1024px) and (min-width: 769px) {
-            .quick-actions-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .quick-action-btn:last-child {
-                grid-column: 1 / -1;
-                max-width: 50%;
-                margin: 0 auto;
-            }
-        }
-        
-        /* Responsive Mobile (< 768px) */
-        @media (max-width: 768px) {
-            .quick-actions-section {
-                padding: 20px 15px;
-            }
-            
-            .quick-actions-title {
-                font-size: 1.1em;
-                margin-bottom: 15px;
-            }
-            
-            .quick-actions-grid {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-            
-            .quick-action-btn {
-                padding: 15px;
-                gap: 12px;
-            }
-            
-            .btn-icon {
-                width: 45px;
-                height: 45px;
-                font-size: 1.6em;
-            }
-            
-            .btn-label {
-                font-size: 1em;
-            }
-            
-            .btn-description {
-                font-size: 0.8em;
-            }
-        }
-        
-        /* Très petits écrans (< 400px) */
-        @media (max-width: 400px) {
-            .quick-actions-section {
-                padding: 15px 10px;
-            }
-            
-            .quick-action-btn {
-                padding: 12px;
-                gap: 10px;
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .btn-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 1.4em;
-            }
-            
-            .btn-content {
-                text-align: center;
-            }
-            
-            .btn-label {
-                font-size: 0.95em;
-            }
-            
-            .btn-description {
-                font-size: 0.75em;
-            }
-        }
-        
-        /* Mode paysage mobile */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .quick-actions-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .quick-action-btn {
-                flex-direction: column;
-                text-align: center;
-                padding: 12px;
-            }
-            
-            .btn-content {
-                text-align: center;
-            }
-            
-            .btn-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 1.5em;
-            }
-        }
     </style>
 </head>
 <body class="is-preload">
@@ -596,7 +625,7 @@
         <nav id="nav">
             <ul class="links">
                 <li><a href="https://iot.olution.info/index.html">Accueil</a></li>
-                <li class="active"><a href="https://iot.olution.info/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}">L'aquaponie (FFP3)</a></li>
+                <li class="active"><a href="https://iot.olution.info/ffp3/ffp3datas/aquaponie{{ environment == 'test' ? '-test' : '' }}">L'aquaponie (FFP3)</a></li>
                 <li><a href="https://iot.olution.info/msp1/msp1datas/msp1-data.php">Le potager</a></li>
                 <li><a href="https://iot.olution.info/n3pp/n3ppdatas/n3pp-data.php">L'élevage d'insectes</a></li>
             </ul>
@@ -636,7 +665,7 @@
                             {# Préparation des outputs avec icônes - Ajouter GPIO 101 (mailNotif) et 115 (WakeUp) #}
                             {% set physical_outputs = outputs|filter(o => (o.gpio < 100 or o.gpio == 101 or o.gpio == 108 or o.gpio == 109 or o.gpio == 110 or o.gpio == 115) and o.name is not empty) %}
                             
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                            <div class="action-buttons-grid">
                                 {% for output in physical_outputs %}
                                     {% set clean_name = output.name|replace({
                                         '(stopp&#233;s si relais activ&#233;)': '',
@@ -649,45 +678,65 @@
                                         ' (stoppée si relais activé)': ''
                                     })|trim %}
                                     
-                                    {# Déterminer l'icône selon le GPIO pour être sûr #}
+                                    {# Déterminer l'icône et la couleur selon le GPIO #}
                                     {% set icon = 'fa-circle' %}
+                                    {% set color = 'default' %}
                                     {% if output.gpio == 101 %}
                                         {% set icon = 'fa-bell' %}
                                         {% set clean_name = 'Notifications' %}
+                                        {% set color = 'purple' %}
                                     {% elseif output.gpio == 115 %}
                                         {% set icon = 'fa-alarm-clock' %}
                                         {% set clean_name = 'Forçage réveil' %}
+                                        {% set color = 'orange' %}
                                     {% elseif output.gpio == 108 %}
                                         {% set icon = 'fa-fish' %}
                                         {% set clean_name = 'Nourrir petits poissons' %}
+                                        {% set color = 'pink' %}
                                     {% elseif output.gpio == 109 %}
                                         {% set icon = 'fa-fish-fins' %}
                                         {% set clean_name = 'Nourrir gros poissons' %}
+                                        {% set color = 'pink' %}
                                     {% elseif output.gpio == 110 %}
                                         {% set icon = 'fa-rotate' %}
                                         {% set clean_name = 'Reset ESP' %}
+                                        {% set color = 'red' %}
                                     {% elseif clean_name|lower matches '/pompe aqua/' %}
                                         {% set icon = 'fa-water' %}
+                                        {% set color = 'blue' %}
                                     {% elseif clean_name|lower matches '/pompe.*r.*serve/' %}
                                         {% set icon = 'fa-droplet' %}
+                                        {% set color = 'cyan' %}
                                     {% elseif clean_name|lower matches '/radiateur/' %}
                                         {% set icon = 'fa-temperature-high' %}
+                                        {% set color = 'red' %}
                                     {% elseif clean_name|lower matches '/lumi.*re/' %}
                                         {% set icon = 'fa-lightbulb' %}
+                                        {% set color = 'yellow' %}
                                     {% endif %}
                                     
-                                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
-                                        <span style="font-weight: 500; font-size: 0.95em;">
-                                            <i class="fas {{ icon }} switch-icon" style="color: #008B74;"></i>{{ clean_name|raw }}
-                                        </span>
-                                        <label class="switch" style="transform: scale(0.8);">
+                                    <div class="action-button-card action-button-{{ color }}" data-state="{{ output.state }}">
+                                        <div class="action-button-content">
+                                            <div class="action-button-icon">
+                                                <i class="fas {{ icon }}"></i>
+                                            </div>
+                                            <div class="action-button-info">
+                                                <div class="action-button-label">{{ clean_name|raw }}</div>
+                                                <div class="action-button-status">
+                                                    <span class="status-text">{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label class="modern-switch">
                                             <input type="checkbox" 
                                                    onchange="updateOutput(this)" 
                                                    id="{{ output.id }}" 
                                                    data-id="{{ output.id }}"
                                                    data-gpio="{{ output.gpio }}"
                                                    {{ output.state == 1 ? 'checked' : '' }}>
-                                            <span class="slider"></span>
+                                            <span class="modern-switch-slider">
+                                                <span class="modern-switch-button"></span>
+                                            </span>
                                         </label>
                                     </div>
                                 {% endfor %}
@@ -788,41 +837,12 @@
                     </div>
                 </div>
                 
-                {# Section Actions rapides (moderne et responsive) #}
-                <section class="quick-actions-section">
-                    <h3 class="quick-actions-title">
-                        <i class="fas fa-rocket"></i> Actions rapides
-                    </h3>
-                    <div class="quick-actions-grid">
-                        <a href="/ffp3/cronpompe.php" class="quick-action-btn btn-primary">
-                            <div class="btn-icon">
-                                <i class="fas fa-gears"></i>
-                            </div>
-                            <div class="btn-content">
-                                <div class="btn-label">Cron manuel</div>
-                                <div class="btn-description">Exécuter le CRON</div>
-                            </div>
-                        </a>
-                        
-                        <a href="/ffp3/cronlog.txt" class="quick-action-btn btn-secondary">
-                            <div class="btn-icon">
-                                <i class="fas fa-file-lines"></i>
-                            </div>
-                            <div class="btn-content">
-                                <div class="btn-label">Journal</div>
-                                <div class="btn-description">Logs du système</div>
-                            </div>
-                        </a>
-                        
-                        <a href="/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}" class="quick-action-btn btn-success">
-                            <div class="btn-icon">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <div class="btn-content">
-                                <div class="btn-label">Données</div>
-                                <div class="btn-description">Voir les graphiques</div>
-                            </div>
-                        </a>
+                {# Section Actions rapides (compacte) #}
+                <section style="background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center;">
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; align-items: center;">
+                        <a href="/ffp3/cronpompe.php" style="margin: 0; padding: 8px 16px; font-size: 0.9em; background: #008B74; color: white; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-gears"></i> Cron manuel</a>
+                        <a href="/ffp3/cronlog.txt" style="margin: 0; padding: 8px 16px; font-size: 0.9em; background: #008B74; color: white; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-file-lines"></i> Journal du cron</a>
+                        <a href="/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}" style="margin: 0; padding: 8px 16px; font-size: 0.9em; background: #008B74; color: white; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-chart-line"></i> Retour aux données</a>
                     </div>
                 </section>
             </article>
@@ -844,6 +864,10 @@
         var state = element.checked ? 1 : 0;
         var url = API_BASE + "/toggle?id=" + id + "&state=" + state;
         
+        // Trouver la carte parent pour mettre à jour son état visuel
+        var card = element.closest('.action-button-card');
+        var statusText = card ? card.querySelector('.status-text') : null;
+        
         console.log("Toggle ID " + id + " (GPIO " + gpio + ") to state " + state);
         console.log("URL: " + url);
         
@@ -853,13 +877,27 @@
                 console.log("Response status: " + this.status);
                 console.log("Response: " + this.responseText);
                 if (this.status === 200) {
-                    // Succès - forcer une synchronisation immédiate
+                    // Succès - Mettre à jour l'état visuel immédiatement
+                    if (card) {
+                        card.setAttribute('data-state', state);
+                        // Animation de transition
+                        card.style.transition = 'all 0.3s ease';
+                    }
+                    if (statusText) {
+                        statusText.textContent = state === 1 ? 'Activé' : 'Désactivé';
+                        statusText.style.color = state === 1 ? '#27ae60' : '#7f8c8d';
+                        statusText.style.fontWeight = state === 1 ? '600' : '400';
+                    }
+                    
+                    // Forcer une synchronisation immédiate
                     if (controlSync) {
                         setTimeout(() => controlSync.forceSync(), 500);
                     }
                 } else {
                     console.error("Toggle failed!");
                     alert("Erreur lors du changement d'état (ID " + id + ")");
+                    // Revenir à l'état précédent en cas d'erreur
+                    element.checked = !element.checked;
                 }
             }
         };
@@ -907,6 +945,11 @@
     // Initialisation de la synchronisation temps réel au chargement
     // ====================================================================
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialiser ControlValuesUpdater
+        const controlValuesUpdater = new ControlValuesUpdater();
+        controlValuesUpdater.init();
+        window.controlValuesUpdater = controlValuesUpdater;
+        
         // Charger le script de synchronisation
         const syncScript = document.createElement('script');
         syncScript.src = '/ffp3/assets/js/control-sync.js';
@@ -922,6 +965,16 @@
                 // Callback quand des états changent
                 onStateChange: function(changes) {
                     console.log('[Control] State changes detected:', changes);
+                    
+                    // Mettre à jour les paramètres affichés si nécessaire
+                    if (window.controlValuesUpdater) {
+                        changes.forEach(change => {
+                            // Pour les GPIOs de paramètres (> 100), mettre à jour l'affichage
+                            if (change.gpio >= 100) {
+                                controlValuesUpdater.updateParameterDisplay(change.gpio, change.newState);
+                            }
+                        });
+                    }
                 },
                 
                 // Callback quand le statut change
@@ -955,5 +1008,8 @@
 <script src="https://iot.olution.info/assets/js/breakpoints.min.js"></script>
 <script src="https://iot.olution.info/assets/js/util.js"></script>
 <script src="https://iot.olution.info/assets/js/main.js"></script>
+
+<!-- Module de mise à jour des valeurs affichées -->
+<script src="/ffp3/assets/js/control-values-updater.js"></script>
 </body>
 </html>
