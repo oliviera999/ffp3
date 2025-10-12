@@ -46,6 +46,16 @@ class TableConfig
     }
 
     /**
+     * Retourne le nom de la table heartbeat ESP32
+     * 
+     * @return string 'ffp3Heartbeat' en prod, 'ffp3Heartbeat2' en test
+     */
+    public static function getHeartbeatTable(): string
+    {
+        return self::isTest() ? 'ffp3Heartbeat2' : 'ffp3Heartbeat';
+    }
+
+    /**
      * Retourne l'environnement actuel
      * 
      * @return string 'prod' ou 'test'

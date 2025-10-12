@@ -74,8 +74,8 @@ class HeartbeatController
             $pdo = Database::getConnection();
             
             // Déterminer la table selon l'environnement
+            $table = TableConfig::getHeartbeatTable();
             $env = TableConfig::getEnvironment();
-            $table = ($env === 'test') ? 'ffp3Heartbeat2' : 'ffp3Heartbeat';
             
             $stmt = $pdo->prepare("
                 INSERT INTO {$table} (uptime, freeHeap, minHeap, reboots) 
