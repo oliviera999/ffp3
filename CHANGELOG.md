@@ -7,6 +7,49 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.2] - 2025-10-12 🔗 Correction des liens cassés
+
+### 🐛 Corrigé
+- **Lien cassé dans la page de contrôle**
+  - `templates/control.twig` ligne 599 : Correction du lien vers la page aquaponie
+  - Avant : `https://iot.olution.info/ffp3/ffp3datas/aquaponie`
+  - Après : `https://iot.olution.info/ffp3/aquaponie`
+  - Le dossier `ffp3datas` n'existe pas dans le path réel
+
+- **Liens cassés dans les fichiers legacy**
+  - `ffp3control/securecontrol/ffp3-outputs.php` : Correction des liens vers cronpompe, cronlog et aquaponie
+  - `ffp3control/securecontrol/ffp3-outputs2.php` : Correction des liens vers aquaponie-test
+  - `ffp3control/securecontrol/test2/ffp3-outputs.php` : Correction des liens de test
+
+### ✨ Ajouté
+- **Fichier `cronpompe.php`**
+  - Création d'un proxy pour l'exécution manuelle du CRON
+  - Redirige vers `run-cron.php` pour maintenir la compatibilité avec les anciens liens
+  - Résout le lien cassé dans l'interface de contrôle
+
+- **Documentation complète des liens**
+  - `DIAGNOSTIC_LIENS_FFP3.md` : Inventaire exhaustif de tous les liens du site
+  - Liste de 48 routes Slim 4 (PROD + TEST)
+  - Statut de toutes les ressources statiques (CSS, JS, PWA)
+  - Recommandations de maintenance
+
+### 📝 Fichiers modifiés
+- `templates/control.twig` : Ligne 599
+- `ffp3control/securecontrol/ffp3-outputs.php` : Lignes 190-193
+- `ffp3control/securecontrol/ffp3-outputs2.php` : Lignes 190-193
+- `ffp3control/securecontrol/test2/ffp3-outputs.php` : Lignes 164-167
+
+### 📝 Fichiers créés
+- `cronpompe.php` : Proxy pour CRON manuel
+- `DIAGNOSTIC_LIENS_FFP3.md` : Documentation des liens
+
+### 🎯 Impact
+- Tous les liens de navigation fonctionnent correctement
+- L'interface de contrôle affiche les bons liens
+- Documentation claire pour la maintenance future
+
+---
+
 ## [4.5.1] - 2025-10-12 🎨 Amélioration UX - Boutons actions rapides responsives
 
 ### 🎨 Amélioré

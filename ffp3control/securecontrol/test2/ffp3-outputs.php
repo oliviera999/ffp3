@@ -161,10 +161,10 @@
                                 </header>
                                 <div>
                                     <center>
-                                  		<a href="https://iot.olution.info/ffp3test/ffp3datas/cronpompe.php" class="button small">cron manuel</a>
-                        		        <a href="https://iot.olution.info/ffp3test/ffp3datas/cronlog.txt" class="button small">journal du cron</a>
+                                  		<a href="/ffp3/cronpompe.php" class="button small">cron manuel</a>
+                        		        <a href="/ffp3/cronlog.txt" class="button small">journal du cron</a>
                         		        <br><br>
-                                        <a href="https://iot.olution.info/ffp3test/ffp3datas/ffp3-data.php" class="button large">Retour aux données</a>
+                                        <a href="/ffp3/aquaponie-test" class="button large">Retour aux données</a>
                                     </center>
                                 </div>
                             </article>
