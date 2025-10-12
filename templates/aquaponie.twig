@@ -1744,11 +1744,11 @@
     <script src="/ffp3/assets/js/pwa-init.js"></script>
         
     <script>
-        // Variables globales pour les modules
-        let chartUpdater = null;
-        let statsUpdater = null;
-        let realtimeUpdater = null;
-        let newReadingsCount = 0;
+        // Variables globales pour les modules (defensive declarations to avoid conflicts with external scripts)
+        window.chartUpdater = window.chartUpdater || null;
+        window.statsUpdater = window.statsUpdater || null;
+        window.realtimeUpdater = window.realtimeUpdater || null;
+        window.newReadingsCount = window.newReadingsCount || 0;
         
         // Charger les préférences depuis localStorage
         function loadLivePreferences() {
@@ -1774,14 +1774,14 @@
             const prefs = loadLivePreferences();
             
             // Initialiser ChartUpdater
-            chartUpdater = new ChartUpdater({
+            window.chartUpdater = new ChartUpdater({
                 maxPoints: prefs.maxPoints,
                 autoScroll: prefs.autoScroll
             });
             
             // Attendre que les graphiques soient créés (après createVersionD())
             setTimeout(() => {
-                const initialized = chartUpdater.init();
+                const initialized = window.chartUpdater.init();
                 if (initialized) {
                     console.log('[Aquaponie] ChartUpdater initialized successfully');
                 } else {
@@ -1790,12 +1790,12 @@
             }, 500);
             
             // Initialiser StatsUpdater
-            statsUpdater = new StatsUpdater({
+            window.statsUpdater = new StatsUpdater({
                 sensors: ['EauAquarium', 'EauReserve', 'EauPotager', 'TempEau', 'TempAir', 'Humidite', 'Luminosite']
             });
             
             setTimeout(() => {
-                const initialized = statsUpdater.init();
+                const initialized = window.statsUpdater.init();
                 if (initialized) {
                     console.log('[Aquaponie] StatsUpdater initialized successfully');
                 } else {
@@ -1803,21 +1803,17 @@
                 }
             }, 500);
             
-            // Exposer globalement
-            window.chartUpdater = chartUpdater;
-            window.statsUpdater = statsUpdater;
-            
             // Utiliser le bon path API selon l'environnement
             const apiBasePath = '{{ environment == "test" ? "/ffp3/api/realtime-test" : "/ffp3/api/realtime" }}';
             
             // Initialiser RealtimeUpdater
-            realtimeUpdater = initRealtimeUpdater({
+            window.realtimeUpdater = initRealtimeUpdater({
                 apiBasePath: apiBasePath,
                 pollInterval: prefs.interval,
                 enabled: prefs.enabled,
                 onNewData: function(readings) {
                     console.log('[Aquaponie] New sensor data received:', readings);
-                    newReadingsCount += readings.length;
+                    window.newReadingsCount += readings.length;
                     updateReadingsCounter();
                 },
                 onHealthUpdate: function(health) {
@@ -1835,10 +1831,10 @@
             // Toggle Mode Live
             document.getElementById('live-mode-toggle').addEventListener('change', function(e) {
                 if (e.target.checked) {
-                    realtimeUpdater.start();
+                    window.realtimeUpdater.start();
                     console.log('[Aquaponie] Live mode enabled');
                 } else {
-                    realtimeUpdater.stop();
+                    window.realtimeUpdater.stop();
                     console.log('[Aquaponie] Live mode disabled');
                 }
                 prefs.enabled = e.target.checked;
@@ -1847,8 +1843,8 @@
             
             // Toggle Auto-scroll
             document.getElementById('auto-scroll-toggle').addEventListener('change', function(e) {
-                if (chartUpdater) {
-                    chartUpdater.enableAutoScroll(e.target.checked);
+                if (window.chartUpdater) {
+                    window.chartUpdater.enableAutoScroll(e.target.checked);
                     console.log('[Aquaponie] Auto-scroll ' + (e.target.checked ? 'enabled' : 'disabled'));
                 }
                 prefs.autoScroll = e.target.checked;
@@ -1858,8 +1854,8 @@
             // Changement d'intervalle
             document.getElementById('update-interval-selector').addEventListener('change', function(e) {
                 const newInterval = parseInt(e.target.value);
-                if (realtimeUpdater) {
-                    realtimeUpdater.setInterval(newInterval);
+                if (window.realtimeUpdater) {
+                    window.realtimeUpdater.setInterval(newInterval);
                     console.log('[Aquaponie] Update interval changed to ' + newInterval + 'ms');
                 }
                 prefs.interval = newInterval;
@@ -1868,9 +1864,9 @@
             
             // Bouton rafraîchir maintenant
             document.getElementById('force-refresh-button').addEventListener('click', function() {
-                if (realtimeUpdater) {
+                if (window.realtimeUpdater) {
                     console.log('[Aquaponie] Force refresh triggered');
-                    realtimeUpdater.poll();
+                    window.realtimeUpdater.poll();
                     
                     // Animation du bouton
                     const btn = this;
@@ -1884,13 +1880,13 @@
             function updateReadingsCounter() {
                 const counter = document.getElementById('new-readings-count');
                 if (counter) {
-                    counter.textContent = newReadingsCount;
+                    counter.textContent = window.newReadingsCount;
                 }
             }
             
             // Réinitialiser le compteur toutes les heures
             setInterval(() => {
-                newReadingsCount = 0;
+                window.newReadingsCount = 0;
                 updateReadingsCounter();
             }, 3600000); // 1 heure
             

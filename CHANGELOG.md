@@ -7,6 +7,55 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.3] - 2025-10-12 🐛 Correction des erreurs console PWA & JavaScript
+
+### 🐛 Corrigé
+- **Erreurs 404 sur les icônes PWA**
+  - Génération de 8 fichiers d'icônes PNG manquants (`icon-72.png` à `icon-512.png`)
+  - Résolution des erreurs console lors du chargement de `manifest.json`
+  - Les icônes sont maintenant disponibles pour l'installation PWA
+  - Utilisation d'un script Python pour créer des icônes placeholder avec branding FFP3
+
+- **Erreur JavaScript "Identifier already declared"**
+  - Correction de conflit avec script externe `js_defer` injecté par le serveur
+  - Variables globales (`chartUpdater`, `statsUpdater`, `realtimeUpdater`, `newReadingsCount`) déclarées de manière défensive
+  - Migration de `let` vers `window.` prefix pour éviter les redéclarations
+  - Mise à jour de toutes les références dans `templates/aquaponie.twig` (lignes 1746-1891)
+
+### ✨ Ajouté
+- **Script de génération d'icônes PWA**
+  - `public/assets/icons/generate_icons.py` : Script Python pour générer les icônes
+  - Support PIL/Pillow pour icônes de qualité avec texte
+  - Fallback vers génération de PNG minimaux sans dépendance externe
+  - Couleur de fond #008B74 (vert olution) avec texte "FFP3" blanc
+
+### 📝 Fichiers modifiés
+- `templates/aquaponie.twig` : Lignes 1746-1891 (déclarations JavaScript défensives)
+
+### 📝 Fichiers créés
+- `public/assets/icons/icon-72.png`
+- `public/assets/icons/icon-96.png`
+- `public/assets/icons/icon-128.png`
+- `public/assets/icons/icon-144.png`
+- `public/assets/icons/icon-152.png`
+- `public/assets/icons/icon-192.png`
+- `public/assets/icons/icon-384.png`
+- `public/assets/icons/icon-512.png`
+- `public/assets/icons/generate_icons.py` : Script de génération
+
+### 🎯 Impact
+- Console du navigateur sans erreurs sur les pages aquaponie/aquaponie-test
+- PWA installable sans avertissements
+- Système de mise à jour temps réel fonctionnel sans conflits JavaScript
+- Compatibilité améliorée avec scripts injectés par le serveur/CDN
+
+### 🔧 Technique
+- Les icônes actuelles sont des placeholders fonctionnels (fond uni + texte)
+- Pour des icônes professionnelles, utiliser les outils recommandés dans `public/assets/icons/README.md`
+- L'approche défensive `window.` évite les conflits avec `js_defer.I4cHjq6EEP.js` du serveur
+
+---
+
 ## [4.5.2] - 2025-10-12 🔗 Correction des liens cassés
 
 ### 🐛 Corrigé
