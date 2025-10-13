@@ -7,6 +7,30 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.16] - 2025-10-13 🐛 Correction bug ChartUpdater temps réel
+
+### 🐛 Corrections de bugs
+
+#### Correction erreur JavaScript dans chart-updater.js
+- **Problème** : Erreur `TypeError: Cannot read properties of undefined (reading 'x')` à la ligne 225
+  - Se produisait lors de la mise à jour temps réel des graphiques
+  - Causée par des éléments `undefined` dans le tableau `series.data` de Highcharts
+  - Bloquait l'ajout de nouveaux points après quelques secondes de fonctionnement
+- **Solution** : Ajout d'une vérification de sécurité dans la fonction `find()`
+  - **Avant** : `series.data.find(p => p.x === update.timestamp)`
+  - **Après** : `series.data.find(p => p && p.x === update.timestamp)`
+- **Impact** : Les graphiques se mettent désormais à jour en temps réel sans erreur
+
+### 🔧 Fichiers modifiés
+- `public/assets/js/chart-updater.js` : Ligne 225 - Ajout vérification `p &&`
+
+### 📝 Notes techniques
+- Le problème apparaissait dans la console après quelques cycles de mise à jour
+- Les points Highcharts peuvent être `null` ou `undefined` après suppression (shift)
+- La vérification `p &&` garantit que l'objet existe avant d'accéder à ses propriétés
+
+---
+
 ## [4.5.15] - 2025-10-13 🐛 Correction des liens de navigation
 
 ### 🐛 Corrections de bugs

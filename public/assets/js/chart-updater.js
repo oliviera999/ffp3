@@ -222,7 +222,7 @@ class ChartUpdater {
             
             seriesUpdates.forEach(update => {
                 // Vérifier si le point existe déjà (éviter les doublons)
-                const existingPoint = series.data.find(p => p.x === update.timestamp);
+                const existingPoint = series.data.find(p => p && p.x === update.timestamp);
                 if (existingPoint) {
                     // Mettre à jour le point existant
                     existingPoint.update(update.value, false);
