@@ -7,6 +7,30 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.22] - 2025-10-13 🎨 Interface compacte - Paramètres sur lignes multiples
+
+### ✨ Améliorations
+
+#### Organisation compacte des paramètres de contrôle
+- **Amélioration** : Réorganisation de tous les paramètres pour un affichage plus compact
+- **Nourrissage - Horaires** : Matin, Midi, Soir sur la même ligne (3 colonnes)
+- **Nourrissage - Durées** : Gros poissons, Petits poissons sur la même ligne (2 colonnes)
+- **Gestion de l'eau - Ligne 1** : Aquarium bas, Débordement (2 colonnes)
+- **Gestion de l'eau - Ligne 2** : Remplissage, Réserve basse (2 colonnes)
+- **Technique** : Grilles CSS responsives avec `display: grid`
+
+- **Fichiers modifiés** :
+  - `templates/control.twig` (lignes 967-992, 994-1008)
+
+- **Impact** :
+  - ✅ Interface beaucoup plus compacte
+  - ✅ Meilleure utilisation de l'espace horizontal
+  - ✅ Moins de défilement vertical nécessaire
+  - ✅ Lisibilité améliorée avec regroupement logique des paramètres
+  - ✅ Responsive sur desktop, tablette et mobile
+
+---
+
 ## [4.5.21] - 2025-10-13 🎨 Amélioration interface nourrissage
 
 ### ✨ Améliorations

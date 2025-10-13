@@ -141,6 +141,27 @@
             text-decoration: none !important;
         }
         
+        /* CRITIQUE : Force les pseudo-éléments ::before pour Font Awesome */
+        /* C'est ici que Font Awesome injecte les icônes via content */
+        .action-button-icon i::before,
+        .action-button-icon .fas::before,
+        .action-button-icon .fa::before,
+        i.fas::before,
+        i.fa-solid::before,
+        .fas::before,
+        .fa-solid::before,
+        [class^="fa-"]::before,
+        [class*=" fa-"]::before {
+            font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "FontAwesome" !important;
+            font-weight: 900 !important;
+            display: inline-block !important;
+            font-style: normal !important;
+            font-variant: normal !important;
+            text-rendering: auto !important;
+            -webkit-font-smoothing: antialiased !important;
+            -moz-osx-font-smoothing: grayscale !important;
+        }
+        
         /* Force Font Awesome pour toutes les icônes fas - Override ALL */
         .fas, .fa-solid, [class^="fa-"], [class*=" fa-"] {
             font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "FontAwesome" !important;
@@ -967,17 +988,28 @@
                                 {# Gestion de l'eau #}
                                 <div class="param-box" style="background: #e3f2fd !important; margin-bottom: 12px !important; padding: 12px !important;">
                                     <h4><i class="fas fa-tint"></i> Gestion de l'eau</h4>
-                                    <label for="aqThr">Aquarium bas (cm)</label>
-                                    <input type="number" name="aqThr" min="0" id="aqThr" value="{{ params.aqThr|default(0) }}">
                                     
-                                    <label for="taThr">Réserve basse (cm)</label>
-                                    <input type="number" name="taThr" min="0" id="taThr" value="{{ params.taThr|default(0) }}">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                                        <div>
+                                            <label for="aqThr">Aquarium bas (cm)</label>
+                                            <input type="number" name="aqThr" min="0" id="aqThr" value="{{ params.aqThr|default(0) }}">
+                                        </div>
+                                        <div>
+                                            <label for="limFlood">Débordement (cm)</label>
+                                            <input type="number" name="limFlood" min="0" id="limFlood" value="{{ params.limFlood|default(0) }}">
+                                        </div>
+                                    </div>
                                     
-                                    <label for="tempsRemplissageSec">Remplissage (s)</label>
-                                    <input type="number" name="tempsRemplissageSec" min="0" id="tempsRemplissageSec" value="{{ params.tempsRemplissageSec|default(0) }}">
-                                    
-                                    <label for="limFlood">Débordement (cm)</label>
-                                    <input type="number" name="limFlood" min="0" id="limFlood" value="{{ params.limFlood|default(0) }}">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                        <div>
+                                            <label for="tempsRemplissageSec">Remplissage (s)</label>
+                                            <input type="number" name="tempsRemplissageSec" min="0" id="tempsRemplissageSec" value="{{ params.tempsRemplissageSec|default(0) }}">
+                                        </div>
+                                        <div>
+                                            <label for="taThr">Réserve basse (cm)</label>
+                                            <input type="number" name="taThr" min="0" id="taThr" value="{{ params.taThr|default(0) }}">
+                                        </div>
+                                    </div>
                                 </div>
                         
                                 {# Chauffage #}
@@ -992,14 +1024,20 @@
                                     <h4><i class="fas fa-bowl-food"></i> Nourrissage automatique</h4>
                                     
                                     <p style="margin: 8px 0 5px 0; font-weight: 500; font-size: 0.9em;">Horaires (heure 0-23)</p>
-                                    <label for="bouffeMat">Matin</label>
-                                    <input type="number" name="bouffeMat" min="0" max="23" id="bouffeMat" value="{{ params.bouffeMat|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
-                                    
-                                    <label for="bouffeMid">Midi</label>
-                                    <input type="number" name="bouffeMid" min="0" max="23" id="bouffeMid" value="{{ params.bouffeMid|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
-                                    
-                                    <label for="bouffeSoir">Soir</label>
-                                    <input type="number" name="bouffeSoir" min="0" max="23" id="bouffeSoir" value="{{ params.bouffeSoir|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                                        <div>
+                                            <label for="bouffeMat">Matin</label>
+                                            <input type="number" name="bouffeMat" min="0" max="23" id="bouffeMat" value="{{ params.bouffeMat|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                        </div>
+                                        <div>
+                                            <label for="bouffeMid">Midi</label>
+                                            <input type="number" name="bouffeMid" min="0" max="23" id="bouffeMid" value="{{ params.bouffeMid|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                        </div>
+                                        <div>
+                                            <label for="bouffeSoir">Soir</label>
+                                            <input type="number" name="bouffeSoir" min="0" max="23" id="bouffeSoir" value="{{ params.bouffeSoir|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                        </div>
+                                    </div>
                                     
                                     <p style="margin: 15px 0 5px 0; font-weight: 500; font-size: 0.9em;">Durées (secondes)</p>
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
