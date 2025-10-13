@@ -7,6 +7,41 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.32] - 2025-10-13 🐛 Correction - Affichage version firmware ESP32
+
+### 🐛 Corrections
+- **Pied de page Control** : Restauration de l'affichage de la version du firmware ESP32 dans le pied de page de l'interface de contrôle
+  - **`OutputController.php`** : Ajout de la récupération de la version du firmware via `SensorReadRepository::getFirmwareVersion()`
+  - **`control.twig`** : Ajout de l'affichage de la version du firmware dans le footer (format : `{{ version }} | Firmware ESP32: v{{ firmware_version }}`)
+  - La version du firmware était déjà affichée dans `aquaponie.twig` et `dashboard.twig` mais manquait dans `control.twig`
+
+### 📝 Impact
+- Les utilisateurs peuvent maintenant voir la version du firmware ESP32 dans toutes les pages de l'application (aquaponie, dashboard et contrôle)
+- Cohérence de l'affichage des informations de version sur toutes les interfaces
+
+### 🎯 Fichiers modifiés
+- `src/Controller/OutputController.php` - Ajout du `SensorReadRepository` et récupération de la version firmware
+- `templates/control.twig` - Affichage de la version firmware dans le footer (ligne 990)
+
+---
+
+## [4.5.31] - 2025-10-13 ✨ Amélioration - Centrage barre mode live
+
+### ✨ Améliorations UI
+- **Barre mode live** : Positionnement centré en bas de page au lieu d'en bas à gauche
+  - **Desktop** : Utilisation de `left: 50%` et `transform: translateX(-50%)` pour centrage parfait
+  - **Mobile** : Adaptation responsive avec `max-width: calc(100% - 20px)` pour éviter le débordement
+  - Meilleure ergonomie visuelle et symétrie de l'interface
+
+### 📝 Impact
+- Amélioration de l'expérience utilisateur avec une barre de contrôle plus centrée et équilibrée
+- Affichage cohérent sur tous les écrans (desktop et mobile)
+
+### 🎯 Fichiers modifiés
+- `public/assets/css/realtime-styles.css` - Centrage de `.live-controls-panel` (lignes 394-409 et 555-565)
+
+---
+
 ## [4.5.30] - 2025-10-13 🐛 Correction - Redirections ffp3datas obsolètes
 
 ### 🐛 Corrections critiques

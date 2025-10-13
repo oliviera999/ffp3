@@ -11,6 +11,7 @@ use App\Service\OutputService;
 use App\Service\TemplateRenderer;
 use App\Repository\OutputRepository;
 use App\Repository\BoardRepository;
+use App\Repository\SensorReadRepository;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -23,6 +24,7 @@ class OutputController
 {
     private OutputService $outputService;
     private TemplateRenderer $renderer;
+    private SensorReadRepository $sensorReadRepo;
 
     public function __construct()
     {
@@ -31,6 +33,7 @@ class OutputController
         $boardRepo = new BoardRepository($pdo);
         $this->outputService = new OutputService($outputRepo, $boardRepo);
         $this->renderer = new TemplateRenderer();
+        $this->sensorReadRepo = new SensorReadRepository($pdo);
     }
 
     /**
@@ -47,6 +50,9 @@ class OutputController
         // Déterminer l'environnement
         $environment = TableConfig::getEnvironment();
         
+        // Récupérer la version du firmware ESP32
+        $firmwareVersion = $this->sensorReadRepo->getFirmwareVersion();
+        
         // Préparer les données pour le template
         $data = [
             'outputs' => $outputs,
@@ -54,6 +60,7 @@ class OutputController
             'title' => 'Contrôle du ffp3',
             'environment' => $environment,
             'version' => Version::getWithPrefix(),
+            'firmware_version' => $firmwareVersion,
         ];
         
         // Rendre le template Twig et écrire dans la réponse
