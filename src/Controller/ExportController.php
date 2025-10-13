@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Config\Database;
 use App\Repository\SensorReadRepository;
 use DateTimeImmutable;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Throwable;
 
 class ExportController
@@ -13,21 +15,19 @@ class ExportController
      * Point d'entrée HTTP : /export-data?start=YYYY-MM-DD[+HH:ii:ss]&end=YYYY-MM-DD[+HH:ii:ss]
      * Valide les paramètres, produit un CSV en streaming puis termine le script.
      */
-    public function downloadCsv(): void
+    public function downloadCsv(Request $request, Response $response): Response
     {
-        header('Content-Type: text/plain; charset=utf-8');
-
         // Récupération des paramètres GET
-        $startParam = $_GET['start'] ?? null;
-        $endParam   = $_GET['end']   ?? null;
+        $queryParams = $request->getQueryParams();
+        $startParam = $queryParams['start'] ?? null;
+        $endParam   = $queryParams['end']   ?? null;
 
         try {
             $start = $startParam ? new DateTimeImmutable($startParam) : new DateTimeImmutable('-1 day');
             $end   = $endParam   ? new DateTimeImmutable($endParam)   : new DateTimeImmutable();
         } catch (\Exception $e) {
-            http_response_code(400);
-            echo 'Paramètres de date invalides';
-            return;
+            $response->getBody()->write('Paramètres de date invalides');
+            return $response->withStatus(400)->withHeader('Content-Type', 'text/plain; charset=utf-8');
         }
 
         try {
@@ -39,22 +39,26 @@ class ExportController
             $nbLines = $repo->exportCsv($start, $end, $tmpFile);
 
             if ($nbLines === 0) {
-                http_response_code(204); // No content
-                echo 'Aucune donnée pour la période demandée';
                 @unlink($tmpFile);
-                return;
+                $response->getBody()->write('Aucune donnée pour la période demandée');
+                return $response->withStatus(204)->withHeader('Content-Type', 'text/plain; charset=utf-8');
             }
 
-            // Envoi des en-têtes pour le téléchargement
-            header('Content-Type: text/csv; charset=utf-8');
-            header('Content-Disposition: attachment; filename="sensor-data.csv"');
-            header('Content-Length: ' . filesize($tmpFile));
-
-            readfile($tmpFile);
+            // Lire le contenu du fichier et l'écrire dans la réponse
+            $csvContent = file_get_contents($tmpFile);
             @unlink($tmpFile);
+            
+            $response->getBody()->write($csvContent);
+            
+            return $response
+                ->withStatus(200)
+                ->withHeader('Content-Type', 'text/csv; charset=utf-8')
+                ->withHeader('Content-Disposition', 'attachment; filename="sensor-data.csv"')
+                ->withHeader('Content-Length', (string) strlen($csvContent));
+                
         } catch (Throwable $e) {
-            http_response_code(500);
-            echo 'Erreur serveur';
+            $response->getBody()->write('Erreur serveur');
+            return $response->withStatus(500)->withHeader('Content-Type', 'text/plain; charset=utf-8');
         }
     }
 }

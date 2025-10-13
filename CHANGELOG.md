@@ -7,6 +7,99 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.15] - 2025-10-13 🐛 Correction des liens de navigation
+
+### 🐛 Corrections de bugs
+
+#### Correction des liens de redirection
+- **Correction de tous les liens pointant vers l'ancienne URL**
+  - **Problème** : Les liens dans plusieurs pages pointaient vers `/ffp3/ffp3datas/ffp3-data.php` (ancienne structure)
+  - **Solution** : Mise à jour vers la nouvelle structure Slim 4
+  - **Avant** : `https://iot.olution.info/ffp3/ffp3datas/ffp3-data.php`
+  - **Après** : `https://iot.olution.info/ffp3/aquaponie` (PROD) et `/ffp3/aquaponie-test` (TEST)
+  - **Impact** : Navigation cohérente dans toute l'application
+
+### 🔧 Fichiers modifiés
+- `index.php` : Correction de la redirection 301
+- `ffp3control/securecontrol/ffp3-outputs.php` : Mise à jour du lien de navigation
+- `ffp3control/securecontrol/ffp3-outputs2.php` : Mise à jour vers `/aquaponie-test`
+- `ffp3control/securecontrol/test2/ffp3-outputs.php` : Mise à jour vers `/aquaponie-test`
+- `ffp3gallery/ffp3-gallery.php` : Correction de 2 liens (navigation + bouton retour)
+
+### 📝 Notes
+- Les liens dans `index.html` étaient déjà corrects
+- Seuls les fichiers actifs ont été corrigés (pas le dossier `unused/`)
+- Les versions TEST redirigent correctement vers `/aquaponie-test`
+
+---
+
+## [4.5.14] - 2025-10-13 🐛 Correction ExportController vers PSR-7
+
+### 🐛 Corrections de bugs
+
+#### Architecture PSR-7 dans ExportController
+- **Migration complète de `ExportController` vers PSR-7**
+  - Suite de la correction de v4.5.13, alignement de tous les contrôleurs API vers PSR-7
+  - **Avant** : Utilisation de `echo`, `header()`, `http_response_code()`, `$_GET`
+  - **Après** : Objets PSR-7 `Request` et `Response` correctement utilisés
+  - Signature changée : `downloadCsv(): void` → `downloadCsv(Request $request, Response $response): Response`
+  - Remplacement de `$_GET` par `$request->getQueryParams()`
+  - Remplacement de `echo` par `$response->getBody()->write()`
+  - Remplacement de `http_response_code()` par `$response->withStatus()`
+  - Remplacement de `header()` par `$response->withHeader()`
+  - Gestion du streaming CSV adapté pour PSR-7 avec `file_get_contents()`
+  - **Impact** : Export CSV plus robuste et cohérent avec l'architecture globale
+  - Prévention des problèmes potentiels de buffer mixing
+  - Meilleure gestion des erreurs HTTP
+
+### 🔧 Fichiers modifiés
+- `src/Controller/ExportController.php` : Migration complète vers PSR-7
+
+### 📊 État de l'architecture
+Tous les contrôleurs API sont maintenant alignés sur PSR-7 :
+- ✅ `PostDataController` (v4.5.13)
+- ✅ `ExportController` (v4.5.14)
+- ✅ `HeartbeatController` (déjà PSR-7)
+- ✅ `RealtimeApiController` (déjà PSR-7)
+- ✅ `OutputController` (déjà PSR-7)
+
+Contrôleurs HTML (moins critiques) :
+- 🟡 `AquaponieController` (legacy - à migrer ultérieurement)
+- 🟡 `DashboardController` (legacy - à migrer ultérieurement)
+- 🟡 `TideStatsController` (legacy - à migrer ultérieurement)
+
+---
+
+## [4.5.13] - 2025-10-13 🐛 Correction critique HTTP 500 sur endpoint ESP32
+
+### 🐛 Corrections de bugs
+
+#### Architecture PSR-7 dans PostDataController
+- **Correction du problème HTTP 500 sur `/post-data-test` et `/post-data`**
+  - L'ESP32 recevait systématiquement HTTP 500 alors que les données étaient correctement insérées en BDD
+  - **Cause** : Le contrôleur `PostDataController` utilisait l'ancienne approche PHP (`echo`, `header()`, `http_response_code()`) incompatible avec l'architecture Slim 4 / PSR-7
+  - **Symptômes** : Messages de réponse concaténés ("Données enregistrées avec succès" + message d'erreur)
+  - **Solution** : Migration complète vers les objets PSR-7 `Request` et `Response`
+  - Signature changée : `handle(): void` → `handle(Request $request, Response $response): Response`
+  - Remplacement de tous les `echo` par `$response->getBody()->write()`
+  - Remplacement de tous les `http_response_code()` par `$response->withStatus()`
+  - Utilisation de `$request->getParsedBody()` au lieu de `$_POST`
+  - **Impact** : L'ESP32 reçoit maintenant correctement HTTP 200 lors d'une insertion réussie
+  - Fin des erreurs de retry inutiles côté ESP32
+  - Cohérence avec les autres contrôleurs (`HeartbeatController`, etc.)
+
+### 🔧 Fichiers modifiés
+- `src/Controller/PostDataController.php` : Migration complète vers PSR-7
+
+### 📊 Contexte technique
+Cette correction résout le problème identifié lors de l'analyse des logs ESP32 où :
+1. ✅ Les données étaient bien insérées en BDD
+2. ❌ Le serveur renvoyait HTTP 500 au lieu de 200
+3. ❌ L'ESP32 effectuait 3 tentatives infructueuses (retry)
+4. ❌ Risque de duplication de données
+
+---
+
 ## [4.5.12] - 2025-10-13 🐛 Correction logs "GPIO NaN" dans la synchronisation
 
 ### 🐛 Corrections de bugs

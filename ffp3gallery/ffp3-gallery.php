@@ -21,7 +21,7 @@
 					<nav id="nav">
 						<ul class="links">
 							<li><a href="https://iot.olution.info/index.php">olution</a></li>
-							<li class="active"><a href="https://iot.olution.info/ffp3/ffp3datas/ffp3-data.php">le prototype farmflow 3</a></li>
+							<li class="active"><a href="https://iot.olution.info/ffp3/aquaponie">le prototype farmflow 3</a></li>
 							<li><a href="https://iot.olution.info/n3pp/n3ppdatas/n3pp-data.php">phasmopolis</a></li>
 							<li><a href="https://iot.olution.info/msp1/msp1datas/msp1-data.php">le tiny garden</a></li>
 							
@@ -92,7 +92,7 @@
 										</div>
 	                             </div> 
                                  <hr />
-					             <a href="https://iot.olution.info/ffp3/ffp3datas/ffp3-data.php" class="button large">Retour aux données</a>
+					             <a href="https://iot.olution.info/ffp3/aquaponie" class="button large">Retour aux données</a>
 							<!--</section>-->
 						</article>
 					</div>	

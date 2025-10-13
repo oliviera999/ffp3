@@ -7,6 +7,8 @@ use App\Domain\SensorData;
 use App\Repository\SensorRepository;
 use App\Service\LogService;
 use App\Security\SignatureValidator;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Throwable;
 
 class PostDataController
@@ -22,48 +24,46 @@ class PostDataController
      * Point d'entrée HTTP : /post-data (méthode POST)
      * Vérifie la clé API, construit l'objet SensorData et insère la ligne.
      */
-    public function handle(): void
+    public function handle(Request $request, Response $response): Response
     {
-        header('Content-Type: text/plain; charset=utf-8');
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405);
-            echo 'Méthode non autorisée';
-            return;
+        // Vérifier méthode POST
+        if ($request->getMethod() !== 'POST') {
+            $this->logger->warning('PostData: Méthode non autorisée', ['method' => $request->getMethod()]);
+            $response->getBody()->write('Méthode non autorisée');
+            return $response->withStatus(405)->withHeader('Content-Type', 'text/plain; charset=utf-8');
         }
+
+        $params = $request->getParsedBody();
 
         // ---------------------------------------------------------------------
         // Validation de la signature HMAC : facultative.
         // Si timestamp ET signature sont fournis => on valide.
-        // Sinon, on laisse passer mais on loggue l’absence.
+        // Sinon, on laisse passer mais on loggue l'absence.
         // ---------------------------------------------------------------------
-        $timestamp = $_POST['timestamp'] ?? null;
-        $signature = $_POST['signature'] ?? null;
+        $timestamp = $params['timestamp'] ?? null;
+        $signature = $params['signature'] ?? null;
 
         if ($timestamp !== null || $signature !== null) {
             // Au moins un des deux champs est présent : on exige les deux + validation
             if ($timestamp === null || $signature === null) {
                 $this->logger->warning('Signature partielle reçue mais incomplète', ['ip' => $_SERVER['REMOTE_ADDR'] ?? 'n/a']);
-                http_response_code(401);
-                echo 'Signature incomplète';
-                return;
+                $response->getBody()->write('Signature incomplète');
+                return $response->withStatus(401)->withHeader('Content-Type', 'text/plain; charset=utf-8');
             }
 
             $sigSecret = $_ENV['API_SIG_SECRET'] ?? null;
             if ($sigSecret === null) {
                 $this->logger->error('Variable API_SIG_SECRET manquante dans .env');
-                http_response_code(500);
-                echo 'Configuration serveur manquante';
-                return;
+                $response->getBody()->write('Configuration serveur manquante');
+                return $response->withStatus(500)->withHeader('Content-Type', 'text/plain; charset=utf-8');
             }
 
             $sigWindow = (int) ($_ENV['SIG_VALID_WINDOW'] ?? 300);
 
             if (!SignatureValidator::isValid((string) $timestamp, (string) $signature, $sigSecret, $sigWindow)) {
                 $this->logger->warning('Signature HMAC invalide', ['ip' => $_SERVER['REMOTE_ADDR'] ?? 'n/a']);
-                http_response_code(401);
-                echo 'Signature incorrecte';
-                return;
+                $response->getBody()->write('Signature incorrecte');
+                return $response->withStatus(401)->withHeader('Content-Type', 'text/plain; charset=utf-8');
             }
             // Signature OK
         } else {
@@ -74,29 +74,27 @@ class PostDataController
         // ---------------------------------------------------------------------
         // Validation de la clé API (mécanisme legacy)
         // ---------------------------------------------------------------------
-        $apiKeyProvided = $_POST['api_key'] ?? '';
+        $apiKeyProvided = $params['api_key'] ?? '';
         $apiKeyExpected = $_ENV['API_KEY'] ?? null;
 
         if ($apiKeyExpected === null) {
             $this->logger->error('Variable API_KEY manquante dans .env');
-            http_response_code(500);
-            echo 'Configuration serveur manquante';
-            return;
+            $response->getBody()->write('Configuration serveur manquante');
+            return $response->withStatus(500)->withHeader('Content-Type', 'text/plain; charset=utf-8');
         }
 
         if ($apiKeyProvided !== $apiKeyExpected) {
             $this->logger->warning("Clé API invalide depuis {ip}", ['ip' => $_SERVER['REMOTE_ADDR'] ?? 'n/a']);
-            http_response_code(401);
-            echo 'Clé API incorrecte';
-            return;
+            $response->getBody()->write('Clé API incorrecte');
+            return $response->withStatus(401)->withHeader('Content-Type', 'text/plain; charset=utf-8');
         }
 
         // Fonctions utilitaires de lecture POST --------------------------------
         // Valeur brute (chaîne) ou null si absente / vide
-        $sanitize = static fn(string $key) => isset($_POST[$key]) && $_POST[$key] !== '' ? trim($_POST[$key]) : null;
+        $sanitize = static fn(string $key) => isset($params[$key]) && $params[$key] !== '' ? trim($params[$key]) : null;
         // Conversions typées sûres (retournent null si champ manquant)
-        $toFloat = static fn(string $key) => isset($_POST[$key]) && $_POST[$key] !== '' ? (float) $_POST[$key] : null;
-        $toInt   = static fn(string $key) => isset($_POST[$key]) && $_POST[$key] !== '' ? (int) $_POST[$key] : null;
+        $toFloat = static fn(string $key) => isset($params[$key]) && $params[$key] !== '' ? (float) $params[$key] : null;
+        $toInt   = static fn(string $key) => isset($params[$key]) && $params[$key] !== '' ? (int) $params[$key] : null;
 
         // Construction de l'objet transférant les données capteurs -------------
         $data = new SensorData(
@@ -132,12 +130,16 @@ class PostDataController
             $repo = new SensorRepository($pdo);
             $repo->insert($data);
 
-            $this->logger->info('Données capteurs insérées', ['sensor' => $data->sensor]);
-            echo 'Données enregistrées avec succès';
+            $this->logger->info('Données capteurs insérées', ['sensor' => $data->sensor, 'version' => $data->version]);
+            
+            $response->getBody()->write('Données enregistrées avec succès');
+            return $response->withStatus(200)->withHeader('Content-Type', 'text/plain; charset=utf-8');
+            
         } catch (Throwable $e) {
             $this->logger->error('Erreur insertion données', ['error' => $e->getMessage()]);
-            http_response_code(500);
-            echo 'Erreur serveur';
+            
+            $response->getBody()->write('Erreur serveur');
+            return $response->withStatus(500)->withHeader('Content-Type', 'text/plain; charset=utf-8');
         }
     }
 } 
