@@ -389,39 +389,33 @@
 }
 
 /* =================================================================
-   PANNEAU CONTRÔLES MODE LIVE
+   CONTRÔLES MODE LIVE INTÉGRÉS (dans État du système)
 ================================================================= */
-.live-controls-panel {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: white;
-    border-radius: 12px;
-    padding: 15px 20px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    z-index: 9997;
+.live-controls-integrated {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.live-control-row {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 20px;
-    border: 2px solid #008B74;
-    transition: all 0.3s ease;
+    gap: 15px;
+    justify-content: space-around;
 }
 
-.live-controls-panel.collapsed {
-    padding: 10px 15px;
-    gap: 10px;
-}
-
-.live-control-group {
+.live-control-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 0 10px;
-    border-right: 1px solid #e0e0e0;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
 }
 
-.live-control-group:last-child {
+.live-control-item:last-child {
     border-right: none;
 }
 
@@ -553,38 +547,33 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-    .live-controls-panel {
-        bottom: 10px;
-        left: 50%;
-        right: auto;
-        transform: translateX(-50%);
-        flex-wrap: wrap;
+    .live-control-row {
+        flex-direction: column;
         gap: 10px;
-        padding: 12px;
-        max-width: calc(100% - 20px);
     }
     
-    .live-control-group {
-        padding: 0 8px;
-        flex: 1 1 auto;
+    .live-control-item {
+        width: 100%;
+        justify-content: space-between;
+        padding: 10px 12px;
     }
     
     .live-control-label {
-        font-size: 0.75em;
+        font-size: 0.85em;
     }
     
     .live-toggle-switch {
-        width: 36px;
-        height: 20px;
+        width: 40px;
+        height: 22px;
     }
     
     .live-toggle-slider:before {
-        height: 14px;
-        width: 14px;
+        height: 16px;
+        width: 16px;
     }
     
     .live-toggle-switch input:checked + .live-toggle-slider:before {
-        transform: translateX(16px);
+        transform: translateX(18px);
     }
 }
 

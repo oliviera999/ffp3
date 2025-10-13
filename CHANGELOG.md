@@ -7,6 +7,65 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.36] - 2025-10-13 ✨ Amélioration UI - Intégration des contrôles Mode Live
+
+### ✨ Amélioration de l'interface
+- **Intégration des contrôles Mode Live dans la boîte "État du système"** : Les contrôles du mode live (activation, auto-scroll, intervalle, etc.) qui étaient dans une fenêtre flottante en bas de l'écran ont été intégrés directement dans le panneau "État du système"
+  - Meilleure organisation de l'interface
+  - Tous les contrôles temps réel sont maintenant regroupés au même endroit
+  - Réduction de l'encombrement visuel
+  - Interface plus épurée et professionnelle
+
+### 📝 Fichiers modifiés
+- **Modifié** : `templates/aquaponie.twig`
+  - Déplacement des contrôles live (Mode Live, Auto-scroll, Intervalle, Statistiques, Bouton Rafraîchir) dans le panneau État du système
+  - Suppression du panneau flottant `live-controls-panel`
+  - Ajout de la nouvelle section `live-controls-integrated` dans le panneau système
+- **Modifié** : `public/assets/css/realtime-styles.css`
+  - Suppression des styles pour `.live-controls-panel` (position fixe en bas)
+  - Ajout des styles pour `.live-controls-integrated` et `.live-control-item`
+  - Mise à jour des règles responsive pour mobile
+  - Les contrôles s'adaptent maintenant au contexte du panneau système
+
+### ✅ Résultat
+- ✅ Interface plus claire et mieux organisée
+- ✅ Contrôles temps réel facilement accessibles dans le panneau système
+- ✅ Plus de fenêtre flottante qui masque le contenu
+- ✅ Responsive amélioré sur mobile
+
+---
+
+## [4.5.35] - 2025-10-13 🐛 Correction - Badge LIVE trompeur quand système hors ligne
+
+### 🐛 Problème résolu
+- **Badge LIVE affiché même quand le système est hors ligne** : Le badge en haut à droite affichait "LIVE" (vert) même lorsque le système ESP32 était hors ligne, ce qui était trompeur pour l'utilisateur
+  - Le badge indiquait uniquement l'état du polling (rafraîchissement automatique)
+  - Il ne tenait pas compte du statut réel du système physique (ESP32)
+  - Impact : L'utilisateur pouvait croire que le système était actif alors qu'il était hors ligne
+
+### ✨ Solutions implémentées
+
+#### 1. Badge synchronisé avec le statut système réel
+- **`public/assets/js/realtime-updater.js`** : Modification de la méthode `updateSystemStatus()`
+  - Le badge affiche maintenant "HORS LIGNE" (rouge) si le système ESP32 est hors ligne
+  - Le badge affiche "LIVE" (vert) uniquement si le système est en ligne ET le polling est actif
+  - La méthode `poll()` ne force plus le badge à "online" pour laisser `updateSystemStatus()` décider
+
+#### 2. Logique améliorée
+- Priorité donnée au statut système réel (health.online) sur l'état du polling
+- Badge "HORS LIGNE" même si le rafraîchissement automatique fonctionne
+- Badge "LIVE" seulement si système en ligne ET polling actif
+
+### 📝 Fichiers modifiés
+- **Modifié** : `public/assets/js/realtime-updater.js`
+
+### ✅ Résultat
+- ✅ Le badge reflète maintenant correctement le statut du système
+- ✅ Plus de confusion entre état du polling et état du système physique
+- ✅ L'utilisateur voit immédiatement si le système ESP32 est opérationnel
+
+---
+
 ## [4.5.34] - 2025-10-13 🐛 Correction - Redirection des liens index.html
 
 ### 🐛 Problème résolu
