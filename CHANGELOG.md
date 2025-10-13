@@ -7,6 +7,41 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.28] - 2025-10-13 🐛 Correction - Icônes invisibles dans le bloc Actions
+
+### 🐛 Correction critique
+- **Icônes Font Awesome** : Les icônes dans le bloc "Actions" (pompes, radiateur, lumière, etc.) ne s'affichaient pas
+  - **Cause** : CSS trop complexe avec overrides excessifs qui empêchaient Font Awesome de fonctionner
+  - **Solution** : Simplification drastique du CSS `.action-button-icon`
+  - Suppression de tous les overrides `!important` sur les pseudo-éléments `::before`
+  - Suppression des règles de police forcées qui interféraient avec Font Awesome
+  - Le CSS simplifié ne définit que le positionnement et le style visuel
+  - Font Awesome gère maintenant naturellement l'affichage des icônes
+- **Impact** : Les icônes s'affichent correctement dans tous les boutons d'action du panneau de contrôle
+- **Fichier modifié** : `templates/control.twig` (lignes 102-120)
+  - Réduction de ~75 lignes de CSS complexe à ~18 lignes simples
+
+### 📝 Note technique
+- Les autres icônes de la page (titres, liens) fonctionnaient déjà correctement
+- Cette correction applique le principe KISS (Keep It Simple, Stupid) au CSS
+- Le styling visuel (couleurs, animations, effets hover) est préservé
+
+---
+
+## [4.5.27] - 2025-10-13 🐛 Correction - Formatage des dates de connexion des boards
+
+### 🐛 Corrections
+- **État des connexions** : Correction du formatage de la date "Dernière requête" dans l'interface de contrôle
+  - Les dates sont maintenant formatées au format `dd/mm/YYYY HH:MM:SS` (ex: 13/10/2025 17:51:34)
+  - Utilisation de `DATE_FORMAT` dans les requêtes SQL pour un formatage correct
+  - Application du fuseau horaire Europe/Paris configuré dans le projet
+- **Fichier modifié** : `src/Repository/BoardRepository.php`
+  - Méthode `findAll()` : Ajout du formatage de date
+  - Méthode `findActiveForEnvironment()` : Ajout du formatage de date
+  - Méthode `findByName()` : Ajout du formatage de date
+
+---
+
 ## [4.5.26] - 2025-10-13 🎨 Optimisation UI - Équilibrage des colonnes
 
 ### ✨ Améliorations

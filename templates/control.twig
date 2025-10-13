@@ -99,81 +99,24 @@
             min-width: 0;
         }
         
-        /* Icône du bouton - Plus grande et plus visible */
+        /* Icône du bouton - Simplifié pour compatibilité Font Awesome */
         .action-button-icon {
             width: 44px;
             height: 44px;
             border-radius: 10px;
-            display: flex !important;
+            display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem !important;
+            font-size: 1.5rem;
             background: currentColor;
-            color: white !important;
+            color: white;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             flex-shrink: 0;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         
-        /* Force l'affichage des icônes Font Awesome - PRIORITÉ MAXIMALE */
-        .action-button-icon i,
-        .action-button-icon .fas,
-        .action-button-icon .fa,
-        i.fas,
-        i.fa-solid {
-            display: inline-block !important;
-            font-size: 1.5rem !important;
-            line-height: 1 !important;
-            color: white !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-            font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "FontAwesome" !important;
-            font-weight: 900 !important;
-            -webkit-font-smoothing: antialiased !important;
-            -moz-osx-font-smoothing: grayscale !important;
-            font-style: normal !important;
-            font-variant: normal !important;
-            text-rendering: auto !important;
-            width: auto !important;
-            height: auto !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border: none !important;
-            background: transparent !important;
-            text-decoration: none !important;
-        }
-        
-        /* CRITIQUE : Force les pseudo-éléments ::before pour Font Awesome */
-        /* C'est ici que Font Awesome injecte les icônes via content */
-        .action-button-icon i::before,
-        .action-button-icon .fas::before,
-        .action-button-icon .fa::before,
-        i.fas::before,
-        i.fa-solid::before,
-        .fas::before,
-        .fa-solid::before,
-        [class^="fa-"]::before,
-        [class*=" fa-"]::before {
-            font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "FontAwesome" !important;
-            font-weight: 900 !important;
-            display: inline-block !important;
-            font-style: normal !important;
-            font-variant: normal !important;
-            text-rendering: auto !important;
-            -webkit-font-smoothing: antialiased !important;
-            -moz-osx-font-smoothing: grayscale !important;
-        }
-        
-        /* Force Font Awesome pour toutes les icônes fas - Override ALL */
-        .fas, .fa-solid, [class^="fa-"], [class*=" fa-"] {
-            font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "FontAwesome" !important;
-            font-weight: 900 !important;
-            font-style: normal !important;
-        }
-        
-        /* Fix spécifique pour les icônes dans les conteneurs d'action */
-        .action-button-icon {
-            font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "FontAwesome" !important;
+        .action-button-icon i {
+            color: white;
         }
         
         .action-button-card:hover .action-button-icon {
