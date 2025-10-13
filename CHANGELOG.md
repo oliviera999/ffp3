@@ -47,18 +47,26 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
   - Bonnes pratiques de développement
   - Architecture technique des caches
 
+### ✨ Améliorations UI
+- **Barre mode live** : Positionnement centré en bas de page (desktop et mobile)
+  - **Desktop** : Utilisation de `left: 50%` et `transform: translateX(-50%)` pour centrage parfait horizontal
+  - **Mobile** : Adaptation responsive avec `max-width: calc(100% - 20px)` pour éviter le débordement
+  - Meilleure ergonomie visuelle et symétrie de l'interface temps réel
+
 ### 📝 Impact
 - ✅ **Résolution définitive** : Les modifications sont maintenant toujours visibles après un déploiement
 - ✅ **Automatisation complète** : Plus besoin de penser au cache lors des déploiements
 - ✅ **Workflow amélioré** : `git pull` vide automatiquement les caches via le hook
 - ✅ **Documentation** : Procédures claires pour l'équipe de développement
 - ✅ **Compatible** : Fonctionne avec le workflow Git actuel sans changement
+- ✅ **UI améliorée** : Barre de contrôle live parfaitement centrée sur tous les écrans
 
 ### 🎯 Fichiers créés/modifiés
 - `bin/clear-cache.php` - **NOUVEAU** : Script de vidage des caches
 - `bin/deploy.sh` - **NOUVEAU** : Script de déploiement avec cache management
 - `.git/hooks/post-merge` - **NOUVEAU** : Hook Git automatique
 - `docs/deployment/CACHE_MANAGEMENT.md` - **NOUVEAU** : Documentation complète
+- `public/assets/css/realtime-styles.css` - Centrage de `.live-controls-panel`
 - `VERSION` - Incrémenté à 4.5.33
 - `CHANGELOG.md` - Ajout de cette entrée
 
