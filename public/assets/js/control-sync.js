@@ -139,7 +139,23 @@ class ControlSync {
         
         for (const [gpio, state] of Object.entries(states)) {
             const gpioNum = parseInt(gpio);
-            const newState = parseInt(state);
+            
+            // Pour les GPIOs < 100 et certains GPIOs spéciaux, c'est un entier (état on/off)
+            // Pour les GPIOs >= 100, c'est souvent une valeur (texte, nombre, email, etc.)
+            // Ne pas convertir systématiquement en parseInt pour éviter NaN sur les chaînes
+            let newState;
+            if (gpioNum < 100 || gpioNum === 101 || gpioNum === 108 || gpioNum === 109 || gpioNum === 110 || gpioNum === 115) {
+                // États binaires (switches): convertir en entier
+                newState = parseInt(state);
+            } else if (gpioNum === 100) {
+                // GPIO 100 = email (chaîne de caractères)
+                newState = String(state || '');
+            } else {
+                // Autres paramètres (nombres ou texte): garder la valeur telle quelle
+                // Tenter de convertir en nombre si possible, sinon garder comme chaîne
+                const asNumber = parseFloat(state);
+                newState = !isNaN(asNumber) ? asNumber : state;
+            }
             
             // Vérifier si l'état a changé
             if (this.lastStates[gpioNum] !== undefined && this.lastStates[gpioNum] !== newState) {
