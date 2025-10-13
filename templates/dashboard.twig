@@ -391,7 +391,7 @@
     <script>
         // Variables globales
         let statsUpdater = null;
-        let realtimeUpdater = null;
+        // realtimeUpdater est déjà déclaré globalement dans realtime-updater.js
         
         // Initialiser le système temps réel
         document.addEventListener('DOMContentLoaded', function() {
@@ -415,8 +415,8 @@
             // Utiliser le bon path API selon l'environnement
             const apiBasePath = '{{ environment == "test" ? "/ffp3/api/realtime-test" : "/ffp3/api/realtime" }}';
             
-            // Démarrer le polling automatique (15 secondes)
-            realtimeUpdater = initRealtimeUpdater({
+            // Démarrer le polling automatique (15 secondes) - la variable est globale via realtime-updater.js
+            initRealtimeUpdater({
                 apiBasePath: apiBasePath,
                 pollInterval: 15000,
                 enabled: true,

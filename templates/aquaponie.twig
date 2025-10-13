@@ -1811,8 +1811,8 @@
         // Variables globales pour les modules
         let chartUpdater = null;
         let statsUpdater = null;
-        let realtimeUpdater = null;
         let newReadingsCount = 0;
+        // realtimeUpdater est déjà déclaré globalement dans realtime-updater.js
         
         // Charger les préférences depuis localStorage
         function loadLivePreferences() {
@@ -1874,8 +1874,8 @@
             // Utiliser le bon path API selon l'environnement
             const apiBasePath = '{{ environment == "test" ? "/ffp3/api/realtime-test" : "/ffp3/api/realtime" }}';
             
-            // Initialiser RealtimeUpdater
-            realtimeUpdater = initRealtimeUpdater({
+            // Initialiser RealtimeUpdater (la variable est déjà globale via realtime-updater.js)
+            initRealtimeUpdater({
                 apiBasePath: apiBasePath,
                 pollInterval: prefs.interval,
                 enabled: prefs.enabled,
@@ -1899,10 +1899,10 @@
             // Toggle Mode Live
             document.getElementById('live-mode-toggle').addEventListener('change', function(e) {
                 if (e.target.checked) {
-                    realtimeUpdater.start();
+                    window.realtimeUpdater.start();
                     console.log('[Aquaponie] Live mode enabled');
                 } else {
-                    realtimeUpdater.stop();
+                    window.realtimeUpdater.stop();
                     console.log('[Aquaponie] Live mode disabled');
                 }
                 prefs.enabled = e.target.checked;
@@ -1922,8 +1922,8 @@
             // Changement d'intervalle
             document.getElementById('update-interval-selector').addEventListener('change', function(e) {
                 const newInterval = parseInt(e.target.value);
-                if (realtimeUpdater) {
-                    realtimeUpdater.setInterval(newInterval);
+                if (window.realtimeUpdater) {
+                    window.realtimeUpdater.setInterval(newInterval);
                     console.log('[Aquaponie] Update interval changed to ' + newInterval + 'ms');
                 }
                 prefs.interval = newInterval;
@@ -1932,9 +1932,9 @@
             
             // Bouton rafraîchir maintenant
             document.getElementById('force-refresh-button').addEventListener('click', function() {
-                if (realtimeUpdater) {
+                if (window.realtimeUpdater) {
                     console.log('[Aquaponie] Force refresh triggered');
-                    realtimeUpdater.poll();
+                    window.realtimeUpdater.poll();
                     
                     // Animation du bouton
                     const btn = this;

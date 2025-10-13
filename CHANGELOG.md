@@ -7,6 +7,34 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.4] - 2025-10-12 🐛 Correction critique - Double déclaration realtimeUpdater
+
+### 🐛 Corrigé
+- **Erreur JavaScript : "Identifier 'realtimeUpdater' has already been declared"**
+  - Variable `realtimeUpdater` déclarée deux fois (dans `realtime-updater.js` et `aquaponie.twig`)
+  - Suppression de la déclaration redondante dans `aquaponie.twig` (ligne 1750)
+  - Suppression de la déclaration redondante dans `dashboard.twig` (ligne 394)
+  - Utilisation de `window.realtimeUpdater` pour accéder à la variable globale
+  - Le mode live fonctionne maintenant sans erreur JavaScript
+
+### 🔧 Technique
+- `templates/aquaponie.twig` : Suppression `let realtimeUpdater = null;`
+- `templates/aquaponie.twig` : Utilisation de `window.realtimeUpdater` dans les event listeners
+- `templates/dashboard.twig` : Suppression `let realtimeUpdater = null;`
+- La variable globale est gérée uniquement par `realtime-updater.js`
+
+### 📝 Fichiers modifiés
+- `templates/aquaponie.twig` : Correction déclaration et références (lignes 1750, 1878, 1902-1937)
+- `templates/dashboard.twig` : Correction déclaration (ligne 394, 419)
+
+### 🎯 Impact
+- ✅ Plus d'erreur JavaScript dans la console
+- ✅ Le mode live démarre correctement
+- ✅ Les contrôles (toggle, intervalle, rafraîchir) fonctionnent
+- ✅ Compatible PROD et TEST
+
+---
+
 ## [4.5.3] - 2025-10-12 📝 Documentation - Plan de correction
 
 ### 📝 Ajouté
