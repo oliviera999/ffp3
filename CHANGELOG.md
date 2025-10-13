@@ -7,6 +7,38 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.6] - 2025-10-12 🕐 Correction critique - Fuseau horaire dates temps réel
+
+### 🐛 Corrigé
+- **Décalage horaire de +1h dans les dates mises à jour en temps réel**
+  - Méthode `formatDateTime()` dans `stats-updater.js` utilisait `new Date()` (timezone navigateur)
+  - Maintenant utilise `moment.tz('Europe/Paris')` comme Highcharts
+  - Dates de synthèse et période affichées correctement en heure Europe/Paris
+  - Cohérence avec la configuration `APP_TIMEZONE=Europe/Paris` du projet
+
+### 🔧 Technique
+- Utilisation de `moment.unix(timestamp).tz('Europe/Paris')` pour le formatage
+- Format : `DD/MM/YYYY HH:mm:ss` avec secondes, `DD/MM/YYYY HH:mm` sans secondes
+- Fallback sur `new Date()` si moment-timezone non disponible (avec avertissement)
+- Alignement avec la configuration timezone Highcharts (ligne 1334 aquaponie.twig)
+
+### 📝 Fichiers modifiés
+- `public/assets/js/stats-updater.js` : Méthode `formatDateTime()` (lignes 323-351)
+
+### 🎯 Impact
+- ✅ Dates affichées correctement en heure de Paris
+- ✅ Plus de décalage horaire
+- ✅ Cohérence avec les timestamps Highcharts
+- ✅ Cohérence avec le timezone du serveur
+
+### ⏰ Rappel configuration timezone
+- **Projet physique (aquaponie)** : Casablanca (`Africa/Casablanca`)
+- **Serveur web** : Paris (`Europe/Paris`) ← timezone utilisé
+- **Configuration** : `APP_TIMEZONE=Europe/Paris` (dans .env)
+- **Affichage** : Europe/Paris (cohérent avec le serveur)
+
+---
+
 ## [4.5.5] - 2025-10-12 ✨ Mode live COMPLET - Toutes les informations en temps réel
 
 ### ✨ Ajouté

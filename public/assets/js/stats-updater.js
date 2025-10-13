@@ -314,24 +314,39 @@ class StatsUpdater {
     
     /**
      * Formate un timestamp en date/heure lisible
+     * Utilise moment-timezone pour afficher en Europe/Paris
      * 
      * @param {number} timestamp - Timestamp Unix en secondes
      * @param {boolean} withSeconds - Inclure les secondes (défaut: true)
      * @returns {string} Date formatée
      */
     formatDateTime(timestamp, withSeconds = true) {
-        const date = new Date(timestamp * 1000);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const seconds = String(date.getSeconds()).padStart(2, '0');
+        // Vérifier que moment et moment-timezone sont disponibles
+        if (typeof moment === 'undefined') {
+            this.log('moment.js not loaded, using fallback', 'warn');
+            // Fallback simple si moment n'est pas disponible
+            const date = new Date(timestamp * 1000);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            
+            if (withSeconds) {
+                return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+            } else {
+                return `${day}/${month}/${year} ${hours}:${minutes}`;
+            }
+        }
+        
+        // Utiliser moment-timezone avec Europe/Paris (comme Highcharts)
+        const m = moment.unix(timestamp).tz('Europe/Paris');
         
         if (withSeconds) {
-            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+            return m.format('DD/MM/YYYY HH:mm:ss');
         } else {
-            return `${day}/${month}/${year} ${hours}:${minutes}`;
+            return m.format('DD/MM/YYYY HH:mm');
         }
     }
     
