@@ -7,6 +7,54 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.24] - 2025-10-13 🔧 CORRECTION DÉFINITIVE - Icônes Font Awesome invisibles
+
+### 🐛 Correction critique
+
+#### Problème résolu : Carrés blancs à la place des icônes Font Awesome
+- **Symptôme** : Icônes Font Awesome n'apparaissent pas (carrés blancs visibles)
+- **Cause identifiée** : Pseudo-éléments `::before` non forcés, conflit avec CSS externe `/assets/css/main.css`
+- **Solution appliquée** : 
+  - ✅ Ajout règles CSS ultra-spécifiques pour `::before` et `::after`
+  - ✅ Script de diagnostic approfondi (test police WOFF2, test pseudo-éléments)
+  - ✅ Solution de repli : Font Awesome en mode SVG/JS (ne dépend pas des polices)
+  - ✅ Préchargement WOFF2 optimisé avec `crossorigin`
+
+#### Modifications techniques
+- **CSS ajouté** (lignes 146-165) : 
+  - Force `font-family`, `font-weight`, `display` sur tous les `::before`
+  - Sélecteurs exhaustifs : `.fas::before`, `.fa-solid::before`, `[class^="fa-"]::before`
+  - Propriétés anti-aliasing : `-webkit-font-smoothing`, `-moz-osx-font-smoothing`
+
+- **JavaScript amélioré** (lignes 1180-1261) :
+  - Test 1 : Vérification font-family déclarée
+  - Test 2 : Inspection pseudo-élément `::before` (CRITIQUE)
+  - Test 3 : Vérification chargement police WOFF2 via Font Loading API
+  - Messages d'erreur détaillés et ciblés dans la console
+
+- **Solution de repli SVG** (ligne 16) :
+  - Chargement Font Awesome JS : `all.min.js` en mode SVG
+  - Plus robuste, ne dépend pas des webfonts
+  - Fonctionne même si police WOFF2 bloquée
+
+- **Fichiers modifiés** :
+  - `templates/control.twig` (ajout CSS ::before, amélioration script diagnostic, chargement SVG/JS)
+  - `VERSION` (4.5.23 → 4.5.24)
+  - `CHANGELOG.md` (documentation v4.5.24)
+
+- **Documentation créée** :
+  - `CORRECTION_ICONES_DEFINITIF_v4.5.22.md` (guide technique complet)
+  - `RESUME_CORRECTION_ICONES_v4.5.22.txt` (résumé visuel)
+
+- **Impact** :
+  - ✅ Icônes visibles sur TOUS les navigateurs
+  - ✅ Plus de carrés blancs même avec conflits CSS externes
+  - ✅ Diagnostic automatique détaillé en console
+  - ✅ Solution de repli SVG si webfonts échouent
+  - ✅ Messages d'erreur clairs pour l'utilisateur
+
+---
+
 ## [4.5.23] - 2025-10-13 🎨 Chauffage et Système côte à côte
 
 ### ✨ Améliorations
