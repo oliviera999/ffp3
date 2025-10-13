@@ -117,7 +117,7 @@ self.addEventListener('fetch', event => {
                         }
                         
                         // Page offline par défaut si rien dans le cache
-                        return caches.match('/ffp3/ffp3datas/')
+                        return caches.match('/ffp3/')
                             .then(fallback => fallback || new Response(
                                 '<h1>Hors ligne</h1><p>Aucune connexion disponible.</p>',
                                 { headers: { 'Content-Type': 'text/html' } }

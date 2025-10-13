@@ -7,6 +7,33 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.30] - 2025-10-13 🐛 Correction - Redirections ffp3datas obsolètes
+
+### 🐛 Corrections critiques
+- **Redirections obsolètes** : Toutes les références au chemin `/ffp3/ffp3datas/*` ont été corrigées vers `/ffp3/*`
+  - **`.htaccess`** : Ajout d'une règle de redirection générique `^ffp3datas/(.*)$ → /ffp3/$1 [R=301]`
+  - Correction des redirections existantes : `export-data.php` et `ffp3-data.php` pointent vers `/ffp3/`
+  - **`templates/control.twig`** : Lien menu navigation corrigé (ligne 734)
+  - **`public/assets/js/mobile-gestures.js`** : Chemins de navigation mobile mis à jour
+  - **`public/service-worker.js`** : Fallback offline corrigé vers `/ffp3/`
+  - **`ENVIRONNEMENT_TEST.md`** : Tous les exemples d'URLs mis à jour dans la documentation
+- **Dossier obsolète** : `ffp3datas/` (vide) déplacé vers `unused/ffp3datas_empty/`
+
+### 📝 Impact
+- Les utilisateurs utilisant encore les anciennes URLs avec `/ffp3/ffp3datas/*` seront automatiquement redirigés
+- Les ESP32 configurés avec les anciens chemins continueront de fonctionner grâce à la redirection 301
+- Navigation et PWA utilisent maintenant les chemins corrects
+
+### 🎯 Fichiers modifiés
+- `.htaccess` - Redirection générique ajoutée
+- `templates/control.twig` - Menu navigation
+- `public/assets/js/mobile-gestures.js` - Navigation mobile
+- `public/service-worker.js` - Fallback PWA
+- `ENVIRONNEMENT_TEST.md` - Documentation mise à jour
+- Déplacement : `ffp3datas/` → `unused/ffp3datas_empty/`
+
+---
+
 ## [4.5.29] - 2025-10-13 🐛 Correction ULTIME - Icônes actions simplifiées au maximum
 
 ### 🐛 Correction critique

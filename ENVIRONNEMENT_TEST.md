@@ -77,18 +77,18 @@ ENV=prod
 
 **PRODUCTION** :
 ```
-https://iot.olution.info/ffp3/ffp3datas/dashboard
-https://iot.olution.info/ffp3/ffp3datas/aquaponie
-https://iot.olution.info/ffp3/ffp3datas/control
-https://iot.olution.info/ffp3/ffp3datas/post-data
+https://iot.olution.info/ffp3/dashboard
+https://iot.olution.info/ffp3/aquaponie
+https://iot.olution.info/ffp3/control
+https://iot.olution.info/ffp3/post-data
 ```
 
 **TEST** :
 ```
-https://iot.olution.info/ffp3/ffp3datas/dashboard-test
-https://iot.olution.info/ffp3/ffp3datas/aquaponie-test
-https://iot.olution.info/ffp3/ffp3datas/control-test
-https://iot.olution.info/ffp3/ffp3datas/post-data-test
+https://iot.olution.info/ffp3/dashboard-test
+https://iot.olution.info/ffp3/aquaponie-test
+https://iot.olution.info/ffp3/control-test
+https://iot.olution.info/ffp3/post-data-test
 ```
 
 ---
@@ -100,7 +100,7 @@ https://iot.olution.info/ffp3/ffp3datas/post-data-test
 Dans votre code Arduino/ESP32, utilisez :
 
 ```cpp
-const char* serverName = "https://iot.olution.info/ffp3/ffp3datas/post-data";
+const char* serverName = "https://iot.olution.info/ffp3/post-data";
 ```
 
 ### Environnement TEST
@@ -108,19 +108,19 @@ const char* serverName = "https://iot.olution.info/ffp3/ffp3datas/post-data";
 Pour tester sans impacter la production :
 
 ```cpp
-const char* serverName = "https://iot.olution.info/ffp3/ffp3datas/post-data-test";
+const char* serverName = "https://iot.olution.info/ffp3/post-data-test";
 ```
 
 ### Récupération des états GPIO
 
 **PRODUCTION** :
 ```cpp
-const char* outputsUrl = "https://iot.olution.info/ffp3/ffp3datas/api/outputs/state";
+const char* outputsUrl = "https://iot.olution.info/ffp3/api/outputs/state";
 ```
 
 **TEST** :
 ```cpp
-const char* outputsUrl = "https://iot.olution.info/ffp3/ffp3datas/api/outputs-test/state";
+const char* outputsUrl = "https://iot.olution.info/ffp3/api/outputs-test/state";
 ```
 
 ---
@@ -131,15 +131,16 @@ Les anciens fichiers PHP redirigent automatiquement vers les nouvelles routes :
 
 ### Redirection POST données
 ```
-ffp3datas/post-ffp3-data2.php → /post-data-test (moderne)
+post-ffp3-data2.php → /post-data-test (moderne)
 ```
 
 ### Redirection visualisation
 ```
-ffp3datas/ffp3-data2.php → /aquaponie-test (moderne)
+ffp3-data2.php → /aquaponie-test (moderne)
 ```
 
 **Note** : Ces fichiers sont conservés pour compatibilité avec d'anciens ESP32 non mis à jour.
+Les anciennes URLs avec `/ffp3/ffp3datas/*` sont automatiquement redirigées vers `/ffp3/*` via `.htaccess`.
 
 ---
 
@@ -277,7 +278,7 @@ Les interfaces de contrôle (`/control` et `/control-test`) peuvent être proté
 
 Les logs sont enregistrés dans :
 ```
-ffp3datas/cronlog.txt
+cronlog.txt
 ```
 
 Pour filtrer par environnement, rechercher :
@@ -315,11 +316,11 @@ grep "PROD" cronlog.txt   # Actions en environnement PROD
 
 ## 📚 Références
 
-- **Configuration** : `ffp3datas/.env`
-- **TableConfig** : `ffp3datas/src/Config/TableConfig.php`
-- **Routes** : `ffp3datas/public/index.php`
-- **Documentation timezone** : `ffp3datas/RESUME_MODIFICATIONS.md`
-- **Améliorations** : `ffp3datas/TODO_AMELIORATIONS_CONTROL.md`
+- **Configuration** : `.env`
+- **TableConfig** : `src/Config/TableConfig.php`
+- **Routes** : `public/index.php`
+- **Documentation timezone** : `RESUME_MODIFICATIONS.md`
+- **Améliorations** : `TODO_AMELIORATIONS_CONTROL.md`
 
 ---
 

@@ -249,10 +249,10 @@ class MobileGestures {
  */
 function initMobileNavigation() {
     const pages = [
-        '/ffp3/ffp3datas/dashboard',
-        '/ffp3/ffp3datas/aquaponie',
-        '/ffp3/ffp3datas/control',
-        '/ffp3/ffp3datas/tide-stats'
+        '/ffp3/dashboard',
+        '/ffp3/aquaponie',
+        '/ffp3/control',
+        '/ffp3/tide-stats'
     ];
 
     const currentPath = window.location.pathname;
