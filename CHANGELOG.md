@@ -7,6 +7,42 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.11] - 2025-10-13 🐛 Correction décalage horaire au chargement initial
+
+### 🐛 Corrections de bugs
+
+#### Affichage des dates/heures
+- **Correction du décalage de +1h au chargement initial de la page aquaponie**
+  - Les dates PHP étaient affichées en timezone Europe/Paris (serveur)
+  - JavaScript utilisait Africa/Casablanca (projet physique) pour les mises à jour live
+  - Cela créait un décalage d'1h au premier affichage, corrigé ensuite par les updates
+  - Solution : Appel immédiat de `statsUpdater.updateSummaryDates()` après initialisation
+  - Les dates sont maintenant cohérentes dès le chargement initial avec le timezone Africa/Casablanca
+
+### 🔧 Fichiers modifiés
+- `templates/aquaponie.twig` : Ajout de l'appel `updateSummaryDates()` après initialisation des timestamps
+
+---
+
+## [4.5.10] - 2025-10-13 🐛 Correction affichage email
+
+### 🐛 Corrections de bugs
+
+#### Formulaire de contrôle
+- **Correction de l'affichage "NaN" dans le champ email**
+  - Le script `control-sync.js` convertissait systématiquement toutes les valeurs en nombres entiers avec `parseInt()`
+  - Pour le GPIO 100 (email), cela produisait `NaN` au lieu de l'adresse email
+  - Implémentation d'une logique de typage intelligent :
+    - GPIOs < 100 et switches spéciaux (101, 108, 109, 110, 115) : conversion en entier (état on/off)
+    - GPIO 100 (email) : conservation comme chaîne de caractères
+    - Autres paramètres : tentative de conversion en nombre, sinon conservation comme chaîne
+  - L'email s'affiche désormais correctement dans le formulaire de configuration
+
+### 🔧 Fichiers modifiés
+- `public/assets/js/control-sync.js` : Refactorisation de la méthode `processStates()`
+
+---
+
 ## [4.7.0] - 2025-10-13 🌍 Gestion timezone et fenêtre glissante améliorées
 
 ### ✨ Nouvelles fonctionnalités

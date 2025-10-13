@@ -1950,6 +1950,11 @@
                         statsUpdater.initialReadingCount = reading_time.length;
                         statsUpdater.liveReadingCount = 0;
                         statsUpdater.updateModeBadge('historical');
+                        
+                        // Mettre à jour immédiatement les dates affichées avec le bon timezone (Africa/Casablanca)
+                        // Cela remplace les dates PHP initiales (Europe/Paris) par les dates JavaScript correctes
+                        statsUpdater.updateSummaryDates(initialStartTimestamp, initialEndTimestamp);
+                        
                         console.log('[Aquaponie] Initial period set:', {
                             start: new Date(initialStartTimestamp * 1000),
                             end: new Date(initialEndTimestamp * 1000),
