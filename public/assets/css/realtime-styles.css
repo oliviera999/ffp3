@@ -394,7 +394,8 @@
 .live-controls-panel {
     position: fixed;
     bottom: 20px;
-    left: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     background: white;
     border-radius: 12px;
     padding: 15px 20px;
@@ -554,11 +555,13 @@
 @media (max-width: 768px) {
     .live-controls-panel {
         bottom: 10px;
-        left: 10px;
-        right: 10px;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
         flex-wrap: wrap;
         gap: 10px;
         padding: 12px;
+        max-width: calc(100% - 20px);
     }
     
     .live-control-group {

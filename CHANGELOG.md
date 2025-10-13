@@ -7,6 +7,75 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.33] - 2025-10-13 🐛 Correction - Problème de cache en production
+
+### 🐛 Corrections critiques
+- **Cache en production** : Résolution définitive du problème où les modifications déployées n'étaient pas visibles en production
+  - Les caches Twig et DI Container n'étaient jamais vidés après un `git pull` sur le serveur
+  - Les pages TEST fonctionnaient correctement car elles n'utilisent pas le cache (`ENV=test`)
+  - **Impact** : Les modifications déployées restaient invisibles jusqu'au vidage manuel des caches
+
+### ✨ Solutions implémentées
+
+#### 1. Script de vidage automatique
+- **`bin/clear-cache.php`** : Script PHP pour vider proprement les caches Twig et DI
+  - Supprime récursivement `var/cache/twig/` et `var/cache/di/`
+  - Recrée les dossiers avec les bonnes permissions
+  - Affiche un rapport détaillé du vidage
+  - Utilisable manuellement : `php bin/clear-cache.php`
+
+#### 2. Hook Git post-merge
+- **`.git/hooks/post-merge`** : Hook Git exécuté automatiquement après chaque `git pull`
+  - Appelle automatiquement `bin/clear-cache.php` après chaque fusion
+  - Garantit que les caches sont toujours à jour après un déploiement
+  - Aucune intervention manuelle nécessaire
+
+#### 3. Script de déploiement amélioré
+- **`bin/deploy.sh`** : Script de déploiement complet avec vidage de cache intégré
+  - Fait le `git pull` depuis GitHub
+  - Vide automatiquement les caches
+  - Installe/met à jour les dépendances Composer
+  - Vérifie l'intégrité de l'installation
+  - Affiche les URLs de test pour validation
+  - Usage : `bash bin/deploy.sh` sur le serveur de production
+
+#### 4. Documentation complète
+- **`docs/deployment/CACHE_MANAGEMENT.md`** : Documentation détaillée de la gestion des caches
+  - Explication du problème et de la solution
+  - Procédures de déploiement recommandées
+  - Guide de troubleshooting
+  - Bonnes pratiques de développement
+  - Architecture technique des caches
+
+### 📝 Impact
+- ✅ **Résolution définitive** : Les modifications sont maintenant toujours visibles après un déploiement
+- ✅ **Automatisation complète** : Plus besoin de penser au cache lors des déploiements
+- ✅ **Workflow amélioré** : `git pull` vide automatiquement les caches via le hook
+- ✅ **Documentation** : Procédures claires pour l'équipe de développement
+- ✅ **Compatible** : Fonctionne avec le workflow Git actuel sans changement
+
+### 🎯 Fichiers créés/modifiés
+- `bin/clear-cache.php` - **NOUVEAU** : Script de vidage des caches
+- `bin/deploy.sh` - **NOUVEAU** : Script de déploiement avec cache management
+- `.git/hooks/post-merge` - **NOUVEAU** : Hook Git automatique
+- `docs/deployment/CACHE_MANAGEMENT.md` - **NOUVEAU** : Documentation complète
+- `VERSION` - Incrémenté à 4.5.33
+- `CHANGELOG.md` - Ajout de cette entrée
+
+### 🔧 Configuration technique
+- Cache Twig : `var/cache/twig/` (actif uniquement si `ENV=prod`)
+- Cache DI Container : `var/cache/di/` (actif uniquement si `ENV=prod`)
+- Routes TEST (`*-test`) : Toujours sans cache pour faciliter le développement
+
+### 📚 Workflow recommandé
+1. Développer et tester sur les routes TEST (`/aquaponie-test`, `/control-test`, etc.)
+2. Incrémenter VERSION et mettre à jour CHANGELOG.md
+3. Commit et push vers GitHub
+4. Sur le serveur : `bash bin/deploy.sh` (ou simple `git pull` qui videra automatiquement les caches)
+5. Tester les pages PROD pour validation
+
+---
+
 ## [4.5.32] - 2025-10-13 🐛 Correction - Affichage version firmware ESP32
 
 ### 🐛 Corrections
