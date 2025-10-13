@@ -1,0 +1,161 @@
+════════════════════════════════════════════════════════════════════════════
+  INSTRUCTIONS D'APPLICATION - Correction doublons GPIO v4.5.17
+════════════════════════════════════════════════════════════════════════════
+
+🎯 OBJECTIF
+-----------
+Corriger le problème des 4 lignes vides avec gpio=16 qui se créent 
+automatiquement dans la table ffp3Outputs.
+
+✅ CE QUI A ÉTÉ FAIT
+--------------------
+1. ✅ Code modifié : src/Service/PumpService.php (INSERT ON DUPLICATE KEY UPDATE)
+2. ✅ Scripts SQL créés dans le dossier migrations/
+3. ✅ Documentation complète rédigée
+4. ✅ VERSION incrémentée : 4.5.16 → 4.5.17
+5. ✅ CHANGELOG.md mis à jour
+
+📋 CE QU'IL VOUS RESTE À FAIRE
+-------------------------------
+
+ÉTAPE 1 : COMMIT ET PUSH DU CODE
+---------------------------------
+cd /chemin/vers/ffp3
+git add .
+git commit -m "fix: correction doublons GPIO v4.5.17 - ajout contrainte UNIQUE"
+git push origin main
+
+ÉTAPE 2 : PULL SUR LE SERVEUR
+------------------------------
+ssh votre-serveur
+cd /var/www/html/ffp3  # (ou le chemin approprié)
+git pull origin main
+
+ÉTAPE 3 : APPLIQUER LES MIGRATIONS SQL
+---------------------------------------
+
+Option A - Via MySQL CLI (recommandé si vous avez SSH) :
+---------------------------------------------------------
+ssh votre-serveur
+
+# 1. Sauvegarde préventive
+mysqldump -u oliviera_iot -p oliviera_iot ffp3Outputs ffp3Outputs2 > backup_outputs_20251013.sql
+
+# 2. Application de la correction des doublons
+mysql -u oliviera_iot -p oliviera_iot < /var/www/html/ffp3/migrations/FIX_DUPLICATE_GPIO_ROWS.sql
+
+# 3. Initialisation des GPIO avec noms (RECOMMANDÉ)
+mysql -u oliviera_iot -p oliviera_iot < /var/www/html/ffp3/migrations/INIT_GPIO_BASE_ROWS.sql
+
+
+Option B - Via phpMyAdmin :
+----------------------------
+1. Aller sur https://iot.olution.info/phpmyadmin (ou votre URL)
+2. Se connecter avec les identifiants de la base
+3. Sélectionner la base "oliviera_iot"
+4. Cliquer sur l'onglet "SQL"
+
+5. SAUVEGARDE : Avant tout, exporter les tables
+   - Onglet "Exporter"
+   - Sélectionner : ffp3Outputs, ffp3Outputs2
+   - Format : SQL
+   - Télécharger le fichier
+
+6. CORRECTION DES DOUBLONS :
+   - Ouvrir le fichier : migrations/FIX_DUPLICATE_GPIO_ROWS.sql
+   - Copier tout le contenu
+   - Coller dans phpMyAdmin onglet SQL
+   - Cliquer "Exécuter"
+   - Vérifier les messages de confirmation
+
+7. INITIALISATION DES GPIO :
+   - Ouvrir le fichier : migrations/INIT_GPIO_BASE_ROWS.sql
+   - Copier tout le contenu
+   - Coller dans phpMyAdmin onglet SQL
+   - Cliquer "Exécuter"
+   - Vérifier que les GPIO s'affichent avec leurs noms
+
+
+ÉTAPE 4 : VÉRIFICATION
+-----------------------
+Dans phpMyAdmin, exécuter ces requêtes pour vérifier :
+
+-- Vérifier qu'il n'y a plus de doublons
+SELECT gpio, COUNT(*) as nb 
+FROM ffp3Outputs 
+GROUP BY gpio 
+HAVING COUNT(*) > 1;
+-- Résultat attendu : 0 lignes
+
+
+-- Vérifier que GPIO 16 a maintenant un nom
+SELECT gpio, name, board, state 
+FROM ffp3Outputs 
+WHERE gpio = 16;
+-- Résultat attendu : 1 ligne "Pompe Aquarium"
+
+
+-- Vérifier que la contrainte UNIQUE existe
+SHOW INDEXES FROM ffp3Outputs 
+WHERE Key_name = 'unique_gpio';
+-- Résultat attendu : 1 ligne
+
+
+ÉTAPE 5 : TEST EN PRODUCTION
+-----------------------------
+1. Aller sur https://iot.olution.info/ffp3/ffp3control/securecontrol/
+2. Vérifier que l'interface de contrôle fonctionne
+3. Vérifier que les noms des GPIO s'affichent correctement
+4. Attendre 5-10 minutes (le temps que le CRON s'exécute)
+5. Retourner dans phpMyAdmin et vérifier qu'AUCUNE nouvelle ligne vide 
+   ne s'est créée pour GPIO 16
+
+
+ÉTAPE 6 : SURVEILLANCE (24-48h)
+--------------------------------
+- Surveiller les logs CRON : cronlog.txt
+- Vérifier périodiquement dans phpMyAdmin qu'il n'y a pas de doublons
+- Tester les fonctionnalités de contrôle des pompes
+
+
+════════════════════════════════════════════════════════════════════════════
+
+⚠️  EN CAS DE PROBLÈME
+----------------------
+1. Consulter migrations/README.md (section Dépannage)
+2. Consulter CORRECTION_DOUBLONS_GPIO_v4.5.17.md (documentation complète)
+3. Restaurer le backup si nécessaire :
+   mysql -u oliviera_iot -p oliviera_iot < backup_outputs_20251013.sql
+
+📞 SUPPORT
+----------
+Si vous rencontrez un problème :
+1. Vérifier les logs : cronlog.txt
+2. Vérifier les erreurs MySQL dans phpMyAdmin
+3. Consulter la documentation dans migrations/README.md
+
+════════════════════════════════════════════════════════════════════════════
+
+✅ CHECKLIST FINALE
+-------------------
+[ ] Code commité et pushé sur Git
+[ ] Code pulled sur le serveur
+[ ] Sauvegarde SQL effectuée
+[ ] Migration FIX_DUPLICATE_GPIO_ROWS.sql appliquée
+[ ] Migration INIT_GPIO_BASE_ROWS.sql appliquée
+[ ] Vérification : aucun doublon restant
+[ ] Vérification : contrainte UNIQUE présente
+[ ] Vérification : GPIO 16 a un nom "Pompe Aquarium"
+[ ] Test interface de contrôle
+[ ] Attente 10 min et vérification qu'aucun doublon ne se crée
+[ ] Surveillance des logs pendant 24h
+
+════════════════════════════════════════════════════════════════════════════
+
+🎉 Une fois tout vérifié, le problème sera DÉFINITIVEMENT RÉSOLU !
+
+La contrainte UNIQUE empêchera toute future création de doublons, 
+même en cas de bug dans le code.
+
+════════════════════════════════════════════════════════════════════════════
+

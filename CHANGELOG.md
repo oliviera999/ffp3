@@ -7,6 +7,126 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.18] - 2025-10-13 🐛 Correction erreur JavaScript dans ChartUpdater
+
+### 🐛 Corrections de bugs
+
+#### Correction de l'erreur "Cannot read properties of undefined (reading 'x')"
+- **Problème identifié** : 
+  - Erreur JavaScript récurrente dans `chart-updater.js` ligne 225
+  - Se produit lors de la mise à jour des graphiques en temps réel
+  - Message d'erreur : `TypeError: Cannot read properties of undefined (reading 'x')`
+  - Bloque partiellement les mises à jour en direct des graphiques
+  
+- **Cause** :
+  - Le tableau `series.data` de Highcharts peut contenir des entrées `null` ou `undefined` après certaines opérations
+  - La vérification `p && p.x === update.timestamp` n'était pas suffisamment robuste
+  - Cas où `update` lui-même pourrait être invalide ou incomplet
+  
+- **Solution appliquée** :
+  - Ajout d'une vérification de l'existence de `series.data` (ligne 218)
+  - Validation des données de `update` avant traitement (lignes 225-228)
+  - Amélioration de la vérification du point existant avec `typeof p.x !== 'undefined'` (ligne 232)
+  - Logs d'avertissement pour faciliter le débogage futur
+
+- **Fichiers modifiés** :
+  - `public/assets/js/chart-updater.js`
+
+- **Impact** :
+  - ✅ Élimine l'erreur JavaScript récurrente
+  - ✅ Améliore la robustesse des mises à jour en temps réel
+  - ✅ Meilleure gestion des cas limites (edge cases)
+  - ✅ Logs plus informatifs pour le débogage
+
+---
+
+## [4.5.17] - 2025-10-13 🐛 Correction création automatique de doublons GPIO
+
+### 🐛 Corrections de bugs
+
+#### Correction du problème de lignes dupliquées dans ffp3Outputs
+- **Problème identifié** : 
+  - 4 lignes vides avec `gpio=16` (et potentiellement d'autres GPIO) se créent automatiquement et systématiquement dans `ffp3Outputs`
+  - Quand supprimées manuellement, elles sont recréées automatiquement avec de nouveaux ID
+  - Problème absent dans `ffp3Outputs2` (environnement TEST)
+  - Cause : Le `PumpService.php` créait une nouvelle ligne à chaque `UPDATE` infructueux, sans vérifier l'existence de doublons
+  
+- **Analyse de la cause** :
+  - Le code `PumpService::setState()` (lignes 68-72) faisait un `UPDATE` puis un `INSERT` si aucune ligne n'était affectée
+  - Aucune contrainte UNIQUE sur la colonne `gpio` n'empêchait les doublons
+  - Les commandes CRON (`ProcessTasksCommand`, `CleanDataCommand`, `RestartPumpCommand`) appellent fréquemment les méthodes de contrôle des pompes
+  - Chaque appel pouvait créer une nouvelle ligne vide si la ligne initiale était supprimée
+
+- **Solutions appliquées** :
+
+  **1. Modification du PumpService.php**
+  - Remplacement de la logique `UPDATE` + `INSERT` par `INSERT ... ON DUPLICATE KEY UPDATE`
+  - **Avant** : 
+    ```php
+    UPDATE ffp3Outputs SET state = :state WHERE gpio = :gpio
+    if (rowCount == 0) INSERT INTO ffp3Outputs (gpio, state) VALUES (...)
+    ```
+  - **Après** :
+    ```php
+    INSERT INTO ffp3Outputs (gpio, state, name, board) 
+    VALUES (:gpio, :state, '', '') 
+    ON DUPLICATE KEY UPDATE state = :state
+    ```
+  - Cette syntaxe MySQL/MariaDB évite les doublons et met à jour la ligne existante automatiquement
+
+  **2. Création des scripts de migration SQL**
+  - `migrations/FIX_DUPLICATE_GPIO_ROWS.sql` :
+    - Nettoyage automatique de tous les doublons existants dans `ffp3Outputs` et `ffp3Outputs2`
+    - Préservation des lignes avec le plus de données (nom, board, description)
+    - Ajout d'une contrainte `UNIQUE` sur la colonne `gpio` dans les deux tables
+    - Vérifications avant/après pour validation
+  
+  - `migrations/INIT_GPIO_BASE_ROWS.sql` :
+    - Initialisation de toutes les lignes GPIO nécessaires (2, 15, 16, 18, 100-116)
+    - Attribution de noms, boards et descriptions appropriés :
+      - GPIO physiques : 2 (Chauffage), 15 (UV), 16 (Pompe Aquarium), 18 (Pompe Réserve)
+      - GPIO virtuels : 100-116 (paramètres de configuration)
+    - Synchronisation automatique entre `ffp3Outputs` et `ffp3Outputs2`
+  
+  - `migrations/README.md` : Documentation complète de la procédure d'application des migrations
+
+- **Impact** :
+  - ✅ Plus aucune création automatique de doublons grâce à la contrainte UNIQUE
+  - ✅ Code plus robuste et conforme aux standards SQL
+  - ✅ Toutes les lignes GPIO ont maintenant des noms et descriptions clairs
+  - ✅ Prévention garantie des futurs doublons au niveau base de données
+
+### 🔧 Fichiers modifiés
+- `src/Service/PumpService.php` : Méthode `setState()` refactorisée avec INSERT ON DUPLICATE KEY UPDATE
+
+### 📁 Fichiers créés
+- `migrations/FIX_DUPLICATE_GPIO_ROWS.sql` : Script de nettoyage des doublons et ajout contrainte UNIQUE
+- `migrations/INIT_GPIO_BASE_ROWS.sql` : Script d'initialisation des GPIO de base avec noms appropriés
+- `migrations/README.md` : Documentation complète des migrations
+
+### 📋 Actions requises (IMPORTANT)
+**À exécuter sur le serveur de production** :
+```bash
+# 1. Sauvegarde préventive
+mysqldump -u oliviera_iot -p oliviera_iot ffp3Outputs ffp3Outputs2 > backup_outputs.sql
+
+# 2. Application de la correction
+mysql -u oliviera_iot -p oliviera_iot < migrations/FIX_DUPLICATE_GPIO_ROWS.sql
+
+# 3. Initialisation des GPIO (recommandé)
+mysql -u oliviera_iot -p oliviera_iot < migrations/INIT_GPIO_BASE_ROWS.sql
+```
+
+Consulter `migrations/README.md` pour la procédure détaillée.
+
+### 📝 Notes techniques
+- La contrainte `UNIQUE` sur `gpio` empêchera MySQL d'accepter des doublons à l'avenir
+- La syntaxe `ON DUPLICATE KEY UPDATE` est spécifique à MySQL/MariaDB
+- Les deux environnements (PROD et TEST) sont traités par les scripts de migration
+- Le problème n'affectait que l'environnement PROD car TEST avait probablement moins d'exécutions CRON
+
+---
+
 ## [4.5.16] - 2025-10-13 🐛 Correction bug ChartUpdater temps réel
 
 ### 🐛 Corrections de bugs

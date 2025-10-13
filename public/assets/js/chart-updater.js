@@ -215,14 +215,21 @@ class ChartUpdater {
         // Appliquer les points série par série
         updatesBySeries.forEach((seriesUpdates, seriesIndex) => {
             const series = chart.series[seriesIndex];
-            if (!series) {
+            if (!series || !series.data) {
                 this.log(`Series ${seriesIndex} not found in chart ${chartIndex}`, 'warn');
                 return;
             }
             
             seriesUpdates.forEach(update => {
+                // Vérifier les données de mise à jour
+                if (!update || update.timestamp === undefined || update.value === undefined) {
+                    this.log(`Invalid update data received`, 'warn');
+                    return;
+                }
+                
                 // Vérifier si le point existe déjà (éviter les doublons)
-                const existingPoint = series.data.find(p => p && p.x === update.timestamp);
+                // Filter out null/undefined points before searching
+                const existingPoint = series.data.find(p => p && typeof p.x !== 'undefined' && p.x === update.timestamp);
                 if (existingPoint) {
                     // Mettre à jour le point existant
                     existingPoint.update(update.value, false);

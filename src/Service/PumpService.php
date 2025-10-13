@@ -55,6 +55,7 @@ class PumpService
 
     /**
      * Modifie l'état d'un GPIO donné.
+     * Utilise INSERT ... ON DUPLICATE KEY UPDATE pour éviter les doublons.
      *
      * @param int $gpio  Numéro du GPIO
      * @param int $state Nouvel état (1=ON, 0=OFF)
@@ -62,14 +63,19 @@ class PumpService
     public function setState(int $gpio, int $state): void
     {
         $table = TableConfig::getOutputsTable();
-        $stmt = $this->pdo->prepare("UPDATE {$table} SET state = :state WHERE gpio = :gpio");
-        $stmt->execute([':state' => $state, ':gpio' => $gpio]);
-
-        // Si aucune ligne n'a été mise à jour, on insère un nouvel enregistrement
-        if ($stmt->rowCount() === 0) {
-            $insert = $this->pdo->prepare("INSERT INTO {$table} (gpio, state) VALUES (:gpio, :state)");
-            $insert->execute([':gpio' => $gpio, ':state' => $state]);
-        }
+        
+        // Utiliser INSERT ... ON DUPLICATE KEY UPDATE pour éviter les doublons
+        // Nécessite que la table ait une contrainte UNIQUE sur gpio
+        $stmt = $this->pdo->prepare(
+            "INSERT INTO {$table} (gpio, state, name, board) 
+             VALUES (:gpio, :state, '', '') 
+             ON DUPLICATE KEY UPDATE state = :state2"
+        );
+        $stmt->execute([
+            ':gpio' => $gpio, 
+            ':state' => $state,
+            ':state2' => $state
+        ]);
     }
 
     // ---------------------------------------------------------------------
