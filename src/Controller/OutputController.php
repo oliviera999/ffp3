@@ -114,10 +114,44 @@ class OutputController
     {
         $outputs = $this->outputService->getAllOutputs();
         
-        // Format simple pour ESP32
+        // Mapping GPIO → noms pour compatibilité ESP32
+        // L'ESP32 attend des clés par nom (light, heat, etc.) ET par numéro GPIO
+        $gpioMapping = [
+            2 => 'heat',           // Radiateurs
+            15 => 'light',         // Lumière
+            16 => 'pump_aqua',     // Pompe aquarium
+            18 => 'pump_tank',     // Pompe réservoir
+            12 => 'bouffeGros',    // Servo gros
+            13 => 'bouffePetits',  // Servo petits
+            // Paramètres de configuration (GPIO 100-116)
+            100 => 'mail',
+            101 => 'mailNotif',
+            102 => 'aqThr',
+            103 => 'taThr',
+            104 => 'chauff',
+            105 => 'bouffeMat',
+            106 => 'bouffeMid',
+            107 => 'bouffeSoir',
+            111 => 'tempsGros',
+            112 => 'tempsPetits',
+            113 => 'tempsRemplissageSec',
+            114 => 'limFlood',
+            115 => 'WakeUp',
+            116 => 'FreqWakeUp',
+        ];
+        
         $result = [];
         foreach ($outputs as $output) {
-            $result[$output['gpio']] = $output['state'];
+            $gpio = (int)$output['gpio'];
+            $state = $output['state'];
+            
+            // Ajouter par numéro GPIO (rétrocompatibilité)
+            $result[(string)$gpio] = $state;
+            
+            // Ajouter par nom si mapping existe (nouveau format)
+            if (isset($gpioMapping[$gpio])) {
+                $result[$gpioMapping[$gpio]] = $state;
+            }
         }
         
         $response->getBody()->write(json_encode($result));

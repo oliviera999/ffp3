@@ -36,8 +36,17 @@ class StatsUpdater {
         // État
         this.isInitialized = false;
         this.readingCount = 0;
+        this.initialReadingCount = 0; // Compteur initial (historique)
+        this.liveReadingCount = 0; // Compteur des nouvelles lectures en live
         this.startTimestamp = null;
         this.endTimestamp = null;
+        this.initialStartTimestamp = null; // Période initiale fixe
+        this.initialEndTimestamp = null;
+        
+        // Fenêtre glissante
+        this.slidingWindowEnabled = options.slidingWindow !== false; // true par défaut
+        this.slidingWindowDuration = options.windowDuration || (6 * 3600); // 6h en secondes par défaut
+        this.isLiveMode = false; // Indique si on est en mode live (reçoit de nouvelles données)
         
         this.log('StatsUpdater initialized');
     }
@@ -340,9 +349,9 @@ class StatsUpdater {
             }
         }
         
-        // Les timestamps PHP sont créés avec Europe/Paris dans ChartDataService.php L60
-        // Mais l'heure RÉELLE est celle de Casablanca (où se trouve le projet physique)
-        // Afficher en Africa/Casablanca pour voir l'heure locale réelle (-1h par rapport à Paris)
+        // Les timestamps sont stockés en base avec timezone Europe/Paris (voir ChartDataService.php)
+        // On les affiche en Africa/Casablanca car c'est l'heure locale réelle du projet physique au Maroc
+        // Note: Décalage horaire variable selon saison (0h en hiver, -1h en été depuis Paris)
         const m = moment.unix(timestamp).tz('Africa/Casablanca');
         
         if (withSeconds) {
@@ -377,11 +386,17 @@ class StatsUpdater {
      */
     incrementReadingCount() {
         this.readingCount++;
+        this.liveReadingCount++;
         
-        // Mettre à jour l'affichage du compteur
+        // Mettre à jour l'affichage des compteurs
         const countElement = document.getElementById('period-measure-count');
         if (countElement) {
-            countElement.textContent = this.readingCount;
+            countElement.textContent = this.initialReadingCount;
+        }
+        
+        const liveCountElement = document.getElementById('live-readings-count');
+        if (liveCountElement) {
+            liveCountElement.textContent = this.liveReadingCount;
         }
     }
     
@@ -391,14 +406,32 @@ class StatsUpdater {
      * @param {number} timestamp - Timestamp de la nouvelle lecture (Unix en secondes)
      */
     updatePeriodInfo(timestamp) {
-        // Initialiser startTimestamp si c'est la première lecture
+        // Initialiser les timestamps si c'est la première lecture
         if (this.startTimestamp === null) {
             this.startTimestamp = timestamp;
+            this.initialStartTimestamp = timestamp;
+        }
+        
+        if (this.endTimestamp === null) {
+            this.endTimestamp = timestamp;
+            this.initialEndTimestamp = timestamp;
+        }
+        
+        // Détecter le passage en mode live (nouvelle donnée reçue après l'initialisation)
+        if (timestamp > this.initialEndTimestamp) {
+            this.isLiveMode = true;
+            this.updateModeBadge('live');
         }
         
         // Mettre à jour endTimestamp (toujours la plus récente)
-        if (timestamp > this.endTimestamp || this.endTimestamp === null) {
+        if (timestamp > this.endTimestamp) {
             this.endTimestamp = timestamp;
+            
+            // Fenêtre glissante : ajuster le startTimestamp pour maintenir la durée fixe
+            if (this.slidingWindowEnabled && this.isLiveMode) {
+                this.startTimestamp = this.endTimestamp - this.slidingWindowDuration;
+                this.log(`Sliding window updated: ${this.formatDuration(this.slidingWindowDuration)}`);
+            }
             
             // Mettre à jour les dates affichées
             if (this.startTimestamp && this.endTimestamp) {
@@ -408,6 +441,24 @@ class StatsUpdater {
         
         // Incrémenter le compteur
         this.incrementReadingCount();
+    }
+    
+    /**
+     * Met à jour le badge MODE (LIVE / HISTORIQUE)
+     * 
+     * @param {string} mode - 'live' ou 'historical'
+     */
+    updateModeBadge(mode) {
+        const badgeElement = document.getElementById('period-mode-badge');
+        if (!badgeElement) return;
+        
+        if (mode === 'live') {
+            badgeElement.className = 'mode-badge mode-badge-live';
+            badgeElement.innerHTML = '<i class="fas fa-circle"></i> LIVE';
+        } else {
+            badgeElement.className = 'mode-badge mode-badge-historical';
+            badgeElement.innerHTML = '<i class="fas fa-history"></i> HISTORIQUE';
+        }
     }
     
     /**

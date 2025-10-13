@@ -16,10 +16,10 @@
         <link rel="stylesheet" href="https://iot.olution.info/assets/css/main.css" />
         <noscript><link rel="stylesheet" href="https://iot.olution.info/assets/css/noscript.css" /></noscript>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-        <link rel="stylesheet" href="/ffp3/assets/css/realtime-styles.css" />
+        <link rel="stylesheet" href="/ffp3/public/assets/css/realtime-styles.css" />
         <link rel="shortcut icon" type="image/png" href="https://iot.olution.info/images/favico.png"/>
-        <link rel="manifest" href="/ffp3/manifest.json" />
-        <link rel="apple-touch-icon" href="/ffp3/assets/icons/icon-192.png" />
+        <link rel="manifest" href="/ffp3/public/manifest.json" />
+        <link rel="apple-touch-icon" href="/ffp3/public/assets/icons/icon-192.png" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
@@ -176,7 +176,7 @@
             <nav id="nav">
                 <ul class="links">
                     <li><a href="https://iot.olution.info/index.html">Accueil</a></li>
-                    <li class="active"><a href="https://iot.olution.info/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}">L'aquaponie (FFP3)</a></li>
+                    <li class="active"><a href="https://iot.olution.info/ffp3/ffp3datas/aquaponie">L'aquaponie (FFP3)</a></li>
                     <li><a href="https://iot.olution.info/msp1/msp1datas/msp1-data.php">Le potager</a></li>
                     <li><a href="https://iot.olution.info/n3pp/n3ppdatas/n3pp-data.php">L'élevage d'insectes</a></li>
                 </ul>
@@ -200,7 +200,7 @@
                         <hr />
                     </header>
 
-                    <h2>📊 Synthèse des mesures du <span id="summary-start-date">{{ start_date|date('d/m/Y H:i:s') }}</span> au <span id="summary-end-date">{{ end_date|date('d/m/Y H:i:s') }}</span></h2>
+                    <h2>📊 Synthèse des mesures du {{ start_date|date('d/m/Y H:i:s') }} au {{ end_date|date('d/m/Y H:i:s') }}</h2>
 
                     <!-- Section Niveaux d'eau -->
                     <div class="section-header">
@@ -218,8 +218,8 @@
                                 <div class="progress-bar" id="eauaqua-progress" style="width: {{ (last_reading_eauaqua|default(0) / 100 * 100)|round(0) }}%;"></div>
                             </div>
                             <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: <span id="eauaqua-avg">{{ avg_eauaqua|default(0)|round(1) }}</span> cm | ET: <span id="eauaqua-stddev">{{ stddev_eauaqua|default(0)|round(2) }}</span></div>
-                                <div>Min: <span id="eauaqua-min">{{ min_eauaqua|default(0) }}</span> cm | Max: <span id="eauaqua-max">{{ max_eauaqua|default(0) }}</span> cm</div>
+                                <div>Moy: {{ avg_eauaqua|default(0)|round(1) }} cm | ET: {{ stddev_eauaqua|default(0)|round(2) }}</div>
+                                <div>Min: {{ min_eauaqua|default(0) }} cm | Max: {{ max_eauaqua|default(0) }} cm</div>
                             </div>
                         </div>
                         
@@ -232,8 +232,8 @@
                                 <div class="progress-bar" id="eaureserve-progress" style="width: {{ (last_reading_eaureserve|default(0) / 100 * 100)|round(0) }}%;"></div>
                             </div>
                             <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: <span id="eaureserve-avg">{{ avg_eaureserve|default(0)|round(1) }}</span> cm | ET: <span id="eaureserve-stddev">{{ stddev_eaureserve|default(0)|round(2) }}</span></div>
-                                <div>Min: <span id="eaureserve-min">{{ min_eaureserve|default(0) }}</span> cm | Max: <span id="eaureserve-max">{{ max_eaureserve|default(0) }}</span> cm</div>
+                                <div>Moy: {{ avg_eaureserve|default(0)|round(1) }} cm | ET: {{ stddev_eaureserve|default(0)|round(2) }}</div>
+                                <div>Min: {{ min_eaureserve|default(0) }} cm | Max: {{ max_eaureserve|default(0) }} cm</div>
                             </div>
                         </div>
                         
@@ -246,72 +246,8 @@
                                 <div class="progress-bar" id="eaupota-progress" style="width: {{ (last_reading_eaupota|default(0) / 100 * 100)|round(0) }}%;"></div>
                             </div>
                             <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: <span id="eaupota-avg">{{ avg_eaupota|default(0)|round(1) }}</span> cm | ET: <span id="eaupota-stddev">{{ stddev_eaupota|default(0)|round(2) }}</span></div>
-                                <div>Min: <span id="eaupota-min">{{ min_eaupota|default(0) }}</span> cm | Max: <span id="eaupota-max">{{ max_eaupota|default(0) }}</span> cm</div>
-                            </div>
-                    </div>
-                </div>
-
-                    <!-- Section Paramètres physiques -->
-                    <div class="section-header">
-                        <i class="fas fa-thermometer-half"></i>
-                        <h3>Paramètres physiques</h3>
-                    </div>
-                    
-                    <div class="stats-grid">
-                        <!-- Température eau -->
-                        <div class="stat-card temp">
-                            <i class="fas fa-water stat-card-icon"></i>
-                            <div class="stat-card-label">Température eau</div>
-                            <div class="stat-card-value" id="tempeau-display">{{ last_reading_tempeau|default(0)|round(1) }} <span class="stat-card-unit">°C</span></div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="tempeau-progress" style="width: {{ (last_reading_tempeau|default(0) / 40 * 100)|round(0) }}%;"></div>
-                            </div>
-                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: <span id="tempeau-avg">{{ avg_tempeau|default(0)|round(1) }}</span> °C | ET: <span id="tempeau-stddev">{{ stddev_tempeau|default(0)|round(2) }}</span></div>
-                                <div>Min: <span id="tempeau-min">{{ min_tempeau|default(0) }}</span> °C | Max: <span id="tempeau-max">{{ max_tempeau|default(0) }}</span> °C</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Température air -->
-                        <div class="stat-card temp">
-                            <i class="fas fa-temperature-high stat-card-icon"></i>
-                            <div class="stat-card-label">Température air</div>
-                            <div class="stat-card-value" id="tempair-display">{{ last_reading_tempair|default(0)|round(1) }} <span class="stat-card-unit">°C</span></div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="tempair-progress" style="width: {{ (last_reading_tempair|default(0) / 40 * 100)|round(0) }}%;"></div>
-                            </div>
-                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: <span id="tempair-avg">{{ avg_tempair|default(0)|round(1) }}</span> °C | ET: <span id="tempair-stddev">{{ stddev_tempair|default(0)|round(2) }}</span></div>
-                                <div>Min: <span id="tempair-min">{{ min_tempair|default(0) }}</span> °C | Max: <span id="tempair-max">{{ max_tempair|default(0) }}</span> °C</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Humidité -->
-                        <div class="stat-card humidity">
-                            <i class="fas fa-droplet stat-card-icon"></i>
-                            <div class="stat-card-label">Humidité</div>
-                            <div class="stat-card-value" id="humi-display">{{ last_reading_humi|default(0)|round(1) }} <span class="stat-card-unit">%</span></div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="humi-progress" style="width: {{ last_reading_humi|default(0) }}%;"></div>
-                            </div>
-                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: <span id="humi-avg">{{ avg_humi|default(0)|round(1) }}</span> % | ET: <span id="humi-stddev">{{ stddev_humi|default(0)|round(2) }}</span></div>
-                                <div>Min: <span id="humi-min">{{ min_humi|default(0) }}</span> % | Max: <span id="humi-max">{{ max_humi|default(0) }}</span> %</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Luminosité -->
-                        <div class="stat-card light">
-                            <i class="fas fa-lightbulb stat-card-icon"></i>
-                            <div class="stat-card-label">Luminosité</div>
-                            <div class="stat-card-value" id="lumi-display">{{ last_reading_lumi|default(0)|round(0) }} <span class="stat-card-unit">UA</span></div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="lumi-progress" style="width: {{ (last_reading_lumi|default(0) / 4000 * 100)|round(0) }}%;"></div>
-                            </div>
-                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: <span id="lumi-avg">{{ avg_lumi|default(0)|round(0) }}</span> UA | ET: <span id="lumi-stddev">{{ stddev_lumi|default(0)|round(2) }}</span></div>
-                                <div>Min: <span id="lumi-min">{{ min_lumi|default(0) }}</span> UA | Max: <span id="lumi-max">{{ max_lumi|default(0) }}</span> UA</div>
+                                <div>Moy: {{ avg_eaupota|default(0)|round(1) }} cm | ET: {{ stddev_eaupota|default(0)|round(2) }}</div>
+                                <div>Min: {{ min_eaupota|default(0) }} cm | Max: {{ max_eaupota|default(0) }} cm</div>
                             </div>
                         </div>
                     </div>
@@ -613,48 +549,6 @@
                             margin-bottom: 10px;
                             text-transform: uppercase;
                             letter-spacing: 1px;
-                            display: flex;
-                            align-items: center;
-                            gap: 12px;
-                            flex-wrap: wrap;
-                        }
-                        
-                        .mode-badge {
-                            display: inline-flex;
-                            align-items: center;
-                            gap: 6px;
-                            padding: 4px 12px;
-                            border-radius: 20px;
-                            font-size: 0.75em;
-                            font-weight: bold;
-                            letter-spacing: 1px;
-                            animation: fadeIn 0.3s ease-in;
-                        }
-                        
-                        .mode-badge-live {
-                            background: linear-gradient(135deg, #e74c3c, #c0392b);
-                            color: white;
-                            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
-                        }
-                        
-                        .mode-badge-live i {
-                            animation: pulse 1.5s ease-in-out infinite;
-                        }
-                        
-                        .mode-badge-historical {
-                            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
-                            color: white;
-                            box-shadow: 0 2px 8px rgba(149, 165, 166, 0.3);
-                        }
-                        
-                        @keyframes pulse {
-                            0%, 100% { opacity: 1; }
-                            50% { opacity: 0.5; }
-                        }
-                        
-                        @keyframes fadeIn {
-                            from { opacity: 0; transform: scale(0.8); }
-                            to { opacity: 1; transform: scale(1); }
                         }
                         
                         .period-info-dates {
@@ -873,32 +767,22 @@
 
                         <!-- Informations sur la période actuelle -->
                         <div class="period-info">
-                            <div class="period-info-title">
-                                📊 Période analysée
-                                <span id="period-mode-badge" class="mode-badge mode-badge-historical">
-                                    <i class="fas fa-history"></i> HISTORIQUE
-                                </span>
-                            </div>
+                            <div class="period-info-title">📊 Période analysée</div>
                             <div class="period-info-dates">
                                 <i class="far fa-calendar-alt"></i>
-                                Du <span id="period-start-date">{{ start_date|date('d/m/Y H:i') }}</span> au <span id="period-end-date">{{ end_date|date('d/m/Y H:i') }}</span>
-                                <small style="opacity: 0.8; font-size: 0.85em;">(heure Casablanca)</small>
+                                Du {{ start_date|date('d/m/Y H:i') }} au {{ end_date|date('d/m/Y H:i') }}
                             </div>
                             <div class="period-info-stats">
                                 <div class="period-stat-item">
-                                    <span class="period-stat-value" id="period-duration">{{ duration_str }}</span>
-                                    <span class="period-stat-label">Durée de la fenêtre</span>
+                                    <span class="period-stat-value">{{ duration_str }}</span>
+                                    <span class="period-stat-label">Durée d'analyse</span>
                                 </div>
                                 <div class="period-stat-item">
-                                    <span class="period-stat-value" id="period-measure-count">{{ measure_count }}</span>
-                                    <span class="period-stat-label">Mesures chargées</span>
+                                    <span class="period-stat-value">{{ measure_count }}</span>
+                                    <span class="period-stat-label">Enregistrements analysés</span>
                                 </div>
                                 <div class="period-stat-item">
-                                    <span class="period-stat-value" id="live-readings-count">0</span>
-                                    <span class="period-stat-label">Lectures live reçues</span>
-                                </div>
-                                <div class="period-stat-item">
-                                    <span class="period-stat-value" id="period-uptime">{{ timepastbegin }}j</span>
+                                    <span class="period-stat-value">{{ timepastbegin }}j</span>
                                     <span class="period-stat-label">Fonctionnement total</span>
                                 </div>
                             </div>
@@ -941,9 +825,6 @@
                                                name="start_datetime" 
                                                value="{{ start_date|date('Y-m-d\\TH:i') }}" 
                                                required>
-                                        <small style="color: #7f8c8d; font-size: 0.85em; margin-top: 4px;">
-                                            <i class="fas fa-clock"></i> Heure de Casablanca (serveur: Paris +1h en hiver, égale en été)
-                                        </small>
                                     </div>
 
                                     <div class="datetime-field">
@@ -955,9 +836,6 @@
                                                name="end_datetime" 
                                                value="{{ end_date|date('Y-m-d\\TH:i') }}" 
                                                required>
-                                        <small style="color: #7f8c8d; font-size: 0.85em; margin-top: 4px;">
-                                            <i class="fas fa-clock"></i> Heure de Casablanca (serveur: Paris +1h en hiver, égale en été)
-                                        </small>
                                     </div>
                                 </div>
 
@@ -1029,25 +907,29 @@
 
                     <script>
                         function setPeriod(value, unit) {
-                            // Utiliser moment-timezone pour créer les dates dans le timezone du serveur (Africa/Casablanca)
-                            const now = moment().tz('Africa/Casablanca');
-                            let start = moment(now);
+                            const now = new Date();
+                            const start = new Date();
                             
                             if (unit === 'hours') {
-                                start = start.subtract(value, 'hours');
+                                start.setHours(now.getHours() - value);
                             } else if (unit === 'days') {
-                                start = start.subtract(value, 'days');
+                                start.setDate(now.getDate() - value);
                             }
                             
-                            // Mise à jour dynamique des champs sans recharger la page
-                            const formatDateTime = (momentObj) => {
-                                return momentObj.format('YYYY-MM-DDTHH:mm');
+                            // Format dates for datetime-local inputs (YYYY-MM-DDTHH:MM)
+                            const formatDateTime = (date) => {
+                                const year = date.getFullYear();
+                                const month = String(date.getMonth() + 1).padStart(2, '0');
+                                const day = String(date.getDate()).padStart(2, '0');
+                                const hours = String(date.getHours()).padStart(2, '0');
+                                const minutes = String(date.getMinutes()).padStart(2, '0');
+                                return `${year}-${month}-${day}T${hours}:${minutes}`;
                             };
                             
                             document.getElementById('start_datetime').value = formatDateTime(start);
                             document.getElementById('end_datetime').value = formatDateTime(now);
                             
-                            // Soumettre le formulaire pour recharger les données
+                            // Submit form automatically
                             document.getElementById('customFilterForm').submit();
                         }
                     </script>
@@ -1382,12 +1264,10 @@
                     {# --------------------------------------------------------------------- #}
 
                     <script>
-                        // Configuration globale Highcharts : utilise Africa/Casablanca
-                        // Les timestamps PHP sont créés avec Europe/Paris mais l'heure RÉELLE est à Casablanca
-                        // Afficher en Casablanca pour voir l'heure locale réelle du projet
+                        // Configuration globale Highcharts : utilise le fuseau Europe/Paris
                         Highcharts.setOptions({
                             time: {
-                                timezone: 'Africa/Casablanca'
+                                timezone: 'Europe/Paris'
                             }
                         });
 
@@ -1429,22 +1309,6 @@
                         }
 
                         // ==============================================
-                        // Configuration globale du timezone
-                        // ==============================================
-                        
-                        // Le serveur stocke en Europe/Paris, mais on affiche en Africa/Casablanca
-                        // (heure locale réelle du projet physique au Maroc)
-                        moment.tz.setDefault('Africa/Casablanca');
-                        
-                        // Configuration Highcharts pour utiliser le même timezone
-                        Highcharts.setOptions({
-                            time: {
-                                timezone: 'Africa/Casablanca',
-                                useUTC: false
-                            }
-                        });
-                        
-                        // ==============================================
                         // Graphiques Stock Navigator + Aires colorées
                         // ==============================================
                         
@@ -1461,7 +1325,7 @@
                                         { type: 'month', count: 1, text: '1m' },
                                         { type: 'all', text: 'Tout' }
                                     ],
-                                    selected: 1,
+                                    selected: 3,
                                     inputEnabled: true
                                 },
                                 title: { text: null },
@@ -1584,7 +1448,7 @@
                                         { type: 'month', count: 1, text: '1m' },
                                         { type: 'all', text: 'Tout' }
                                     ],
-                                    selected: 1,
+                                    selected: 3,
                                     inputEnabled: true
                                 },
                                 title: { text: null },
@@ -1817,242 +1681,35 @@
             </footer>
         </div>
 
-    <!-- Badge LIVE pour indicateur temps réel -->
-    <div id="live-badge" class="badge badge-secondary">
-        <i class="fas fa-circle"></i> INITIALISATION...
-    </div>
+        <!-- Badge LIVE pour indicateur temps réel -->
+        <div id="live-badge" class="badge badge-secondary">
+            <i class="fas fa-circle"></i> INITIALISATION...
+        </div>
 
-    <!-- Panneau de contrôles mode live -->
-    <div id="live-controls-panel" class="live-controls-panel">
-        <!-- Mode Live ON/OFF -->
-        <div class="live-control-group">
-            <span class="live-control-label">Mode Live</span>
-            <label class="live-toggle-switch">
-                <input type="checkbox" id="live-mode-toggle" checked>
-                <span class="live-toggle-slider"></span>
-            </label>
-        </div>
-        
-        <!-- Auto-scroll -->
-        <div class="live-control-group">
-            <span class="live-control-label">Auto-scroll</span>
-            <label class="live-toggle-switch">
-                <input type="checkbox" id="auto-scroll-toggle" checked>
-                <span class="live-toggle-slider"></span>
-            </label>
-        </div>
-        
-        <!-- Intervalle de mise à jour -->
-        <div class="live-control-group">
-            <span class="live-control-label">Intervalle</span>
-            <select id="update-interval-selector" class="live-interval-selector">
-                <option value="5000">5s</option>
-                <option value="10000">10s</option>
-                <option value="15000" selected>15s</option>
-                <option value="30000">30s</option>
-                <option value="60000">60s</option>
-            </select>
-        </div>
-        
-        <!-- Statistiques -->
-        <div class="live-control-group">
-            <div class="live-stats-display">
-                <i class="fas fa-chart-line"></i>
-                <span id="new-readings-count" class="live-stats-value">0</span>
-                <span>nouvelles données</span>
-            </div>
-        </div>
-        
-        <!-- Bouton rafraîchir -->
-        <div class="live-control-group">
-            <button id="force-refresh-button" class="live-refresh-button">
-                <i class="fas fa-sync-alt"></i>
-                Rafraîchir
-            </button>
-        </div>
-    </div>
-
-    <!-- Scripts PWA et Temps Réel -->
-    <script src="/ffp3/assets/js/toast-notifications.js"></script>
-    <script src="/ffp3/assets/js/chart-updater.js"></script>
-    <script src="/ffp3/assets/js/stats-updater.js"></script>
-    <script src="/ffp3/assets/js/realtime-updater.js"></script>
-    <script src="/ffp3/assets/js/pwa-init.js"></script>
+        <!-- Scripts PWA et Temps Réel -->
+        <script src="/ffp3/public/assets/js/toast-notifications.js"></script>
+        <script src="/ffp3/public/assets/js/realtime-updater.js"></script>
+        <script src="/ffp3/public/assets/js/pwa-init.js"></script>
         
     <script>
-        // Variables globales pour les modules
-        let chartUpdater = null;
-        let statsUpdater = null;
-        let newReadingsCount = 0;
-        // realtimeUpdater est déjà déclaré globalement dans realtime-updater.js
-        
-        // Charger les préférences depuis localStorage
-        function loadLivePreferences() {
-            const prefs = {
-                enabled: localStorage.getItem('liveMode.enabled') !== 'false', // true par défaut
-                autoScroll: localStorage.getItem('liveMode.autoScroll') !== 'false',
-                interval: parseInt(localStorage.getItem('liveMode.interval')) || 15000,
-                maxPoints: parseInt(localStorage.getItem('liveMode.maxPoints')) || 10000
-            };
-            return prefs;
-        }
-        
-        // Sauvegarder les préférences
-        function saveLivePreferences(prefs) {
-            localStorage.setItem('liveMode.enabled', prefs.enabled);
-            localStorage.setItem('liveMode.autoScroll', prefs.autoScroll);
-            localStorage.setItem('liveMode.interval', prefs.interval);
-            localStorage.setItem('liveMode.maxPoints', prefs.maxPoints);
-        }
-        
         // Initialiser le système temps réel
         document.addEventListener('DOMContentLoaded', function() {
-            const prefs = loadLivePreferences();
-            
-            // Initialiser ChartUpdater
-            chartUpdater = new ChartUpdater({
-                maxPoints: prefs.maxPoints,
-                autoScroll: prefs.autoScroll
-            });
-            
-            // Attendre que les graphiques soient créés (après createVersionD())
-            setTimeout(() => {
-                const initialized = chartUpdater.init();
-                if (initialized) {
-                    console.log('[Aquaponie] ChartUpdater initialized successfully');
-                } else {
-                    console.warn('[Aquaponie] ChartUpdater initialization failed');
-                }
-            }, 500);
-            
-            // Initialiser StatsUpdater
-            statsUpdater = new StatsUpdater({
-                sensors: ['EauAquarium', 'EauReserve', 'EauPotager', 'TempEau', 'TempAir', 'Humidite', 'Luminosite']
-            });
-            
-            setTimeout(() => {
-                const initialized = statsUpdater.init();
-                if (initialized) {
-                    console.log('[Aquaponie] StatsUpdater initialized successfully');
-                    
-                    // Initialiser les timestamps de période depuis les données PHP
-                    // Note: reading_time contient des timestamps en millisecondes (format Highcharts)
-                    // On les convertit en secondes Unix pour StatsUpdater
-                    const initialStartTimestamp = reading_time && reading_time.length > 0 ? reading_time[0] / 1000 : null;
-                    const initialEndTimestamp = reading_time && reading_time.length > 0 ? reading_time[reading_time.length - 1] / 1000 : null;
-                    
-                    if (initialStartTimestamp && initialEndTimestamp) {
-                        statsUpdater.startTimestamp = initialStartTimestamp;
-                        statsUpdater.endTimestamp = initialEndTimestamp;
-                        statsUpdater.initialStartTimestamp = initialStartTimestamp;
-                        statsUpdater.initialEndTimestamp = initialEndTimestamp;
-                        statsUpdater.readingCount = reading_time.length;
-                        statsUpdater.initialReadingCount = reading_time.length;
-                        statsUpdater.liveReadingCount = 0;
-                        statsUpdater.updateModeBadge('historical');
-                        console.log('[Aquaponie] Initial period set:', {
-                            start: new Date(initialStartTimestamp * 1000),
-                            end: new Date(initialEndTimestamp * 1000),
-                            count: reading_time.length
-                        });
-                    }
-                } else {
-                    console.warn('[Aquaponie] StatsUpdater initialization failed');
-                }
-            }, 500);
-            
-            // Exposer globalement
-            window.chartUpdater = chartUpdater;
-            window.statsUpdater = statsUpdater;
-            
+            // Démarrer le polling automatique (15 secondes)
             // Utiliser le bon path API selon l'environnement
             const apiBasePath = '{{ environment == "test" ? "/ffp3/api/realtime-test" : "/ffp3/api/realtime" }}';
             
-            // Initialiser RealtimeUpdater (la variable est déjà globale via realtime-updater.js)
             initRealtimeUpdater({
                 apiBasePath: apiBasePath,
-                pollInterval: prefs.interval,
-                enabled: prefs.enabled,
-                onNewData: function(readings) {
-                    console.log('[Aquaponie] New sensor data received:', readings);
-                    newReadingsCount += readings.length;
-                    updateReadingsCounter();
+                pollInterval: 15000,
+                enabled: true,
+                onNewData: function(data) {
+                    console.log('[Aquaponie] New sensor data received:', data);
+                    // TODO: Mettre à jour les graphiques avec nouvelles données
                 },
                 onHealthUpdate: function(health) {
                     console.log('[Aquaponie] System health updated:', health);
                 }
             });
-            
-            // Appliquer les préférences aux contrôles UI
-            document.getElementById('live-mode-toggle').checked = prefs.enabled;
-            document.getElementById('auto-scroll-toggle').checked = prefs.autoScroll;
-            document.getElementById('update-interval-selector').value = prefs.interval;
-            
-            // Event listeners pour les contrôles
-            
-            // Toggle Mode Live
-            document.getElementById('live-mode-toggle').addEventListener('change', function(e) {
-                if (e.target.checked) {
-                    window.realtimeUpdater.start();
-                    console.log('[Aquaponie] Live mode enabled');
-                } else {
-                    window.realtimeUpdater.stop();
-                    console.log('[Aquaponie] Live mode disabled');
-                }
-                prefs.enabled = e.target.checked;
-                saveLivePreferences(prefs);
-            });
-            
-            // Toggle Auto-scroll
-            document.getElementById('auto-scroll-toggle').addEventListener('change', function(e) {
-                if (chartUpdater) {
-                    chartUpdater.enableAutoScroll(e.target.checked);
-                    console.log('[Aquaponie] Auto-scroll ' + (e.target.checked ? 'enabled' : 'disabled'));
-                }
-                prefs.autoScroll = e.target.checked;
-                saveLivePreferences(prefs);
-            });
-            
-            // Changement d'intervalle
-            document.getElementById('update-interval-selector').addEventListener('change', function(e) {
-                const newInterval = parseInt(e.target.value);
-                if (window.realtimeUpdater) {
-                    window.realtimeUpdater.setInterval(newInterval);
-                    console.log('[Aquaponie] Update interval changed to ' + newInterval + 'ms');
-                }
-                prefs.interval = newInterval;
-                saveLivePreferences(prefs);
-            });
-            
-            // Bouton rafraîchir maintenant
-            document.getElementById('force-refresh-button').addEventListener('click', function() {
-                if (window.realtimeUpdater) {
-                    console.log('[Aquaponie] Force refresh triggered');
-                    window.realtimeUpdater.poll();
-                    
-                    // Animation du bouton
-                    const btn = this;
-                    const icon = btn.querySelector('i');
-                    icon.classList.add('fa-spin');
-                    setTimeout(() => icon.classList.remove('fa-spin'), 1000);
-                }
-            });
-            
-            // Fonction pour mettre à jour le compteur de nouvelles lectures
-            function updateReadingsCounter() {
-                const counter = document.getElementById('new-readings-count');
-                if (counter) {
-                    counter.textContent = newReadingsCount;
-                }
-            }
-            
-            // Réinitialiser le compteur toutes les heures
-            setInterval(() => {
-                newReadingsCount = 0;
-                updateReadingsCounter();
-            }, 3600000); // 1 heure
-            
-            console.log('[Aquaponie] Live update system initialized');
         });
     </script>
     </body>

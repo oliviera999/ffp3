@@ -15,28 +15,33 @@ Cette différence crée des implications pour la gestion des timestamps et l'aff
 
 ### Timezone du Projet
 
-Le projet utilise actuellement **`Europe/Paris`** comme timezone unique :
+Le projet utilise une configuration **hybride** :
 
 ```env
 # .env
-APP_TIMEZONE=Europe/Paris
+APP_TIMEZONE=Europe/Paris  # Stockage serveur
 ```
 
-Cette configuration est appliquée globalement dans `src/Config/Env.php` :
+**Affichage** : `Africa/Casablanca` (heure locale réelle du projet)
 
-```php
-private static function configureTimezone(): void
-{
-    $timezone = $_ENV['APP_TIMEZONE'] ?? 'Europe/Paris';
-    date_default_timezone_set($timezone);
-}
-```
+### Architecture Timezone
+
+**Backend (PHP)** :
+- Configuration appliquée globalement dans `src/Config/Env.php`
+- Timezone : `Europe/Paris`
+- Tous les timestamps PHP et base de données utilisent ce fuseau
+
+**Frontend (JavaScript)** :
+- Configuration globale : `moment.tz.setDefault('Africa/Casablanca')`
+- Highcharts configuré avec timezone `Africa/Casablanca`
+- Tous les affichages utilisent l'heure de Casablanca
 
 ### Impact sur les Timestamps
 
-- ✅ **Tous les timestamps PHP** sont en heure de Paris
-- ✅ **Base de données** : Les `reading_time` sont stockés en heure de Paris
-- ✅ **Graphiques Highcharts** : Configurés pour afficher l'heure de Paris via `moment-timezone`
+- ✅ **Stockage PHP/BD** : Timestamps en heure de Paris (`Europe/Paris`)
+- ✅ **Affichage web** : Dates converties et affichées en heure de Casablanca (`Africa/Casablanca`)
+- ✅ **Conversion automatique** : moment-timezone gère la conversion entre les deux fuseaux
+- ℹ️ **Décalage** : 0h en hiver, -1h en été (Casablanca en retard sur Paris)
 
 ---
 
@@ -203,15 +208,48 @@ document.querySelectorAll('.local-time').forEach(el => {
 
 ---
 
+## 🔄 Gestion de la Période d'Analyse
+
+### Fenêtre Glissante (Nouveau - v4.7.0)
+
+Le système implémente désormais une **fenêtre glissante** en mode live :
+
+**Comportement** :
+- Au chargement initial : Affiche la période demandée (ex: 6 dernières heures)
+- En mode HISTORIQUE : La période reste fixe
+- En mode LIVE (réception de nouvelles données) :
+  - La période glisse automatiquement pour maintenir la durée fixe
+  - Par défaut : fenêtre de 6 heures
+  - L'heure de début s'ajuste automatiquement quand de nouvelles données arrivent
+
+**Affichage** :
+- Badge `HISTORIQUE` : Période fixe, pas de nouvelles données
+- Badge `LIVE` : Fenêtre glissante active, nouvelles données en temps réel
+- Compteur séparé : "Mesures chargées" (initial) vs "Lectures live reçues"
+
+**Configuration** :
+```javascript
+// Dans aquaponie.twig
+statsUpdater = new StatsUpdater({
+    sensors: [...],
+    slidingWindow: true,           // Activer fenêtre glissante
+    windowDuration: 6 * 3600        // 6h en secondes
+});
+```
+
+---
+
 ## 📝 Résumé
 
-| Élément | Timezone Actuelle | Recommandation |
-|---------|-------------------|----------------|
-| **Serveur PHP** | Europe/Paris | Garder ou passer à Africa/Casablanca selon besoin |
-| **Base de données** | Europe/Paris (timestamps stockés) | Conserver tel quel |
-| **Graphiques Highcharts** | Europe/Paris | Synchroniser avec APP_TIMEZONE |
-| **ESP32** | À configurer | Africa/Casablanca (heure locale physique) |
-| **Affichage utilisateur** | Europe/Paris | Cohérent avec APP_TIMEZONE |
+| Élément | Timezone/Configuration | Notes |
+|---------|------------------------|-------|
+| **Serveur PHP** | Europe/Paris | Stockage uniforme |
+| **Base de données** | Europe/Paris | Timestamps stockés |
+| **Graphiques Highcharts** | Africa/Casablanca | Affichage converti |
+| **StatsUpdater JS** | Africa/Casablanca | Affichage converti |
+| **ESP32** | Africa/Casablanca (recommandé) | Heure locale physique |
+| **Affichage utilisateur** | Africa/Casablanca | Heure locale réelle |
+| **Fenêtre d'analyse** | 6h glissante en mode live | Configurable |
 
 ---
 
@@ -223,7 +261,36 @@ document.querySelectorAll('.local-time').forEach(el => {
 
 ---
 
-**Dernière mise à jour** : 2025-10-12  
-**Version** : 4.4.6
+**Dernière mise à jour** : 2025-10-13  
+**Version** : 4.7.0
+
+---
+
+## 🆕 Modifications Récentes (v4.7.0)
+
+### Changements Implémentés
+
+1. **Unification du Timezone d'Affichage**
+   - ✅ Configuration globale `moment.tz.setDefault('Africa/Casablanca')`
+   - ✅ Highcharts configuré avec timezone `Africa/Casablanca`
+   - ✅ Tous les affichages cohérents en heure de Casablanca
+
+2. **Fenêtre Glissante en Mode Live**
+   - ✅ Implémentation d'une fenêtre glissante de 6h par défaut
+   - ✅ Badge LIVE/HISTORIQUE pour distinguer les modes
+   - ✅ Compteurs séparés : "Mesures chargées" vs "Lectures live"
+   - ✅ Ajustement automatique de la période en temps réel
+
+3. **Filtres Rapides Améliorés**
+   - ✅ Utilisation de moment-timezone au lieu de Date() natif
+   - ✅ Dates calculées dans le timezone du serveur (Casablanca)
+   - ✅ Plus de problèmes de décalage horaire
+
+4. **Documentation et Clarté**
+   - ✅ Indication du timezone dans les champs datetime-local
+   - ✅ Commentaires clarifiés sur les conversions timestamps
+   - ✅ Documentation complète de l'architecture timezone
+
+---
 
 

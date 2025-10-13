@@ -51,7 +51,7 @@ class AquaponieController
         // Période d'analyse
         $lastDate = $this->sensorReadRepo->getLastReadingDate();
         $defaultEndDate = $lastDate ?: date('Y-m-d H:i:s');
-        $defaultStartDate = date('Y-m-d H:i:s', strtotime($defaultEndDate . ' -1 day'));
+        $defaultStartDate = date('Y-m-d H:i:s', strtotime($defaultEndDate . ' -6 hours'));
 
         // Récupération des paramètres de période (nouveau format datetime-local ou ancien format séparé)
         [$startDate, $endDate] = $this->extractDateRange($defaultStartDate, $defaultEndDate);
