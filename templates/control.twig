@@ -36,8 +36,8 @@
         /* Grille responsive pour les boutons d'action */
         .action-buttons-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+            gap: 0.75rem;
             width: 100%;
             padding: 0;
             margin: 0;
@@ -46,8 +46,8 @@
         /* Carte de bouton d'action moderne */
         .action-button-card {
             background: linear-gradient(145deg, #ffffff, #f8f9fa);
-            border-radius: 16px;
-            padding: 1rem;
+            border-radius: 12px;
+            padding: 0.75rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07),
                         0 1px 3px rgba(0, 0, 0, 0.06);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -55,7 +55,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
             cursor: pointer;
             position: relative;
             overflow: visible;
@@ -94,20 +94,20 @@
         .action-button-content {
             display: flex;
             align-items: center;
-            gap: 0.875rem;
+            gap: 0.625rem;
             flex: 1;
             min-width: 0;
         }
         
         /* Icône du bouton - Plus grande et plus visible */
         .action-button-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
             display: flex !important;
             align-items: center;
             justify-content: center;
-            font-size: 1.75rem !important;
+            font-size: 1.5rem !important;
             background: currentColor;
             color: white !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -122,7 +122,7 @@
         i.fas,
         i.fa-solid {
             display: inline-block !important;
-            font-size: 1.75rem !important;
+            font-size: 1.5rem !important;
             line-height: 1 !important;
             color: white !important;
             opacity: 1 !important;
@@ -204,7 +204,7 @@
         
         .action-button-label {
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #2c3e50;
             margin-bottom: 0.25rem;
             line-height: 1.3;
@@ -215,7 +215,7 @@
         }
         
         .action-button-status {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: #7f8c8d;
             font-weight: 500;
             transition: all 0.3s;
@@ -230,8 +230,8 @@
         .modern-switch {
             position: relative;
             display: inline-block;
-            width: 58px;
-            height: 32px;
+            width: 52px;
+            height: 28px;
             flex-shrink: 0;
             cursor: pointer;
         }
@@ -258,8 +258,8 @@
         .modern-switch-button {
             position: absolute;
             content: '';
-            height: 26px;
-            width: 26px;
+            height: 22px;
+            width: 22px;
             left: 3px;
             bottom: 3px;
             background: white;
@@ -275,7 +275,7 @@
         }
         
         .modern-switch input:checked + .modern-switch-slider .modern-switch-button {
-            transform: translateX(26px);
+            transform: translateX(24px);
             box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
         }
         
@@ -1026,7 +1026,7 @@
                                     {# Système #}
                                     <div class="param-box" style="background: #f3e5f5 !important; margin-bottom: 0 !important; padding: 12px !important;">
                                         <h4><i class="fas fa-microchip"></i> Système</h4>
-                                        <label for="FreqWakeUp">Fréquence WakeUp (secondes)</label>
+                                        <label for="FreqWakeUp">Fréquence WakeUp (s)</label>
                                         <input type="number" name="FreqWakeUp" min="0" id="FreqWakeUp" value="{{ params.FreqWakeUp|default(0) }}">
                                     </div>
                                 </div>

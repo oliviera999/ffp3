@@ -7,6 +7,30 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.26] - 2025-10-13 🎨 Optimisation UI - Équilibrage des colonnes
+
+### ✨ Améliorations
+- **Interface de contrôle** : Réduction de la taille des cadres d'actions pour équilibrer les deux colonnes
+  - Padding réduit de 1rem à 0.75rem
+  - Icônes réduites de 52px à 44px
+  - Taille de police des labels réduite de 1rem à 0.9rem
+  - Taille de police des statuts réduite de 0.85rem à 0.75rem
+  - Switch toggle réduit de 58×32px à 52×28px
+  - Gap entre boutons réduit de 1rem à 0.75rem
+  - Border-radius ajusté de 16px à 12px
+- **Objectif** : Améliorer l'équilibre visuel entre la colonne Actions et la colonne Paramètres
+- **Fichier modifié** : `templates/control.twig`
+
+---
+
+## [4.5.25] - 2025-10-13 🎨 Amélioration UI - Label Fréquence WakeUp
+
+### ✨ Améliorations
+- **Interface** : Label "Fréquence WakeUp (secondes)" remplacé par "Fréquence WakeUp (s)" pour plus de concision
+- **Fichier modifié** : `templates/control.twig` (ligne 1029)
+
+---
+
 ## [4.5.24] - 2025-10-13 🔧 CORRECTION DÉFINITIVE - Icônes Font Awesome invisibles
 
 ### 🐛 Correction critique
