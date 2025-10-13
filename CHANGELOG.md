@@ -7,6 +7,80 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.20] - 2025-10-13 🔧 Renforcement affichage icônes Font Awesome
+
+### 🐛 Corrections de bugs
+
+#### Renforcement du CSS pour affichage des icônes Font Awesome
+- **Problème** : Les icônes Font Awesome n'apparaissent toujours pas sur certains navigateurs (cases blanches)
+- **Cause** : Conflits CSS avec `main.css` qui écrase les styles Font Awesome
+- **Solutions appliquées** :
+  - Ajout du préchargement du fichier de police Font Awesome (`fa-solid-900.woff2`)
+  - Renforcement des règles CSS avec plus de sélecteurs spécifiques
+  - Ajout de propriétés CSS supplémentaires (`font-style`, `font-variant`, `text-rendering`, etc.)
+  - Override des styles pour tous les sélecteurs d'icônes (`[class^="fa-"]`, `[class*=" fa-"]`)
+  - Ajout d'un script de vérification du chargement de Font Awesome au démarrage
+  - Message d'erreur visible si Font Awesome ne se charge pas correctement
+
+- **Fichiers modifiés** :
+  - `templates/control.twig` (lignes 12-14, 116-154, 1132-1169)
+
+- **Impact** :
+  - ✅ Icônes Font Awesome forcées à s'afficher même avec conflits CSS
+  - ✅ Détection automatique des problèmes de chargement
+  - ✅ Message d'erreur visible pour l'utilisateur si problème
+  - ✅ Logs dans la console pour diagnostic
+
+---
+
+## [4.5.19] - 2025-10-13 🐛 Correction cycle infini pompe réservoir (logique inversée)
+
+### 🐛 Corrections de bugs
+
+#### Correction du refill pompe réservoir qui se répète sans s'arrêter
+- **Problème identifié** : 
+  - Lorsque la pompe réservoir (refill) est activée depuis le serveur distant, elle se déclenche en boucle infinie
+  - L'ESP32 reçoit en continu des commandes contradictoires
+  - La pompe démarre/arrête de façon répétée sans respecter la durée configurée
+  
+- **Cause racine** :
+  - **Désaccord de logique inversée** entre le serveur distant et l'ESP32
+  - **Côté hardware/serveur** : GPIO 18 utilise une logique inversée (0 = ON, 1 = OFF)
+  - **Côté ESP32** : S'attend à une logique normale (`pump_tank=1` = ON, `pump_tank=0` = OFF)
+  
+- **Scénario du bug** :
+  1. Utilisateur active la pompe depuis le serveur distant
+  2. Serveur écrit GPIO 18 = 0 (pompe ON selon logique inversée)
+  3. Serveur renvoie `pump_tank=0` à l'ESP32 (valeur brute du GPIO)
+  4. ESP32 lit `pump_tank=0` (false) → arrête la pompe
+  5. Serveur garde GPIO 18 = 0 en BDD
+  6. À la prochaine synchro → retour à l'étape 3 (boucle infinie)
+  
+- **Solution appliquée** :
+  - Inversion de la logique dans `OutputController::getOutputsState()` pour GPIO 18
+  - GPIO 18 = 0 (hardware) → `pump_tank=1` (envoyé à l'ESP32)
+  - GPIO 18 = 1 (hardware) → `pump_tank=0` (envoyé à l'ESP32)
+  - Maintient la compatibilité avec la logique hardware existante
+  - Transparent pour l'interface web (qui écrit directement dans GPIO)
+
+- **Fichiers modifiés** :
+  - `src/Controller/OutputController.php` (lignes 148-154)
+
+- **Impact** :
+  - ✅ Élimine le cycle infini de démarrage/arrêt
+  - ✅ La pompe réservoir respecte maintenant la durée configurée
+  - ✅ Synchronisation correcte entre serveur distant et ESP32
+  - ✅ Pas d'impact sur les autres pompes/actionneurs
+  - ✅ Compatible avec l'existant (pas de migration BDD nécessaire)
+
+- **Tests à effectuer** :
+  - [ ] Activer la pompe réservoir depuis l'interface web distante
+  - [ ] Vérifier que la pompe s'arrête après la durée configurée
+  - [ ] Vérifier que `pump_tank` reflète bien l'état réel de la pompe
+  - [ ] Vérifier les autres GPIO (pompe aquarium, lumière, chauffage)
+
+---
+
 ## [4.5.18] - 2025-10-13 🐛 Correction erreur JavaScript dans ChartUpdater
 
 ### 🐛 Corrections de bugs
