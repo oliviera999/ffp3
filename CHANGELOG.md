@@ -7,6 +7,23 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.12] - 2025-10-13 🐛 Correction logs "GPIO NaN" dans la synchronisation
+
+### 🐛 Corrections de bugs
+
+#### Synchronisation temps réel de l'interface de contrôle
+- **Correction du problème "GPIO NaN changed" dans les logs de la console**
+  - L'API `/api/outputs/state` retourne à la fois des clés numériques (GPIOs) et des clés textuelles (noms comme "mail", "heat", "light") pour la compatibilité ESP32
+  - Le script `control-sync.js` tentait de convertir toutes les clés en nombres avec `parseInt()`, produisant `NaN` pour les clés non numériques
+  - Solution : Ajout d'une vérification `isNaN()` pour ignorer les clés non numériques qui sont des alias
+  - Les logs affichent maintenant correctement uniquement les GPIOs numériques valides
+  - Cela évite également un traitement inutile et des notifications en double
+
+### 🔧 Fichiers modifiés
+- `public/assets/js/control-sync.js` : Ajout du filtrage des clés non numériques dans `processStates()`
+
+---
+
 ## [4.5.11] - 2025-10-13 🐛 Correction décalage horaire au chargement initial
 
 ### 🐛 Corrections de bugs

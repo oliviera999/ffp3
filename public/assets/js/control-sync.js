@@ -140,6 +140,12 @@ class ControlSync {
         for (const [gpio, state] of Object.entries(states)) {
             const gpioNum = parseInt(gpio);
             
+            // Ignorer les clés non numériques (ex: "mail", "heat", "light")
+            // Ces clés sont des alias ajoutés pour la compatibilité ESP32
+            if (isNaN(gpioNum)) {
+                continue;
+            }
+            
             // Pour les GPIOs < 100 et certains GPIOs spéciaux, c'est un entier (état on/off)
             // Pour les GPIOs >= 100, c'est souvent une valeur (texte, nombre, email, etc.)
             // Ne pas convertir systématiquement en parseInt pour éviter NaN sur les chaînes
