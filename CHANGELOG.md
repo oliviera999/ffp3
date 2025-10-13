@@ -7,35 +7,59 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
-## [4.5.6] - 2025-10-12 🕐 Correction critique - Fuseau horaire dates temps réel
+## [4.5.7] - 2025-10-12 🌍 Changement timezone → Africa/Casablanca (lieu physique)
 
-### 🐛 Corrigé
-- **Décalage horaire de +1h dans les dates mises à jour en temps réel**
-  - Méthode `formatDateTime()` dans `stats-updater.js` utilisait `new Date()` (timezone navigateur)
-  - Maintenant utilise `moment.tz('Europe/Paris')` comme Highcharts
-  - Dates de synthèse et période affichées correctement en heure Europe/Paris
-  - Cohérence avec la configuration `APP_TIMEZONE=Europe/Paris` du projet
+### 🔧 Changement majeur - Fuseau horaire
+- **Passage de Europe/Paris à Africa/Casablanca pour l'affichage**
+  - Le projet physique (aquaponie, ESP32) est situé à **Casablanca**
+  - Affichage maintenant cohérent avec le lieu physique du projet
+  - Highcharts configuré en `Africa/Casablanca` au lieu de `Europe/Paris`
+  - stats-updater.js utilise `Africa/Casablanca` pour formater les dates
 
-### 🔧 Technique
-- Utilisation de `moment.unix(timestamp).tz('Europe/Paris')` pour le formatage
-- Format : `DD/MM/YYYY HH:mm:ss` avec secondes, `DD/MM/YYYY HH:mm` sans secondes
-- Fallback sur `new Date()` si moment-timezone non disponible (avec avertissement)
-- Alignement avec la configuration timezone Highcharts (ligne 1334 aquaponie.twig)
+### ⚠️ Important - Différence avec le serveur
+- **Serveur web** : Hébergé à Paris (`Europe/Paris`)
+- **Configuration PHP** : `APP_TIMEZONE=Europe/Paris` (dans .env)
+- **Timestamps en BDD** : Stockés en heure de Paris
+- **Affichage côté client** : Maintenant en heure de Casablanca
+- **Différence horaire** : -1h en été (Paris GMT+2, Casablanca GMT+1)
+
+### 🎯 Impact utilisateur
+- ✅ Les dates affichées correspondent à l'heure locale du projet à Casablanca
+- ✅ Plus de confusion avec le décalage horaire
+- ✅ Cohérence entre tous les affichages (graphiques + cartes + dates)
+- ⚠️ Les timestamps PHP restent en heure de Paris (backend)
 
 ### 📝 Fichiers modifiés
-- `public/assets/js/stats-updater.js` : Méthode `formatDateTime()` (lignes 323-351)
+- `templates/aquaponie.twig` : Highcharts timezone `Europe/Paris` → `Africa/Casablanca` (ligne 1334)
+- `public/assets/js/stats-updater.js` : formatDateTime timezone `Europe/Paris` → `Africa/Casablanca` (ligne 344)
 
-### 🎯 Impact
-- ✅ Dates affichées correctement en heure de Paris
-- ✅ Plus de décalage horaire
-- ✅ Cohérence avec les timestamps Highcharts
-- ✅ Cohérence avec le timezone du serveur
+### 🧪 Test de validation
+Pour vérifier que le timezone est correct :
+```javascript
+// Dans la console
+moment().tz('Africa/Casablanca').format('DD/MM/YYYY HH:mm:ss')
+// Doit afficher l'heure actuelle à Casablanca
 
-### ⏰ Rappel configuration timezone
-- **Projet physique (aquaponie)** : Casablanca (`Africa/Casablanca`)
-- **Serveur web** : Paris (`Europe/Paris`) ← timezone utilisé
-- **Configuration** : `APP_TIMEZONE=Europe/Paris` (dans .env)
-- **Affichage** : Europe/Paris (cohérent avec le serveur)
+statsUpdater.formatDateTime(Math.floor(Date.now() / 1000))
+// Doit afficher l'heure actuelle à Casablanca
+```
+
+### 💡 Note pour l'avenir
+Si nécessaire de revenir à l'heure de Paris (serveur), il suffit de changer :
+- Ligne 1334 de `aquaponie.twig` : `timezone: 'Europe/Paris'`
+- Ligne 344 de `stats-updater.js` : `.tz('Europe/Paris')`
+
+---
+
+## [4.5.6] - 2025-10-12 🕐 Tentative correction fuseau horaire (remplacée par v4.5.7)
+
+### 📝 Note
+Cette version a été remplacée par la v4.5.7 qui corrige le timezone vers Casablanca.
+
+### 🐛 Tentative de correction
+- Méthode `formatDateTime()` modifiée pour utiliser moment-timezone
+- Initialement configuré sur `Europe/Paris` mais devait être `Africa/Casablanca`
+- Voir v4.5.7 pour la correction finale
 
 ---
 

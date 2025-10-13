@@ -340,8 +340,8 @@ class StatsUpdater {
             }
         }
         
-        // Utiliser moment-timezone avec Europe/Paris (comme Highcharts)
-        const m = moment.unix(timestamp).tz('Europe/Paris');
+        // Utiliser moment-timezone avec Africa/Casablanca (lieu physique du projet)
+        const m = moment.unix(timestamp).tz('Africa/Casablanca');
         
         if (withSeconds) {
             return m.format('DD/MM/YYYY HH:mm:ss');
