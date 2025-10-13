@@ -7,6 +7,7 @@ use App\Controller\AquaponieController;
 use App\Controller\DashboardController;
 use App\Controller\ExportController;
 use App\Controller\HeartbeatController;
+use App\Controller\HomeController;
 use App\Controller\OutputController;
 use App\Controller\PostDataController;
 use App\Controller\RealtimeApiController;
@@ -45,7 +46,13 @@ $app->add(new \App\Middleware\ErrorHandlerMiddleware());
 // Routes PRODUCTION (par défaut)
 // ====================================================================
 
-$app->get('/', [DashboardController::class, 'show']);
+// Page d'accueil
+$app->get('/', [HomeController::class, 'show']);
+$app->get('/index.html', function (Request $request, Response $response) {
+    return $response->withHeader('Location', '/ffp3/')->withStatus(301);
+});
+
+// Dashboard
 $app->get('/dashboard', [DashboardController::class, 'show']);
 
 // Page aquaponie

@@ -7,6 +7,53 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.34] - 2025-10-13 🐛 Correction - Redirection des liens index.html
+
+### 🐛 Problème résolu
+- **Liens vers index.html** : Les liens `https://iot.olution.info/index.html` utilisés dans la navigation ne fonctionnaient plus
+  - Le fichier `index.html` à la racine du projet n'était pas accessible car situé hors du document root (`public/`)
+  - Impact : Clic sur "Accueil" dans les menus de navigation ne fonctionnait pas
+  - Toutes les pages (aquaponie, control, dashboard, tide_stats) étaient affectées
+
+### ✨ Solutions implémentées
+
+#### 1. Nouveau contrôleur HomeController
+- **`src/Controller/HomeController.php`** : Contrôleur dédié à la page d'accueil
+  - Utilise `TemplateRenderer` pour afficher le template Twig
+  - Cohérent avec l'architecture Slim 4 existante
+
+#### 2. Template Twig pour la page d'accueil
+- **`templates/home.twig`** : Conversion de `index.html` en template Twig
+  - Page d'accueil moderne avec présentation des 3 projets IoT (FFP3, MSP1, N3PP)
+  - Design avec cartes de projet, statistiques et technologies utilisées
+  - Navigation cohérente avec le reste de l'application
+
+#### 3. Routes et redirections
+- **Route `/`** : Affiche la page d'accueil via HomeController
+- **Route `/index.html`** : Redirection 301 vers `/ffp3/` pour rétrocompatibilité
+  - Tous les anciens liens vers `index.html` sont automatiquement redirigés
+  - Pas de liens cassés, redirection transparente pour l'utilisateur
+
+#### 4. Mise à jour de tous les templates
+- **Correction des liens de navigation** dans tous les templates Twig :
+  - `templates/aquaponie.twig`
+  - `templates/control.twig`
+  - `templates/dashboard.twig`
+  - `templates/tide_stats.twig`
+- Les liens pointent maintenant vers `https://iot.olution.info/ffp3/` au lieu de `index.html`
+
+### 📝 Fichiers modifiés
+- **Nouveaux** : `src/Controller/HomeController.php`, `templates/home.twig`
+- **Modifiés** : `public/index.php`, `templates/aquaponie.twig`, `templates/control.twig`, `templates/dashboard.twig`, `templates/tide_stats.twig`
+
+### ✅ Résultat
+- ✅ Tous les liens "Accueil" fonctionnent correctement
+- ✅ Redirection automatique pour les anciens liens `index.html`
+- ✅ Page d'accueil accessible et moderne
+- ✅ Navigation cohérente sur toutes les pages
+
+---
+
 ## [4.5.33] - 2025-10-13 🐛 Correction - Problème de cache en production
 
 ### 🐛 Corrections critiques
