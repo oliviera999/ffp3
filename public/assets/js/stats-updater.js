@@ -340,7 +340,9 @@ class StatsUpdater {
             }
         }
         
-        // Utiliser moment-timezone avec Africa/Casablanca (lieu physique du projet)
+        // Les timestamps PHP sont créés avec Europe/Paris dans ChartDataService.php L60
+        // Mais l'heure RÉELLE est celle de Casablanca (où se trouve le projet physique)
+        // Afficher en Africa/Casablanca pour voir l'heure locale réelle (-1h par rapport à Paris)
         const m = moment.unix(timestamp).tz('Africa/Casablanca');
         
         if (withSeconds) {

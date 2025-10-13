@@ -7,6 +7,98 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.0] - 2025-10-13 🎨 Interface de contrôle modernisée et responsive
+
+### ✨ Amélioration majeure de l'UI des boutons d'actions
+- **Refonte complète du design des boutons de contrôle** (pompes, lumières, etc.)
+  - Cartes modernes avec dégradés subtils et ombres élégantes
+  - Icônes Font Awesome plus grandes et plus visibles (52px → adaptation responsive)
+  - Animation pulse-glow sur les actionneurs activés
+  - Effet hover avec élévation et changement de couleur
+  - Switches modernes avec effet lumineux quand activé
+
+### 📱 Responsive design optimisé
+- **Grille adaptative intelligente** : `grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr))`
+- **Breakpoints optimisés** :
+  - Desktop (>1024px) : Grille multi-colonnes 300px
+  - Tablette (768-1024px) : Grille 2 colonnes adaptative
+  - Mobile (<768px) : 1 colonne pleine largeur
+  - Petit mobile (<400px) : Tailles réduites pour meilleure lisibilité
+- **Touch-friendly** : Tailles de boutons et switches adaptées aux écrans tactiles
+
+### 🎨 Design system amélioré
+- **Couleurs vibrantes et cohérentes** :
+  - Bleu pour pompes aquarium (#2980b9)
+  - Cyan pour pompes réserve (#00bcd4)
+  - Rouge pour radiateurs (#e74c3c)
+  - Jaune pour lumières (#f39c12)
+  - Violet pour notifications (#9b59b6)
+  - Orange pour système (#e67e22)
+  - Rose pour nourrissage (#e91e63)
+- **Animations fluides** : Transitions cubic-bezier pour effets naturels
+- **Box-shadow multiples** : Profondeur visuelle améliorée
+
+### 🔧 Corrections techniques
+- **Suppression du conflit CSS** : Retrait de `ffp3control/ffp3-style.css` (anciens switches 120x68px)
+- **Font Awesome 6.5.1** : Mise à jour avec CDN fiable et integrity check
+- **Reset CSS** : `box-sizing: border-box` global pour éviter les conflits
+
+### 📝 Fichiers modifiés
+- `templates/control.twig` : Refonte complète du CSS (lignes 20-755)
+  - Nouveau système de grille responsive
+  - Styles modernes pour `.action-button-card`
+  - Switches `.modern-switch` redessinés
+  - Media queries optimisées
+
+### 🚀 Impact utilisateur
+- ✅ Interface beaucoup plus moderne et professionnelle
+- ✅ Meilleure lisibilité sur tous les types d'écrans
+- ✅ Icônes visibles et esthétiques
+- ✅ Expérience tactile améliorée sur mobile/tablette
+- ✅ Boutons plus compacts mais plus lisibles
+
+---
+
+## [4.5.8] - 2025-10-12 ✅ Correction finale timezone - Africa/Casablanca confirmé
+
+### 🐛 Corrigé - CONFIRMATION
+- **Les dates affichaient 10:00 au lieu de 09:00 (heure réelle Casablanca)**
+  - Timestamps BDD stockés en heure de Paris (+1h par rapport à Casablanca)
+  - Configuration serveur PHP : `APP_TIMEZONE=Europe/Paris`
+  - Affichage doit être en `Africa/Casablanca` pour montrer l'heure locale réelle
+  - Correction appliquée dans stats-updater.js ET aquaponie.twig (Highcharts)
+
+### 🔧 Solution confirmée
+- **stats-updater.js** : `.tz('Africa/Casablanca')` (ligne 346)
+- **aquaponie.twig Highcharts** : `timezone: 'Africa/Casablanca'` (ligne 1336)
+- Les deux fichiers maintenant cohérents et configurés sur Casablanca
+
+### ⏰ Architecture timezone finale
+- **BDD** : Timestamps stockés en heure de Paris (car serveur à Paris)
+- **APP_TIMEZONE** : `Europe/Paris` (config PHP backend)
+- **Affichage client** : `Africa/Casablanca` ← **HEURE LOCALE RÉELLE**
+- **Conversion automatique** : -1h par rapport aux timestamps Paris
+- **Résultat** : Les utilisateurs voient l'heure réelle de Casablanca ✅
+
+### 🎯 Impact
+- ✅ Dates affichées = heure locale réelle de Casablanca (09:00 et non 10:00)
+- ✅ Cohérence Highcharts + stats-updater (les deux en Casablanca)
+- ✅ Correction du décalage de +1h
+- ✅ Les utilisateurs voient l'heure du lieu physique du projet
+
+### 📝 Fichiers modifiés
+- `templates/aquaponie.twig` : Highcharts timezone retour à `Africa/Casablanca` (L1336)
+- `public/assets/js/stats-updater.js` : formatDateTime retour à `Africa/Casablanca` (L346)
+
+### 🧪 Test de validation
+```javascript
+// Dans la console, vérifier qu'on affiche l'heure de Casablanca
+moment().tz('Africa/Casablanca').format('HH:mm:ss')  // Heure actuelle Casablanca
+statsUpdater.formatDateTime(Math.floor(Date.now() / 1000))  // Doit être identique
+```
+
+---
+
 ## [4.5.7] - 2025-10-12 🌍 Changement timezone → Africa/Casablanca (lieu physique)
 
 ### 🔧 Changement majeur - Fuseau horaire

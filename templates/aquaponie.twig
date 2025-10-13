@@ -1328,7 +1328,9 @@
                     {# --------------------------------------------------------------------- #}
 
                     <script>
-                        // Configuration globale Highcharts : utilise le fuseau Africa/Casablanca (lieu physique du projet)
+                        // Configuration globale Highcharts : utilise Africa/Casablanca
+                        // Les timestamps PHP sont créés avec Europe/Paris mais l'heure RÉELLE est à Casablanca
+                        // Afficher en Casablanca pour voir l'heure locale réelle du projet
                         Highcharts.setOptions({
                             time: {
                                 timezone: 'Africa/Casablanca'
