@@ -7,6 +7,23 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.29] - 2025-10-13 🐛 Correction ULTIME - Icônes actions simplifiées au maximum
+
+### 🐛 Correction critique
+- **Icônes Font Awesome** : Simplification drastique pour affichage garanti des icônes d'action
+  - **Suppression** : Conteneur `.action-button-icon` avec cadre et ombre qui bloquait l'affichage
+  - **Nouveau** : Icône `<i class="fas">` directement dans le flux avec classe `.action-icon-simple`
+  - **CSS** : Réduction drastique - suppression de tous les effets complexes (gradients, box-shadow multiples, pseudo-éléments)
+  - **HTML** : Structure ultra-simple - icône directement visible sans encapsulation
+  - **Couleurs** : Application directe via style inline pour éviter les conflits CSS
+- **Principe appliqué** : "Maximum simplification" - Si ça marche dans les titres `<h3>`, utiliser exactement la même structure
+- **Fichier modifié** : `templates/control.twig`
+  - HTML simplifié : Suppression du div `.action-button-icon`
+  - CSS simplifié : Carte de bouton sans gradients ni ombres complexes
+  - Animation supprimée : `pulse-glow` inutile
+
+---
+
 ## [4.5.28] - 2025-10-13 🐛 Correction - Icônes invisibles dans le bloc Actions
 
 ### 🐛 Correction critique

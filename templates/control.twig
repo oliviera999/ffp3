@@ -43,51 +43,30 @@
             margin: 0;
         }
         
-        /* Carte de bouton d'action moderne */
+        /* Carte de bouton d'action simple */
         .action-button-card {
-            background: linear-gradient(145deg, #ffffff, #f8f9fa);
-            border-radius: 12px;
+            background: #ffffff;
+            border-radius: 8px;
             padding: 0.75rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07),
-                        0 1px 3px rgba(0, 0, 0, 0.06);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 2px solid #e8e8e8;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 0.75rem;
             cursor: pointer;
-            position: relative;
-            overflow: visible;
+            transition: border-color 0.3s, background-color 0.3s;
         }
         
         /* Effet hover */
         .action-button-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15),
-                        0 6px 12px rgba(0, 0, 0, 0.1);
-            border-color: currentColor;
+            border-color: #ccc;
+            background: #f8f9fa;
         }
         
-        /* État activé avec effet lumineux */
+        /* État activé */
         .action-button-card[data-state="1"] {
             border-color: currentColor;
-            background: linear-gradient(145deg, #ffffff, rgba(255, 255, 255, 0.98));
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1),
-                        0 0 20px currentColor;
-        }
-        
-        .action-button-card[data-state="1"]::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: currentColor;
-            opacity: 0.1;
-            border-radius: 16px;
-            z-index: -1;
+            background: #f0f8f7;
         }
         
         /* Contenu du bouton */
@@ -99,45 +78,18 @@
             min-width: 0;
         }
         
-        /* Icône du bouton - Simplifié pour compatibilité Font Awesome */
-        .action-button-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            background: currentColor;
-            color: white;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Icône simple - directement visible sans conteneur */
+        .action-icon-simple {
+            font-size: 1.8rem;
+            margin-right: 12px;
             flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s;
         }
         
-        .action-button-icon i {
-            color: white;
+        .action-button-card:hover .action-icon-simple {
+            transform: scale(1.1);
         }
         
-        .action-button-card:hover .action-button-icon {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-        }
-        
-        .action-button-card[data-state="1"] .action-button-icon {
-            animation: pulse-glow 2s infinite;
-        }
-        
-        @keyframes pulse-glow {
-            0%, 100% {
-                transform: scale(1);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            }
-            50% {
-                transform: scale(1.05);
-                box-shadow: 0 6px 20px currentColor;
-            }
-        }
         
         /* Informations du bouton */
         .action-button-info {
@@ -871,9 +823,16 @@
                                     
                                     <div class="action-button-card action-button-{{ color }}" data-state="{{ output.state }}">
                                         <div class="action-button-content">
-                                            <div class="action-button-icon">
-                                                <i class="fas {{ icon }}"></i>
-                                            </div>
+                                            <i class="fas {{ icon }} action-icon-simple" style="color: {{ 
+                                                color == 'blue' ? '#2980b9' : 
+                                                (color == 'cyan' ? '#00bcd4' : 
+                                                (color == 'red' ? '#e74c3c' : 
+                                                (color == 'yellow' ? '#f39c12' : 
+                                                (color == 'purple' ? '#9b59b6' : 
+                                                (color == 'orange' ? '#e67e22' : 
+                                                (color == 'pink' ? '#e91e63' : 
+                                                (color == 'green' ? '#27ae60' : '#008B74'))))))) 
+                                            }};"></i>
                                             <div class="action-button-info">
                                                 <div class="action-button-label">{{ clean_name|raw }}</div>
                                                 <div class="action-button-status">
