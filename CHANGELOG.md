@@ -7,6 +7,26 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.21] - 2025-10-13 🎨 Amélioration interface nourrissage
+
+### ✨ Améliorations
+
+#### Affichage des durées de nourrissage sur la même ligne
+- **Amélioration** : Les champs "Gros poissons" et "Petits poissons" sont maintenant côte à côte
+- **Bénéfice** : Interface plus compacte et lisible pour les durées de nourrissage
+- **Technique** : Grille CSS à 2 colonnes (`display: grid; grid-template-columns: 1fr 1fr; gap: 10px`)
+- **Responsive** : Fonctionne sur desktop, tablette et mobile
+
+- **Fichiers modifiés** :
+  - `templates/control.twig` (lignes 1004-1015)
+
+- **Impact** :
+  - ✅ Interface plus compacte
+  - ✅ Meilleure lisibilité des paramètres de nourrissage
+  - ✅ Gain de place vertical
+
+---
+
 ## [4.5.20] - 2025-10-13 🔧 Renforcement affichage icônes Font Awesome
 
 ### 🐛 Corrections de bugs

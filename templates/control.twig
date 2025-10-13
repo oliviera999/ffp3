@@ -1002,11 +1002,16 @@
                                     <input type="number" name="bouffeSoir" min="0" max="23" id="bouffeSoir" value="{{ params.bouffeSoir|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
                                     
                                     <p style="margin: 15px 0 5px 0; font-weight: 500; font-size: 0.9em;">Durées (secondes)</p>
-                                    <label for="tempsGros">Gros poissons</label>
-                                    <input type="number" name="tempsGros" min="0" id="tempsGros" value="{{ params.tempsGros|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
-                                    
-                                    <label for="tempsPetits">Petits poissons</label>
-                                    <input type="number" name="tempsPetits" min="0" id="tempsPetits" value="{{ params.tempsPetits|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                        <div>
+                                            <label for="tempsGros">Gros poissons</label>
+                                            <input type="number" name="tempsGros" min="0" id="tempsGros" value="{{ params.tempsGros|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                        </div>
+                                        <div>
+                                            <label for="tempsPetits">Petits poissons</label>
+                                            <input type="number" name="tempsPetits" min="0" id="tempsPetits" value="{{ params.tempsPetits|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                        </div>
+                                    </div>
                                 </div>
                         
                                 {# Système #}
