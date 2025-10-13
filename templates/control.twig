@@ -9,8 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="stylesheet" href="/assets/css/main.css" />
     <noscript><link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
-    <link rel="stylesheet" href="/ffp3/ffp3control/ffp3-style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="/ffp3/assets/css/realtime-styles.css" />
     <link rel="manifest" href="/ffp3/manifest.json" />
     <link rel="apple-touch-icon" href="/ffp3/assets/icons/icon-192.png" />
@@ -20,85 +19,138 @@
     <!-- Control Sync - Temps réel -->
     <style>
         /* ========================================
+           RESET POUR ÉVITER CONFLITS CSS
+           ======================================== */
+        * {
+            box-sizing: border-box;
+        }
+        
+        /* ========================================
            STYLES MODERNES POUR LES BOUTONS D'ACTION
            ======================================== */
         
         /* Grille responsive pour les boutons d'action */
         .action-buttons-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+            gap: 1rem;
             width: 100%;
+            padding: 0;
+            margin: 0;
         }
         
         /* Carte de bouton d'action moderne */
         .action-button-card {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07),
+                        0 1px 3px rgba(0, 0, 0, 0.06);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid transparent;
+            border: 2px solid #e8e8e8;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 1rem;
             cursor: pointer;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
         }
         
-        .action-button-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, currentColor, transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
+        /* Effet hover */
         .action-button-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15),
+                        0 6px 12px rgba(0, 0, 0, 0.1);
+            border-color: currentColor;
         }
         
-        .action-button-card:hover::before {
-            opacity: 1;
-        }
-        
-        /* État activé */
+        /* État activé avec effet lumineux */
         .action-button-card[data-state="1"] {
             border-color: currentColor;
-            background: linear-gradient(135deg, white 0%, rgba(255, 255, 255, 0.95) 100%);
+            background: linear-gradient(145deg, #ffffff, rgba(255, 255, 255, 0.98));
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1),
+                        0 0 20px currentColor;
+        }
+        
+        .action-button-card[data-state="1"]::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: currentColor;
+            opacity: 0.1;
+            border-radius: 16px;
+            z-index: -1;
         }
         
         /* Contenu du bouton */
         .action-button-content {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 0.875rem;
             flex: 1;
+            min-width: 0;
         }
         
-        /* Icône du bouton */
+        /* Icône du bouton - Plus grande et plus visible */
         .action-button-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex !important;
             align-items: center;
             justify-content: center;
-            font-size: 1.5em;
+            font-size: 1.75rem !important;
             background: currentColor;
-            color: white;
-            transition: transform 0.3s;
+            color: white !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Force l'affichage des icônes Font Awesome */
+        .action-button-icon i,
+        .action-button-icon .fas,
+        .action-button-icon .fa {
+            display: inline-block !important;
+            font-size: 1.75rem !important;
+            line-height: 1 !important;
+            color: white !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            font-family: "Font Awesome 6 Free" !important;
+            font-weight: 900 !important;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Force Font Awesome pour toutes les icônes fas */
+        .fas, .fa-solid {
+            font-family: "Font Awesome 6 Free" !important;
+            font-weight: 900 !important;
         }
         
         .action-button-card:hover .action-button-icon {
             transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .action-button-card[data-state="1"] .action-button-icon {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 6px 20px currentColor;
+            }
         }
         
         /* Informations du bouton */
@@ -109,25 +161,34 @@
         
         .action-button-label {
             font-weight: 600;
-            font-size: 0.95em;
+            font-size: 1rem;
             color: #2c3e50;
-            margin-bottom: 4px;
-            white-space: nowrap;
+            margin-bottom: 0.25rem;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
-            text-overflow: ellipsis;
         }
         
         .action-button-status {
-            font-size: 0.8em;
+            font-size: 0.85rem;
             color: #7f8c8d;
+            font-weight: 500;
+            transition: all 0.3s;
         }
         
-        /* Switch moderne */
+        .action-button-card[data-state="1"] .action-button-status {
+            color: currentColor;
+            font-weight: 600;
+        }
+        
+        /* Switch moderne - Plus élégant */
         .modern-switch {
             position: relative;
             display: inline-block;
-            width: 56px;
-            height: 30px;
+            width: 58px;
+            height: 32px;
             flex-shrink: 0;
             cursor: pointer;
         }
@@ -145,39 +206,43 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #cbd5e0;
-            border-radius: 30px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(145deg, #d0d7de, #e5e9ed);
+            border-radius: 32px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         .modern-switch-button {
             position: absolute;
             content: '';
-            height: 24px;
-            width: 24px;
+            height: 26px;
+            width: 26px;
             left: 3px;
             bottom: 3px;
-            background-color: white;
+            background: white;
             border-radius: 50%;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
         }
         
         .modern-switch input:checked + .modern-switch-slider {
-            background-color: currentColor;
+            background: currentColor;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2),
+                        0 0 16px currentColor;
         }
         
         .modern-switch input:checked + .modern-switch-slider .modern-switch-button {
             transform: translateX(26px);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
         }
         
         .modern-switch:hover .modern-switch-slider {
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
         }
         
-        /* Couleurs par type d'actionneur */
+        /* Couleurs par type d'actionneur - Plus vibrantes */
         .action-button-blue {
-            color: #3498db;
+            color: #2980b9;
         }
         
         .action-button-cyan {
@@ -204,6 +269,10 @@
             color: #e91e63;
         }
         
+        .action-button-green {
+            color: #27ae60;
+        }
+        
         .action-button-default {
             color: #008B74;
         }
@@ -211,22 +280,22 @@
         /* Responsive - Tablettes */
         @media (max-width: 1024px) {
             .action-buttons-grid {
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-                gap: 14px;
+                grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+                gap: 0.875rem;
             }
             
             .action-button-card {
-                padding: 14px;
+                padding: 0.875rem;
             }
             
             .action-button-icon {
-                width: 42px;
-                height: 42px;
-                font-size: 1.3em;
+                width: 46px;
+                height: 46px;
+                font-size: 1.5rem;
             }
             
             .action-button-label {
-                font-size: 0.9em;
+                font-size: 0.95rem;
             }
         }
         
@@ -234,31 +303,36 @@
         @media (max-width: 768px) {
             .action-buttons-grid {
                 grid-template-columns: 1fr;
-                gap: 12px;
+                gap: 0.75rem;
             }
             
             .action-button-card {
-                padding: 12px;
+                padding: 0.875rem;
             }
             
             .action-button-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2em;
+                width: 44px;
+                height: 44px;
+                font-size: 1.4rem;
+                border-radius: 12px;
             }
             
             .action-button-label {
-                font-size: 0.85em;
+                font-size: 0.9rem;
+            }
+            
+            .action-button-status {
+                font-size: 0.8rem;
             }
             
             .modern-switch {
-                width: 50px;
-                height: 26px;
+                width: 52px;
+                height: 28px;
             }
             
             .modern-switch-button {
-                height: 20px;
-                width: 20px;
+                height: 22px;
+                width: 22px;
             }
             
             .modern-switch input:checked + .modern-switch-slider .modern-switch-button {
@@ -269,22 +343,38 @@
         /* Très petits écrans */
         @media (max-width: 400px) {
             .action-button-content {
-                gap: 10px;
+                gap: 0.625rem;
             }
             
             .action-button-icon {
-                width: 36px;
-                height: 36px;
-                font-size: 1.1em;
+                width: 40px;
+                height: 40px;
+                font-size: 1.25rem;
                 border-radius: 10px;
             }
             
             .action-button-label {
-                font-size: 0.8em;
+                font-size: 0.85rem;
             }
             
             .action-button-status {
-                font-size: 0.75em;
+                font-size: 0.75rem;
+            }
+            
+            .modern-switch {
+                width: 48px;
+                height: 26px;
+            }
+            
+            .modern-switch-button {
+                height: 20px;
+                width: 20px;
+                left: 3px;
+                bottom: 3px;
+            }
+            
+            .modern-switch input:checked + .modern-switch-slider .modern-switch-button {
+                transform: translateX(22px);
             }
         }
         
@@ -606,6 +696,84 @@
         .control-grid section * {
             max-width: 100% !important;
         }
+        
+        /* ========================================
+           OPTIMISATIONS SUPPLÉMENTAIRES
+           ======================================== */
+        
+        /* Section titre avec meilleure hiérarchie */
+        .compact-section h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Param boxes plus compactes et modernes */
+        .param-box {
+            transition: all 0.2s;
+        }
+        
+        .param-box:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Inputs et labels avec meilleur espacement */
+        .compact-form label {
+            display: block;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        /* Boutons d'action avec meilleur touch target */
+        .compact-form input[type="submit"] {
+            transition: all 0.2s;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .compact-form input[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 139, 116, 0.3);
+        }
+        
+        .compact-form input[type="submit"]:active {
+            transform: translateY(0);
+        }
+        
+        /* Responsive amélioré pour section paramètres */
+        @media (max-width: 768px) {
+            .control-grid {
+                display: block !important;
+            }
+            
+            .left-column,
+            .right-column {
+                width: 100% !important;
+                margin-bottom: 1rem;
+            }
+            
+            .compact-section {
+                margin-bottom: 1rem !important;
+            }
+            
+            .param-box h4 {
+                font-size: 0.95rem !important;
+            }
+        }
+        
+        /* Actions rapides responsive */
+        @media (max-width: 600px) {
+            .control-grid + section > div {
+                flex-direction: column !important;
+            }
+            
+            .control-grid + section > div a {
+                width: 100% !important;
+                text-align: center !important;
+            }
+        }
     </style>
 </head>
 <body class="is-preload">
@@ -686,7 +854,7 @@
                                         {% set clean_name = 'Notifications' %}
                                         {% set color = 'purple' %}
                                     {% elseif output.gpio == 115 %}
-                                        {% set icon = 'fa-alarm-clock' %}
+                                        {% set icon = 'fa-clock' %}
                                         {% set clean_name = 'Forçage réveil' %}
                                         {% set color = 'orange' %}
                                     {% elseif output.gpio == 108 %}
@@ -694,11 +862,11 @@
                                         {% set clean_name = 'Nourrir petits poissons' %}
                                         {% set color = 'pink' %}
                                     {% elseif output.gpio == 109 %}
-                                        {% set icon = 'fa-fish-fins' %}
+                                        {% set icon = 'fa-fish' %}
                                         {% set clean_name = 'Nourrir gros poissons' %}
                                         {% set color = 'pink' %}
                                     {% elseif output.gpio == 110 %}
-                                        {% set icon = 'fa-rotate' %}
+                                        {% set icon = 'fa-arrows-rotate' %}
                                         {% set clean_name = 'Reset ESP' %}
                                         {% set color = 'red' %}
                                     {% elseif clean_name|lower matches '/pompe aqua/' %}

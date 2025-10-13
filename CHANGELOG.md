@@ -7,6 +7,134 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.7.0] - 2025-10-13 🌍 Gestion timezone et fenêtre glissante améliorées
+
+### ✨ Nouvelles fonctionnalités
+
+#### Fenêtre glissante en mode live
+- **Implémentation d'une fenêtre d'analyse glissante** (6h par défaut)
+  - Au chargement : Affiche la période demandée (historique)
+  - En mode live : La fenêtre glisse automatiquement pour maintenir la durée fixe
+  - L'heure de début s'ajuste quand de nouvelles données arrivent
+  
+#### Badge LIVE/HISTORIQUE
+- **Indicateur visuel du mode d'analyse** avec badge animé
+  - Badge `HISTORIQUE` (gris) : Période fixe, pas de nouvelles données
+  - Badge `LIVE` (rouge pulsant) : Fenêtre glissante active avec données temps réel
+  
+#### Compteurs séparés
+- **Distinction claire entre données historiques et live**
+  - "Mesures chargées" : Nombre de mesures dans la période initiale
+  - "Lectures live reçues" : Compteur incrémental des nouvelles données
+
+### 🌍 Unification du timezone d'affichage
+
+#### Configuration globale Africa/Casablanca
+- **Ajout de `moment.tz.setDefault('Africa/Casablanca')`** dans `aquaponie.twig`
+- **Configuration Highcharts** avec timezone `Africa/Casablanca`
+- **Tous les affichages cohérents** en heure locale de Casablanca (heure réelle du projet physique)
+
+#### Architecture timezone hybride
+- **Backend (PHP)** : Stockage en `Europe/Paris` (stable, pas de migration nécessaire)
+- **Frontend (JS)** : Affichage en `Africa/Casablanca` (conversion automatique)
+- **Décalage horaire** : 0h en hiver, -1h en été (Casablanca en retard sur Paris)
+
+### 🔧 Améliorations techniques
+
+#### Filtres rapides optimisés
+- **Remplacement de `Date()` natif par moment-timezone** dans `setPeriod()`
+- **Calcul des dates dans le timezone du serveur** (Africa/Casablanca)
+- **Plus de problèmes de décalage** avec utilisateurs dans différents fuseaux
+
+#### Indication timezone dans les formulaires
+- **Ajout de label explicite** : "Heure de Casablanca (serveur: Paris +1h en hiver, égale en été)"
+- **Clarification pour l'utilisateur** lors de la sélection de périodes personnalisées
+
+#### Commentaires et documentation
+- **Clarification des conversions timestamps** (millisecondes Highcharts → secondes Unix)
+- **Commentaires explicites** sur la logique de fenêtre glissante
+- **Documentation complète** dans `docs/TIMEZONE_MANAGEMENT.md`
+
+### 📝 Fichiers modifiés
+
+#### Frontend
+- `templates/aquaponie.twig`
+  - Configuration globale moment.tz et Highcharts
+  - Fonction `setPeriod()` avec moment-timezone
+  - Badge mode LIVE/HISTORIQUE avec styles CSS
+  - Indication timezone dans formulaires
+  - Initialisation correcte de StatsUpdater
+
+- `public/assets/js/stats-updater.js`
+  - Propriétés pour fenêtre glissante (`slidingWindow`, `windowDuration`)
+  - Séparation compteurs (`initialReadingCount`, `liveReadingCount`)
+  - Méthode `updatePeriodInfo()` avec logique fenêtre glissante
+  - Méthode `updateModeBadge()` pour indicateur LIVE/HISTORIQUE
+  - Commentaires clarifiés sur conversions timezone
+
+#### Documentation
+- `docs/TIMEZONE_MANAGEMENT.md`
+  - Section "Modifications Récentes (v4.7.0)"
+  - Architecture timezone hybride documentée
+  - Gestion fenêtre glissante expliquée
+  - Tableau récapitulatif mis à jour
+
+### 🐛 Corrections de bugs
+
+- **Fix : Période d'analyse s'étendant indéfiniment** en mode live (remplacé par fenêtre glissante)
+- **Fix : Filtres rapides utilisant timezone navigateur** (maintenant timezone serveur)
+- **Fix : Incohérence timezone PHP vs JavaScript** (affichage unifié Africa/Casablanca)
+- **Fix : Confusion compteur de mesures** (séparation historique/live)
+- **Fix : Durée calculée incorrectement** en mode live (fenêtre glissante fixe)
+
+### 📊 Impact utilisateur
+
+- ✅ **Affichage en heure locale réelle** (Casablanca) pour les utilisateurs au Maroc
+- ✅ **Fenêtre d'analyse stable** qui ne s'étend plus indéfiniment
+- ✅ **Distinction claire** entre données historiques et temps réel
+- ✅ **Filtres cohérents** quel que soit le timezone du navigateur
+- ✅ **Meilleure compréhension** du mode d'analyse (LIVE vs HISTORIQUE)
+
+---
+
+## [4.5.9] - 2025-10-13 🔧 Correction icônes Font Awesome Control
+
+### 🐛 Corrigé - Icônes invisibles
+- **Problème** : Les icônes Font Awesome n'apparaissaient pas dans l'interface de contrôle
+- **Causes identifiées** :
+  - Icônes avec noms inexistants (fa-alarm-clock, fa-fish-fins, fa-rotate)
+  - CSS conflictuel écrasant les styles Font Awesome
+  - Font-family non forcée sur les icônes
+
+### ✅ Solutions appliquées
+- **Noms d'icônes corrigés** :
+  - `fa-alarm-clock` → `fa-clock` (réveil)
+  - `fa-fish-fins` → `fa-fish` (nourrissage gros poissons)
+  - `fa-rotate` → `fa-arrows-rotate` (reset ESP)
+- **CSS forcé avec !important** :
+  - `font-family: "Font Awesome 6 Free" !important`
+  - `font-weight: 900 !important`
+  - `display: inline-block !important`
+  - `visibility: visible !important`
+
+### 🧪 Outil de diagnostic créé
+- **`test_font_awesome.html`** : Page de test pour vérifier les icônes
+  - Vérifie le chargement de Font Awesome
+  - Teste toutes les icônes utilisées
+  - Propose des alternatives si besoin
+  - Code de debug pour la console
+
+### 📝 Fichiers modifiés
+- `templates/control.twig` : Correction des noms d'icônes + CSS forcé
+- `test_font_awesome.html` : Outil de diagnostic créé
+
+### 🎯 Impact
+- ✅ Icônes maintenant visibles sur toutes les actions
+- ✅ Pas de conflit CSS
+- ✅ Compatibilité Font Awesome 6.5.1 assurée
+
+---
+
 ## [4.6.0] - 2025-10-13 🎨 Interface de contrôle modernisée et responsive
 
 ### ✨ Amélioration majeure de l'UI des boutons d'actions
