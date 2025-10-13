@@ -36,6 +36,8 @@ class StatsUpdater {
         // État
         this.isInitialized = false;
         this.readingCount = 0;
+        this.startTimestamp = null;
+        this.endTimestamp = null;
         
         this.log('StatsUpdater initialized');
     }
@@ -108,8 +110,9 @@ class StatsUpdater {
      * Met à jour toutes les statistiques avec de nouvelles valeurs
      * 
      * @param {Object} sensors - Objet contenant les valeurs des capteurs
+     * @param {number} timestamp - Timestamp de la lecture (optionnel)
      */
-    updateAllStats(sensors) {
+    updateAllStats(sensors, timestamp = null) {
         if (!this.isInitialized) {
             this.log('Not initialized, skipping update', 'warn');
             return;
@@ -121,7 +124,13 @@ class StatsUpdater {
             }
         }
         
-        this.readingCount++;
+        // Mettre à jour les informations de période si timestamp fourni
+        if (timestamp !== null) {
+            this.updatePeriodInfo(timestamp);
+        } else {
+            // Sinon, juste incrémenter le compteur
+            this.incrementReadingCount();
+        }
     }
     
     /**
@@ -140,10 +149,19 @@ class StatsUpdater {
             stat.sum += value;
             stat.count++;
             stat.avg = stat.sum / stat.count;
+            
+            // Calcul de l'écart-type (approximation simplifiée)
+            if (!stat.squareSum) stat.squareSum = 0;
+            stat.squareSum += value * value;
+            const variance = (stat.squareSum / stat.count) - (stat.avg * stat.avg);
+            stat.stddev = Math.sqrt(Math.max(0, variance));
         }
         
-        // Mettre à jour l'affichage
+        // Mettre à jour l'affichage principal
         this.updateStatCard(sensorName, value);
+        
+        // Mettre à jour les statistiques détaillées (min, max, avg, stddev)
+        this.updateStatDetails(sensorName);
     }
     
     /**
@@ -207,16 +225,134 @@ class StatsUpdater {
     }
     
     /**
+     * Met à jour les statistiques détaillées affichées sous une carte
+     * 
+     * @param {string} sensorName - Nom du capteur
+     */
+    updateStatDetails(sensorName) {
+        const stat = this.stats.get(sensorName);
+        if (!stat || stat.count === 0) return;
+        
+        const sensorKey = this.sensorIdMap[sensorName] || sensorName.toLowerCase();
+        const config = this.getSensorConfig(sensorName);
+        
+        // Mettre à jour min
+        const minEl = document.getElementById(`${sensorKey}-min`);
+        if (minEl) {
+            minEl.textContent = stat.min.toFixed(config.decimals);
+        }
+        
+        // Mettre à jour max
+        const maxEl = document.getElementById(`${sensorKey}-max`);
+        if (maxEl) {
+            maxEl.textContent = stat.max.toFixed(config.decimals);
+        }
+        
+        // Mettre à jour moyenne
+        const avgEl = document.getElementById(`${sensorKey}-avg`);
+        if (avgEl) {
+            avgEl.textContent = stat.avg.toFixed(config.decimals);
+        }
+        
+        // Mettre à jour écart-type
+        const stddevEl = document.getElementById(`${sensorKey}-stddev`);
+        if (stddevEl && stat.stddev !== undefined) {
+            stddevEl.textContent = stat.stddev.toFixed(2);
+        }
+    }
+    
+    /**
      * Met à jour les dates de synthèse
      * 
-     * @param {Date|string} startDate - Date de début
-     * @param {Date|string} endDate - Date de fin
+     * @param {number} startTimestamp - Timestamp de début (Unix en secondes)
+     * @param {number} endTimestamp - Timestamp de fin (Unix en secondes)
      */
-    updateSummaryDates(startDate, endDate) {
-        // Cette fonction pourrait être étendue pour mettre à jour
-        // dynamiquement les dates affichées dans la synthèse
-        // Pour l'instant, on log juste l'information
-        this.log(`Summary dates updated: ${startDate} to ${endDate}`);
+    updateSummaryDates(startTimestamp, endTimestamp) {
+        // Mettre à jour les dates dans le titre
+        const summaryStartEl = document.getElementById('summary-start-date');
+        const summaryEndEl = document.getElementById('summary-end-date');
+        
+        if (summaryStartEl) {
+            summaryStartEl.textContent = this.formatDateTime(startTimestamp);
+        }
+        
+        if (summaryEndEl) {
+            summaryEndEl.textContent = this.formatDateTime(endTimestamp);
+        }
+        
+        // Mettre à jour les dates dans la période
+        const periodStartEl = document.getElementById('period-start-date');
+        const periodEndEl = document.getElementById('period-end-date');
+        
+        if (periodStartEl) {
+            periodStartEl.textContent = this.formatDateTime(startTimestamp, false);
+        }
+        
+        if (periodEndEl) {
+            periodEndEl.textContent = this.formatDateTime(endTimestamp, false);
+        }
+        
+        // Calculer et mettre à jour la durée
+        const durationSeconds = endTimestamp - startTimestamp;
+        this.updateDuration(durationSeconds);
+        
+        this.log(`Summary dates updated: ${this.formatDateTime(startTimestamp)} to ${this.formatDateTime(endTimestamp)}`);
+    }
+    
+    /**
+     * Met à jour la durée d'analyse
+     * 
+     * @param {number} durationSeconds - Durée en secondes
+     */
+    updateDuration(durationSeconds) {
+        const durationEl = document.getElementById('period-duration');
+        if (!durationEl) return;
+        
+        const duration = this.formatDuration(durationSeconds);
+        durationEl.textContent = duration;
+    }
+    
+    /**
+     * Formate un timestamp en date/heure lisible
+     * 
+     * @param {number} timestamp - Timestamp Unix en secondes
+     * @param {boolean} withSeconds - Inclure les secondes (défaut: true)
+     * @returns {string} Date formatée
+     */
+    formatDateTime(timestamp, withSeconds = true) {
+        const date = new Date(timestamp * 1000);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        
+        if (withSeconds) {
+            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+        } else {
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
+        }
+    }
+    
+    /**
+     * Formate une durée en secondes en chaîne lisible
+     * 
+     * @param {number} seconds - Durée en secondes
+     * @returns {string} Durée formatée
+     */
+    formatDuration(seconds) {
+        const days = Math.floor(seconds / 86400);
+        const hours = Math.floor((seconds % 86400) / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        
+        if (days > 0) {
+            return `${days}j ${hours}h`;
+        } else if (hours > 0) {
+            return `${hours}h ${minutes}min`;
+        } else {
+            return `${minutes}min`;
+        }
     }
     
     /**
@@ -225,11 +361,36 @@ class StatsUpdater {
     incrementReadingCount() {
         this.readingCount++;
         
-        // Mettre à jour l'affichage si l'élément existe
-        const countElement = document.querySelector('.period-stat-value');
+        // Mettre à jour l'affichage du compteur
+        const countElement = document.getElementById('period-measure-count');
         if (countElement) {
             countElement.textContent = this.readingCount;
         }
+    }
+    
+    /**
+     * Met à jour les informations de période avec une nouvelle lecture
+     * 
+     * @param {number} timestamp - Timestamp de la nouvelle lecture (Unix en secondes)
+     */
+    updatePeriodInfo(timestamp) {
+        // Initialiser startTimestamp si c'est la première lecture
+        if (this.startTimestamp === null) {
+            this.startTimestamp = timestamp;
+        }
+        
+        // Mettre à jour endTimestamp (toujours la plus récente)
+        if (timestamp > this.endTimestamp || this.endTimestamp === null) {
+            this.endTimestamp = timestamp;
+            
+            // Mettre à jour les dates affichées
+            if (this.startTimestamp && this.endTimestamp) {
+                this.updateSummaryDates(this.startTimestamp, this.endTimestamp);
+            }
+        }
+        
+        // Incrémenter le compteur
+        this.incrementReadingCount();
     }
     
     /**

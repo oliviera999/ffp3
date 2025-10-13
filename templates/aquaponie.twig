@@ -200,7 +200,7 @@
                         <hr />
                     </header>
 
-                    <h2>📊 Synthèse des mesures du {{ start_date|date('d/m/Y H:i:s') }} au {{ end_date|date('d/m/Y H:i:s') }}</h2>
+                    <h2>📊 Synthèse des mesures du <span id="summary-start-date">{{ start_date|date('d/m/Y H:i:s') }}</span> au <span id="summary-end-date">{{ end_date|date('d/m/Y H:i:s') }}</span></h2>
 
                     <!-- Section Niveaux d'eau -->
                     <div class="section-header">
@@ -218,8 +218,8 @@
                                 <div class="progress-bar" id="eauaqua-progress" style="width: {{ (last_reading_eauaqua|default(0) / 100 * 100)|round(0) }}%;"></div>
                             </div>
                             <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: {{ avg_eauaqua|default(0)|round(1) }} cm | ET: {{ stddev_eauaqua|default(0)|round(2) }}</div>
-                                <div>Min: {{ min_eauaqua|default(0) }} cm | Max: {{ max_eauaqua|default(0) }} cm</div>
+                                <div>Moy: <span id="eauaqua-avg">{{ avg_eauaqua|default(0)|round(1) }}</span> cm | ET: <span id="eauaqua-stddev">{{ stddev_eauaqua|default(0)|round(2) }}</span></div>
+                                <div>Min: <span id="eauaqua-min">{{ min_eauaqua|default(0) }}</span> cm | Max: <span id="eauaqua-max">{{ max_eauaqua|default(0) }}</span> cm</div>
                             </div>
                         </div>
                         
@@ -232,8 +232,8 @@
                                 <div class="progress-bar" id="eaureserve-progress" style="width: {{ (last_reading_eaureserve|default(0) / 100 * 100)|round(0) }}%;"></div>
                             </div>
                             <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: {{ avg_eaureserve|default(0)|round(1) }} cm | ET: {{ stddev_eaureserve|default(0)|round(2) }}</div>
-                                <div>Min: {{ min_eaureserve|default(0) }} cm | Max: {{ max_eaureserve|default(0) }} cm</div>
+                                <div>Moy: <span id="eaureserve-avg">{{ avg_eaureserve|default(0)|round(1) }}</span> cm | ET: <span id="eaureserve-stddev">{{ stddev_eaureserve|default(0)|round(2) }}</span></div>
+                                <div>Min: <span id="eaureserve-min">{{ min_eaureserve|default(0) }}</span> cm | Max: <span id="eaureserve-max">{{ max_eaureserve|default(0) }}</span> cm</div>
                             </div>
                         </div>
                         
@@ -246,8 +246,8 @@
                                 <div class="progress-bar" id="eaupota-progress" style="width: {{ (last_reading_eaupota|default(0) / 100 * 100)|round(0) }}%;"></div>
                             </div>
                             <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: {{ avg_eaupota|default(0)|round(1) }} cm | ET: {{ stddev_eaupota|default(0)|round(2) }}</div>
-                                <div>Min: {{ min_eaupota|default(0) }} cm | Max: {{ max_eaupota|default(0) }} cm</div>
+                                <div>Moy: <span id="eaupota-avg">{{ avg_eaupota|default(0)|round(1) }}</span> cm | ET: <span id="eaupota-stddev">{{ stddev_eaupota|default(0)|round(2) }}</span></div>
+                                <div>Min: <span id="eaupota-min">{{ min_eaupota|default(0) }}</span> cm | Max: <span id="eaupota-max">{{ max_eaupota|default(0) }}</span> cm</div>
                             </div>
                     </div>
                 </div>
@@ -268,8 +268,8 @@
                                 <div class="progress-bar" id="tempeau-progress" style="width: {{ (last_reading_tempeau|default(0) / 40 * 100)|round(0) }}%;"></div>
                             </div>
                             <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: {{ avg_tempeau|default(0)|round(1) }} °C | ET: {{ stddev_tempeau|default(0)|round(2) }}</div>
-                                <div>Min: {{ min_tempeau|default(0) }} °C | Max: {{ max_tempeau|default(0) }} °C</div>
+                                <div>Moy: <span id="tempeau-avg">{{ avg_tempeau|default(0)|round(1) }}</span> °C | ET: <span id="tempeau-stddev">{{ stddev_tempeau|default(0)|round(2) }}</span></div>
+                                <div>Min: <span id="tempeau-min">{{ min_tempeau|default(0) }}</span> °C | Max: <span id="tempeau-max">{{ max_tempeau|default(0) }}</span> °C</div>
                             </div>
                         </div>
                         
@@ -282,8 +282,8 @@
                                 <div class="progress-bar" id="tempair-progress" style="width: {{ (last_reading_tempair|default(0) / 40 * 100)|round(0) }}%;"></div>
                             </div>
                             <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: {{ avg_tempair|default(0)|round(1) }} °C | ET: {{ stddev_tempair|default(0)|round(2) }}</div>
-                                <div>Min: {{ min_tempair|default(0) }} °C | Max: {{ max_tempair|default(0) }} °C</div>
+                                <div>Moy: <span id="tempair-avg">{{ avg_tempair|default(0)|round(1) }}</span> °C | ET: <span id="tempair-stddev">{{ stddev_tempair|default(0)|round(2) }}</span></div>
+                                <div>Min: <span id="tempair-min">{{ min_tempair|default(0) }}</span> °C | Max: <span id="tempair-max">{{ max_tempair|default(0) }}</span> °C</div>
                             </div>
                         </div>
                         
@@ -296,8 +296,8 @@
                                 <div class="progress-bar" id="humi-progress" style="width: {{ last_reading_humi|default(0) }}%;"></div>
                             </div>
                             <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: {{ avg_humi|default(0)|round(1) }} % | ET: {{ stddev_humi|default(0)|round(2) }}</div>
-                                <div>Min: {{ min_humi|default(0) }} % | Max: {{ max_humi|default(0) }} %</div>
+                                <div>Moy: <span id="humi-avg">{{ avg_humi|default(0)|round(1) }}</span> % | ET: <span id="humi-stddev">{{ stddev_humi|default(0)|round(2) }}</span></div>
+                                <div>Min: <span id="humi-min">{{ min_humi|default(0) }}</span> % | Max: <span id="humi-max">{{ max_humi|default(0) }}</span> %</div>
                             </div>
                         </div>
                         
@@ -310,8 +310,8 @@
                                 <div class="progress-bar" id="lumi-progress" style="width: {{ (last_reading_lumi|default(0) / 4000 * 100)|round(0) }}%;"></div>
                             </div>
                             <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: {{ avg_lumi|default(0)|round(0) }} UA | ET: {{ stddev_lumi|default(0)|round(2) }}</div>
-                                <div>Min: {{ min_lumi|default(0) }} UA | Max: {{ max_lumi|default(0) }} UA</div>
+                                <div>Moy: <span id="lumi-avg">{{ avg_lumi|default(0)|round(0) }}</span> UA | ET: <span id="lumi-stddev">{{ stddev_lumi|default(0)|round(2) }}</span></div>
+                                <div>Min: <span id="lumi-min">{{ min_lumi|default(0) }}</span> UA | Max: <span id="lumi-max">{{ max_lumi|default(0) }}</span> UA</div>
                             </div>
                         </div>
                     </div>
@@ -834,19 +834,19 @@
                             <div class="period-info-title">📊 Période analysée</div>
                             <div class="period-info-dates">
                                 <i class="far fa-calendar-alt"></i>
-                                Du {{ start_date|date('d/m/Y H:i') }} au {{ end_date|date('d/m/Y H:i') }}
+                                Du <span id="period-start-date">{{ start_date|date('d/m/Y H:i') }}</span> au <span id="period-end-date">{{ end_date|date('d/m/Y H:i') }}</span>
                             </div>
                             <div class="period-info-stats">
                                 <div class="period-stat-item">
-                                    <span class="period-stat-value">{{ duration_str }}</span>
+                                    <span class="period-stat-value" id="period-duration">{{ duration_str }}</span>
                                     <span class="period-stat-label">Durée d'analyse</span>
                                 </div>
                                 <div class="period-stat-item">
-                                    <span class="period-stat-value">{{ measure_count }}</span>
+                                    <span class="period-stat-value" id="period-measure-count">{{ measure_count }}</span>
                                     <span class="period-stat-label">Enregistrements analysés</span>
                                 </div>
                                 <div class="period-stat-item">
-                                    <span class="period-stat-value">{{ timepastbegin }}j</span>
+                                    <span class="period-stat-value" id="period-uptime">{{ timepastbegin }}j</span>
                                     <span class="period-stat-label">Fonctionnement total</span>
                                 </div>
                             </div>
@@ -1862,6 +1862,22 @@
                 const initialized = statsUpdater.init();
                 if (initialized) {
                     console.log('[Aquaponie] StatsUpdater initialized successfully');
+                    
+                    // Initialiser les timestamps de période depuis les données PHP
+                    // Convertir les timestamps PHP (millisecondes) en secondes
+                    const initialStartTimestamp = reading_time && reading_time.length > 0 ? reading_time[0] / 1000 : null;
+                    const initialEndTimestamp = reading_time && reading_time.length > 0 ? reading_time[reading_time.length - 1] / 1000 : null;
+                    
+                    if (initialStartTimestamp && initialEndTimestamp) {
+                        statsUpdater.startTimestamp = initialStartTimestamp;
+                        statsUpdater.endTimestamp = initialEndTimestamp;
+                        statsUpdater.readingCount = reading_time.length;
+                        console.log('[Aquaponie] Initial period set:', {
+                            start: new Date(initialStartTimestamp * 1000),
+                            end: new Date(initialEndTimestamp * 1000),
+                            count: reading_time.length
+                        });
+                    }
                 } else {
                     console.warn('[Aquaponie] StatsUpdater initialization failed');
                 }

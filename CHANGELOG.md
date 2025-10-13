@@ -7,6 +7,70 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.5] - 2025-10-12 ✨ Mode live COMPLET - Toutes les informations en temps réel
+
+### ✨ Ajouté
+- **Mise à jour en temps réel de TOUTES les informations temporelles**
+  - Dates de synthèse : "du XX/XX/XXXX au XX/XX/XXXX" se mettent à jour automatiquement
+  - Durée d'analyse calculée et affichée dynamiquement
+  - Nombre d'enregistrements analysés incrémenté en temps réel
+  - Toutes les périodes affichées (titre + bannière) synchronisées
+
+- **Mise à jour de TOUTES les statistiques des cartes**
+  - Min, Max, Moyenne, Écart-type (ET) pour chaque capteur
+  - Calcul incrémental des statistiques (pas besoin de recharger toutes les données)
+  - Affichage mis à jour automatiquement sous chaque carte
+  - 7 capteurs × 4 stats = 28 valeurs mises à jour en temps réel
+
+### 🔧 Amélioré
+- **Module stats-updater.js considérablement étendu**
+  - Nouvelle méthode `updateStatDetails()` : Met à jour min/max/avg/stddev
+  - Nouvelle méthode `updatePeriodInfo()` : Gère les timestamps de période
+  - Nouvelle méthode `updateSummaryDates()` : Met à jour toutes les dates affichées
+  - Nouvelles méthodes `formatDateTime()` et `formatDuration()` : Formatage élégant
+  - Calcul de l'écart-type en temps réel (variance + racine carrée)
+  - Initialisation des timestamps depuis les données PHP initiales
+
+- **Template aquaponie.twig avec IDs ajoutés partout**
+  - IDs sur dates de synthèse : `summary-start-date`, `summary-end-date`
+  - IDs sur période : `period-start-date`, `period-end-date`
+  - IDs sur durée : `period-duration`
+  - IDs sur compteur : `period-measure-count`
+  - IDs sur stats de cartes : `{sensor}-min`, `{sensor}-max`, `{sensor}-avg`, `{sensor}-stddev`
+  - Total : 38 nouveaux IDs ajoutés pour permettre les mises à jour
+
+- **realtime-updater.js passe maintenant le timestamp**
+  - Appel `updateAllStats(sensors, timestamp)` au lieu de `updateAllStats(sensors)`
+  - Permet le calcul automatique de la durée et des dates
+
+### 🎯 Impact utilisateur - MODE LIVE COMPLET
+Les utilisateurs voient maintenant se mettre à jour automatiquement :
+- ✅ Dates de début et fin de période (2 endroits)
+- ✅ Durée d'analyse ("Xj Xh" ou "Xh Xmin")
+- ✅ Nombre d'enregistrements analysés
+- ✅ Valeurs actuelles des 7 capteurs
+- ✅ Min, Max, Moyenne, ET de chaque capteur (28 valeurs)
+- ✅ Barres de progression
+- ✅ Graphiques Highcharts
+- ✅ Badge LIVE et état système
+
+**TOTAL : 42 éléments** mis à jour automatiquement toutes les 15 secondes !
+
+### 📝 Fichiers modifiés
+- `public/assets/js/stats-updater.js` : +7 méthodes, calcul écart-type, formatage dates
+- `public/assets/js/realtime-updater.js` : Passage du timestamp à updateAllStats
+- `templates/aquaponie.twig` : +38 IDs ajoutés, initialisation timestamps (L203, 221-222, 235-236, 249-250, 271-272, 285-286, 299-300, 313-314, 837, 841-850, 1867-1879)
+
+### 🧪 Tests recommandés
+1. Ouvrir `/aquaponie` → Vérifier 7 cartes avec min/max/moy/ET
+2. Attendre 15 secondes → Vérifier que **TOUTES** les valeurs clignotent
+3. Observer dates de synthèse se mettre à jour automatiquement
+4. Observer durée d'analyse s'incrémenter
+5. Observer nombre d'enregistrements s'incrémenter
+6. Console : `statsUpdater.getStats()` pour voir toutes les stats
+
+---
+
 ## [4.5.4] - 2025-10-12 🐛 Correction critique - Double déclaration realtimeUpdater
 
 ### 🐛 Corrigé

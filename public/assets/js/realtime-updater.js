@@ -142,9 +142,9 @@ class RealtimeUpdater {
                     window.chartUpdater.addNewReadings(newReadings);
                 }
                 
-                // Mettre à jour les statistiques avec la dernière lecture
+                // Mettre à jour les statistiques avec la dernière lecture (inclure le timestamp)
                 if (window.statsUpdater && lastReading.sensors) {
-                    window.statsUpdater.updateAllStats(lastReading.sensors);
+                    window.statsUpdater.updateAllStats(lastReading.sensors, lastReading.timestamp);
                 }
                 
                 // Notification toast (seulement si plusieurs nouvelles données)
