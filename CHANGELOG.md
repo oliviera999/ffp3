@@ -7,6 +7,30 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.41] - 2025-10-14 🔧 CORRECTION CRITIQUE - Force environnement PROD pour garantir bonnes tables
+
+### 🚨 Correction critique
+- **Ajout middleware EnvironmentMiddleware('prod')** pour TOUTES les routes de production
+- Force explicitement l'utilisation des tables `ffp3Data` et `ffp3Outputs` en production
+- Garantit que les graphiques et toutes les pages PROD utilisent les bonnes tables
+- Symétrie avec les routes TEST qui utilisent déjà `EnvironmentMiddleware('test')`
+
+### 📝 Fichiers modifiés
+- **Modifié** : `public/index.php` - Groupement routes PROD avec middleware explicit
+
+### 🎯 Impact
+- ✅ Garantie absolue que PROD utilise `ffp3Data` (et non `ffp3Data2`)
+- ✅ Évite tout risque de confusion entre environnements PROD/TEST
+- ✅ Plus de sécurité : l'environnement est maintenant forcé par middleware, pas juste par défaut .env
+- ✅ Cohérence : même architecture pour PROD et TEST
+
+### ⚙️ Technique
+- Les routes `/aquaponie`, `/dashboard`, `/post-data`, etc. forcent maintenant `ENV=prod`
+- Les routes `*-test` continuent de forcer `ENV=test`
+- Cache Twig vidé pour appliquer immédiatement les changements
+
+---
+
 ## [4.5.40] - 2025-10-14 🔧 CRITIQUE - Mise à jour SÉLECTIVE des outputs (évite écrasement)
 
 ### 🚨 Correction critique

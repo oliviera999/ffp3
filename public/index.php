@@ -43,53 +43,54 @@ if ($basePath !== '/' && $basePath !== '') {
 $app->add(new \App\Middleware\ErrorHandlerMiddleware());
 
 // ====================================================================
-// Routes PRODUCTION (par défaut)
+// Routes PRODUCTION (par défaut) - avec middleware pour forcer 'prod'
 // ====================================================================
+$app->group('', function ($group) {
+    // Page d'accueil
+    $group->get('/', [HomeController::class, 'show']);
+    $group->get('/index.html', function (Request $request, Response $response) {
+        return $response->withHeader('Location', '/ffp3/')->withStatus(301);
+    });
 
-// Page d'accueil
-$app->get('/', [HomeController::class, 'show']);
-$app->get('/index.html', function (Request $request, Response $response) {
-    return $response->withHeader('Location', '/ffp3/')->withStatus(301);
-});
+    // Dashboard
+    $group->get('/dashboard', [DashboardController::class, 'show']);
 
-// Dashboard
-$app->get('/dashboard', [DashboardController::class, 'show']);
+    // Page aquaponie
+    $group->map(['GET', 'POST'], '/aquaponie', [AquaponieController::class, 'show']);
+    $group->map(['GET', 'POST'], '/ffp3-data', [AquaponieController::class, 'show']); // Alias legacy
 
-// Page aquaponie
-$app->map(['GET', 'POST'], '/aquaponie', [AquaponieController::class, 'show']);
-$app->map(['GET', 'POST'], '/ffp3-data', [AquaponieController::class, 'show']); // Alias legacy
+    // Post data depuis ESP32
+    $group->post('/post-data', [PostDataController::class, 'handle']);
+    $group->post('/post-ffp3-data.php', [PostDataController::class, 'handle']); // Alias legacy
 
-// Post data depuis ESP32
-$app->post('/post-data', [PostDataController::class, 'handle']);
-$app->post('/post-ffp3-data.php', [PostDataController::class, 'handle']); // Alias legacy
+    // Export CSV
+    $group->get('/export-data', [ExportController::class, 'downloadCsv']);
+    $group->get('/export-data.php', [ExportController::class, 'downloadCsv']); // Alias legacy
 
-// Export CSV
-$app->get('/export-data', [ExportController::class, 'downloadCsv']);
-$app->get('/export-data.php', [ExportController::class, 'downloadCsv']); // Alias legacy
+    // Statistiques marées
+    $group->map(['GET', 'POST'], '/tide-stats', [TideStatsController::class, 'show']);
 
-// Statistiques marées
-$app->map(['GET', 'POST'], '/tide-stats', [TideStatsController::class, 'show']);
+    // Interface de contrôle PROD
+    $group->get('/control', [OutputController::class, 'showInterface']);
+    $group->get('/api/outputs/toggle', [OutputController::class, 'toggleOutput']);
+    $group->get('/api/outputs/state', [OutputController::class, 'getOutputsState']);
+    $group->post('/api/outputs/parameters', [OutputController::class, 'updateParameters']);
 
-// Interface de contrôle PROD
-$app->get('/control', [OutputController::class, 'showInterface']);
-$app->get('/api/outputs/toggle', [OutputController::class, 'toggleOutput']);
-$app->get('/api/outputs/state', [OutputController::class, 'getOutputsState']);
-$app->post('/api/outputs/parameters', [OutputController::class, 'updateParameters']);
+    // ====================================================================
+    // API Temps Réel PROD
+    // ====================================================================
+    $group->get('/api/realtime/sensors/latest', [RealtimeApiController::class, 'getLatestSensors']);
+    $group->get('/api/realtime/sensors/since/{timestamp}', [RealtimeApiController::class, 'getSensorsSince']);
+    $group->get('/api/realtime/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
+    $group->get('/api/realtime/system/health', [RealtimeApiController::class, 'getSystemHealth']);
+    $group->get('/api/realtime/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
 
-// ====================================================================
-// API Temps Réel PROD
-// ====================================================================
-$app->get('/api/realtime/sensors/latest', [RealtimeApiController::class, 'getLatestSensors']);
-$app->get('/api/realtime/sensors/since/{timestamp}', [RealtimeApiController::class, 'getSensorsSince']);
-$app->get('/api/realtime/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
-$app->get('/api/realtime/system/health', [RealtimeApiController::class, 'getSystemHealth']);
-$app->get('/api/realtime/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
-
-// ====================================================================
-// Heartbeat ESP32 PROD
-// ====================================================================
-$app->post('/heartbeat', [HeartbeatController::class, 'handle']);
-$app->post('/heartbeat.php', [HeartbeatController::class, 'handle']); // Alias legacy
+    // ====================================================================
+    // Heartbeat ESP32 PROD
+    // ====================================================================
+    $group->post('/heartbeat', [HeartbeatController::class, 'handle']);
+    $group->post('/heartbeat.php', [HeartbeatController::class, 'handle']); // Alias legacy
+})->add(new EnvironmentMiddleware('prod'));
 
 // ====================================================================
 // Groupe de routes TEST (avec middleware EnvironmentMiddleware)
