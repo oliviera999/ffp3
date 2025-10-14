@@ -201,36 +201,36 @@ try {
 
 
 
-    // CRITIQUE (v11.36): Mise à jour COMPLÈTE des OUTPUTS pour synchronisation ESP32
-    // TOUTES les entrées de la table outputs doivent être mises à jour
+    // CRITIQUE (v11.37): Mise à jour SÉLECTIVE des OUTPUTS pour synchronisation ESP32
+    // Seulement les valeurs PRÉSENTES dans POST sont mises à jour (pas d'écrasement)
     $outputRepo = new \App\Repository\OutputRepository($pdo);
     
-    // Mapper TOUS les GPIO (physiques ET virtuels) vers les données reçues
+    // Mapper SEULEMENT les GPIO présents dans POST (isset)
     $outputsToUpdate = [
         // === GPIO PHYSIQUES (actionneurs matériels) ===
-        16 => $data->etatPompeAqua,     // Pompe aquarium
-        18 => $data->etatPompeTank,     // Pompe réservoir  
-        2  => $data->etatHeat,           // Chauffage
-        15 => $data->etatUV,             // Lumière
+        16 => isset($_POST['etatPompeAqua']) ? $data->etatPompeAqua : null,
+        18 => isset($_POST['etatPompeTank']) ? $data->etatPompeTank : null,
+        2  => isset($_POST['etatHeat']) ? $data->etatHeat : null,
+        15 => isset($_POST['etatUV']) ? $data->etatUV : null,
         
         // === GPIO VIRTUELS 100-116 (configuration) ===
-        100 => $data->mail,              // Mail (texte - stocké dans state comme varchar)
-        101 => $data->mailNotif === 'checked' ? 1 : 0,  // Notif mail
-        102 => $data->aqThreshold,       // Seuil aquarium
-        103 => $data->tankThreshold,     // Seuil réservoir
-        104 => $data->chauffageThreshold, // Seuil chauffage
-        105 => $data->bouffeMatin,       // Heure bouffe matin
-        106 => $data->bouffeMidi,        // Heure bouffe midi
-        107 => $data->bouffeSoir,        // Heure bouffe soir
-        108 => $data->bouffePetits,      // Flag bouffe petits
-        109 => $data->bouffeGros,        // Flag bouffe gros
-        110 => $data->resetMode,         // Reset mode
-        111 => $data->tempsGros,         // Durée gros poissons
-        112 => $data->tempsPetits,       // Durée petits poissons
-        113 => $data->tempsRemplissageSec, // Durée remplissage
-        114 => $data->limFlood,          // Limite inondation
-        115 => $data->wakeUp,            // Réveil forcé
-        116 => $data->freqWakeUp         // Fréquence réveil
+        100 => isset($_POST['mail']) ? $data->mail : null,
+        101 => isset($_POST['mailNotif']) ? ($data->mailNotif === 'checked' ? 1 : 0) : null,
+        102 => isset($_POST['aqThreshold']) ? $data->aqThreshold : null,
+        103 => isset($_POST['tankThreshold']) ? $data->tankThreshold : null,
+        104 => isset($_POST['chauffageThreshold']) ? $data->chauffageThreshold : null,
+        105 => isset($_POST['bouffeMatin']) ? $data->bouffeMatin : null,
+        106 => isset($_POST['bouffeMidi']) ? $data->bouffeMidi : null,
+        107 => isset($_POST['bouffeSoir']) ? $data->bouffeSoir : null,
+        108 => isset($_POST['bouffePetits']) ? $data->bouffePetits : null,
+        109 => isset($_POST['bouffeGros']) ? $data->bouffeGros : null,
+        110 => isset($_POST['resetMode']) ? $data->resetMode : null,
+        111 => isset($_POST['tempsGros']) ? $data->tempsGros : null,
+        112 => isset($_POST['tempsPetits']) ? $data->tempsPetits : null,
+        113 => isset($_POST['tempsRemplissageSec']) ? $data->tempsRemplissageSec : null,
+        114 => isset($_POST['limFlood']) ? $data->limFlood : null,
+        115 => isset($_POST['WakeUp']) ? $data->wakeUp : null,
+        116 => isset($_POST['FreqWakeUp']) ? $data->freqWakeUp : null,
     ];
     
     $updatedCount = 0;

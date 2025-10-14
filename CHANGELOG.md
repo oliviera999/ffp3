@@ -7,6 +7,28 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.40] - 2025-10-14 🔧 CRITIQUE - Mise à jour SÉLECTIVE des outputs (évite écrasement)
+
+### 🚨 Correction critique
+- **Mise à jour SÉLECTIVE au lieu de COMPLÈTE** : seuls les GPIO présents dans POST sont mis à jour
+- Protection contre l'écrasement des valeurs existantes si non envoyées par ESP32
+- Vérification `isset($_POST[...])` pour chaque paramètre avant mise à jour
+- Préserve les valeurs configurées manuellement via l'interface web
+
+### 📝 Fichiers modifiés
+- **Modifié** : `public/post-data.php` - Ajout vérifications isset() pour mise à jour conditionnelle
+
+### 🎯 Impact
+- ✅ Si ESP32 n'envoie pas un paramètre → valeur existante en BDD préservée
+- ✅ Permet configuration mixte (ESP32 + interface web) sans conflit
+- ✅ Plus de robustesse face aux POST incomplets ou anciens firmwares ESP32
+
+### ⚠️ Important pour ESP32
+- L'ESP32 doit envoyer TOUS les paramètres GPIO à chaque POST pour synchronisation complète
+- Si un paramètre est omis, la valeur en BDD ne sera PAS mise à jour
+
+---
+
 ## [4.5.39] - 2025-10-14 🔧 Correction GPIO 100 - Mise à jour email dans outputs
 
 ### 🔧 Correction importante
