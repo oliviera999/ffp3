@@ -28,18 +28,18 @@ class SensorRepository
     public function insert(SensorData $data): void
     {
         $table = TableConfig::getDataTable();
+        // v11.36: Format compatible avec structure BDD actuelle (sans colonnes tempsGros, etc.)
+        // Ces valeurs sont mises à jour dans ffp3Outputs uniquement
         $sql = "INSERT INTO {$table} (
             sensor, version, TempAir, Humidite, TempEau, EauPotager, EauAquarium, EauReserve,
             diffMaree, Luminosite, etatPompeAqua, etatPompeTank, etatHeat, etatUV,
             bouffeMatin, bouffeMidi, bouffePetits, bouffeGros,
-            aqThreshold, tankThreshold, chauffageThreshold, mail, mailNotif, resetMode, bouffeSoir,
-            tempsGros, tempsPetits, tempsRemplissageSec, limFlood, WakeUp, FreqWakeUp
+            aqThreshold, tankThreshold, chauffageThreshold, mail, mailNotif, resetMode, bouffeSoir
         ) VALUES (
             :sensor, :version, :tempAir, :humidite, :tempEau, :eauPotager, :eauAquarium, :eauReserve,
             :diffMaree, :luminosite, :etatPompeAqua, :etatPompeTank, :etatHeat, :etatUV,
             :bouffeMatin, :bouffeMidi, :bouffePetits, :bouffeGros,
-            :aqThreshold, :tankThreshold, :chauffageThreshold, :mail, :mailNotif, :resetMode, :bouffeSoir,
-            :tempsGros, :tempsPetits, :tempsRemplissageSec, :limFlood, :wakeUp, :freqWakeUp
+            :aqThreshold, :tankThreshold, :chauffageThreshold, :mail, :mailNotif, :resetMode, :bouffeSoir
         )";
 
         // Préparation de la requête pour éviter toute injection SQL
@@ -70,12 +70,9 @@ class SensorRepository
             ':mailNotif' => $data->mailNotif,
             ':resetMode' => $data->resetMode,
             ':bouffeSoir' => $data->bouffeSoir,
-            ':tempsGros' => $data->tempsGros,
-            ':tempsPetits' => $data->tempsPetits,
-            ':tempsRemplissageSec' => $data->tempsRemplissageSec,
-            ':limFlood' => $data->limFlood,
-            ':wakeUp' => $data->wakeUp,
-            ':freqWakeUp' => $data->freqWakeUp,
         ]);
+        
+        // Note: tempsGros, tempsPetits, tempsRemplissageSec, limFlood, WakeUp, FreqWakeUp
+        // sont mis à jour dans ffp3Outputs uniquement (pas dans historique Data)
     }
 }

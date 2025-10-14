@@ -7,6 +7,24 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.38] - 2025-10-14 🔧 Correction structure BDD - GPIO 111-116 dans outputs uniquement
+
+### 🔧 Correction importante
+- **Les nouveaux GPIO 111-116 ne sont PAS ajoutés à la table ffp3Data** (historique)
+- **Ils sont uniquement gérés dans ffp3Outputs** (configuration actuelle)
+- Correction du SensorRepository pour éviter les erreurs SQL sur colonnes manquantes
+- Les valeurs tempsGros, tempsPetits, tempsRemplissageSec, limFlood, WakeUp, FreqWakeUp sont bien reçues et mises à jour dans outputs
+
+### 📝 Fichiers modifiés
+- **Modifié** : `src/Repository/SensorRepository.php` - Retrait des colonnes inexistantes de l'INSERT
+
+### 🎯 Logique
+- La table **ffp3Data** conserve uniquement l'historique des mesures capteurs et états de base
+- La table **ffp3Outputs** stocke la configuration actuelle (GPIO physiques + virtuels)
+- Séparation claire entre données historiques et paramètres de configuration
+
+---
+
 ## [4.5.37] - 2025-10-14 🔄 Synchronisation complète ESP32 - Nouveaux GPIO virtuels 111-116
 
 ### ✨ Nouveaux paramètres ESP32
