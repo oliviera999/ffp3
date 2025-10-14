@@ -32,12 +32,14 @@ class SensorRepository
             sensor, version, TempAir, Humidite, TempEau, EauPotager, EauAquarium, EauReserve,
             diffMaree, Luminosite, etatPompeAqua, etatPompeTank, etatHeat, etatUV,
             bouffeMatin, bouffeMidi, bouffePetits, bouffeGros,
-            aqThreshold, tankThreshold, chauffageThreshold, mail, mailNotif, resetMode, bouffeSoir
+            aqThreshold, tankThreshold, chauffageThreshold, mail, mailNotif, resetMode, bouffeSoir,
+            tempsGros, tempsPetits, tempsRemplissageSec, limFlood, WakeUp, FreqWakeUp
         ) VALUES (
             :sensor, :version, :tempAir, :humidite, :tempEau, :eauPotager, :eauAquarium, :eauReserve,
             :diffMaree, :luminosite, :etatPompeAqua, :etatPompeTank, :etatHeat, :etatUV,
             :bouffeMatin, :bouffeMidi, :bouffePetits, :bouffeGros,
-            :aqThreshold, :tankThreshold, :chauffageThreshold, :mail, :mailNotif, :resetMode, :bouffeSoir
+            :aqThreshold, :tankThreshold, :chauffageThreshold, :mail, :mailNotif, :resetMode, :bouffeSoir,
+            :tempsGros, :tempsPetits, :tempsRemplissageSec, :limFlood, :wakeUp, :freqWakeUp
         )";
 
         // Préparation de la requête pour éviter toute injection SQL
@@ -68,6 +70,12 @@ class SensorRepository
             ':mailNotif' => $data->mailNotif,
             ':resetMode' => $data->resetMode,
             ':bouffeSoir' => $data->bouffeSoir,
+            ':tempsGros' => $data->tempsGros,
+            ':tempsPetits' => $data->tempsPetits,
+            ':tempsRemplissageSec' => $data->tempsRemplissageSec,
+            ':limFlood' => $data->limFlood,
+            ':wakeUp' => $data->wakeUp,
+            ':freqWakeUp' => $data->freqWakeUp,
         ]);
     }
 }

@@ -7,6 +7,35 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.37] - 2025-10-14 🔄 Synchronisation complète ESP32 - Nouveaux GPIO virtuels 111-116
+
+### ✨ Nouveaux paramètres ESP32
+- **Ajout de 6 nouveaux paramètres GPIO virtuels** (111-116) pour une configuration avancée :
+  - **GPIO 111** : `tempsGros` - Durée de distribution nourriture gros poissons (secondes)
+  - **GPIO 112** : `tempsPetits` - Durée de distribution nourriture petits poissons (secondes)
+  - **GPIO 113** : `tempsRemplissageSec` - Durée de remplissage du réservoir (secondes)
+  - **GPIO 114** : `limFlood` - Limite de protection contre l'inondation (cm)
+  - **GPIO 115** : `wakeUp` - Réveil forcé de l'ESP32 (1=actif, 0=inactif)
+  - **GPIO 116** : `freqWakeUp` - Fréquence de réveil de l'ESP32 (secondes)
+
+### 🔄 Amélioration synchronisation outputs
+- **Mise à jour automatique complète de la table outputs** lors de la réception des données ESP32
+- Synchronisation de TOUS les GPIO (physiques 2, 15, 16, 18 + virtuels 100-116)
+- Garantit que le serveur et l'ESP32 sont toujours en phase
+
+### 📝 Fichiers modifiés
+- **Modifié** : `src/Domain/SensorData.php` - Ajout des 6 nouveaux paramètres
+- **Modifié** : `src/Repository/SensorRepository.php` - Support des nouvelles colonnes en base
+- **Modifié** : `public/post-data.php` - Réception et mise à jour outputs complète
+
+### 🎯 Impact
+- Meilleure gestion des temporisations (pompes, distribution nourriture)
+- Protection améliorée contre les inondations
+- Contrôle avancé du cycle de réveil ESP32 pour économie d'énergie
+- Synchronisation bidirectionnelle serveur ↔ ESP32 plus robuste
+
+---
+
 ## [4.5.36] - 2025-10-13 ✨ Amélioration UI - Intégration des contrôles Mode Live
 
 ### ✨ Amélioration de l'interface
