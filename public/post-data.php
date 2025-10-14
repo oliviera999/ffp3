@@ -128,63 +128,64 @@ $data = new SensorData(
 
     version: $sanitize('version'),
 
-    tempAir: (float)$sanitize('TempAir'),
+    // v11.37: Valeurs NULL si absentes (pas de cast 0)
+    tempAir: $sanitize('TempAir') !== null ? (float)$sanitize('TempAir') : null,
 
-    humidite: (float)$sanitize('Humidite'),
+    humidite: $sanitize('Humidite') !== null ? (float)$sanitize('Humidite') : null,
 
-    tempEau: (float)$sanitize('TempEau'),
+    tempEau: $sanitize('TempEau') !== null ? (float)$sanitize('TempEau') : null,
 
-    eauPotager: (float)$sanitize('EauPotager'),
+    eauPotager: $sanitize('EauPotager') !== null ? (float)$sanitize('EauPotager') : null,
 
-    eauAquarium: (float)$sanitize('EauAquarium'),
+    eauAquarium: $sanitize('EauAquarium') !== null ? (float)$sanitize('EauAquarium') : null,
 
-    eauReserve: (float)$sanitize('EauReserve'),
+    eauReserve: $sanitize('EauReserve') !== null ? (float)$sanitize('EauReserve') : null,
 
-    diffMaree: (float)$sanitize('diffMaree'),
+    diffMaree: $sanitize('diffMaree') !== null ? (float)$sanitize('diffMaree') : null,
 
-    luminosite: (float)$sanitize('Luminosite'),
+    luminosite: $sanitize('Luminosite') !== null ? (float)$sanitize('Luminosite') : null,
 
-    etatPompeAqua: (int)$sanitize('etatPompeAqua'),
+    etatPompeAqua: $sanitize('etatPompeAqua') !== null ? (int)$sanitize('etatPompeAqua') : null,
 
-    etatPompeTank: (int)$sanitize('etatPompeTank'),
+    etatPompeTank: $sanitize('etatPompeTank') !== null ? (int)$sanitize('etatPompeTank') : null,
 
-    etatHeat: (int)$sanitize('etatHeat'),
+    etatHeat: $sanitize('etatHeat') !== null ? (int)$sanitize('etatHeat') : null,
 
-    etatUV: (int)$sanitize('etatUV'),
+    etatUV: $sanitize('etatUV') !== null ? (int)$sanitize('etatUV') : null,
 
-    bouffeMatin: (int)$sanitize('bouffeMatin'),
+    bouffeMatin: $sanitize('bouffeMatin') !== null ? (int)$sanitize('bouffeMatin') : null,
 
-    bouffeMidi: (int)$sanitize('bouffeMidi'),
+    bouffeMidi: $sanitize('bouffeMidi') !== null ? (int)$sanitize('bouffeMidi') : null,
 
-    bouffePetits: (int)$sanitize('bouffePetits'),
+    bouffePetits: $sanitize('bouffePetits') !== null ? (int)$sanitize('bouffePetits') : null,
 
-    bouffeGros: (int)$sanitize('bouffeGros'),
+    bouffeGros: $sanitize('bouffeGros') !== null ? (int)$sanitize('bouffeGros') : null,
 
-    aqThreshold: (int)$sanitize('aqThreshold'),
+    aqThreshold: $sanitize('aqThreshold') !== null ? (int)$sanitize('aqThreshold') : null,
 
-    tankThreshold: (int)$sanitize('tankThreshold'),
+    tankThreshold: $sanitize('tankThreshold') !== null ? (int)$sanitize('tankThreshold') : null,
 
-    chauffageThreshold: (int)$sanitize('chauffageThreshold'),
+    chauffageThreshold: $sanitize('chauffageThreshold') !== null ? (int)$sanitize('chauffageThreshold') : null,
 
     mail: $sanitize('mail'),
 
     mailNotif: $sanitize('mailNotif'),
 
-    resetMode: (int)$sanitize('resetMode'),
+    resetMode: $sanitize('resetMode') !== null ? (int)$sanitize('resetMode') : null,
 
-    bouffeSoir: (int)$sanitize('bouffeSoir'),
+    bouffeSoir: $sanitize('bouffeSoir') !== null ? (int)$sanitize('bouffeSoir') : null,
 
-    tempsGros: (int)$sanitize('tempsGros'),
+    tempsGros: $sanitize('tempsGros') !== null ? (int)$sanitize('tempsGros') : null,
 
-    tempsPetits: (int)$sanitize('tempsPetits'),
+    tempsPetits: $sanitize('tempsPetits') !== null ? (int)$sanitize('tempsPetits') : null,
 
-    tempsRemplissageSec: (int)$sanitize('tempsRemplissageSec'),
+    tempsRemplissageSec: $sanitize('tempsRemplissageSec') !== null ? (int)$sanitize('tempsRemplissageSec') : null,
 
-    limFlood: (int)$sanitize('limFlood'),
+    limFlood: $sanitize('limFlood') !== null ? (int)$sanitize('limFlood') : null,
 
-    wakeUp: (int)$sanitize('WakeUp'),
+    wakeUp: $sanitize('WakeUp') !== null ? (int)$sanitize('WakeUp') : null,
 
-    freqWakeUp: (int)$sanitize('FreqWakeUp')
+    freqWakeUp: $sanitize('FreqWakeUp') !== null ? (int)$sanitize('FreqWakeUp') : null
 
 );
 
@@ -213,7 +214,7 @@ try {
         15 => $data->etatUV,             // Lumière
         
         // === GPIO VIRTUELS 100-116 (configuration) ===
-        100 => null,                     // Mail (texte, géré séparément)
+        100 => $data->mail,              // Mail (texte - stocké dans state comme varchar)
         101 => $data->mailNotif === 'checked' ? 1 : 0,  // Notif mail
         102 => $data->aqThreshold,       // Seuil aquarium
         103 => $data->tankThreshold,     // Seuil réservoir
@@ -234,16 +235,15 @@ try {
     
     $updatedCount = 0;
     foreach ($outputsToUpdate as $gpio => $state) {
-        if ($state !== null) {
-            $outputRepo->updateState($gpio, (int)$state);
+        if ($state !== null && $state !== '') {
+            // GPIO 100 (mail) est un VARCHAR, les autres sont INT
+            if ($gpio === 100) {
+                $outputRepo->updateState($gpio, $state); // Texte pour email
+            } else {
+                $outputRepo->updateState($gpio, (int)$state); // Entier pour autres
+            }
             $updatedCount++;
         }
-    }
-    
-    // Gestion spéciale GPIO 100 (email - texte)
-    if ($data->mail) {
-        // TODO: Implémenter updateTextValue() dans OutputRepository si nécessaire
-        $logger->debug("Email config: {$data->mail} (texte non mis à jour dans outputs)");
     }
 
     $logger->info('Insertion OK + Outputs mis à jour', ['sensor' => $data->sensor, 'version' => $data->version]);

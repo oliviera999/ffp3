@@ -7,6 +7,23 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.39] - 2025-10-14 🔧 Correction GPIO 100 - Mise à jour email dans outputs
+
+### 🔧 Correction importante
+- **GPIO 100 (email) maintenant correctement mis à jour dans ffp3Outputs**
+- Gestion différenciée : VARCHAR pour GPIO 100 (email), INT pour les autres GPIO
+- Suppression du code TODO incomplet pour la gestion de l'email
+- L'email est désormais synchronisé à chaque POST de l'ESP32
+
+### 📝 Fichiers modifiés
+- **Modifié** : `public/post-data.php` - Mise à jour correcte du GPIO 100 (email)
+
+### 🎯 Impact
+- L'email de notification est maintenant correctement stocké et récupérable depuis ffp3Outputs
+- L'ESP32 peut récupérer l'email configuré via `/api/outputs/state`
+
+---
+
 ## [4.5.38] - 2025-10-14 🔧 Correction structure BDD - GPIO 111-116 dans outputs uniquement
 
 ### 🔧 Correction importante
