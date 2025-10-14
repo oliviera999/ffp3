@@ -120,7 +120,9 @@ class RealtimeUpdater {
 
             // Succès : reset retry counter
             this.retryCount = 0;
-            this.updateBadge('online');
+            
+            // NE PAS forcer le badge à 'online' ici, car updateSystemStatus() le fera
+            // en fonction du vrai statut du système (health.online)
 
             // Traiter les nouvelles données
             if (newReadings.length > 0) {
@@ -233,6 +235,15 @@ class RealtimeUpdater {
                 statusIndicator.className = 'status-indicator status-offline';
                 statusIndicator.innerHTML = '<i class="fas fa-times-circle"></i> Hors ligne';
             }
+        }
+
+        // Mettre à jour le badge LIVE en fonction du statut système réel
+        // Si le système ESP32 est hors ligne, afficher "HORS LIGNE" même si le polling fonctionne
+        if (!health.online) {
+            this.updateBadge('offline');
+        } else if (!this.isPaused) {
+            // Seulement afficher "LIVE" si le système est en ligne ET le polling actif
+            this.updateBadge('online');
         }
     }
 

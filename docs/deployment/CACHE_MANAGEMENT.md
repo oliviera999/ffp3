@@ -297,6 +297,8 @@ if [ -f "$PROJECT_ROOT/bin/clear-cache.php" ]; then
 fi
 ```
 
+**✨ Compatible avec CRON** : Ce hook fonctionne aussi lorsque le `git pull` est exécuté automatiquement par une tâche CRON. Le déploiement devient ainsi totalement automatique : push local → CRON pull → hook vide les caches → modifications visibles.
+
 ## 📖 Références
 
 - **Documentation Twig** : https://twig.symfony.com/doc/3.x/api.html#environment-options
