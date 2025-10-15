@@ -62,27 +62,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         $sql = "INSERT INTO ffp3Data2 (sensor, version, TempAir, Humidite, TempEau, EauPotager, EauAquarium, EauReserve, diffMaree, Luminosite, etatPompeAqua, etatPompeTank, etatHeat, etatUV, bouffeMatin, bouffeMidi, bouffePetits, bouffeGros,  aqThreshold, tankThreshold, chauffageThreshold, mail, mailNotif, resetMode, bouffeSoir)
         VALUES ('" . $sensor . "', '" . $version . "', '" . $TempAir . "', '" . $Humidite . "', '" . $TempEau . "', '" . $EauPotager . "', '" . $EauAquarium . "', '" . $EauReserve . "', '" . $diffMaree . "', '" . $Luminosite . "', '" . $etatPompeAqua . "', '" . $etatPompeTank . "', '" . $etatHeat . "', '" . $etatUV . "', '" . $bouffeMat . "', '" . $bouffeMidi . "', '" . $bouffePetits . "', '" . $bouffeGros . "',  '" . $aqThreshold . "', '" . $tankThreshold . "',  '" . $chauffageThreshold . "','" . $mail . "', '" . $mailNotif . "', '" . $resetMode . "', '" . $bouffeSoir . "');
-        UPDATE ffp3Outputs2 SET state = '" . $etatPompeAqua . "' WHERE gpio= '16';
-        UPDATE ffp3Outputs2 SET state = '" . $etatPompeTank . "' WHERE gpio= '18';
-        UPDATE ffp3Outputs2 SET state = '" . $etatHeat . "' WHERE gpio= '2';
-        UPDATE ffp3Outputs2 SET state = '" . $etatUV . "' WHERE gpio= '15';
-        UPDATE ffp3Outputs2 SET state = '" . $bouffePetits . "' WHERE gpio= '108';
-        UPDATE ffp3Outputs2 SET state = '" . $bouffeGros . "' WHERE gpio= '109';
-        UPDATE ffp3Outputs2 SET state = '" . $resetMode . "' WHERE gpio= '110';
-        UPDATE ffp3Outputs2 SET state = '" . $mail . "' WHERE gpio= '100';
-        UPDATE ffp3Outputs2 SET state = '" . $mailNotif . "' WHERE gpio= '101';
-        UPDATE ffp3Outputs2 SET state = '" . $aqThreshold . "' WHERE gpio= '102';
-        UPDATE ffp3Outputs2 SET state = '" . $tankThreshold . "' WHERE gpio= '103';
-        UPDATE ffp3Outputs2 SET state = '" . $chauffageThreshold . "' WHERE gpio= '104';
-        UPDATE ffp3Outputs2 SET state = '" . $bouffeMat . "' WHERE gpio= '105';
-        UPDATE ffp3Outputs2 SET state = '" . $bouffeMidi . "' WHERE gpio= '106';
-        UPDATE ffp3Outputs2 SET state = '" . $bouffeSoir . "' WHERE gpio= '107';
-        UPDATE ffp3Outputs2 SET state = '" . $tempsGros . "' WHERE gpio= '111';
-        UPDATE ffp3Outputs2 SET state = '" . $tempsPetits . "' WHERE gpio= '112';
-        UPDATE ffp3Outputs2 SET state = '" . $tempsRemplissageSec . "' WHERE gpio= '113';
-        UPDATE ffp3Outputs2 SET state = '" . $limFlood . "' WHERE gpio= '114';
-        UPDATE ffp3Outputs2 SET state = '" . $WakeUp . "' WHERE gpio= '115';
-        UPDATE ffp3Outputs2 SET state = '" . $FreqWakeUp . "' WHERE gpio= '116';
+        UPDATE ffp3Outputs2 SET state = '" . $etatPompeAqua . "' WHERE gpio = 16 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $etatPompeTank . "' WHERE gpio = 18 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $etatHeat . "' WHERE gpio = 2 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $etatUV . "' WHERE gpio = 15 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $bouffePetits . "' WHERE gpio = 108 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $bouffeGros . "' WHERE gpio = 109 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $resetMode . "' WHERE gpio = 110 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $mail . "' WHERE gpio = 100 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $mailNotif . "' WHERE gpio = 101 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $aqThreshold . "' WHERE gpio = 102 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $tankThreshold . "' WHERE gpio = 103 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $chauffageThreshold . "' WHERE gpio = 104 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $bouffeMat . "' WHERE gpio = 105 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $bouffeMidi . "' WHERE gpio = 106 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $bouffeSoir . "' WHERE gpio = 107 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $tempsGros . "' WHERE gpio = 111 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $tempsPetits . "' WHERE gpio = 112 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $tempsRemplissageSec . "' WHERE gpio = 113 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $limFlood . "' WHERE gpio = 114 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $WakeUp . "' WHERE gpio = 115 AND board = 1;
+        UPDATE ffp3Outputs2 SET state = '" . $FreqWakeUp . "' WHERE gpio = 116 AND board = 1;
         ";
 /*$etatPompeAqua = $etatPompeTank = $etatHeat = $etatUV = $bouffeMatin = $bouffeMidi = $bouffeSoir = $bouffePetits = $bouffeGros = $aqThreshold = $tankThreshold = $chauffageThreshold = $mail = $mailNotif = $resetMode = "";
 

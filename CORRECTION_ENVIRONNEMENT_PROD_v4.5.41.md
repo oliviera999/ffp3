@@ -169,3 +169,4 @@ $table = TableConfig::getDataTable();
 **Auteur :** Claude AI Assistant  
 **Statut :** ✅ Correction appliquée et testée
 
+

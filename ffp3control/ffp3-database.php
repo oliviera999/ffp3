@@ -18,20 +18,20 @@ $password = "Iot#Olution1";
             die("Connection failed: " . $conn->connect_error);
         }
 
-        $sql = "UPDATE ffp3Outputs SET state = '" . $mail . "' WHERE gpio= '100';
-        UPDATE ffp3Outputs SET state = '" . $mailNotif . "' WHERE gpio= '101';
-        UPDATE ffp3Outputs SET state = '" . $aqThr . "' WHERE gpio= '102';
-        UPDATE ffp3Outputs SET state = '" . $taThr . "' WHERE gpio= '103';
-        UPDATE ffp3Outputs SET state = '" . $tempsRemplissageSec . "' WHERE gpio= '113';
-        UPDATE ffp3Outputs SET state = '" . $limFlood . "' WHERE gpio= '114';
-        UPDATE ffp3Outputs SET state = '" . $chauff . "' WHERE gpio= '104';
-        UPDATE ffp3Outputs SET state = '" . $bouffeMat . "' WHERE gpio= '105';
-        UPDATE ffp3Outputs SET state = '" . $bouffeMid . "' WHERE gpio= '106';
-        UPDATE ffp3Outputs SET state = '" . $bouffeSoir . "' WHERE gpio= '107';
-        UPDATE ffp3Outputs SET state = '" . $tempsGros . "' WHERE gpio= '111';
-        UPDATE ffp3Outputs SET state = '" . $tempsPetits . "' WHERE gpio= '112';
-        UPDATE ffp3Outputs SET state = '" . $WakeUp . "' WHERE gpio= '115';
-        UPDATE ffp3Outputs SET state = '" . $FreqWakeUp . "' WHERE gpio= '116';
+        $sql = "UPDATE ffp3Outputs SET state = '" . $mail . "' WHERE gpio = 100 AND board = 1;
+        UPDATE ffp3Outputs SET state = '" . $mailNotif . "' WHERE gpio = 101 AND board = 1;
+        UPDATE ffp3Outputs SET state = '" . $aqThr . "' WHERE gpio = 102 AND board = 1;
+        UPDATE ffp3Outputs SET state = '" . $taThr . "' WHERE gpio = 103 AND board = 1;
+        UPDATE ffp3Outputs SET state = '" . $tempsRemplissageSec . "' WHERE gpio = 113 AND board = 1;
+        UPDATE ffp3Outputs SET state = '" . $limFlood . "' WHERE gpio = 114 AND board = 1;
+        UPDATE ffp3Outputs SET state = '" . $chauff . "' WHERE gpio = 104 AND board = 1;
+        UPDATE ffp3Outputs SET state = '" . $bouffeMat . "' WHERE gpio = 105 AND board = 1;
+        UPDATE ffp3Outputs SET state = '" . $bouffeMid . "' WHERE gpio = 106 AND board = 1;
+        UPDATE ffp3Outputs SET state = '" . $bouffeSoir . "' WHERE gpio = 107 AND board = 1;
+        UPDATE ffp3Outputs SET state = '" . $tempsGros . "' WHERE gpio = 111 AND board = 1;
+        UPDATE ffp3Outputs SET state = '" . $tempsPetits . "' WHERE gpio = 112 AND board = 1;
+        UPDATE ffp3Outputs SET state = '" . $WakeUp . "' WHERE gpio = 115 AND board = 1;
+        UPDATE ffp3Outputs SET state = '" . $FreqWakeUp . "' WHERE gpio = 116 AND board = 1;
 
         ";
         
