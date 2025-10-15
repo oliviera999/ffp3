@@ -768,8 +768,8 @@
                                 <i class="fas fa-bolt"></i> Actions
                             </h3>
                             
-                            {# Préparation des outputs avec icônes - Ajouter GPIO 101 (mailNotif) et 115 (WakeUp) #}
-                            {% set physical_outputs = outputs|filter(o => (o.gpio < 100 or o.gpio == 101 or o.gpio == 108 or o.gpio == 109 or o.gpio == 110 or o.gpio == 115) and o.name is not empty) %}
+                            {# Préparation des outputs avec icônes - Exclure GPIO 108 et 109 (nourrissage manuel) qui seront dans la section nourrissage #}
+                            {% set physical_outputs = outputs|filter(o => (o.gpio < 100 or o.gpio == 101 or o.gpio == 110 or o.gpio == 115) and o.name is not empty) %}
                             
                             <div class="action-buttons-grid">
                                 {% for output in physical_outputs %}
@@ -795,14 +795,6 @@
                                         {% set icon = 'fa-clock' %}
                                         {% set clean_name = 'Forçage réveil' %}
                                         {% set color = 'orange' %}
-                                    {% elseif output.gpio == 108 %}
-                                        {% set icon = 'fa-fish' %}
-                                        {% set clean_name = 'Nourrir petits poissons' %}
-                                        {% set color = 'pink' %}
-                                    {% elseif output.gpio == 109 %}
-                                        {% set icon = 'fa-fish' %}
-                                        {% set clean_name = 'Nourrir gros poissons' %}
-                                        {% set color = 'pink' %}
                                     {% elseif output.gpio == 110 %}
                                         {% set icon = 'fa-arrows-rotate' %}
                                         {% set clean_name = 'Reset ESP' %}
@@ -933,35 +925,78 @@
                                     </div>
                                 </div>
                         
-                                {# Nourrissage #}
+                                {# Nourrissage - Section complète avec boutons manuels et réglages automatiques #}
                                 <div class="param-box" style="background: #fff9c4 !important; margin-bottom: 12px !important; padding: 12px !important;">
-                                    <h4><i class="fas fa-bowl-food"></i> Nourrissage automatique</h4>
+                                    <h4><i class="fas fa-bowl-food"></i> Nourrissage</h4>
                                     
-                                    <p style="margin: 8px 0 5px 0; font-weight: 500; font-size: 0.9em;">Horaires (heure 0-23)</p>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-                                        <div>
-                                            <label for="bouffeMat">Matin</label>
-                                            <input type="number" name="bouffeMat" min="0" max="23" id="bouffeMat" value="{{ params.bouffeMat|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                    {# Boutons de nourrissage manuel #}
+                                    {% set feeding_outputs = outputs|filter(o => o.gpio == 108 or o.gpio == 109) %}
+                                    {% if feeding_outputs|length > 0 %}
+                                        <div style="margin-bottom: 15px;">
+                                            <p style="margin: 0 0 8px 0; font-weight: 500; font-size: 0.9em; color: #2c3e50;">Actions manuelles</p>
+                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                                {% for output in feeding_outputs %}
+                                                    {% set clean_name = output.gpio == 108 ? 'Petits poissons' : 'Gros poissons' %}
+                                                    {% set icon = 'fa-fish' %}
+                                                    {% set color = '#e91e63' %}
+                                                    
+                                                    <div class="action-button-card action-button-pink" data-state="{{ output.state }}" style="padding: 8px !important; margin: 0 !important;">
+                                                        <div class="action-button-content">
+                                                            <i class="fas {{ icon }} action-icon-simple" style="color: {{ color }}; font-size: 1.2rem !important;"></i>
+                                                            <div class="action-button-info">
+                                                                <div class="action-button-label" style="font-size: 0.8rem !important;">{{ clean_name }}</div>
+                                                                <div class="action-button-status" style="font-size: 0.7rem !important;">
+                                                                    <span class="status-text">{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <label class="modern-switch" style="transform: scale(0.8);">
+                                                            <input type="checkbox" 
+                                                                   onchange="updateOutput(this)" 
+                                                                   id="{{ output.id }}" 
+                                                                   data-id="{{ output.id }}"
+                                                                   data-gpio="{{ output.gpio }}"
+                                                                   {{ output.state == 1 ? 'checked' : '' }}>
+                                                            <span class="modern-switch-slider">
+                                                                <span class="modern-switch-button"></span>
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label for="bouffeMid">Midi</label>
-                                            <input type="number" name="bouffeMid" min="0" max="23" id="bouffeMid" value="{{ params.bouffeMid|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
-                                        </div>
-                                        <div>
-                                            <label for="bouffeSoir">Soir</label>
-                                            <input type="number" name="bouffeSoir" min="0" max="23" id="bouffeSoir" value="{{ params.bouffeSoir|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
-                                        </div>
-                                    </div>
+                                    {% endif %}
                                     
-                                    <p style="margin: 15px 0 5px 0; font-weight: 500; font-size: 0.9em;">Durées (secondes)</p>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                                        <div>
-                                            <label for="tempsGros">Gros poissons</label>
-                                            <input type="number" name="tempsGros" min="0" id="tempsGros" value="{{ params.tempsGros|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                    {# Réglages automatiques #}
+                                    <div style="border-top: 1px solid #e0e0e0; padding-top: 12px;">
+                                        <p style="margin: 0 0 8px 0; font-weight: 500; font-size: 0.9em; color: #2c3e50;">Programmation automatique</p>
+                                        
+                                        <p style="margin: 8px 0 5px 0; font-weight: 500; font-size: 0.9em;">Horaires (heure 0-23)</p>
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                                            <div>
+                                                <label for="bouffeMat">Matin</label>
+                                                <input type="number" name="bouffeMat" min="0" max="23" id="bouffeMat" value="{{ params.bouffeMat|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                            </div>
+                                            <div>
+                                                <label for="bouffeMid">Midi</label>
+                                                <input type="number" name="bouffeMid" min="0" max="23" id="bouffeMid" value="{{ params.bouffeMid|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                            </div>
+                                            <div>
+                                                <label for="bouffeSoir">Soir</label>
+                                                <input type="number" name="bouffeSoir" min="0" max="23" id="bouffeSoir" value="{{ params.bouffeSoir|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label for="tempsPetits">Petits poissons</label>
-                                            <input type="number" name="tempsPetits" min="0" id="tempsPetits" value="{{ params.tempsPetits|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                        
+                                        <p style="margin: 15px 0 5px 0; font-weight: 500; font-size: 0.9em;">Durées (secondes)</p>
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                            <div>
+                                                <label for="tempsGros">Gros poissons</label>
+                                                <input type="number" name="tempsGros" min="0" id="tempsGros" value="{{ params.tempsGros|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                            </div>
+                                            <div>
+                                                <label for="tempsPetits">Petits poissons</label>
+                                                <input type="number" name="tempsPetits" min="0" id="tempsPetits" value="{{ params.tempsPetits|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

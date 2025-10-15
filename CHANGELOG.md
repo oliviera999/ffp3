@@ -7,6 +7,21 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.44] - 2025-01-27 🎨 AMÉLIORATION UX - Regroupement des contrôles de nourrissage
+
+### 🎨 Amélioration interface
+- **Regroupement harmonieux des contrôles de nourrissage** dans une seule section
+- Boutons de nourrissage manuel (petits et gros poissons) déplacés vers la section nourrissage
+- Interface plus cohérente avec séparation claire entre actions manuelles et programmation automatique
+- Amélioration de l'ergonomie et de la lisibilité des contrôles
+
+### 🔧 Optimisation technique
+- Suppression des doublons dans la section Actions
+- Meilleure organisation du code Twig pour la section nourrissage
+- Interface responsive maintenue avec les nouveaux éléments
+
+---
+
 ## [4.5.43] - 2025-01-27 🎨 AMÉLIORATION UX - Suppression du bouton d'enregistrement manuel
 
 ### 🎨 Amélioration interface
