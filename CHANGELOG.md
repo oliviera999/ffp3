@@ -7,6 +7,29 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.3] - 2025-01-27 🎨 AMÉLIORATION UX - Organisation en 3 colonnes
+
+### 🎨 Amélioration interface
+- **Nouvelle organisation en 3 colonnes** pour une meilleure répartition des fonctionnalités
+- **Colonne 1 : Gestion de l'eau** - Contrôle des pompes + paramètres de niveau
+- **Colonne 2 : Nourrissage** - Actions manuelles + programmation automatique
+- **Colonne 3 : Chauffage&Lumière, Email et Système** - Toutes les autres fonctionnalités regroupées
+- Interface plus équilibrée et mieux organisée visuellement
+
+### 🔧 Optimisation technique
+- Grille CSS moderne avec `grid-template-columns: 1fr 1fr 1fr`
+- Espacement harmonieux entre les colonnes (gap: 20px)
+- Boutons adaptés à la largeur des colonnes (grid-template-columns: 1fr)
+- Meilleure utilisation de l'espace horizontal disponible
+
+### ✨ Avantages de la nouvelle organisation
+- **Lisibilité améliorée** : Chaque colonne a une fonction claire et distincte
+- **Équilibre visuel** : Répartition harmonieuse des éléments sur la page
+- **Navigation intuitive** : Logique fonctionnelle respectée dans l'organisation
+- **Responsive design** : Adaptation automatique sur tous les écrans
+
+---
+
 ## [4.6.2] - 2025-01-27 🎨 AMÉLIORATION MAJEURE - Interface pleine largeur et regroupement final
 
 ### 🎨 Amélioration interface majeure
