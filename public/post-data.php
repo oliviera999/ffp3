@@ -12,16 +12,12 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-
-
 use App\Config\Database;
-
+use App\Config\TableConfig;
+use App\Config\Env;
 use App\Domain\SensorData;
-
 use App\Repository\SensorRepository;
-
 use Monolog\Handler\StreamHandler;
-
 use Monolog\Logger;
 
 
@@ -43,13 +39,21 @@ if (!is_dir($logPath)) {
 
 
 $logger = new Logger('post-data');
-
 $logger->pushHandler(new StreamHandler($logPath . '/post-data.log', Logger::INFO));
 
+// Charger les variables d'environnement
+Env::load();
 
+// Logs de diagnostic détaillés (v11.37)
+$logger->info('=== DÉBUT REQUÊTE POST-DATA ===', [
+    'timestamp' => date('Y-m-d H:i:s'),
+    'method' => $_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN',
+    'uri' => $_SERVER['REQUEST_URI'] ?? 'UNKNOWN',
+    'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN',
+    'remote_addr' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN'
+]);
 
 // Réponse en texte brut (utile pour debug ou client HTTP simple)
-
 header('Content-Type: text/plain; charset=utf-8');
 
 
@@ -93,16 +97,23 @@ if ($apiKeyConfig === null) {
 
 
 if ($apiKeyProvided !== $apiKeyConfig) {
-
-    $logger->warning('Tentative d\'appel avec une clé API invalide');
-
+    $logger->warning('Tentative d\'appel avec une clé API invalide', [
+        'provided' => $apiKeyProvided,
+        'expected' => $apiKeyConfig
+    ]);
     http_response_code(401);
-
     echo 'Clé API incorrecte';
-
     exit;
-
 }
+
+// Logs de diagnostic environnement (v11.37)
+$logger->info('Configuration environnement', [
+    'ENV' => $_ENV['ENV'] ?? 'NON DÉFINI',
+    'TableConfig::getEnvironment()' => TableConfig::getEnvironment(),
+    'TableConfig::isTest()' => TableConfig::isTest(),
+    'dataTable' => TableConfig::getDataTable(),
+    'outputsTable' => TableConfig::getOutputsTable()
+]);
 
 
 
@@ -192,12 +203,34 @@ $data = new SensorData(
 
 
 try {
+    // Logs de diagnostic données reçues (v11.37)
+    $logger->info('Données POST reçues', [
+        'sensor' => $data->sensor,
+        'version' => $data->version,
+        'tempAir' => $data->tempAir,
+        'humidite' => $data->humidite,
+        'tempEau' => $data->tempEau,
+        'eauPotager' => $data->eauPotager,
+        'eauAquarium' => $data->eauAquarium,
+        'eauReserve' => $data->eauReserve,
+        'diffMaree' => $data->diffMaree,
+        'luminosite' => $data->luminosite,
+        'etatPompeAqua' => $data->etatPompeAqua,
+        'etatPompeTank' => $data->etatPompeTank,
+        'etatHeat' => $data->etatHeat,
+        'etatUV' => $data->etatUV
+    ]);
 
     $pdo  = Database::getConnection();
+    $logger->info('Connexion DB réussie');
 
     $repo = new SensorRepository($pdo);
+    $logger->info('Repository créé, début insertion', [
+        'table' => TableConfig::getDataTable()
+    ]);
 
     $repo->insert($data);
+    $logger->info('Insertion SensorData réussie');
 
 
 
@@ -246,16 +279,30 @@ try {
         }
     }
 
-    $logger->info('Insertion OK + Outputs mis à jour', ['sensor' => $data->sensor, 'version' => $data->version]);
+    $logger->info('Insertion OK + Outputs mis à jour', [
+        'sensor' => $data->sensor, 
+        'version' => $data->version,
+        'dataTable' => TableConfig::getDataTable(),
+        'outputsTable' => TableConfig::getOutputsTable(),
+        'outputsUpdated' => $updatedCount
+    ]);
 
     echo "Données enregistrées avec succès";
 
 } catch (Throwable $e) {
-
-    $logger->error('Erreur lors de l\'insertion', ['error' => $e->getMessage()]);
+    // Logs d'erreur détaillés (v11.37)
+    $logger->error('Erreur lors de l\'insertion', [
+        'error' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+        'trace' => $e->getTraceAsString(),
+        'environment' => TableConfig::getEnvironment(),
+        'dataTable' => TableConfig::getDataTable(),
+        'outputsTable' => TableConfig::getOutputsTable(),
+        'sensor' => $data->sensor ?? 'UNKNOWN',
+        'version' => $data->version ?? 'UNKNOWN'
+    ]);
 
     http_response_code(500);
-
     echo 'Erreur serveur';
-
 } 
