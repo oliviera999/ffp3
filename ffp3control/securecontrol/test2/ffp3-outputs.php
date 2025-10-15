@@ -3,7 +3,7 @@
   Complete project details at https://RandomNerdTutorials.com/control-esp32-esp8266-gpios-from-anywhere/
 -->
 <?php
-    include_once('/home4/oliviera/iot.olution.info/ffp3test/ffp3control/ffp3-database.php');
+    include_once('../../../ffp3control/ffp3-database.php');
 
     $result = getPartOutputs();
     $html_buttons = null;

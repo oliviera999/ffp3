@@ -7,6 +7,23 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.3] - 2025-01-27 🔧 CORRECTION - Erreur 500 page de contrôle
+
+### 🐛 Correction bug critique
+- **Erreur 500 corrigée** sur la page de contrôle (`/ffp3/control`)
+- **Chemins absolus remplacés** par des chemins relatifs dans les fichiers :
+  - `ffp3control/securecontrol/ffp3-outputs.php`
+  - `ffp3control/securecontrol/ffp3-outputs2.php` 
+  - `ffp3control/securecontrol/test2/ffp3-outputs.php`
+- **Include corrigé** : `include_once('../../ffp3control/ffp3-database.php')` au lieu du chemin absolu `/home4/oliviera/iot.olution.info/ffp3/ffp3control/ffp3-database.php`
+- Page de contrôle maintenant accessible et fonctionnelle
+
+### 🔧 Amélioration technique
+- Suppression des dépendances aux chemins absolus hardcodés
+- Meilleure portabilité du code entre environnements
+
+---
+
 ## [4.6.4] - 2025-01-27 🎨 OPTIMISATION UX - Colonnes équilibrées et formulaire unifié
 
 ### 🎨 Amélioration interface
