@@ -16,11 +16,9 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  */
 class HeartbeatController
 {
-    private LogService $logger;
-
-    public function __construct()
-    {
-        $this->logger = new LogService();
+    public function __construct(
+        private LogService $logger
+    ) {
     }
 
     /**

@@ -130,11 +130,15 @@ return [
     },
 
     \App\Controller\PostDataController::class => function (ContainerInterface $c) {
-        return new \App\Controller\PostDataController();
+        return new \App\Controller\PostDataController(
+            $c->get(\App\Service\LogService::class)
+        );
     },
 
     \App\Controller\HeartbeatController::class => function (ContainerInterface $c) {
-        return new \App\Controller\HeartbeatController();
+        return new \App\Controller\HeartbeatController(
+            $c->get(\App\Service\LogService::class)
+        );
     },
 
     \App\Controller\AquaponieController::class => function (ContainerInterface $c) {
@@ -147,11 +151,17 @@ return [
     },
 
     \App\Controller\DashboardController::class => function (ContainerInterface $c) {
-        return new \App\Controller\DashboardController();
+        return new \App\Controller\DashboardController(
+            $c->get(\App\Repository\SensorReadRepository::class),
+            $c->get(\App\Service\SensorStatisticsService::class),
+            $c->get(\App\Service\TemplateRenderer::class)
+        );
     },
 
     \App\Controller\ExportController::class => function (ContainerInterface $c) {
-        return new \App\Controller\ExportController();
+        return new \App\Controller\ExportController(
+            $c->get(\App\Repository\SensorReadRepository::class)
+        );
     },
 
     \App\Controller\TideStatsController::class => function (ContainerInterface $c) {
@@ -169,4 +179,8 @@ return [
 
     \App\Controller\HomeController::class => function (ContainerInterface $c) {
         return new \App\Controller\HomeController(
-            $
+            $c->get(\App\Service\TemplateRenderer::class)
+        );
+    },
+];
+

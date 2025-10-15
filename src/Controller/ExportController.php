@@ -11,6 +11,11 @@ use Throwable;
 
 class ExportController
 {
+    public function __construct(
+        private SensorReadRepository $sensorReadRepo
+    ) {
+    }
+
     /**
      * Point d'entrée HTTP : /export-data?start=YYYY-MM-DD[+HH:ii:ss]&end=YYYY-MM-DD[+HH:ii:ss]
      * Valide les paramètres, produit un CSV en streaming puis termine le script.
@@ -31,12 +36,10 @@ class ExportController
         }
 
         try {
-            $pdo  = Database::getConnection();
-            $repo = new SensorReadRepository($pdo);
 
             // Fichier temporaire pour éviter de charger tout en mémoire
             $tmpFile = tempnam(sys_get_temp_dir(), 'export_');
-            $nbLines = $repo->exportCsv($start, $end, $tmpFile);
+            $nbLines = $this->sensorReadRepo->exportCsv($start, $end, $tmpFile);
 
             if ($nbLines === 0) {
                 @unlink($tmpFile);

@@ -11,15 +11,11 @@ use App\Service\TemplateRenderer;
 
 class DashboardController
 {
-    private SensorReadRepository $sensorReadRepo;
-    private SensorStatisticsService $statsService;
-
-    public function __construct()
-    {
-        // Le timezone est configuré centralement via Env::load() dans Database::getConnection()
-        $pdo = Database::getConnection();
-        $this->sensorReadRepo = new SensorReadRepository($pdo);
-        $this->statsService = new SensorStatisticsService($pdo);
+    public function __construct(
+        private SensorReadRepository $sensorReadRepo,
+        private SensorStatisticsService $statsService,
+        private TemplateRenderer $renderer
+    ) {
     }
 
     /**
@@ -80,7 +76,7 @@ class DashboardController
             $readingsCount = $readingsCount;
             include __DIR__ . '/../../templates/dashboard.php';
         } else {
-            echo TemplateRenderer::render('dashboard.twig', [
+            echo $this->renderer->render('dashboard.twig', [
                 'startDate'     => $startDate,
                 'endDate'       => $endDate,
                 'duration'      => $duration,
