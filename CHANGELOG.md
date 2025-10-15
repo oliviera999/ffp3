@@ -7,6 +7,26 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.43] - 2025-01-27 🎨 AMÉLIORATION UX - Suppression du bouton d'enregistrement manuel
+
+### 🎨 Amélioration interface
+- **Suppression du bouton "Changer les valeurs"** devenu obsolète
+- Interface plus épurée et moderne
+- Focus sur l'enregistrement automatique uniquement
+- Suppression du code JavaScript inutilisé (`createOutput()`)
+
+### 🔧 Nettoyage technique
+- Suppression de l'attribut `onsubmit` du formulaire
+- Code JavaScript simplifié
+- Interface plus cohérente avec le comportement automatique
+
+### 📝 Fichiers modifiés
+- **Modifié** : `ffp3control/securecontrol/ffp3-outputs.php` - Suppression bouton PROD
+- **Modifié** : `ffp3control/securecontrol/ffp3-outputs2.php` - Suppression bouton TEST
+- **Modifié** : `VERSION` - Incrémentation 4.5.42 → 4.5.43
+
+---
+
 ## [4.5.42] - 2025-01-27 ✨ AMÉLIORATION UX - Enregistrement automatique du formulaire de contrôle
 
 ### ✨ Nouvelle fonctionnalité

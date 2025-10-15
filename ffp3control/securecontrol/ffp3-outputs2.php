@@ -185,7 +185,7 @@
                                     <?php echo $html_buttons; ?>
                                     <br><br>
                                     <div>
-                                        <form onsubmit="return createOutput();">
+                                        <form>
                                             <h3 style="text-align:center">Changer les paramètres</h3>
                                             <div id="save-status" style="text-align: center; margin: 10px 0; font-weight: bold; display: none;">
                                                 <span id="save-message"></span>
@@ -221,7 +221,6 @@
                                             <input type="number" name="WakeUp" min="0" id="WakeUp" value=<?php echo $WakeUp; ?> class="auto-save-field">
                                             <label for="FreqWakeUp">Forçage éveil</label>
                                             <input type="number" name="FreqWakeUp" min="0" id="FreqWakeUp" value=<?php echo $FreqWakeUp; ?> class="auto-save-field">
-                                            <input type="submit" value="Changer les valeurs">
                                         </form>
                                     </div>
                                 </header>
@@ -388,16 +387,6 @@
                 alert("Output deleted");
                 setTimeout(function(){ window.location.reload(); });
             }
-        }
-
-        function createOutput(element) {
-            // Cette fonction est maintenant utilisée pour l'enregistrement manuel
-            // Elle déclenche immédiatement l'enregistrement sans délai
-            if (saveTimeout) {
-                clearTimeout(saveTimeout);
-            }
-            performAutoSave();
-            return false; // Empêcher la soumission du formulaire
         }
 
     </script>
