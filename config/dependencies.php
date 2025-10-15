@@ -134,31 +134,24 @@ return [
     },
 
     \App\Controller\HeartbeatController::class => function (ContainerInterface $c) {
-        return new \App\Controller\HeartbeatController(
-            $c->get(\App\Repository\SensorReadRepository::class)
-        );
+        return new \App\Controller\HeartbeatController();
     },
 
     \App\Controller\AquaponieController::class => function (ContainerInterface $c) {
         return new \App\Controller\AquaponieController(
-            $c->get(\App\Service\SensorDataService::class),
-            $c->get(\App\Service\TideAnalysisService::class),
-            $c->get(\App\Service\WaterBalanceService::class),
-            $c->get(\App\Service\TemplateRenderer::class)
+            $c->get(\App\Repository\SensorReadRepository::class),
+            $c->get(\App\Service\StatisticsAggregatorService::class),
+            $c->get(\App\Service\ChartDataService::class),
+            $c->get(\App\Service\WaterBalanceService::class)
         );
     },
 
     \App\Controller\DashboardController::class => function (ContainerInterface $c) {
-        return new \App\Controller\DashboardController(
-            $c->get(\App\Service\SensorDataService::class),
-            $c->get(\App\Service\TemplateRenderer::class)
-        );
+        return new \App\Controller\DashboardController();
     },
 
     \App\Controller\ExportController::class => function (ContainerInterface $c) {
-        return new \App\Controller\ExportController(
-            $c->get(\App\Service\SensorDataService::class)
-        );
+        return new \App\Controller\ExportController();
     },
 
     \App\Controller\TideStatsController::class => function (ContainerInterface $c) {
