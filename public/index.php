@@ -60,6 +60,15 @@ $app->group('', function ($group) {
         return $response->withHeader('Location', '/ffp3/')->withStatus(301);
     });
 
+    // Route de diagnostic temporaire
+    $group->get('/debug-slim', function (Request $request, Response $response) {
+        ob_start();
+        include __DIR__ . '/debug_slim.php';
+        $content = ob_get_clean();
+        $response->getBody()->write($content);
+        return $response->withHeader('Content-Type', 'text/html');
+    });
+
     // Dashboard
     $group->get('/dashboard', [DashboardController::class, 'show']);
 

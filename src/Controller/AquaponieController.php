@@ -37,21 +37,28 @@ class AquaponieController
      */
     public function show(): void
     {
-        // Support des redirections legacy avec transfert de session
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        try {
+            // DEBUG: Log du début de la méthode
+            error_log("AquaponieController::show - Début");
+            
+            // Support des redirections legacy avec transfert de session
+            error_log("AquaponieController::show - Gestion des sessions");
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
         
-        if (isset($_SESSION['post_data_transfer'])) {
-            $_POST = array_merge($_POST, $_SESSION['post_data_transfer']);
-            unset($_SESSION['post_data_transfer']);
-            session_write_close();
-        }
-        
-        // Période d'analyse
-        $lastDate = $this->sensorReadRepo->getLastReadingDate();
-        $defaultEndDate = $lastDate ?: date('Y-m-d H:i:s');
-        $defaultStartDate = date('Y-m-d H:i:s', strtotime($defaultEndDate . ' -6 hours'));
+            if (isset($_SESSION['post_data_transfer'])) {
+                $_POST = array_merge($_POST, $_SESSION['post_data_transfer']);
+                unset($_SESSION['post_data_transfer']);
+                session_write_close();
+            }
+            
+            // Période d'analyse
+            error_log("AquaponieController::show - Récupération de la dernière date");
+            $lastDate = $this->sensorReadRepo->getLastReadingDate();
+            $defaultEndDate = $lastDate ?: date('Y-m-d H:i:s');
+            $defaultStartDate = date('Y-m-d H:i:s', strtotime($defaultEndDate . ' -6 hours'));
+            error_log("AquaponieController::show - Période: $defaultStartDate à $defaultEndDate");
 
         // Récupération des paramètres de période (nouveau format datetime-local ou ancien format séparé)
         [$startDate, $endDate] = $this->extractDateRange($defaultStartDate, $defaultEndDate);
@@ -129,6 +136,15 @@ class AquaponieController
             'last_reading_eaureserve' => $lastReadingExtracted['eaureserve'],
             'last_reading_eaupota' => $lastReadingExtracted['eaupota'],
         ], $statsFlattened, $waterBalance));
+        
+        } catch (\Throwable $e) {
+            error_log("AquaponieController::show - ERREUR: " . $e->getMessage());
+            error_log("AquaponieController::show - Fichier: " . $e->getFile() . " ligne " . $e->getLine());
+            error_log("AquaponieController::show - Trace: " . $e->getTraceAsString());
+            
+            echo "ERREUR AquaponieController: " . $e->getMessage();
+            exit(1);
+        }
     }
 
     /**

@@ -31,32 +31,59 @@ class OutputController
      */
     public function showInterface(Request $request, Response $response): Response
     {
-        // Récupérer tous les outputs
-        $outputs = $this->outputService->getAllOutputs();
-        
-        // Récupérer uniquement les boards actives pour cet environnement
-        $boards = $this->outputService->getActiveBoardsForCurrentEnvironment();
-        
-        // Déterminer l'environnement
-        $environment = TableConfig::getEnvironment();
-        
-        // Récupérer la version du firmware ESP32
-        $firmwareVersion = $this->sensorReadRepo->getFirmwareVersion();
-        
-        // Préparer les données pour le template
-        $data = [
-            'outputs' => $outputs,
-            'boards' => $boards,
-            'title' => 'Contrôle du ffp3',
-            'environment' => $environment,
-            'version' => Version::getWithPrefix(),
-            'firmware_version' => $firmwareVersion,
-        ];
-        
-        // Rendre le template Twig et écrire dans la réponse
-        $html = $this->renderer->render('control.twig', $data);
-        $response->getBody()->write($html);
-        return $response;
+        try {
+            // DEBUG: Log du début de la méthode
+            error_log("OutputController::showInterface - Début");
+            
+            // Récupérer tous les outputs
+            error_log("OutputController::showInterface - Récupération des outputs");
+            $outputs = $this->outputService->getAllOutputs();
+            error_log("OutputController::showInterface - Outputs récupérés: " . count($outputs));
+            
+            // Récupérer uniquement les boards actives pour cet environnement
+            error_log("OutputController::showInterface - Récupération des boards");
+            $boards = $this->outputService->getActiveBoardsForCurrentEnvironment();
+            error_log("OutputController::showInterface - Boards récupérés: " . count($boards));
+            
+            // Déterminer l'environnement
+            error_log("OutputController::showInterface - Détermination de l'environnement");
+            $environment = TableConfig::getEnvironment();
+            error_log("OutputController::showInterface - Environnement: " . $environment);
+            
+            // Récupérer la version du firmware ESP32
+            error_log("OutputController::showInterface - Récupération de la version firmware");
+            $firmwareVersion = $this->sensorReadRepo->getFirmwareVersion();
+            error_log("OutputController::showInterface - Version firmware: " . $firmwareVersion);
+            
+            // Préparer les données pour le template
+            error_log("OutputController::showInterface - Préparation des données");
+            $data = [
+                'outputs' => $outputs,
+                'boards' => $boards,
+                'title' => 'Contrôle du ffp3',
+                'environment' => $environment,
+                'version' => Version::getWithPrefix(),
+                'firmware_version' => $firmwareVersion,
+            ];
+            
+            // Rendre le template Twig et écrire dans la réponse
+            error_log("OutputController::showInterface - Rendu du template");
+            $html = $this->renderer->render('control.twig', $data);
+            error_log("OutputController::showInterface - Template rendu");
+            
+            $response->getBody()->write($html);
+            error_log("OutputController::showInterface - Réponse écrite");
+            
+            return $response;
+            
+        } catch (\Throwable $e) {
+            error_log("OutputController::showInterface - ERREUR: " . $e->getMessage());
+            error_log("OutputController::showInterface - Fichier: " . $e->getFile() . " ligne " . $e->getLine());
+            error_log("OutputController::showInterface - Trace: " . $e->getTraceAsString());
+            
+            $response->getBody()->write("ERREUR OutputController: " . $e->getMessage());
+            return $response->withStatus(500);
+        }
     }
 
     /**
