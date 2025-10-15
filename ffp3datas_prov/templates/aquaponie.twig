@@ -20,6 +20,182 @@
         <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
         <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
         <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="stylesheet" href="/ffp3/assets/css/realtime-styles.css" />
+        <link rel="manifest" href="/ffp3/manifest.json" />
+        <link rel="apple-touch-icon" href="/ffp3/assets/icons/icon-192.png" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
+        <script src="https://code.highcharts.com/stock/highstock.js"></script>
+        
+        <style>
+            /* =================================================================
+               HEADER MODERNE ET HERO SECTION
+            ================================================================= */
+            .modern-header {
+                background: linear-gradient(135deg, #008B74 0%, #00B794 50%, #008B74 100%);
+                color: white;
+                padding: 50px 0;
+                margin: -20px -20px 50px -20px;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .modern-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+                opacity: 0.3;
+            }
+            
+            .header-content {
+                position: relative;
+                z-index: 2;
+                text-align: center;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+            
+            .header-title {
+                font-size: 3.5em;
+                font-weight: bold;
+                margin: 0 0 15px 0;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 20px;
+            }
+            
+            .header-title i {
+                font-size: 0.8em;
+                animation: float 3s ease-in-out infinite;
+            }
+            
+            @keyframes float {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-10px); }
+            }
+            
+            .header-subtitle {
+                font-size: 1.3em;
+                margin: 0 0 30px 0;
+                opacity: 0.9;
+                font-weight: 300;
+                line-height: 1.6;
+            }
+            
+            .system-status-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: rgba(255,255,255,0.2);
+                padding: 12px 24px;
+                border-radius: 25px;
+                font-weight: 500;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.3);
+                margin: 0 10px 20px 10px;
+                transition: all 0.3s ease;
+            }
+            
+            .system-status-badge:hover {
+                background: rgba(255,255,255,0.3);
+                transform: translateY(-2px);
+            }
+            
+            .system-status-badge i {
+                font-size: 1.2em;
+                animation: pulse 2s infinite;
+            }
+            
+            .quick-stats {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 20px;
+                margin-top: 30px;
+                max-width: 800px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            .quick-stat {
+                background: rgba(255,255,255,0.15);
+                padding: 20px;
+                border-radius: 15px;
+                text-align: center;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.2);
+                transition: all 0.3s ease;
+            }
+            
+            .quick-stat:hover {
+                background: rgba(255,255,255,0.25);
+                transform: translateY(-5px);
+            }
+            
+            .quick-stat-value {
+                font-size: 2em;
+                font-weight: bold;
+                margin: 5px 0;
+                display: block;
+            }
+            
+            .quick-stat-label {
+                font-size: 0.9em;
+                opacity: 0.9;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            
+            .quick-stat-icon {
+                font-size: 1.5em;
+                margin-bottom: 10px;
+                opacity: 0.8;
+            }
+            
+            /* =================================================================
+               RESPONSIVE DESIGN
+            ================================================================= */
+            @media (max-width: 768px) {
+                .header-title {
+                    font-size: 2.5em;
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                
+                .header-subtitle {
+                    font-size: 1.1em;
+                }
+                
+                .quick-stats {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 15px;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .modern-header {
+                    padding: 30px 0;
+                    margin: -20px -10px 30px -10px;
+                }
+                
+                .quick-stats {
+                    grid-template-columns: 1fr;
+                }
+                
+                .system-status-badge {
+                    margin: 0 5px 15px 5px;
+                    padding: 10px 20px;
+                    font-size: 0.9em;
+                }
+            }
+        </style>
     </head>
     <body class="is-preload">
         <!-- Wrapper -->
@@ -45,19 +221,72 @@
 
             <!-- Main -->
             <div id="main">
+                <!-- Modern Header Hero Section -->
+                <div class="modern-header">
+                    <div class="header-content">
+                        <div class="header-title">
+                            <i class="fas fa-fish"></i>
+                            🚀 NOUVEAU - Système Aquaponie FFP3 🚀
+                            <i class="fas fa-fish"></i>
+                        </div>
+                        <div class="header-subtitle">
+                            Surveillance intelligente et contrôle automatisé de votre écosystème aquaponique
+                        </div>
+                        
+                        <!-- Badges de statut système -->
+                        <div class="system-status-badge">
+                            <i class="fas fa-circle"></i>
+                            <span>Environnement: {{ environment|upper }}</span>
+                        </div>
+                        <div class="system-status-badge">
+                            <i class="fas fa-microchip"></i>
+                            <span>Version: {{ version }}</span>
+                        </div>
+                        {% if firmware_version %}
+                        <div class="system-status-badge">
+                            <i class="fas fa-code"></i>
+                            <span>Firmware: {{ firmware_version }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Statistiques rapides -->
+                        <div class="quick-stats">
+                            <div class="quick-stat">
+                                <i class="fas fa-database quick-stat-icon"></i>
+                                <span class="quick-stat-value">{{ measure_count }}</span>
+                                <span class="quick-stat-label">Mesures</span>
+                            </div>
+                            <div class="quick-stat">
+                                <i class="fas fa-clock quick-stat-icon"></i>
+                                <span class="quick-stat-value">{{ duration_str|split(',')[0]|trim }}</span>
+                                <span class="quick-stat-label">Période</span>
+                            </div>
+                            <div class="quick-stat">
+                                <i class="fas fa-calendar quick-stat-icon"></i>
+                                <span class="quick-stat-value">{{ timepastbegin }}</span>
+                                <span class="quick-stat-label">Jours actifs</span>
+                            </div>
+                            <div class="quick-stat">
+                                <i class="fas fa-thermometer-half quick-stat-icon"></i>
+                                <span class="quick-stat-value">{{ last_reading_tempair|default(0)|round(1) }}°C</span>
+                                <span class="quick-stat-label">Température</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Featured Post -->
                 <article class="post featured">
                     <header class="major">
                         <h2>
-                            <i class="icon solid fa-fish"></i>
-                            Aquaponie
-                            <i class="icon solid fa-fish"></i>
+                            <i class="icon solid fa-chart-line"></i>
+                            Données en temps réel
                         </h2>
                         <p>Le système est suivi grâce à la carte de développement ESP-32 qui mesure et présente différents paramètres du système. De nombreux capteurs permettent d'automatiser le fonctionnement du système pendant une période de plus d'un mois. Les données sont transmises sur le serveur d'olution et traitées pour être présentées. Le système est également contrôlable manuellement à distance. Ce prototype est issu du projet <a href="https://farmflow.marout.org">farmflow</a>. On vous invite à le découvrir ainsi que l'aquaponie en général.</p>
                         <hr />
                     </header>
 
-                    <h2>Synthèse des mesures du {{ start_date|date('d/m/Y') }} au {{ end_date|date('d/m/Y') }}</h2>
+                    <h2>📊 Synthèse des mesures du {{ start_date|date('d/m/Y H:i:s') }} au {{ end_date|date('d/m/Y H:i:s') }}</h2>
 
                     <!-- TABLEAUX & JAUGES NIVEAUX EAU -->
                     <!-- Début du contenu migré depuis l'ancien template PHP -->

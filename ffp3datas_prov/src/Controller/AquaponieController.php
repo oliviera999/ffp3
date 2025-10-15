@@ -263,6 +263,11 @@ class AquaponieController
                 'first_reading_begin'=> $first_reading_begin,
                 'timepastbegin'=> $timepastbegin,
                 'first_reading_time_begin'=> $first_reading_time_begin,
+                
+                // Variables pour le header moderne
+                'version' => $_ENV['APP_VERSION'] ?? '4.6.0',
+                'environment' => $_ENV['ENV'] ?? 'prod',
+                'firmware_version' => $this->sensorReadRepo->getFirmwareVersion(),
                 // ... on peut passer le reste si besoin
             ]);
         }

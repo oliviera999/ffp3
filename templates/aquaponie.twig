@@ -30,126 +30,378 @@
         <script src="https://code.highcharts.com/modules/accessibility.js"></script>
         
         <style>
-            /* Cartes de statistiques modernes */
-            .stats-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 20px;
-                margin: 20px 0;
+            /* =================================================================
+               HEADER MODERNE ET HERO SECTION
+            ================================================================= */
+            .modern-header {
+                background: linear-gradient(135deg, #008B74 0%, #00B794 50%, #008B74 100%);
+                color: white;
+                padding: 50px 0;
+                margin: -20px -20px 50px -20px;
+                position: relative;
+                overflow: hidden;
             }
             
-            .stat-card {
-                background: white;
-                border-radius: 12px;
-                padding: 20px;
-                box-shadow: 0 2px 8px rgba(0,139,116,0.15);
+            .modern-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+                opacity: 0.3;
+            }
+            
+            .header-content {
+                position: relative;
+                z-index: 2;
                 text-align: center;
-                transition: transform 0.2s, box-shadow 0.2s;
-                border: 1px solid rgba(0,139,116,0.1);
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
             }
             
-            .stat-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 6px 16px rgba(0,139,116,0.25);
+            .header-title {
+                font-size: 3.5em;
+                font-weight: bold;
+                margin: 0 0 15px 0;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 20px;
             }
             
-            .stat-card-icon {
-                font-size: 2.5em;
-                margin-bottom: 10px;
+            .header-title i {
+                font-size: 0.8em;
+                animation: float 3s ease-in-out infinite;
+            }
+            
+            @keyframes float {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-10px); }
+            }
+            
+            .header-subtitle {
+                font-size: 1.3em;
+                margin: 0 0 30px 0;
+                opacity: 0.9;
+                font-weight: 300;
+                line-height: 1.6;
+            }
+            
+            .system-status-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: rgba(255,255,255,0.2);
+                padding: 12px 24px;
+                border-radius: 25px;
+                font-weight: 500;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.3);
+                margin: 0 10px 20px 10px;
+                transition: all 0.3s ease;
+            }
+            
+            .system-status-badge:hover {
+                background: rgba(255,255,255,0.3);
+                transform: translateY(-2px);
+            }
+            
+            .system-status-badge i {
+                font-size: 1.2em;
+                animation: pulse 2s infinite;
+            }
+            
+            .quick-stats {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 20px;
+                margin-top: 30px;
+                max-width: 800px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            .quick-stat {
+                background: rgba(255,255,255,0.15);
+                padding: 20px;
+                border-radius: 15px;
+                text-align: center;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.2);
+                transition: all 0.3s ease;
+            }
+            
+            .quick-stat:hover {
+                background: rgba(255,255,255,0.25);
+                transform: translateY(-5px);
+            }
+            
+            .quick-stat-value {
+                font-size: 2em;
+                font-weight: bold;
+                margin: 5px 0;
                 display: block;
             }
             
-            .stat-card-value {
-                font-size: 2em;
-                font-weight: bold;
-                color: #2c3e50;
-                margin: 10px 0;
-            }
-            
-            .stat-card-label {
+            .quick-stat-label {
                 font-size: 0.9em;
-                color: #7f8c8d;
+                opacity: 0.9;
                 text-transform: uppercase;
                 letter-spacing: 1px;
             }
             
-            .stat-card-unit {
-                font-size: 0.6em;
-                color: #95a5a6;
+            .quick-stat-icon {
+                font-size: 1.5em;
+                margin-bottom: 10px;
+                opacity: 0.8;
             }
             
-            /* Progress bars modernes */
+            /* =================================================================
+               CARTES DE STATISTIQUES AMÉLIORÉES
+            ================================================================= */
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 25px;
+                margin: 30px 0;
+            }
+            
+            .stat-card {
+                background: white;
+                border-radius: 16px;
+                padding: 25px;
+                box-shadow: 0 4px 20px rgba(0,139,116,0.1);
+                text-align: center;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border: 1px solid rgba(0,139,116,0.08);
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .stat-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, #008B74, #00B794);
+                transform: scaleX(0);
+                transition: transform 0.3s ease;
+            }
+            
+            .stat-card:hover {
+                transform: translateY(-8px) scale(1.02);
+                box-shadow: 0 12px 40px rgba(0,139,116,0.2);
+            }
+            
+            .stat-card:hover::before {
+                transform: scaleX(1);
+            }
+            
+            .stat-card-icon {
+                font-size: 3em;
+                margin-bottom: 15px;
+                display: block;
+                transition: all 0.3s ease;
+            }
+            
+            .stat-card:hover .stat-card-icon {
+                transform: scale(1.1);
+            }
+            
+            .stat-card-value {
+                font-size: 2.5em;
+                font-weight: bold;
+                color: #2c3e50;
+                margin: 15px 0;
+                line-height: 1;
+            }
+            
+            .stat-card-label {
+                font-size: 1em;
+                color: #7f8c8d;
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                font-weight: 600;
+                margin-bottom: 15px;
+            }
+            
+            .stat-card-unit {
+                font-size: 0.7em;
+                color: #95a5a6;
+                font-weight: 400;
+            }
+            
+            /* Progress bars modernes avec animations */
             .progress-bar-container {
                 width: 100%;
-                height: 8px;
-                background: #ecf0f1;
-                border-radius: 4px;
+                height: 10px;
+                background: #f8f9fa;
+                border-radius: 8px;
                 overflow: hidden;
-                margin: 10px 0;
+                margin: 15px 0;
+                position: relative;
             }
             
             .progress-bar {
                 height: 100%;
-                background: linear-gradient(90deg, #3498db, #2ecc71);
-                border-radius: 4px;
-                transition: width 0.6s ease;
+                background: linear-gradient(90deg, #008B74, #00B794);
+                border-radius: 8px;
+                transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
             }
             
-            /* Couleurs par type de capteur - Harmonisées avec la charte olution.info */
+            .progress-bar::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                animation: shimmer 2s infinite;
+            }
+            
+            @keyframes shimmer {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(100%); }
+            }
+            
+            /* Couleurs par type de capteur - Palette moderne */
             .stat-card.water { 
-                border-top: 4px solid #008B74;
+                border-left: 5px solid #008B74;
                 background: linear-gradient(180deg, #ffffff 0%, #f0faf8 100%);
             }
             .stat-card.water .stat-card-icon { color: #008B74; }
-            .stat-card.water .progress-bar { background: linear-gradient(90deg, #008B74, #00c9a7) !important; }
+            .stat-card.water .progress-bar { 
+                background: linear-gradient(90deg, #008B74, #00B794) !important; 
+            }
             
             .stat-card.temp { 
-                border-top: 4px solid #d35400;
+                border-left: 5px solid #e74c3c;
                 background: linear-gradient(180deg, #ffffff 0%, #fef5f1 100%);
             }
-            .stat-card.temp .stat-card-icon { color: #d35400; }
-            .stat-card.temp .progress-bar { background: linear-gradient(90deg, #3498db, #d35400) !important; }
+            .stat-card.temp .stat-card-icon { color: #e74c3c; }
+            .stat-card.temp .progress-bar { 
+                background: linear-gradient(90deg, #e74c3c, #ff6b6b) !important; 
+            }
             
             .stat-card.humidity { 
-                border-top: 4px solid #2980b9;
+                border-left: 5px solid #3498db;
                 background: linear-gradient(180deg, #ffffff 0%, #f4f8fb 100%);
             }
-            .stat-card.humidity .stat-card-icon { color: #2980b9; }
-            .stat-card.humidity .progress-bar { background: linear-gradient(90deg, #ecf0f1, #2980b9) !important; }
+            .stat-card.humidity .stat-card-icon { color: #3498db; }
+            .stat-card.humidity .progress-bar { 
+                background: linear-gradient(90deg, #3498db, #5dade2) !important; 
+            }
             
             .stat-card.light { 
-                border-top: 4px solid #f39c12;
+                border-left: 5px solid #f39c12;
                 background: linear-gradient(180deg, #ffffff 0%, #fef9f3 100%);
             }
             .stat-card.light .stat-card-icon { color: #f39c12; }
-            .stat-card.light .progress-bar { background: linear-gradient(90deg, #f39c12, #f1c40f) !important; }
+            .stat-card.light .progress-bar { 
+                background: linear-gradient(90deg, #f39c12, #f1c40f) !important; 
+            }
             
-            /* Section headers avec icônes */
+            /* =================================================================
+               SECTION HEADERS MODERNES
+            ================================================================= */
             .section-header {
                 display: flex !important;
                 align-items: center !important;
-                gap: 15px !important;
-                margin: 30px 0 20px 0 !important;
-                padding-bottom: 10px !important;
+                gap: 20px !important;
+                margin: 50px 0 30px 0 !important;
+                padding: 20px 0 !important;
                 border-bottom: 3px solid #008B74 !important;
+                position: relative;
+            }
+            
+            .section-header::after {
+                content: '';
+                position: absolute;
+                bottom: -3px;
+                left: 0;
+                width: 60px;
+                height: 3px;
+                background: #00B794;
+                border-radius: 2px;
             }
             
             .section-header h3 {
                 margin: 0 !important;
                 color: #008B74 !important;
-                font-size: 1.5em !important;
+                font-size: 1.8em !important;
+                font-weight: 700 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 1px !important;
             }
             
             .section-header i {
-                font-size: 1.8em !important;
+                font-size: 2em !important;
                 color: #008B74 !important;
                 display: inline-block !important;
+                padding: 10px;
+                background: rgba(0,139,116,0.1);
+                border-radius: 12px;
+                transition: all 0.3s ease;
             }
             
-            /* Responsive */
+            .section-header:hover i {
+                background: rgba(0,139,116,0.2);
+                transform: scale(1.1);
+            }
+            
+            /* =================================================================
+               RESPONSIVE DESIGN
+            ================================================================= */
             @media (max-width: 768px) {
+                .header-title {
+                    font-size: 2.5em;
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                
+                .header-subtitle {
+                    font-size: 1.1em;
+                }
+                
+                .quick-stats {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 15px;
+                }
+                
                 .stats-grid {
                     grid-template-columns: 1fr;
+                    gap: 20px;
+                }
+                
+                .section-header {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 15px;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .modern-header {
+                    padding: 30px 0;
+                    margin: -20px -10px 30px -10px;
+                }
+                
+                .quick-stats {
+                    grid-template-columns: 1fr;
+                }
+                
+                .system-status-badge {
+                    margin: 0 5px 15px 5px;
+                    padding: 10px 20px;
+                    font-size: 0.9em;
                 }
             }
             
@@ -188,13 +440,66 @@
 
             <!-- Main -->
             <div id="main">
+                <!-- Modern Header Hero Section -->
+                <div class="modern-header">
+                    <div class="header-content">
+                        <div class="header-title">
+                            <i class="fas fa-fish"></i>
+                            Système Aquaponie FFP3
+                            <i class="fas fa-fish"></i>
+                        </div>
+                        <div class="header-subtitle">
+                            Surveillance intelligente et contrôle automatisé de votre écosystème aquaponique
+                        </div>
+                        
+                        <!-- Badges de statut système -->
+                        <div class="system-status-badge">
+                            <i class="fas fa-circle"></i>
+                            <span>Environnement: {{ environment|upper }}</span>
+                        </div>
+                        <div class="system-status-badge">
+                            <i class="fas fa-microchip"></i>
+                            <span>Version: {{ version }}</span>
+                        </div>
+                        {% if firmware_version %}
+                        <div class="system-status-badge">
+                            <i class="fas fa-code"></i>
+                            <span>Firmware: {{ firmware_version }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Statistiques rapides -->
+                        <div class="quick-stats">
+                            <div class="quick-stat">
+                                <i class="fas fa-database quick-stat-icon"></i>
+                                <span class="quick-stat-value">{{ measure_count }}</span>
+                                <span class="quick-stat-label">Mesures</span>
+                            </div>
+                            <div class="quick-stat">
+                                <i class="fas fa-clock quick-stat-icon"></i>
+                                <span class="quick-stat-value">{{ duration_str|split(',')[0]|trim }}</span>
+                                <span class="quick-stat-label">Période</span>
+                            </div>
+                            <div class="quick-stat">
+                                <i class="fas fa-calendar quick-stat-icon"></i>
+                                <span class="quick-stat-value">{{ timepastbegin }}</span>
+                                <span class="quick-stat-label">Jours actifs</span>
+                            </div>
+                            <div class="quick-stat">
+                                <i class="fas fa-thermometer-half quick-stat-icon"></i>
+                                <span class="quick-stat-value">{{ last_reading_tempair|default(0)|round(1) }}°C</span>
+                                <span class="quick-stat-label">Température</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Featured Post -->
                 <article class="post featured">
                     <header class="major">
                         <h2>
-                            <i class="icon solid fa-fish"></i>
-                            Aquaponie
-                            <i class="icon solid fa-fish"></i>
+                            <i class="icon solid fa-chart-line"></i>
+                            Données en temps réel
                         </h2>
                         <p>Le système est suivi grâce à la carte de développement ESP-32 qui mesure et présente différents paramètres du système. De nombreux capteurs permettent d'automatiser le fonctionnement du système pendant une période de plus d'un mois. Les données sont transmises sur le serveur d'olution et traitées pour être présentées. Le système est également contrôlable manuellement à distance. Ce prototype est issu du projet <a href="https://farmflow.marout.org">farmflow</a>. On vous invite à le découvrir ainsi que l'aquaponie en général.</p>
                         <hr />
