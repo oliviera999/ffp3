@@ -7,6 +7,22 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.45] - 2025-01-27 🎨 AMÉLIORATION UX - Regroupement des contrôles de gestion de l'eau
+
+### 🎨 Amélioration interface
+- **Regroupement harmonieux des contrôles de gestion de l'eau** dans une seule section
+- Boutons des pompes (aquarium et réserve) déplacés vers la section Gestion de l'eau
+- Interface plus cohérente avec séparation claire entre contrôle des pompes et paramètres de niveau
+- Amélioration de l'ergonomie et de la lisibilité des contrôles hydrauliques
+
+### 🔧 Optimisation technique
+- Suppression des doublons dans la section Actions
+- Meilleure organisation du code Twig pour la section gestion de l'eau
+- Interface responsive maintenue avec les nouveaux éléments
+- Filtrage intelligent des outputs pour éviter les répétitions
+
+---
+
 ## [4.5.44] - 2025-01-27 🎨 AMÉLIORATION UX - Regroupement des contrôles de nourrissage
 
 ### 🎨 Amélioration interface

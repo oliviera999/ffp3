@@ -768,8 +768,8 @@
                                 <i class="fas fa-bolt"></i> Actions
                             </h3>
                             
-                            {# Préparation des outputs avec icônes - Exclure GPIO 108 et 109 (nourrissage manuel) qui seront dans la section nourrissage #}
-                            {% set physical_outputs = outputs|filter(o => (o.gpio < 100 or o.gpio == 101 or o.gpio == 110 or o.gpio == 115) and o.name is not empty) %}
+                            {# Préparation des outputs avec icônes - Exclure GPIO 108, 109 (nourrissage manuel) et pompes (aquarium/réserve) #}
+                            {% set physical_outputs = outputs|filter(o => (o.gpio < 100 or o.gpio == 101 or o.gpio == 110 or o.gpio == 115) and o.name is not empty and not (o.name|lower matches '/pompe aqua/' or o.name|lower matches '/pompe.*r.*serve/')) %}
                             
                             <div class="action-buttons-grid">
                                 {% for output in physical_outputs %}
@@ -881,29 +881,93 @@
                                     <input type="email" name="mail" id="mail" value="{{ params.mail|default('') }}" placeholder="email@exemple.com" style="padding: 6px 10px !important; margin: 3px 0 !important; height: auto !important;">
                                 </div>
                         
-                                {# Gestion de l'eau #}
+                                {# Gestion de l'eau - Section complète avec boutons de pompes et réglages #}
                                 <div class="param-box" style="background: #e3f2fd !important; margin-bottom: 12px !important; padding: 12px !important;">
                                     <h4><i class="fas fa-tint"></i> Gestion de l'eau</h4>
                                     
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                                        <div>
-                                            <label for="aqThr">Aquarium bas (cm)</label>
-                                            <input type="number" name="aqThr" min="0" id="aqThr" value="{{ params.aqThr|default(0) }}">
+                                    {# Boutons des pompes #}
+                                    {% set pump_outputs = outputs|filter(o => o.name|lower matches '/pompe aqua/' or o.name|lower matches '/pompe.*r.*serve/') %}
+                                    {% if pump_outputs|length > 0 %}
+                                        <div style="margin-bottom: 15px;">
+                                            <p style="margin: 0 0 8px 0; font-weight: 500; font-size: 0.9em; color: #2c3e50;">Contrôle des pompes</p>
+                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                                {% for output in pump_outputs %}
+                                                    {% set clean_name = output.name|replace({
+                                                        '(stopp&#233;s si relais activ&#233;)': '',
+                                                        '(stopp&#233;e si relais activ&#233;)': '',
+                                                        '(stoppés si relais activé)': '',
+                                                        '(stoppée si relais activé)': '',
+                                                        ' (stopp&#233;s si relais activ&#233;)': '',
+                                                        ' (stopp&#233;e si relais activ&#233;)': '',
+                                                        ' (stoppés si relais activé)': '',
+                                                        ' (stoppée si relais activé)': ''
+                                                    })|trim %}
+                                                    
+                                                    {% if clean_name|lower matches '/pompe aqua/' %}
+                                                        {% set icon = 'fa-water' %}
+                                                        {% set color = '#2980b9' %}
+                                                        {% set display_name = 'Pompe aquarium' %}
+                                                    {% elseif clean_name|lower matches '/pompe.*r.*serve/' %}
+                                                        {% set icon = 'fa-droplet' %}
+                                                        {% set color = '#00bcd4' %}
+                                                        {% set display_name = 'Pompe réserve' %}
+                                                    {% else %}
+                                                        {% set icon = 'fa-circle' %}
+                                                        {% set color = '#008B74' %}
+                                                        {% set display_name = clean_name %}
+                                                    {% endif %}
+                                                    
+                                                    <div class="action-button-card action-button-blue" data-state="{{ output.state }}" style="padding: 8px !important; margin: 0 !important;">
+                                                        <div class="action-button-content">
+                                                            <i class="fas {{ icon }} action-icon-simple" style="color: {{ color }}; font-size: 1.2rem !important;"></i>
+                                                            <div class="action-button-info">
+                                                                <div class="action-button-label" style="font-size: 0.8rem !important;">{{ display_name }}</div>
+                                                                <div class="action-button-status" style="font-size: 0.7rem !important;">
+                                                                    <span class="status-text">{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <label class="modern-switch" style="transform: scale(0.8);">
+                                                            <input type="checkbox" 
+                                                                   onchange="updateOutput(this)" 
+                                                                   id="{{ output.id }}" 
+                                                                   data-id="{{ output.id }}"
+                                                                   data-gpio="{{ output.gpio }}"
+                                                                   {{ output.state == 1 ? 'checked' : '' }}>
+                                                            <span class="modern-switch-slider">
+                                                                <span class="modern-switch-button"></span>
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label for="limFlood">Débordement (cm)</label>
-                                            <input type="number" name="limFlood" min="0" id="limFlood" value="{{ params.limFlood|default(0) }}">
-                                        </div>
-                                    </div>
+                                    {% endif %}
                                     
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                                        <div>
-                                            <label for="tempsRemplissageSec">Remplissage (s)</label>
-                                            <input type="number" name="tempsRemplissageSec" min="0" id="tempsRemplissageSec" value="{{ params.tempsRemplissageSec|default(0) }}">
+                                    {# Réglages de l'eau #}
+                                    <div style="border-top: 1px solid #e0e0e0; padding-top: 12px;">
+                                        <p style="margin: 0 0 8px 0; font-weight: 500; font-size: 0.9em; color: #2c3e50;">Paramètres de niveau</p>
+                                        
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                                            <div>
+                                                <label for="aqThr">Aquarium bas (cm)</label>
+                                                <input type="number" name="aqThr" min="0" id="aqThr" value="{{ params.aqThr|default(0) }}">
+                                            </div>
+                                            <div>
+                                                <label for="limFlood">Débordement (cm)</label>
+                                                <input type="number" name="limFlood" min="0" id="limFlood" value="{{ params.limFlood|default(0) }}">
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label for="taThr">Réserve basse (cm)</label>
-                                            <input type="number" name="taThr" min="0" id="taThr" value="{{ params.taThr|default(0) }}">
+                                        
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                            <div>
+                                                <label for="tempsRemplissageSec">Remplissage (s)</label>
+                                                <input type="number" name="tempsRemplissageSec" min="0" id="tempsRemplissageSec" value="{{ params.tempsRemplissageSec|default(0) }}">
+                                            </div>
+                                            <div>
+                                                <label for="taThr">Réserve basse (cm)</label>
+                                                <input type="number" name="taThr" min="0" id="taThr" value="{{ params.taThr|default(0) }}">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
