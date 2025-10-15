@@ -1,0 +1,847 @@
+<!DOCTYPE HTML>
+<!--
+    olution iot datas by HTML5 UP (version twig)
+    Identique visuellement au template legacy. Toute logique PHP a été
+    migrée dans App\Controller\AquaponieController.
+-->
+<html>
+    <head>
+        <title>n3 iot datas</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <!-- <meta http-equiv="refresh" content="60"/> -->
+        <link rel="stylesheet" href="https://iot.olution.info/assets/css/main.css" />
+        <noscript><link rel="stylesheet" href="https://iot.olution.info/assets/css/noscript.css" /></noscript>
+        <link rel="shortcut icon" type="image/png" href="https://iot.olution.info/images/favico.png"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/modules/boost.js"></script>
+        <script src="https://code.highcharts.com/stock/modules/data.js"></script>
+        <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+        <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+        <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="stylesheet" href="/ffp3/assets/css/realtime-styles.css" />
+        <link rel="manifest" href="/ffp3/manifest.json" />
+        <link rel="apple-touch-icon" href="/ffp3/assets/icons/icon-192.png" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
+        <script src="https://code.highcharts.com/stock/highstock.js"></script>
+        
+        <style>
+            /* =================================================================
+               STYLES COHÉRENTS AVEC LE DESIGN GLOBAL
+            ================================================================= */
+            
+            /* Info banner cohérent avec la page d'accueil */
+            .system-info-banner {
+                background: linear-gradient(135deg, #008B74 0%, #00B794 100%);
+                color: white;
+                padding: 25px;
+                border-radius: 16px;
+                margin: 20px 0;
+                text-align: center;
+            }
+            
+            .system-info-banner h3 {
+                margin: 0 0 15px 0;
+                font-size: 1.4em;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .system-info-banner p {
+                margin: 8px 0;
+                opacity: 0.9;
+                line-height: 1.5;
+            }
+            
+            /* Stats grid cohérent */
+            .stats-overview {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+                margin: 30px 0;
+            }
+            
+            .stat-overview-card {
+                background: #f8f9fa;
+                padding: 20px;
+                border-radius: 12px;
+                text-align: center;
+                border-left: 4px solid #008B74;
+                transition: all 0.3s ease;
+            }
+            
+            .stat-overview-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 16px rgba(0,139,116,0.2);
+            }
+            
+            .stat-overview-value {
+                font-size: 2em;
+                font-weight: bold;
+                color: #008B74;
+                margin: 8px 0;
+                display: block;
+            }
+            
+            .stat-overview-label {
+                font-size: 0.9em;
+                color: #666;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            
+            .stat-overview-icon {
+                font-size: 1.5em;
+                color: #008B74;
+                margin-bottom: 10px;
+            }
+            
+            /* Section headers cohérents */
+            .section-header {
+                display: flex !important;
+                align-items: center !important;
+                gap: 15px !important;
+                margin: 40px 0 25px 0 !important;
+                padding: 15px 0 !important;
+                border-bottom: 3px solid #008B74 !important;
+                position: relative;
+            }
+            
+            .section-header::after {
+                content: '';
+                position: absolute;
+                bottom: -3px;
+                left: 0;
+                width: 60px;
+                height: 3px;
+                background: #00B794;
+                border-radius: 2px;
+            }
+            
+            .section-header h2, .section-header h3 {
+                margin: 0 !important;
+                color: #008B74 !important;
+                font-size: 1.6em !important;
+                font-weight: 700 !important;
+            }
+            
+            .section-header i {
+                font-size: 1.8em !important;
+                color: #008B74 !important;
+                padding: 8px;
+                background: rgba(0,139,116,0.1);
+                border-radius: 10px;
+                transition: all 0.3s ease;
+            }
+            
+            .section-header:hover i {
+                background: rgba(0,139,116,0.2);
+                transform: scale(1.05);
+            }
+            
+            /* Cartes de données harmonisées */
+            .data-cards-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 25px;
+                margin: 25px 0;
+            }
+            
+            .data-card {
+                background: white;
+                border-radius: 16px;
+                padding: 25px;
+                box-shadow: 0 4px 16px rgba(0,139,116,0.15);
+                text-align: center;
+                transition: all 0.3s ease;
+                border-top: 5px solid #008B74;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .data-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 5px;
+                background: linear-gradient(90deg, #008B74, #00B794);
+                transition: height 0.3s;
+            }
+            
+            .data-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 12px 28px rgba(0,139,116,0.25);
+            }
+            
+            .data-card:hover::before {
+                height: 8px;
+            }
+            
+            .data-card-icon {
+                font-size: 2.5em;
+                margin-bottom: 15px;
+                display: block;
+                color: #008B74;
+                transition: all 0.3s ease;
+            }
+            
+            .data-card:hover .data-card-icon {
+                transform: scale(1.1);
+            }
+            
+            .data-card-value {
+                font-size: 2.2em;
+                font-weight: bold;
+                color: #2c3e50;
+                margin: 15px 0;
+                line-height: 1;
+            }
+            
+            .data-card-label {
+                font-size: 1em;
+                color: #7f8c8d;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-weight: 600;
+                margin-bottom: 15px;
+            }
+            
+            .data-card-unit {
+                font-size: 0.7em;
+                color: #95a5a6;
+                font-weight: 400;
+            }
+            
+            /* Progress bars harmonisés */
+            .progress-bar-container {
+                width: 100%;
+                height: 10px;
+                background: #f8f9fa;
+                border-radius: 8px;
+                overflow: hidden;
+                margin: 15px 0;
+                position: relative;
+            }
+            
+            .progress-bar {
+                height: 100%;
+                background: linear-gradient(90deg, #008B74, #00B794);
+                border-radius: 8px;
+                transition: width 0.8s ease;
+                position: relative;
+            }
+            
+            .progress-bar::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                animation: shimmer 2s infinite;
+            }
+            
+            @keyframes shimmer {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(100%); }
+            }
+            
+            /* Couleurs par type de capteur */
+            .data-card.water { 
+                border-top-color: #008B74;
+            }
+            .data-card.water .data-card-icon { color: #008B74; }
+            .data-card.water .progress-bar { 
+                background: linear-gradient(90deg, #008B74, #00B794) !important; 
+            }
+            
+            .data-card.temp { 
+                border-top-color: #e74c3c;
+            }
+            .data-card.temp .data-card-icon { color: #e74c3c; }
+            .data-card.temp .progress-bar { 
+                background: linear-gradient(90deg, #e74c3c, #ff6b6b) !important; 
+            }
+            
+            .data-card.humidity { 
+                border-top-color: #3498db;
+            }
+            .data-card.humidity .data-card-icon { color: #3498db; }
+            .data-card.humidity .progress-bar { 
+                background: linear-gradient(90deg, #3498db, #5dade2) !important; 
+            }
+            
+            .data-card.light { 
+                border-top-color: #f39c12;
+            }
+            .data-card.light .data-card-icon { color: #f39c12; }
+            .data-card.light .progress-bar { 
+                background: linear-gradient(90deg, #f39c12, #f1c40f) !important; 
+            }
+            
+            /* Responsive design */
+            @media (max-width: 768px) {
+                .stats-overview {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 15px;
+                }
+                
+                .data-cards-grid {
+                    grid-template-columns: 1fr;
+                    gap: 20px;
+                }
+                
+                .section-header {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 10px;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .stats-overview {
+                    grid-template-columns: 1fr;
+                }
+                
+                .system-info-banner {
+                    padding: 20px;
+                }
+                
+                .system-info-banner h3 {
+                    font-size: 1.2em;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+            }
+        </style>
+    </head>
+    <body class="is-preload">
+        <!-- Wrapper -->
+        <div id="wrapper" class="fade-in">
+            <!-- Header -->
+            <header id="header">
+                <a href="https://iot.olution.info/index.php" class="logo">n3 iot datas</a>
+            </header>
+
+            <!-- Nav -->
+            <nav id="nav">
+                <ul class="links">
+                    <li><a href="https://iot.olution.info/index.php">Accueil</a></li>
+                    <li class="active"><a href="https://iot.olution.info/ffp3/ffp3datas/ffp3-data.php">L'aquaponie</a></li>
+                    <li><a href="https://iot.olution.info/msp1/msp1datas/msp1-data.php">Le potager</a></li>
+                    <li><a href="https://iot.olution.info/n3pp/n3ppdatas/n3pp-data.php">L'élevage d'insectes</a></li>
+                </ul>
+                <ul class="icons">
+                    <li><a href="https://olution.info/course/view.php?id=511" class="icon solid fa-leaf"><span class="label">olution</span></a></li>
+                    <li><a href="https://farmflow.marout.org/" class="icon solid fa-fish"><span class="label">farmflow</span></a></li>
+                </ul>
+            </nav>
+
+            <!-- Main -->
+            <div id="main">
+                <!-- Featured Post -->
+                <article class="post featured">
+                    <header class="major">
+                        <h1 style="margin-bottom: 20px;">
+                            <i class="icon solid fa-fish"></i>
+                            Système Aquaponie FFP3
+                            <i class="icon solid fa-fish"></i>
+                        </h1>
+                        <p style="font-size: 1.2em; line-height: 1.6;">
+                            Surveillance intelligente et contrôle automatisé de votre écosystème aquaponique.
+                            <br>
+                            Le système est suivi grâce à la carte de développement ESP-32 qui mesure et présente différents paramètres du système.
+                        </p>
+                        <hr />
+                    </header>
+
+                    <!-- Banner info système -->
+                    <div class="system-info-banner">
+                        <h3><i class="fas fa-microchip"></i> Informations système</h3>
+                        <p>
+                            <strong>Environnement:</strong> {{ environment|upper }} • 
+                            <strong>Version:</strong> {{ version }} • 
+                            {% if firmware_version %}<strong>Firmware ESP32:</strong> {{ firmware_version }}{% endif %}
+                        </p>
+                        <p>
+                            <i class="fas fa-chart-line"></i> Données en temps réel • 
+                            <i class="fas fa-database"></i> {{ measure_count }} mesures • 
+                            <i class="fas fa-calendar"></i> {{ timepastbegin }} jours d'activité
+                        </p>
+                    </div>
+
+                    <!-- Vue d'ensemble des statistiques -->
+                    <div class="section-header">
+                        <i class="fas fa-chart-bar"></i>
+                        <h2>Vue d'ensemble</h2>
+                    </div>
+
+                    <div class="stats-overview">
+                        <div class="stat-overview-card">
+                            <i class="fas fa-database stat-overview-icon"></i>
+                            <span class="stat-overview-value">{{ measure_count }}</span>
+                            <span class="stat-overview-label">Mesures</span>
+                        </div>
+                        <div class="stat-overview-card">
+                            <i class="fas fa-clock stat-overview-icon"></i>
+                            <span class="stat-overview-value">{{ duration_str|split(',')[0]|trim }}</span>
+                            <span class="stat-overview-label">Période</span>
+                        </div>
+                        <div class="stat-overview-card">
+                            <i class="fas fa-calendar stat-overview-icon"></i>
+                            <span class="stat-overview-value">{{ timepastbegin }}</span>
+                            <span class="stat-overview-label">Jours actifs</span>
+                        </div>
+                        <div class="stat-overview-card">
+                            <i class="fas fa-thermometer-half stat-overview-icon"></i>
+                            <span class="stat-overview-value">{{ last_reading_tempair|default(0)|round(1) }}°C</span>
+                            <span class="stat-overview-label">Température</span>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <i class="fas fa-chart-line"></i>
+                        <h2>Synthèse des mesures du {{ start_date|date('d/m/Y H:i:s') }} au {{ end_date|date('d/m/Y H:i:s') }}</h2>
+                    </div>
+
+                    <!-- TABLEAUX & JAUGES NIVEAUX EAU -->
+                    <!-- Début du contenu migré depuis l'ancien template PHP -->
+
+                    {# --------------------------------------------------------------------- #}
+                    {# TABLEAU & GAUGES – NIVEAUX D’EAU                                             #}
+                    {# --------------------------------------------------------------------- #}
+
+                    <div id="table-eaux" class="container">
+                        <section class="content">
+                            <div class="table-wrapper">
+                                <table>
+                                    <tr>
+                                        <h3>Statistiques des niveaux d'eau</h3>
+                                    </tr>
+                                    <tr>
+                                        <td>Mesures actuelles</td>
+                                        <td>
+                                            <div class="box gauge--5">
+                                                <h5>EAU AQUARIUM</h5>
+                                                <div class="mask">
+                                                    <div class="semi-circle"></div>
+                                                    <div class="semi-circle--mask"></div>
+                                                </div>
+                                                <p style="text-align: center" id="eauaqua">--</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="box gauge--6">
+                                                <h5>EAU RESERVE</h5>
+                                                <div class="mask">
+                                                    <div class="semi-circle"></div>
+                                                    <div class="semi-circle--mask"></div>
+                                                </div>
+                                                <p style="text-align: center" id="eaureserve">--</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="box gauge--7">
+                                                <h5>EAU POTAGER</h5>
+                                                <div class="mask">
+                                                    <div class="semi-circle"></div>
+                                                    <div class="semi-circle--mask"></div>
+                                                </div>
+                                                <p style="text-align: center" id="eaupota">--</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Moy</td>
+                                        <td>{{ avg_eauaqua|default(0)|round(0) }} cm</td>
+                                        <td>{{ avg_eaureserve|default(0)|round(0) }} cm</td>
+                                        <td>{{ avg_eaupota|default(0)|round(0) }} cm</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Min</td>
+                                        <td>{{ min_eauaqua|default(0) }} cm</td>
+                                        <td>{{ min_eaureserve|default(0) }} cm</td>
+                                        <td>{{ min_eaupota|default(0) }} cm</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Max</td>
+                                        <td>{{ max_eauaqua|default(0) }} cm</td>
+                                        <td>{{ max_eaureserve|default(0) }} cm</td>
+                                        <td>{{ max_eaupota|default(0) }} cm</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ET</td>
+                                        <td>{{ stddev_eauaqua|default(0)|round(2) }} cm</td>
+                                        <td>{{ stddev_eaureserve|default(0)|round(2) }} cm</td>
+                                        <td>{{ stddev_eaupota|default(0)|round(2) }} cm</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+
+                    <div id="chart-niveauxeaux" class="container"></div>
+                    <hr />
+
+                    {# --------------------------------------------------------------------- #}
+                    {# TABLEAU – PARAMÈTRES PHYSIQUES                                             #}
+                    {# --------------------------------------------------------------------- #}
+
+                    <div id="table-parametresphys" class="container">
+                        <section class="content">
+                            <div class="table-wrapper">
+                                <table>
+                                    <tr>
+                                        <h3>Statistiques des paramètres physiques</h3>
+                                    </tr>
+                                    <tr>
+                                        <td>Mesures actuelles</td>
+                                        <td>
+                                            <div class="box gauge--2">
+                                                <h5>TEMPERATURE EAU</h5>
+                                                <div class="mask">
+                                                    <div class="semi-circle"></div>
+                                                    <div class="semi-circle--mask"></div>
+                                                </div>
+                                                <p style="text-align: center" id="tempeau">--</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="box gauge--1">
+                                                <h5>TEMPERATURE AIR</h5>
+                                                <div class="mask">
+                                                    <div class="semi-circle"></div>
+                                                    <div class="semi-circle--mask"></div>
+                                                </div>
+                                                <p style="text-align: center" id="tempair">--</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="box gauge--3">
+                                                <h5>HUMIDITE</h5>
+                                                <div class="mask">
+                                                    <div class="semi-circle"></div>
+                                                    <div class="semi-circle--mask"></div>
+                                                </div>
+                                                <p style="text-align: center" id="humi">--</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="box gauge--4">
+                                                <h5>LUMINOSITE</h5>
+                                                <div class="mask">
+                                                    <div class="semi-circle"></div>
+                                                    <div class="semi-circle--mask"></div>
+                                                </div>
+                                                <p style="text-align: center" id="lumi">--</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Moy</td>
+                                        <td>{{ avg_tempeau|default(0)|round(1) }}&deg;C</td>
+                                        <td>{{ avg_tempair|default(0)|round(1) }}&deg;C</td>
+                                        <td>{{ avg_humi|default(0)|round(0) }} %</td>
+                                        <td>{{ avg_lumi|default(0)|round(0) }} UA</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Min</td>
+                                        <td>{{ min_tempeau|default(0)|round(1) }}&deg;C</td>
+                                        <td>{{ min_tempair|default(0)|round(1) }}&deg;C</td>
+                                        <td>{{ min_humi|default(0)|round(0) }} %</td>
+                                        <td>{{ min_lumi|default(0) }} UA</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Max</td>
+                                        <td>{{ max_tempeau|default(0)|round(1) }}&deg;C</td>
+                                        <td>{{ max_tempair|default(0)|round(1) }}&deg;C</td>
+                                        <td>{{ max_humi|default(0)|round(0) }} %</td>
+                                        <td>{{ max_lumi|default(0) }} UA</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ET</td>
+                                        <td>{{ stddev_tempeau|default(0)|round(2) }}&deg;C</td>
+                                        <td>{{ stddev_tempair|default(0)|round(2) }}&deg;C</td>
+                                        <td>{{ stddev_humi|default(0)|round(0) }} %</td>
+                                        <td>{{ stddev_lumi|default(0)|round(0) }} UA</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+
+                    <div id="chart-temperatures" class="container"></div>
+                    <hr />
+
+                    <h5 style="text-align: center">durée d'analyse des données : {{ duration_str }}</h5>
+
+                    {# --------------------------------------------------------------------- #}
+                    {# FORMULAIRE DE FILTRAGE                                                     #}
+                    {# --------------------------------------------------------------------- #}
+
+                    <style>
+                        .form-container {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 10px;
+                            max-width: 400px;
+                        }
+                        .form-container label {
+                            margin-bottom: 5px;
+                        }
+                        .form-container input,
+                        .form-container button {
+                            padding: 5px;
+                            width: 100%;
+                        }
+                    </style>
+
+                    <center>
+                        <form method="POST" action="">
+                            <div class="form-container">
+                                <div>
+                                    <label for="start_date">Date de début :</label>
+                                    <input type="date" id="start_date" name="start_date" value="{{ start_date|date('Y-m-d') }}" required>
+                                    <label for="start_time">Heure de début :</label>
+                                    <input type="time" id="start_time" name="start_time" value="{{ start_date|date('H:i') }}" required>
+                                </div>
+
+                                <div>
+                                    <label for="end_date">Date de fin :</label>
+                                    <input type="date" id="end_date" name="end_date" value="{{ end_date|date('Y-m-d') }}" required>
+                                    <label for="end_time">Heure de fin :</label>
+                                    <input type="time" id="end_time" name="end_time" value="{{ end_date|date('H:i') }}" required>
+                                </div>
+
+                                <div>
+                                    <button type="submit">Afficher les mesures</button>
+                                </div>
+                            </div>
+                        </form>
+                    </center>
+
+                    <h6 style="text-align: center">du {{ start_date }} au {{ end_date }} ({{ measure_count }} enregistrements analysés sur {{ first_reading_begin }})</h6>
+                    <h6 style="text-align: center">durée depuis le début du fonctionnement : {{ timepastbegin }}j (premier enregistrement le {{ first_reading_time_begin }})</h6>
+
+                    <form method="POST">
+                        <input type="hidden" name="start_date" value="{{ start_date }}">
+                        <input type="hidden" name="end_date" value="{{ end_date }}">
+                        <button type="submit" name="export_csv">Télécharger les données (CSV)</button>
+                    </form>
+
+                    <hr />
+                    <br />
+
+                    {# --------------------------------------------------------------------- #}
+                    {# PARAMÈTRES CHIMIQUES (Google Sheets)                                       #}
+                    {# --------------------------------------------------------------------- #}
+
+                    <h2>Suivi des paramètres chimiques de l'eau</h2>
+                    <div>Ces analyses sont réalisées manuellement par les élèves grâce à un kit dédié à l'aquariophilie.</div>
+                    <iframe width="600" height="371" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTrF6mLbo5-qLN-uhd7J2LeeV7LvE9LEr9nkyXgh7KUUh7lL-Houdx3XpIQ_-3vJk50e7dTuUAvQ-dR/pubchart?oid=209032696&amp;format=interactive"></iframe>
+                    <iframe width="600" height="371" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTrF6mLbo5-qLN-uhd7J2LeeV7LvE9LEr9nkyXgh7KUUh7lL-Houdx3XpIQ_-3vJk50e7dTuUAvQ-dR/pubchart?oid=699943208&amp;format=interactive"></iframe>
+                    <iframe width="600" height="371" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTrF6mLbo5-qLN-uhd7J2LeeV7LvE9LEr9nkyXgh7KUUh7lL-Houdx3XpIQ_-3vJk50e7dTuUAvQ-dR/pubchart?oid=1338338691&amp;format=interactive"></iframe>
+
+                    {# --------------------------------------------------------------------- #}
+                    {# SCRIPTS JS – INJECTION DES DONNÉES                                         #}
+                    {# --------------------------------------------------------------------- #}
+
+                    <script>
+                        // Tableaux PHP ➜ Twig ➜ JavaScript (données Highcharts)
+                        var EauAquarium = {{ EauAquarium|raw }};
+                        var EauReserve  = {{ EauReserve|raw }};
+                        var EauPotager  = {{ EauPotager|raw }};
+
+                        var TempAir    = {{ TempAir|raw }};
+                        var TempEau    = {{ TempEau|raw }};
+                        var Humidite   = {{ Humidite|raw }};
+                        var Luminosite = {{ Luminosite|raw }};
+
+                        var etatPompeAqua = {{ etatPompeAqua|raw }};
+                        var etatPompeTank = {{ etatPompeTank|raw }};
+                        var etatHeat      = {{ etatHeat|raw }};
+                        var etatUV        = {{ etatUV|raw }};
+
+                        var bouffePetits = {{ bouffePetits|raw }};
+                        var bouffeGros   = {{ bouffeGros|raw }};
+
+                        var reading_time = {{ reading_time|raw }};
+
+                        // Association horodatage ➜ valeurs
+                        for (var i = 0, l = EauAquarium.length; i < l; i++) {
+                            EauAquarium[i] = [ reading_time[i], EauAquarium[i] ];
+                            EauReserve[i]  = [ reading_time[i], EauReserve[i]  ];
+                            EauPotager[i]  = [ reading_time[i], EauPotager[i]  ];
+                            etatPompeAqua[i] = [ reading_time[i], etatPompeAqua[i] ];
+                            etatPompeTank[i] = [ reading_time[i], etatPompeTank[i] ];
+                            etatHeat[i]      = [ reading_time[i], etatHeat[i]      ];
+                            TempEau[i]       = [ reading_time[i], TempEau[i]       ];
+                            TempAir[i]       = [ reading_time[i], TempAir[i]       ];
+                            Humidite[i]      = [ reading_time[i], Humidite[i]      ];
+                            Luminosite[i]    = [ reading_time[i], Luminosite[i]    ];
+                            etatUV[i]        = [ reading_time[i], etatUV[i]        ];
+                            bouffePetits[i]  = [ reading_time[i], bouffePetits[i]  ];
+                            bouffeGros[i]    = [ reading_time[i], bouffeGros[i]    ];
+                        }
+
+                        // --- Highcharts : Niveaux d'eau ---
+                        Highcharts.chart('chart-niveauxeaux', {
+                            chart: { zoomType: 'xy' },
+                            title: { text: 'Les niveaux en eau', align: 'left' },
+                            subtitle: { text: 'ffp3', align: 'left' },
+                            xAxis: [{ type: 'datetime', crosshair: true }],
+                            yAxis: [{ // Secondary
+                                gridLineWidth: 0,
+                                tickInterval: 1,
+                                title: { text: 'Distance eau aquarium et potager', style: { color: ['#FF6300'] } },
+                                labels: { format: '{value} cm', style: { color: ['#FF6300'] } }
+                            }, {
+                                max: 80,
+                                min: 0,
+                                tickInterval: 5,
+                                opposite: true,
+                                labels: { format: '{value} cm', style: { color: ['#007E61'] } },
+                                title: { text: 'Distance eau réserve', style: { color: ['#007E61'] } }
+                            }, {
+                                gridLineWidth: 0,
+                                max: 10,
+                                title: { text: ' ', style: { color: ['#27BDA0'] } },
+                                labels: { format: '', style: { color: ['#FFFFFF'] } },
+                                opposite: true
+                            }],
+                            tooltip: { shared: true },
+                            legend: {
+                                layout: 'horizontal', align: 'left', x: 300,
+                                verticalAlign: 'top', y: 0, floating: true,
+                                backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'rgba(255,255,255,0.25)'
+                            },
+                            series: [{ name: 'Eau aquarium', type: 'spline', yAxis: 0, data: EauAquarium, zIndex: 9, color: '#FF6300', tooltip: { valueSuffix: ' cm' } },
+                                     { name: 'Eau du potager', type: 'spline', lineWidth: 0.5, yAxis: 0, data: EauPotager, zIndex: 5, color: '#27BDA0', tooltip: { valueSuffix: ' cm' } },
+                                     { name: 'Eau de la réserve', type: 'spline', yAxis: 1, data: EauReserve, zIndex: 3, color: '#007E61', marker: { enabled: false }, dashStyle: 'shortdot', tooltip: { valueSuffix: ' cm' } },
+                                     { name: 'Pompe réserve', type: 'column', yAxis: 2, data: etatPompeTank, zIndex: 6, color: '#FF9F64', tooltip: { valueSuffix: ' on-off' } },
+                                     { name: 'Pompe aquarium', type: 'column', yAxis: 2, data: etatPompeAqua, zIndex: 1, color: '#27BDA0', tooltip: { valueSuffix: ' on-off' } },
+                                     { name: 'Chauffage', type: 'column', yAxis: 1, data: etatHeat, zIndex: 2, color: '#008E72', tooltip: { valueSuffix: ' on-off' } }]
+                        });
+
+                        // --- Highcharts : Paramètres physiques --- (code abrégé pour clarté)
+                        Highcharts.chart('chart-temperatures', {
+                            chart: { zoomType: 'xy' },
+                            title: { text: 'Les paramètres physiques', align: 'left' },
+                            subtitle: { text: 'ffp3', align: 'left' },
+                            xAxis: [{ type: 'datetime', crosshair: true }],
+                            yAxis: [{
+                                labels: { format: '{value} °C', style: { color: ['#007E61'] } },
+                                title: { text: 'Températures eau et air', style: { color: ['#007E61'] } }
+                            }, {
+                                gridLineWidth: 0,
+                                title: { text: 'Humidité air', style: { color: ['#000000'] } },
+                                labels: { format: '{value} %', style: { color: ['#000000'] } }
+                            }, {
+                                gridLineWidth: 0,
+                                title: { text: 'Luminosité', style: { color: ['#FF6300'] } },
+                                labels: { format: '{value} UA', style: { color: ['#FF6300'] } },
+                                opposite: true
+                            }, {
+                                gridLineWidth: 0,
+                                max: 10,
+                                title: { text: ' ', style: { color: ['#27BDA0'] } },
+                                labels: { format: '', style: { color: ['#FFFFFF'] } },
+                                opposite: true
+                            }],
+                            tooltip: { shared: true },
+                            legend: {
+                                layout: 'horizontal', align: 'left', x: 350,
+                                verticalAlign: 'top', y: 0, floating: true,
+                                backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'rgba(255,255,255,0.25)'
+                            },
+                            series: [{ name: 'Température eau', type: 'spline', yAxis: 0, data: TempEau, zIndex: 10, color: '#00B794', tooltip: { valueSuffix: ' °C' } },
+                                     { name: 'Température air', type: 'spline', yAxis: 0, data: TempAir, zIndex: 9, color: '#007E61', tooltip: { valueSuffix: ' °C' } },
+                                     { name: 'Humidité', type: 'spline', yAxis: 1, data: Humidite, zIndex: 8, color: '#000000', dashStyle: 'shortdot', tooltip: { valueSuffix: ' %' } },
+                                     { name: 'Luminosité', type: 'spline', yAxis: 2, data: Luminosite, zIndex: 7, color: '#FF6300', tooltip: { valueSuffix: ' UA' } },
+                                     { name: 'Etat LEDs', type: 'column', yAxis: 3, data: etatUV, zIndex: 6, color: '#FF9F64', tooltip: { valueSuffix: ' on-off' } },
+                                     { name: 'Nourriture gros poissons', type: 'column', yAxis: 3, data: bouffeGros, zIndex: 6, color: '#27BDA0', tooltip: { valueSuffix: ' on-off' } },
+                                     { name: 'Nourriture petits poissons', type: 'column', yAxis: 3, data: bouffePetits, zIndex: 6, color: '#008E72', tooltip: { valueSuffix: ' on-off' } }]
+                        });
+
+                        // --- Dernières valeurs ➜ gauges ---
+                        var TemperatureAir = {{ last_reading_tempair|default(0) }};
+                        var TemperatureEau = {{ last_reading_tempeau|default(0) }};
+                        var HumiditeLast   = {{ last_reading_humi|default(0) }};
+                        var LuminositeLast = {{ last_reading_lumi|default(0) }};
+                        var EauAquariumLast = {{ last_reading_eauaqua|default(0) }};
+                        var EauReserveLast  = {{ last_reading_eaureserve|default(0) }};
+                        var EauPotagerLast  = {{ last_reading_eaupota|default(0) }};
+
+                        // Fonctions JS pour alimenter les jauges... (code inchangé)
+                        // Affichage direct des dernières valeurs dans les jauges
+
+                        setTempAir(TemperatureAir);
+                        setTempEau(TemperatureEau);
+                        setHumidite(HumiditeLast);
+                        setLuminosite(LuminositeLast);
+                        setEauAquarium(EauAquariumLast);
+                        setEauReserve(EauReserveLast);
+                        setEauPotager(EauPotagerLast);
+
+                        // ---------- Fonctions helper jauges ----------
+                        function scaleValue(value, from, to) {
+                            var scale = (to[1] - to[0]) / (from[1] - from[0]);
+                            var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
+                            return ~~(capped * scale + to[0]);
+                        }
+
+                        function rotateGauge(selector, degrees) {
+                            document.querySelector(selector).style.transform = 'rotate(' + degrees + 'deg)';
+                        }
+
+                        function setTempAir(curVal){
+                            var ang = scaleValue(curVal, [5, 35], [0, 180]);
+                            rotateGauge('.gauge--1 .semi-circle--mask', ang);
+                            document.getElementById('tempair').textContent = curVal + ' ºC';
+                        }
+                        function setTempEau(curVal){
+                            var ang = scaleValue(curVal, [5, 35], [0, 180]);
+                            rotateGauge('.gauge--2 .semi-circle--mask', ang);
+                            document.getElementById('tempeau').textContent = curVal + ' ºC';
+                        }
+                        function setHumidite(curVal){
+                            var ang = scaleValue(curVal, [0, 100], [0, 180]);
+                            rotateGauge('.gauge--3 .semi-circle--mask', ang);
+                            document.getElementById('humi').textContent = curVal + ' %';
+                        }
+                        function setLuminosite(curVal){
+                            var ang = scaleValue(curVal, [0, 4095], [0, 180]);
+                            rotateGauge('.gauge--4 .semi-circle--mask', ang);
+                            document.getElementById('lumi').textContent = curVal + ' UA';
+                        }
+                        function setEauAquarium(curVal){
+                            var ang = scaleValue(curVal, [5, 25], [0, 180]);
+                            rotateGauge('.gauge--5 .semi-circle--mask', ang);
+                            document.getElementById('eauaqua').textContent = curVal + ' cm';
+                        }
+                        function setEauReserve(curVal){
+                            var ang = scaleValue(curVal, [5, 75], [0, 180]);
+                            rotateGauge('.gauge--6 .semi-circle--mask', ang);
+                            document.getElementById('eaureserve').textContent = curVal + ' cm';
+                        }
+                        function setEauPotager(curVal){
+                            var ang = scaleValue(curVal, [0, 25], [0, 180]);
+                            rotateGauge('.gauge--7 .semi-circle--mask', ang);
+                            document.getElementById('eaupota').textContent = curVal + ' cm';
+                        }
+                    </script>
+
+                    <!-- Fin du contenu migré -->
+                </article>
+            </div>
+        </div>
+    </body>
+</html> 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Config\TableConfig;
+use App\Domain\SensorData;
 use PDO;
 
 /**
@@ -86,15 +87,65 @@ class OutputRepository
     }
 
     /**
-     * Récupère l'état actuel d'un output
+     * Synchronise les états des GPIO depuis les données capteurs
+     * Met à jour ffp3Outputs ou ffp3Outputs2 selon l'environnement
      * 
-     * @param int $gpio Numéro GPIO
-     * @return int|null État (0 ou 1), ou null si non trouvé
+     * @param SensorData $data Données capteurs contenant les états à synchroniser
      */
-    public function getState(int $gpio): ?int
+    public function syncStatesFromSensorData(SensorData $data): void
     {
-        $output = $this->findByGpio($gpio);
-        return $output !== null ? (int)$output['state'] : null;
+        $table = TableConfig::getOutputsTable();
+        
+        // Mapping des champs SensorData vers les GPIO
+        $gpioUpdates = [
+            // Actionneurs physiques
+            2 => $data->etatHeat,           // Chauffage
+            15 => $data->etatUV,            // Lumière
+            16 => $data->etatPompeAqua,     // Pompe aquarium
+            18 => $data->etatPompeTank,     // Pompe réservoir
+            
+            // Configuration
+            100 => $data->mail,             // Email (string)
+            101 => $data->mailNotif,        // Notifications (string)
+            102 => $data->aqThreshold,       // Seuil aquarium
+            103 => $data->tankThreshold,     // Seuil réservoir
+            104 => $data->chauffageThreshold, // Seuil chauffage
+            105 => $data->bouffeMatin,      // Heure nourrissage matin
+            106 => $data->bouffeMidi,       // Heure nourrissage midi
+            107 => $data->bouffeSoir,       // Heure nourrissage soir
+            
+            // Paramètres timing
+            111 => $data->tempsGros,        // Temps nourrissage gros
+            112 => $data->tempsPetits,      // Temps nourrissage petits
+            113 => $data->tempsRemplissageSec, // Temps remplissage
+            114 => $data->limFlood,         // Limite débordement
+            115 => $data->wakeUp,           // WakeUp forcé
+            116 => $data->freqWakeUp,       // Fréquence réveil
+        ];
+        
+        // Transaction pour garantir la cohérence
+        $this->pdo->beginTransaction();
+        
+        try {
+            foreach ($gpioUpdates as $gpio => $value) {
+                if ($value !== null) {
+                    // Conversion en string pour compatibilité avec le type varchar(64)
+                    $stateValue = (string)$value;
+                    
+                    $sql = "UPDATE {$table} SET state = :state WHERE gpio = :gpio";
+                    $stmt = $this->pdo->prepare($sql);
+                    $stmt->execute([
+                        ':gpio' => $gpio,
+                        ':state' => $stateValue
+                    ]);
+                }
+            }
+            
+            $this->pdo->commit();
+            
+        } catch (\Exception $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
     }
-}
 

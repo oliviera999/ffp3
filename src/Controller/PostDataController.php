@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Config\Database;
 use App\Domain\SensorData;
+use App\Repository\OutputRepository;
 use App\Repository\SensorRepository;
 use App\Service\LogService;
 use App\Security\SignatureValidator;
@@ -122,7 +123,13 @@ class PostDataController
             mail: $sanitize('mail'),
             mailNotif: $sanitize('mailNotif'),
             resetMode: $toInt('resetMode'),
-            bouffeSoir: $toInt('bouffeSoir')
+            bouffeSoir: $toInt('bouffeSoir'),
+            tempsGros: $toInt('tempsGros'),
+            tempsPetits: $toInt('tempsPetits'),
+            tempsRemplissageSec: $toInt('tempsRemplissageSec'),
+            limFlood: $toInt('limFlood'),
+            wakeUp: $toInt('WakeUp'),
+            freqWakeUp: $toInt('FreqWakeUp')
         );
 
         try {
@@ -130,7 +137,11 @@ class PostDataController
             $repo = new SensorRepository($pdo);
             $repo->insert($data);
 
-            $this->logger->info('Données capteurs insérées', ['sensor' => $data->sensor, 'version' => $data->version]);
+            // Synchroniser les états dans ffp3Outputs/ffp3Outputs2
+            $outputRepo = new OutputRepository($pdo);
+            $outputRepo->syncStatesFromSensorData($data);
+
+            $this->logger->info('Données capteurs insérées et outputs synchronisés', ['sensor' => $data->sensor, 'version' => $data->version]);
             
             $response->getBody()->write('Données enregistrées avec succès');
             return $response->withStatus(200)->withHeader('Content-Type', 'text/plain; charset=utf-8');
