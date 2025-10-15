@@ -7,6 +7,45 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.1] - 2025-01-27 🎨 AMÉLIORATION UX - Regroupement des contrôles Chauffage & Lumière
+
+### 🎨 Amélioration interface
+- **Section Chauffage transformée en "Chauffage & Lumière"** avec boutons intégrés
+- Boutons du radiateur et de la lumière déplacés vers la section Chauffage & Lumière
+- Interface plus cohérente avec séparation claire entre contrôle des équipements et paramètres de température
+- Amélioration de l'ergonomie et de la lisibilité des contrôles thermiques et lumineux
+
+### 🔧 Optimisation technique
+- Suppression des doublons dans la section Actions
+- Meilleure organisation du code Twig pour la section Chauffage & Lumière
+- Interface responsive maintenue avec les nouveaux éléments
+- Filtrage intelligent des outputs pour éviter les répétitions
+
+---
+
+## [4.6.0] - 2025-01-27 🎨 AMÉLIORATION MAJEURE - Interface aquaponie modernisée
+
+### 🎨 Interface utilisateur modernisée
+- **Nouveau header hero moderne** avec gradient et animations
+- **Section d'accueil repensée** avec statistiques rapides en temps réel
+- **Cartes de données améliorées** avec animations fluides et effets hover
+- **Progress bars modernisées** avec animations shimmer et transitions
+- **Section headers redesignés** avec icônes stylisées et effets visuels
+- **Design responsive optimisé** pour tous les écrans
+
+### ✨ Nouvelles fonctionnalités visuelles
+- Badges de statut système avec informations version et environnement
+- Statistiques rapides dans le header (mesures, période, jours actifs, température)
+- Animations CSS avancées (float, pulse, shimmer)
+- Effets de transparence et backdrop-filter pour un look moderne
+- Palette de couleurs harmonisée avec la charte olution.info
+
+### 🔧 Améliorations techniques
+- CSS modernisé avec Flexbox et Grid Layout
+- Animations CSS optimisées avec cubic-bezier
+- Responsive design amélioré pour mobile et tablette
+- Code CSS mieux organisé avec sections commentées
+
 ## [4.5.47] - 2025-01-27 🎨 AMÉLIORATION UX - Réorganisation de l'ordre des sections
 
 ### 🎨 Amélioration interface

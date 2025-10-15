@@ -768,8 +768,8 @@
                                 <i class="fas fa-bolt"></i> Actions
                             </h3>
                             
-                            {# Préparation des outputs avec icônes - Exclure GPIO 108, 109 (nourrissage manuel) et pompes (aquarium/réserve) #}
-                            {% set physical_outputs = outputs|filter(o => (o.gpio < 100 or o.gpio == 101 or o.gpio == 110 or o.gpio == 115) and o.name is not empty and not (o.name|lower matches '/pompe aqua/' or o.name|lower matches '/pompe.*r.*serve/')) %}
+                            {# Préparation des outputs avec icônes - Exclure GPIO 108, 109 (nourrissage manuel), pompes (aquarium/réserve), chauffage et lumière #}
+                            {% set physical_outputs = outputs|filter(o => (o.gpio < 100 or o.gpio == 101 or o.gpio == 110 or o.gpio == 115) and o.name is not empty and not (o.name|lower matches '/pompe aqua/' or o.name|lower matches '/pompe.*r.*serve/' or o.name|lower matches '/radiateur/' or o.name|lower matches '/lumi.*re/')) %}
                             
                             <div class="action-buttons-grid">
                                 {% for output in physical_outputs %}
@@ -1042,11 +1042,75 @@
                                     </div>
                                 </div>
                         
-                                {# Chauffage - Section pleine largeur #}
+                                {# Chauffage & Lumière - Section complète avec boutons et réglages #}
                                 <div class="param-box" style="background: #fff3e0 !important; margin-bottom: 12px !important; padding: 12px !important;">
-                                    <h4><i class="fas fa-temperature-half"></i> Chauffage</h4>
-                                    <label for="chauff">Température min. (°C)</label>
-                                    <input type="number" name="chauff" min="0" step="0.1" id="chauff" value="{{ params.chauff|default(0) }}">
+                                    <h4><i class="fas fa-temperature-half"></i> Chauffage & Lumière</h4>
+                                    
+                                    {# Boutons chauffage et lumière #}
+                                    {% set heating_light_outputs = outputs|filter(o => o.name|lower matches '/radiateur/' or o.name|lower matches '/lumi.*re/') %}
+                                    {% if heating_light_outputs|length > 0 %}
+                                        <div style="margin-bottom: 15px;">
+                                            <p style="margin: 0 0 8px 0; font-weight: 500; font-size: 0.9em; color: #2c3e50;">Contrôle des équipements</p>
+                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                                {% for output in heating_light_outputs %}
+                                                    {% set clean_name = output.name|replace({
+                                                        '(stopp&#233;s si relais activ&#233;)': '',
+                                                        '(stopp&#233;e si relais activ&#233;)': '',
+                                                        '(stoppés si relais activé)': '',
+                                                        '(stoppée si relais activé)': '',
+                                                        ' (stopp&#233;s si relais activ&#233;)': '',
+                                                        ' (stopp&#233;e si relais activ&#233;)': '',
+                                                        ' (stoppés si relais activé)': '',
+                                                        ' (stoppée si relais activé)': ''
+                                                    })|trim %}
+                                                    
+                                                    {% if clean_name|lower matches '/radiateur/' %}
+                                                        {% set icon = 'fa-temperature-high' %}
+                                                        {% set color = '#e74c3c' %}
+                                                        {% set display_name = 'Radiateur' %}
+                                                    {% elseif clean_name|lower matches '/lumi.*re/' %}
+                                                        {% set icon = 'fa-lightbulb' %}
+                                                        {% set color = '#f39c12' %}
+                                                        {% set display_name = 'Lumière' %}
+                                                    {% else %}
+                                                        {% set icon = 'fa-circle' %}
+                                                        {% set color = '#008B74' %}
+                                                        {% set display_name = clean_name %}
+                                                    {% endif %}
+                                                    
+                                                    <div class="action-button-card action-button-red" data-state="{{ output.state }}" style="padding: 8px !important; margin: 0 !important;">
+                                                        <div class="action-button-content">
+                                                            <i class="fas {{ icon }} action-icon-simple" style="color: {{ color }}; font-size: 1.2rem !important;"></i>
+                                                            <div class="action-button-info">
+                                                                <div class="action-button-label" style="font-size: 0.8rem !important;">{{ display_name }}</div>
+                                                                <div class="action-button-status" style="font-size: 0.7rem !important;">
+                                                                    <span class="status-text">{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <label class="modern-switch" style="transform: scale(0.8);">
+                                                            <input type="checkbox" 
+                                                                   onchange="updateOutput(this)" 
+                                                                   id="{{ output.id }}" 
+                                                                   data-id="{{ output.id }}"
+                                                                   data-gpio="{{ output.gpio }}"
+                                                                   {{ output.state == 1 ? 'checked' : '' }}>
+                                                            <span class="modern-switch-slider">
+                                                                <span class="modern-switch-button"></span>
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    {# Réglages de température #}
+                                    <div style="border-top: 1px solid #e0e0e0; padding-top: 12px;">
+                                        <p style="margin: 0 0 8px 0; font-weight: 500; font-size: 0.9em; color: #2c3e50;">Paramètres de température</p>
+                                        <label for="chauff">Température min. (°C)</label>
+                                        <input type="number" name="chauff" min="0" step="0.1" id="chauff" value="{{ params.chauff|default(0) }}">
+                                    </div>
                                 </div>
                         
                                 {# Email de notification #}
