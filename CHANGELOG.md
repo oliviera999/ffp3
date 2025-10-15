@@ -7,6 +7,32 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.6] - 2025-01-27 🔧 CORRECTION - Migration complète vers injection de dépendances
+
+### 🐛 Corrections critiques
+- **Erreurs 500 corrigées** sur toutes les pages web (`/aquaponie`, `/control`, `/dashboard`)
+- **Erreurs 500 corrigées** sur toutes les API temps réel (`/api/realtime/*`)
+- **Migration complète** de tous les contrôleurs vers l'injection de dépendances
+
+### 🔧 Améliorations techniques
+- **HomeController** : Migration vers DI avec TemplateRenderer
+- **DashboardController** : Migration vers DI avec SensorReadRepository, SensorStatisticsService, TemplateRenderer
+- **ExportController** : Migration vers DI avec SensorReadRepository
+- **HeartbeatController** : Migration vers DI avec LogService
+- **PostDataController** : Migration vers DI avec LogService
+- **Configuration DI** : Ajout de toutes les définitions manquantes dans `config/dependencies.php`
+- **Suppression** des instanciations manuelles dans les constructeurs
+- **Correction** des appels statiques `TemplateRenderer::render`
+
+### 📋 Résolution des erreurs
+- ✅ `/aquaponie` : Erreur 500 → 200 OK
+- ✅ `/control` : Erreur 500 → 200 OK
+- ✅ `/api/realtime/sensors/latest` : Erreur 500 → 200 OK
+- ✅ `/api/realtime/outputs/state` : Erreur 500 → 200 OK
+- ✅ `/api/realtime/system/health` : Erreur 500 → 200 OK
+
+---
+
 ## [4.6.5] - 2025-01-27 🔧 CORRECTION - Erreurs 500 API temps réel et contrôle
 
 ### 🐛 Corrections critiques
