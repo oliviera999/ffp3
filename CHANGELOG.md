@@ -7,6 +7,32 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.42] - 2025-01-27 ✨ AMÉLIORATION UX - Enregistrement automatique du formulaire de contrôle
+
+### ✨ Nouvelle fonctionnalité
+- **Enregistrement automatique** des paramètres du formulaire de contrôle
+- Les valeurs s'enregistrent automatiquement 1 seconde après la saisie (système de debounce)
+- Plus besoin de cliquer sur "Changer les valeurs" pour sauvegarder
+- Feedback visuel en temps réel :
+  - 🟠 Bordure orange pendant l'enregistrement
+  - 🟢 Bordure verte en cas de succès
+  - 🔴 Bordure rouge en cas d'erreur
+- Message de statut affiché en haut du formulaire
+- Compatible avec tous les types de champs (text, number, select)
+
+### 🔧 Améliorations techniques
+- Système de debounce pour éviter trop de requêtes simultanées
+- Gestion des états visuels avec transitions CSS fluides
+- Conservation de la fonctionnalité d'enregistrement manuel
+- Application sur les deux environnements (PROD et TEST)
+
+### 📝 Fichiers modifiés
+- **Modifié** : `ffp3control/securecontrol/ffp3-outputs.php` - Interface de contrôle PROD
+- **Modifié** : `ffp3control/securecontrol/ffp3-outputs2.php` - Interface de contrôle TEST
+- **Modifié** : `VERSION` - Incrémentation 4.5.41 → 4.5.42
+
+---
+
 ## [4.5.41] - 2025-10-14 🔧 CORRECTION CRITIQUE - Force environnement PROD pour garantir bonnes tables
 
 ### 🚨 Correction critique

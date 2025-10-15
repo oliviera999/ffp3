@@ -110,6 +110,43 @@
 		<noscript><link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
         <link rel="stylesheet" href="/ffp3/ffp3control/ffp3-style.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <style>
+            .auto-save-field {
+                transition: border-color 0.3s ease;
+            }
+            .auto-save-field.saving {
+                border-color: #ffa500 !important;
+                box-shadow: 0 0 5px rgba(255, 165, 0, 0.5);
+            }
+            .auto-save-field.saved {
+                border-color: #28a745 !important;
+                box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+            }
+            .auto-save-field.error {
+                border-color: #dc3545 !important;
+                box-shadow: 0 0 5px rgba(220, 53, 69, 0.5);
+            }
+            #save-status {
+                padding: 10px;
+                border-radius: 5px;
+                margin: 10px 0;
+            }
+            #save-status.saving {
+                background-color: #fff3cd;
+                color: #856404;
+                border: 1px solid #ffeaa7;
+            }
+            #save-status.saved {
+                background-color: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+            }
+            #save-status.error {
+                background-color: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+        </style>
 		<link rel="shortcut icon" type="image/png" href="https://iot.olution.info/images/favico.png"/>
 	</head>
 	<body class="is-preload">
@@ -150,37 +187,40 @@
                                     <div>
                                         <form onsubmit="return createOutput();">
                                             <h3 style="text-align:center">Changer les paramètres</h3>
+                                            <div id="save-status" style="text-align: center; margin: 10px 0; font-weight: bold; display: none;">
+                                                <span id="save-message"></span>
+                                            </div>
                                             <label for="mail">Mail</label>
-                                            <input type="text" name="mail" id="mail" value=<?php echo $mail; ?>><br>
+                                            <input type="text" name="mail" id="mail" value=<?php echo $mail; ?> class="auto-save-field"><br>
                                             <label for="mailNotif">Notification par mail (<?php echo $mailNotif; ?>)</label>
-                                            <select id="mailNotif" name="mailNotif">
+                                            <select id="mailNotif" name="mailNotif" class="auto-save-field">
                                               <option value="checked">oui</option>
                                               <option value="false">non</option>
                                             </select>
                                             <label for="aqThr">Limite aquarium</label>
-                                            <input type="number" name="aqThr" min="0" id="aqThr" value=<?php echo $aqThr; ?>>
+                                            <input type="number" name="aqThr" min="0" id="aqThr" value=<?php echo $aqThr; ?> class="auto-save-field">
                                             <label for="taThr">Limite réserve</label>
-                                            <input type="number" name="taThr" min="0" id="taThr" value=<?php echo $taThr; ?>>
+                                            <input type="number" name="taThr" min="0" id="taThr" value=<?php echo $taThr; ?> class="auto-save-field">
                                             <label for="tempsRemplissageSec">Temps de remplissage de l'aquarium</label>
-                                            <input type="number" name="tempsRemplissageSec" min="0" id="tempsRemplissageSec" value=<?php echo $tempsRemplissageSec; ?>>
+                                            <input type="number" name="tempsRemplissageSec" min="0" id="tempsRemplissageSec" value=<?php echo $tempsRemplissageSec; ?> class="auto-save-field">
                                             <label for="$limFlood">Limite pour le débordement</label>
-                                            <input type="number" name="limFlood" min="0" id="limFlood" value=<?php echo $limFlood; ?>>
+                                            <input type="number" name="limFlood" min="0" id="limFlood" value=<?php echo $limFlood; ?> class="auto-save-field">
                                             <label for="chauff">Limite chauffage</label>
-                                            <input type="number" name="chauff" min="0" id="chauff" value=<?php echo $chThr; ?>>
+                                            <input type="number" name="chauff" min="0" id="chauff" value=<?php echo $chThr; ?> class="auto-save-field">
                                             <label for="bouffeMat">Heure de nourriture le matin</label>
-                                            <input type="number" name="bouffeMat" min="0" id="bouffeMat" value=<?php echo $boMat; ?>>
+                                            <input type="number" name="bouffeMat" min="0" id="bouffeMat" value=<?php echo $boMat; ?> class="auto-save-field">
                                             <label for="bouffeMid">Heure de nourriture le midi</label>
-                                            <input type="number" name="bouffeMid" min="0" id="bouffeMid" value=<?php echo $boMid; ?>>
+                                            <input type="number" name="bouffeMid" min="0" id="bouffeMid" value=<?php echo $boMid; ?> class="auto-save-field">
                                             <label for="bouffeSoir">Heure de nourriture le soir</label>
-                                            <input type="number" name="bouffeSoir" min="0" id="bouffeSoir" value=<?php echo $boSoi; ?>>
+                                            <input type="number" name="bouffeSoir" min="0" id="bouffeSoir" value=<?php echo $boSoi; ?> class="auto-save-field">
                                             <label for="tempsGros">Temps de nourrissage des gros poissons</label>
-                                            <input type="number" name="tempsGros" min="0" id="tempsGros" value=<?php echo $tGros; ?>>
+                                            <input type="number" name="tempsGros" min="0" id="tempsGros" value=<?php echo $tGros; ?> class="auto-save-field">
                                             <label for="tempsPetits">Temps de nourrissage des petits poissons</label>
-                                            <input type="number" name="tempsPetits" min="0" id="tempsPetits" value=<?php echo $tPetits; ?>>
+                                            <input type="number" name="tempsPetits" min="0" id="tempsPetits" value=<?php echo $tPetits; ?> class="auto-save-field">
                                             <label for="WakeUp">Forçage éveil</label>
-                                            <input type="number" name="WakeUp" min="0" id="WakeUp" value=<?php echo $WakeUp; ?>>
+                                            <input type="number" name="WakeUp" min="0" id="WakeUp" value=<?php echo $WakeUp; ?> class="auto-save-field">
                                             <label for="FreqWakeUp">Forçage éveil</label>
-                                            <input type="number" name="FreqWakeUp" min="0" id="FreqWakeUp" value=<?php echo $FreqWakeUp; ?>>
+                                            <input type="number" name="FreqWakeUp" min="0" id="FreqWakeUp" value=<?php echo $FreqWakeUp; ?> class="auto-save-field">
                                             <input type="submit" value="Changer les valeurs">
                                         </form>
                                     </div>
@@ -198,6 +238,136 @@
                     </div>
 
     <script>
+        // Variables pour l'enregistrement automatique
+        let saveTimeout = null;
+        let isSaving = false;
+        const SAVE_DELAY = 1000; // Délai de 1 seconde avant l'enregistrement automatique
+
+        // Fonction pour afficher le statut de sauvegarde
+        function showSaveStatus(message, type) {
+            const statusDiv = document.getElementById('save-status');
+            const messageSpan = document.getElementById('save-message');
+            
+            statusDiv.className = type;
+            messageSpan.textContent = message;
+            statusDiv.style.display = 'block';
+            
+            // Masquer le message après 3 secondes pour les succès
+            if (type === 'saved') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Fonction pour mettre à jour l'apparence d'un champ
+        function updateFieldAppearance(fieldId, state) {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.classList.remove('saving', 'saved', 'error');
+                field.classList.add(state);
+                
+                // Retirer la classe après 2 secondes pour 'saved' et 'error'
+                if (state === 'saved' || state === 'error') {
+                    setTimeout(() => {
+                        field.classList.remove(state);
+                    }, 2000);
+                }
+            }
+        }
+
+        // Fonction d'enregistrement automatique avec debounce
+        function autoSave() {
+            // Annuler le timeout précédent s'il existe
+            if (saveTimeout) {
+                clearTimeout(saveTimeout);
+            }
+
+            // Programmer un nouvel enregistrement
+            saveTimeout = setTimeout(() => {
+                if (!isSaving) {
+                    performAutoSave();
+                }
+            }, SAVE_DELAY);
+        }
+
+        // Fonction qui effectue réellement l'enregistrement
+        function performAutoSave() {
+            if (isSaving) return;
+            
+            isSaving = true;
+            showSaveStatus('Enregistrement en cours...', 'saving');
+
+            // Marquer tous les champs comme "en cours de sauvegarde"
+            const fields = document.querySelectorAll('.auto-save-field');
+            fields.forEach(field => {
+                updateFieldAppearance(field.id, 'saving');
+            });
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "https://iot.olution.info/ffp3/ffp3control/ffp3-outputs-action2.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            xhr.onreadystatechange = function() {
+                if (this.readyState === XMLHttpRequest.DONE) {
+                    isSaving = false;
+                    
+                    if (this.status === 200) {
+                        showSaveStatus('✓ Paramètres sauvegardés automatiquement', 'saved');
+                        
+                        // Marquer tous les champs comme "sauvegardés"
+                        fields.forEach(field => {
+                            updateFieldAppearance(field.id, 'saved');
+                        });
+                    } else {
+                        showSaveStatus('✗ Erreur lors de la sauvegarde automatique', 'error');
+                        
+                        // Marquer tous les champs comme "erreur"
+                        fields.forEach(field => {
+                            updateFieldAppearance(field.id, 'error');
+                        });
+                    }
+                }
+            }
+
+            // Récupérer toutes les valeurs des champs
+            var mail = document.getElementById("mail").value;
+            var mailNotif = document.getElementById("mailNotif").value;
+            var aqThr = document.getElementById("aqThr").value;
+            var taThr = document.getElementById("taThr").value;
+            var tempsRemplissageSec = document.getElementById("tempsRemplissageSec").value;
+            var limFlood = document.getElementById("limFlood").value;
+            var chauff = document.getElementById("chauff").value;
+            var bouffeMat = document.getElementById("bouffeMat").value;
+            var bouffeMid = document.getElementById("bouffeMid").value;
+            var bouffeSoir = document.getElementById("bouffeSoir").value;
+            var tempsGros = document.getElementById("tempsGros").value;
+            var tempsPetits = document.getElementById("tempsPetits").value;
+            var WakeUp = document.getElementById("WakeUp").value;
+            var FreqWakeUp = document.getElementById("FreqWakeUp").value;
+
+            var httpRequestData = "action=output_create&mail="+mail+"&mailNotif="+mailNotif+"&aqThr="+aqThr+"&tempsRemplissageSec="+tempsRemplissageSec+"&limFlood="+limFlood+"&taThr="+taThr+"&chauff="+chauff+"&bouffeMat="+bouffeMat+"&bouffeMid="+bouffeMid+"&bouffeSoir="+bouffeSoir+"&tempsGros="+tempsGros+"&tempsPetits="+tempsPetits+"&WakeUp="+WakeUp+"&FreqWakeUp="+FreqWakeUp;
+            xhr.send(httpRequestData);
+        }
+
+        // Initialisation de l'enregistrement automatique
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ajouter les événements sur tous les champs avec la classe auto-save-field
+            const autoSaveFields = document.querySelectorAll('.auto-save-field');
+            
+            autoSaveFields.forEach(field => {
+                // Pour les champs de type number et text
+                field.addEventListener('input', autoSave);
+                field.addEventListener('change', autoSave);
+                
+                // Pour les select
+                if (field.tagName === 'SELECT') {
+                    field.addEventListener('change', autoSave);
+                }
+            });
+        });
+
+        // Fonctions existantes (conservées pour compatibilité)
         function updateOutput(element) {
             var xhr = new XMLHttpRequest();
             if(element.checked){
@@ -220,38 +390,14 @@
             }
         }
 
-
         function createOutput(element) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "https://iot.olution.info/ffp3/ffp3control/ffp3-outputs-action2.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-            xhr.onreadystatechange = function() {
-                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                    alert("Changement pris en compte");
-                    setTimeout(function(){ window.location.reload(); });
-                }
-                else {
-                    alert("Changement non pris en compte !");
-                }
+            // Cette fonction est maintenant utilisée pour l'enregistrement manuel
+            // Elle déclenche immédiatement l'enregistrement sans délai
+            if (saveTimeout) {
+                clearTimeout(saveTimeout);
             }
-            var mail = document.getElementById("mail").value;
-            var mailNotif = document.getElementById("mailNotif").value;
-            var aqThr = document.getElementById("aqThr").value;
-            var taThr = document.getElementById("taThr").value;
-            var tempsRemplissageSec = document.getElementById("tempsRemplissageSec").value;
-            var limFlood = document.getElementById("limFlood").value;
-            var chauff = document.getElementById("chauff").value;
-            var bouffeMat = document.getElementById("bouffeMat").value;
-            var bouffeMid = document.getElementById("bouffeMid").value;
-            var bouffeSoir = document.getElementById("bouffeSoir").value;
-            var tempsGros = document.getElementById("tempsGros").value;
-            var tempsPetits = document.getElementById("tempsPetits").value;
-            var WakeUp = document.getElementById("WakeUp").value;
-            var FreqWakeUp = document.getElementById("FreqWakeUp").value;
-
-            var httpRequestData = "action=output_create&mail="+mail+"&mailNotif="+mailNotif+"&aqThr="+aqThr+"&tempsRemplissageSec="+tempsRemplissageSec+"&limFlood="+limFlood+"&taThr="+taThr+"&chauff="+chauff+"&bouffeMat="+bouffeMat+"&bouffeMid="+bouffeMid+"&bouffeSoir="+bouffeSoir+"&tempsGros="+tempsGros+"&tempsPetits="+tempsPetits+"&WakeUp="+WakeUp+"&FreqWakeUp="+FreqWakeUp;
-            xhr.send(httpRequestData);
+            performAutoSave();
+            return false; // Empêcher la soumission du formulaire
         }
 
     </script>
