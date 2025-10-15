@@ -7,6 +7,31 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.2] - 2025-01-27 🎨 AMÉLIORATION MAJEURE - Interface pleine largeur et regroupement final
+
+### 🎨 Amélioration interface majeure
+- **Suppression de la colonne Actions** devenue vide après regroupement des contrôles
+- **Interface pleine largeur** : La colonne Paramètres occupe maintenant toute la largeur de la page
+- **Regroupement final des contrôles** :
+  - Boutons "Forçage réveil" et "Reset ESP" déplacés vers la section Système
+  - Bouton "Notifications" déplacé vers la section Email de notification
+- Interface plus moderne et épurée avec une seule colonne centrée
+
+### 🔧 Optimisation technique majeure
+- Suppression complète du code de la colonne Actions
+- Simplification du layout CSS (suppression de la grille 2 colonnes)
+- Meilleure utilisation de l'espace disponible
+- Interface responsive optimisée pour tous les écrans
+
+### ✨ Nouvelle organisation finale
+- **Gestion de l'eau** : Pompes + paramètres de niveau
+- **Nourrissage** : Actions manuelles + programmation automatique
+- **Chauffage & Lumière** : Contrôle des équipements + paramètres de température
+- **Email de notification** : Contrôle des notifications + configuration email
+- **Système** : Contrôle système + paramètres système
+
+---
+
 ## [4.6.1] - 2025-01-27 🎨 AMÉLIORATION UX - Regroupement des contrôles Chauffage & Lumière
 
 ### 🎨 Amélioration interface
