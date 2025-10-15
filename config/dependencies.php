@@ -119,9 +119,59 @@ return [
     },
 
     // ====================================================================
-    // CONTROLLERS (Autowiring activé par défaut avec PHP-DI)
+    // CONTROLLERS (Définis explicitement pour éviter les problèmes d'autowiring)
     // ====================================================================
-    // Les contrôleurs sont automatiquement résolus via autowiring
-    // Pas besoin de les définir explicitement sauf si configuration spéciale nécessaire
+    \App\Controller\OutputController::class => function (ContainerInterface $c) {
+        return new \App\Controller\OutputController(
+            $c->get(\App\Service\OutputService::class),
+            $c->get(\App\Service\TemplateRenderer::class),
+            $c->get(\App\Repository\SensorReadRepository::class)
+        );
+    },
+
+    \App\Controller\PostDataController::class => function (ContainerInterface $c) {
+        return new \App\Controller\PostDataController();
+    },
+
+    \App\Controller\HeartbeatController::class => function (ContainerInterface $c) {
+        return new \App\Controller\HeartbeatController(
+            $c->get(\App\Repository\SensorReadRepository::class)
+        );
+    },
+
+    \App\Controller\AquaponieController::class => function (ContainerInterface $c) {
+        return new \App\Controller\AquaponieController(
+            $c->get(\App\Service\SensorDataService::class),
+            $c->get(\App\Service\TideAnalysisService::class),
+            $c->get(\App\Service\WaterBalanceService::class),
+            $c->get(\App\Service\TemplateRenderer::class)
+        );
+    },
+
+    \App\Controller\DashboardController::class => function (ContainerInterface $c) {
+        return new \App\Controller\DashboardController(
+            $c->get(\App\Service\SensorDataService::class),
+            $c->get(\App\Service\TemplateRenderer::class)
+        );
+    },
+
+    \App\Controller\ExportController::class => function (ContainerInterface $c) {
+        return new \App\Controller\ExportController(
+            $c->get(\App\Service\SensorDataService::class)
+        );
+    },
+
+    \App\Controller\TideStatsController::class => function (ContainerInterface $c) {
+        return new \App\Controller\TideStatsController(
+            $c->get(\App\Service\TideAnalysisService::class),
+            $c->get(\App\Service\TemplateRenderer::class)
+        );
+    },
+
+    \App\Controller\RealtimeApiController::class => function (ContainerInterface $c) {
+        return new \App\Controller\RealtimeApiController(
+            $c->get(\App\Service\RealtimeDataService::class)
+        );
+    },
 ];
 
