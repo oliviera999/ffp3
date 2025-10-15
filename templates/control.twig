@@ -927,15 +927,15 @@
                                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
                                         <div>
                                             <label for="bouffeMat">Matin</label>
-                                            <input type="number" name="bouffeMat" min="0" max="23" id="bouffeMat" value="{{ params.bouffeMat|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                                    <input type="number" name="bouffeMat" min="0" max="23" id="bouffeMat" value="{{ params.bouffeMat|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;" onchange="autoSaveParameter('bouffeMat', this.value)">
                                         </div>
                                         <div>
                                             <label for="bouffeMid">Midi</label>
-                                            <input type="number" name="bouffeMid" min="0" max="23" id="bouffeMid" value="{{ params.bouffeMid|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                                    <input type="number" name="bouffeMid" min="0" max="23" id="bouffeMid" value="{{ params.bouffeMid|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;" onchange="autoSaveParameter('bouffeMid', this.value)">
                                         </div>
                                         <div>
                                             <label for="bouffeSoir">Soir</label>
-                                            <input type="number" name="bouffeSoir" min="0" max="23" id="bouffeSoir" value="{{ params.bouffeSoir|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                                    <input type="number" name="bouffeSoir" min="0" max="23" id="bouffeSoir" value="{{ params.bouffeSoir|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;" onchange="autoSaveParameter('bouffeSoir', this.value)">
                                         </div>
                                     </div>
                                     
@@ -943,11 +943,11 @@
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                                         <div>
                                             <label for="tempsGros">Gros poissons</label>
-                                            <input type="number" name="tempsGros" min="0" id="tempsGros" value="{{ params.tempsGros|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                                    <input type="number" name="tempsGros" min="0" id="tempsGros" value="{{ params.tempsGros|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;" onchange="autoSaveParameter('tempsGros', this.value)">
                                         </div>
                                         <div>
                                             <label for="tempsPetits">Petits poissons</label>
-                                            <input type="number" name="tempsPetits" min="0" id="tempsPetits" value="{{ params.tempsPetits|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;">
+                                                    <input type="number" name="tempsPetits" min="0" id="tempsPetits" value="{{ params.tempsPetits|default(0) }}" style="width: 100%; font-size: 1em !important; padding: 6px 10px !important;" onchange="autoSaveParameter('tempsPetits', this.value)">
                                         </div>
                                     </div>
                                 </div>
@@ -1028,7 +1028,7 @@
                                         <div style="border-top: 1px solid #e0e0e0; padding-top: 12px;">
                                             <p style="margin: 0 0 8px 0; font-weight: 500; font-size: 0.9em; color: #2c3e50;">Paramètres de température</p>
                                             <label for="chauff">Température min. (°C)</label>
-                                            <input type="number" name="chauff" min="0" step="0.1" id="chauff" value="{{ params.chauff|default(0) }}">
+                                            <input type="number" name="chauff" min="0" step="0.1" id="chauff" value="{{ params.chauff|default(0) }}" onchange="autoSaveParameter('chauff', this.value)">
                                         </div>
                                     </div>
                             
@@ -1073,7 +1073,7 @@
                                         {# Configuration email #}
                                         <div style="border-top: 1px solid #e0e0e0; padding-top: 12px;">
                                             <p style="margin: 0 0 8px 0; font-weight: 500; font-size: 0.9em; color: #2c3e50;">Configuration email</p>
-                                            <input type="email" name="mail" id="mail" value="{{ params.mail|default('') }}" placeholder="email@exemple.com" style="padding: 6px 10px !important; margin: 3px 0 !important; height: auto !important;">
+                                            <input type="email" name="mail" id="mail" value="{{ params.mail|default('') }}" placeholder="email@exemple.com" style="padding: 6px 10px !important; margin: 3px 0 !important; height: auto !important;" onchange="autoSaveParameter('mail', this.value)">
                                         </div>
                                     </div>
                             
@@ -1133,16 +1133,10 @@
                                         <div style="border-top: 1px solid #e0e0e0; padding-top: 12px;">
                                             <p style="margin: 0 0 8px 0; font-weight: 500; font-size: 0.9em; color: #2c3e50;">Paramètres système</p>
                                             <label for="FreqWakeUp">Fréquence WakeUp (s)</label>
-                                            <input type="number" name="FreqWakeUp" min="0" id="FreqWakeUp" value="{{ params.FreqWakeUp|default(0) }}">
+                                            <input type="number" name="FreqWakeUp" min="0" id="FreqWakeUp" value="{{ params.FreqWakeUp|default(0) }}" onchange="autoSaveParameter('FreqWakeUp', this.value)">
                                         </div>
                                     </div>
                         </section>
-                    </div>
-                </div>
-                    
-                    {# Bouton Enregistrer global #}
-                    <div style="text-align: center; margin-top: 20px;">
-                        <input type="submit" value="💾 Enregistrer tous les paramètres" style="width: 100%; max-width: 400px; font-size: 1.1em; padding: 16px 24px; line-height: 1; vertical-align: middle; background: #008B74; color: white; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
                     </div>
                 </form>
                 
@@ -1245,6 +1239,101 @@
 
         // Note: mailNotif (GPIO 101) et WakeUp (GPIO 115) sont maintenant gérés par les switches de la section Actions
         var httpRequestData = "mail="+mail+"&aqThr="+aqThr+"&tempsRemplissageSec="+tempsRemplissageSec+"&limFlood="+limFlood+"&taThr="+taThr+"&chauff="+chauff+"&bouffeMat="+bouffeMat+"&bouffeMid="+bouffeMid+"&bouffeSoir="+bouffeSoir+"&tempsGros="+tempsGros+"&tempsPetits="+tempsPetits+"&FreqWakeUp="+FreqWakeUp;
+        
+        // Fonction de sauvegarde automatique des paramètres
+        function autoSaveParameter(paramName, paramValue) {
+            // Afficher l'indicateur de sauvegarde
+            showSaveIndicator(paramName);
+            
+            // Préparer les données pour l'envoi
+            var httpRequestData = paramName + "=" + encodeURIComponent(paramValue);
+            
+            // Envoyer la requête AJAX
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/ffp3/post-data.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        // Succès - afficher l'indicateur de succès
+                        showSuccessIndicator(paramName);
+                    } else {
+                        // Erreur - afficher l'indicateur d'erreur
+                        showErrorIndicator(paramName);
+                    }
+                }
+            };
+            
+            xhr.send(httpRequestData);
+        }
+        
+        // Fonction pour afficher l'indicateur de sauvegarde
+        function showSaveIndicator(paramName) {
+            var input = document.getElementById(paramName);
+            if (input) {
+                input.style.borderColor = '#ffa500';
+                input.style.backgroundColor = '#fff8e1';
+                
+                // Ajouter une icône de sauvegarde temporaire
+                var indicator = document.createElement('span');
+                indicator.id = 'save-indicator-' + paramName;
+                indicator.innerHTML = ' 💾';
+                indicator.style.color = '#ffa500';
+                indicator.style.fontSize = '0.8em';
+                input.parentNode.appendChild(indicator);
+            }
+        }
+        
+        // Fonction pour afficher l'indicateur de succès
+        function showSuccessIndicator(paramName) {
+            var input = document.getElementById(paramName);
+            var indicator = document.getElementById('save-indicator-' + paramName);
+            
+            if (input) {
+                input.style.borderColor = '#4caf50';
+                input.style.backgroundColor = '#e8f5e9';
+                
+                if (indicator) {
+                    indicator.innerHTML = ' ✅';
+                    indicator.style.color = '#4caf50';
+                    
+                    // Supprimer l'indicateur après 2 secondes
+                    setTimeout(function() {
+                        if (indicator && indicator.parentNode) {
+                            indicator.parentNode.removeChild(indicator);
+                        }
+                        input.style.borderColor = '';
+                        input.style.backgroundColor = '';
+                    }, 2000);
+                }
+            }
+        }
+        
+        // Fonction pour afficher l'indicateur d'erreur
+        function showErrorIndicator(paramName) {
+            var input = document.getElementById(paramName);
+            var indicator = document.getElementById('save-indicator-' + paramName);
+            
+            if (input) {
+                input.style.borderColor = '#f44336';
+                input.style.backgroundColor = '#ffebee';
+                
+                if (indicator) {
+                    indicator.innerHTML = ' ❌';
+                    indicator.style.color = '#f44336';
+                    
+                    // Supprimer l'indicateur après 3 secondes
+                    setTimeout(function() {
+                        if (indicator && indicator.parentNode) {
+                            indicator.parentNode.removeChild(indicator);
+                        }
+                        input.style.borderColor = '';
+                        input.style.backgroundColor = '';
+                    }, 3000);
+                }
+            }
+        }
         xhr.send(httpRequestData);
         
         return false; // Empêcher la soumission normale du formulaire
@@ -1407,4 +1496,5 @@
 <!-- Module de mise à jour des valeurs affichées -->
 <script src="/ffp3/assets/js/control-values-updater.js"></script>
 </body>
+</html>
 </html>
