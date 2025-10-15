@@ -7,7 +7,50 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
-## [4.6.6] - 2025-01-27 🔧 CORRECTION - Migration complète vers injection de dépendances
+## [4.6.11] - 2024-12-19
+
+### 🧪 TEST - Script de test automatique PowerShell
+- **Script PowerShell** : `deploy-and-test.ps1` pour test automatique de tous les endpoints
+- **Test automatisé** : Pages web, API temps réel, endpoints ESP32, redirections
+- **Identification précise** : 8 erreurs 500 persistantes identifiées
+- **Pages fonctionnelles** : Home, Dashboard, Aquaponie, Tide Stats (200)
+- **Pages problématiques** : Control, API temps réel, Post FFP3 Data (500)
+- **Rapport final** : `RAPPORT_FINAL_v4.6.11.md` avec diagnostic complet
+
+### Problème identifié
+- Erreurs 500 persistantes malgré corrections DI
+- Cause probable : Configuration serveur ou routage Slim Framework
+- Solution : Diagnostic direct sur serveur via SSH requis
+
+## [4.6.10] - 2024-12-19
+
+### 🚀 DÉPLOIEMENT - Scripts de déploiement et test automatique
+- **Script de test** : `deploy-and-test.sh` (test complet de tous les endpoints)
+- **Script de déploiement** : `deploy-server.sh` (déploiement sécurisé sur serveur)
+- **Tests automatisés** : Pages web, API temps réel, endpoints ESP32, redirections
+- **Vérifications** : Git, Composer, permissions, composants critiques
+- **Redémarrage automatique** des services
+
+### Usage
+- **Local** : `bash deploy-and-test.sh` (test complet)
+- **Serveur** : `bash deploy-server.sh` (déploiement)
+
+## [4.6.9] - 2024-12-19
+
+### 🔍 DIAGNOSTIC - Scripts de diagnostic complets
+- **Scripts de diagnostic** : `diagnostic-simple.php`, `diagnostic-direct.php`, `diagnostic-complete.php`, `test-debug.php`
+- **Tests complets** des composants : services, contrôleurs, templates
+- **Simulation des appels** de contrôleurs avec Request/Response mock
+- **Tests des middlewares** et du routage Slim
+- **Identification des causes** des erreurs 500 persistantes
+
+### Problème identifié
+- Redirection serveur empêche l'accès aux scripts de diagnostic
+- Solution : Exécuter les scripts directement sur le serveur via SSH
+
+## [4.6.8] - 2024-12-19
+
+### 🔧 CORRECTION - Migration complète vers injection de dépendances
 
 ### 🐛 Corrections critiques
 - **Erreurs 500 corrigées** sur toutes les pages web (`/aquaponie`, `/control`, `/dashboard`)
