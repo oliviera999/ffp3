@@ -166,5 +166,7 @@ return [
             $c->get(\App\Service\RealtimeDataService::class)
         );
     },
-];
 
+    \App\Controller\HomeController::class => function (ContainerInterface $c) {
+        return new \App\Controller\HomeController(
+            $
