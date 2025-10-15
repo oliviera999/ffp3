@@ -33,6 +33,9 @@ class EnvironmentMiddleware implements MiddlewareInterface
 
     public function process(Request $request, RequestHandler $handler): Response
     {
+        // S'assurer que l'environnement est chargé avant de le définir
+        \App\Config\Env::load();
+        
         // Définir l'environnement pour cette requête
         TableConfig::setEnvironment($this->environment);
         
