@@ -875,12 +875,6 @@
                     {% endfor %}
                     
                             <form onsubmit="return createOutput();">
-                                {# Email de notification #}
-                                <div class="param-box" style="background: #e8f5e9 !important; margin-bottom: 12px !important; padding: 12px !important;">
-                                    <h4><i class="fas fa-envelope"></i> Email de notification</h4>
-                                    <input type="email" name="mail" id="mail" value="{{ params.mail|default('') }}" placeholder="email@exemple.com" style="padding: 6px 10px !important; margin: 3px 0 !important; height: auto !important;">
-                                </div>
-                        
                                 {# Gestion de l'eau - Section complète avec boutons de pompes et réglages #}
                                 <div class="param-box" style="background: #e3f2fd !important; margin-bottom: 12px !important; padding: 12px !important;">
                                     <h4><i class="fas fa-tint"></i> Gestion de l'eau</h4>
@@ -972,23 +966,6 @@
                                     </div>
                                 </div>
                         
-                                {# Grille 2 colonnes pour Chauffage et Système #}
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-                                    {# Chauffage #}
-                                    <div class="param-box" style="background: #fff3e0 !important; margin-bottom: 0 !important; padding: 12px !important;">
-                                        <h4><i class="fas fa-temperature-half"></i> Chauffage</h4>
-                                        <label for="chauff">Température min. (°C)</label>
-                                        <input type="number" name="chauff" min="0" step="0.1" id="chauff" value="{{ params.chauff|default(0) }}">
-                                    </div>
-                        
-                                    {# Système #}
-                                    <div class="param-box" style="background: #f3e5f5 !important; margin-bottom: 0 !important; padding: 12px !important;">
-                                        <h4><i class="fas fa-microchip"></i> Système</h4>
-                                        <label for="FreqWakeUp">Fréquence WakeUp (s)</label>
-                                        <input type="number" name="FreqWakeUp" min="0" id="FreqWakeUp" value="{{ params.FreqWakeUp|default(0) }}">
-                                    </div>
-                                </div>
-                        
                                 {# Nourrissage - Section complète avec boutons manuels et réglages automatiques #}
                                 <div class="param-box" style="background: #fff9c4 !important; margin-bottom: 12px !important; padding: 12px !important;">
                                     <h4><i class="fas fa-bowl-food"></i> Nourrissage</h4>
@@ -1063,6 +1040,26 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                        
+                                {# Chauffage - Section pleine largeur #}
+                                <div class="param-box" style="background: #fff3e0 !important; margin-bottom: 12px !important; padding: 12px !important;">
+                                    <h4><i class="fas fa-temperature-half"></i> Chauffage</h4>
+                                    <label for="chauff">Température min. (°C)</label>
+                                    <input type="number" name="chauff" min="0" step="0.1" id="chauff" value="{{ params.chauff|default(0) }}">
+                                </div>
+                        
+                                {# Email de notification #}
+                                <div class="param-box" style="background: #e8f5e9 !important; margin-bottom: 12px !important; padding: 12px !important;">
+                                    <h4><i class="fas fa-envelope"></i> Email de notification</h4>
+                                    <input type="email" name="mail" id="mail" value="{{ params.mail|default('') }}" placeholder="email@exemple.com" style="padding: 6px 10px !important; margin: 3px 0 !important; height: auto !important;">
+                                </div>
+                        
+                                {# Système - Section pleine largeur #}
+                                <div class="param-box" style="background: #f3e5f5 !important; margin-bottom: 12px !important; padding: 12px !important;">
+                                    <h4><i class="fas fa-microchip"></i> Système</h4>
+                                    <label for="FreqWakeUp">Fréquence WakeUp (s)</label>
+                                    <input type="number" name="FreqWakeUp" min="0" id="FreqWakeUp" value="{{ params.FreqWakeUp|default(0) }}">
                                 </div>
                                 
                                 <div style="text-align: center;">

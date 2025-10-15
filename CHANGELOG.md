@@ -7,6 +7,36 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.5.47] - 2025-01-27 🎨 AMÉLIORATION UX - Réorganisation de l'ordre des sections
+
+### 🎨 Amélioration interface
+- **Réorganisation de l'ordre vertical des sections** selon la logique fonctionnelle
+- Nouvel ordre : Gestion de l'eau → Nourrissage → Chauffage → Email → Système
+- Interface plus logique et intuitive pour l'utilisateur
+- Meilleure hiérarchie des fonctionnalités par ordre d'importance
+
+### 🔧 Optimisation technique
+- Réorganisation complète du code Twig des sections
+- Maintien de la cohérence visuelle et fonctionnelle
+- Interface responsive préservée
+
+---
+
+## [4.5.46] - 2025-01-27 🎨 AMÉLIORATION UX - Harmonisation des sections Chauffage et Système
+
+### 🎨 Amélioration interface
+- **Sections Chauffage et Système en pleine largeur** pour harmoniser avec les autres sections
+- Suppression de la grille 2 colonnes pour une meilleure cohérence visuelle
+- Interface plus uniforme et lisible
+- Meilleure utilisation de l'espace disponible
+
+### 🔧 Optimisation technique
+- Simplification du code Twig en supprimant la grille complexe
+- Style cohérent avec les autres param-box
+- Maintien de la responsivité sur tous les écrans
+
+---
+
 ## [4.5.45] - 2025-01-27 🎨 AMÉLIORATION UX - Regroupement des contrôles de gestion de l'eau
 
 ### 🎨 Amélioration interface
