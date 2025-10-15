@@ -4,23 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Config\Database;
 use App\Config\TableConfig;
 use App\Config\Version;
-use App\Repository\SensorReadRepository;
 use App\Service\TemplateRenderer;
 use App\Service\TideAnalysisService;
 
 class TideStatsController
 {
-    private TideAnalysisService $tideService;
-
-    public function __construct()
-    {
-        // Le timezone est configuré centralement via Env::load() dans Database::getConnection()
-        $pdo = Database::getConnection();
-        $readRepo = new SensorReadRepository($pdo);
-        $this->tideService = new TideAnalysisService($readRepo);
+    public function __construct(
+        private TideAnalysisService $tideService,
+        private TemplateRenderer $renderer
+    ) {
     }
 
     public function show(): void
@@ -48,7 +42,7 @@ class TideStatsController
         // Environnement actuel
         $environment = TableConfig::getEnvironment();
 
-        echo TemplateRenderer::render('tide_stats.twig', [
+        echo $this->renderer->render('tide_stats.twig', [
             'start_date' => $startDate,
             'end_date'   => $endDate,
             'marnage_moyen'    => $stats['marnage_moyen'],

@@ -57,7 +57,9 @@ $app->group('', function ($group) {
 
     // Page aquaponie
     $group->map(['GET', 'POST'], '/aquaponie', [AquaponieController::class, 'show']);
-    $group->map(['GET', 'POST'], '/ffp3-data', [AquaponieController::class, 'show']); // Alias legacy
+    $group->get('/ffp3-data', function (Request $request, Response $response) {
+        return $response->withHeader('Location', '/ffp3/aquaponie')->withStatus(301);
+    }); // Redirection legacy vers aquaponie
 
     // Post data depuis ESP32
     $group->post('/post-data', [PostDataController::class, 'handle']);
@@ -89,7 +91,9 @@ $app->group('', function ($group) {
     // Heartbeat ESP32 PROD
     // ====================================================================
     $group->post('/heartbeat', [HeartbeatController::class, 'handle']);
-    $group->post('/heartbeat.php', [HeartbeatController::class, 'handle']); // Alias legacy
+    $group->post('/heartbeat.php', function (Request $request, Response $response) {
+        return $response->withHeader('Location', '/ffp3/heartbeat')->withStatus(301);
+    }); // Redirection legacy vers heartbeat
 })->add(new EnvironmentMiddleware('prod'));
 
 // ====================================================================

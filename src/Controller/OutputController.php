@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Config\Database;
 use App\Config\TableConfig;
 use App\Config\Version;
 use App\Service\OutputService;
 use App\Service\TemplateRenderer;
-use App\Repository\OutputRepository;
-use App\Repository\BoardRepository;
 use App\Repository\SensorReadRepository;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -22,18 +19,11 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  */
 class OutputController
 {
-    private OutputService $outputService;
-    private TemplateRenderer $renderer;
-    private SensorReadRepository $sensorReadRepo;
-
-    public function __construct()
-    {
-        $pdo = Database::getConnection();
-        $outputRepo = new OutputRepository($pdo);
-        $boardRepo = new BoardRepository($pdo);
-        $this->outputService = new OutputService($outputRepo, $boardRepo);
-        $this->renderer = new TemplateRenderer();
-        $this->sensorReadRepo = new SensorReadRepository($pdo);
+    public function __construct(
+        private OutputService $outputService,
+        private TemplateRenderer $renderer,
+        private SensorReadRepository $sensorReadRepo
+    ) {
     }
 
     /**

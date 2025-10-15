@@ -7,6 +7,59 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.5] - 2025-01-27 🔧 CORRECTION - Erreurs 500 API temps réel et contrôle
+
+### 🐛 Corrections critiques
+- **Erreurs 500 corrigées** sur toutes les API temps réel (`/api/realtime/*`)
+- **Erreur 500 corrigée** sur la page de contrôle (`/control`)
+- **Bridge legacy fonctionnel** créé pour `/post-ffp3-data.php`
+- **Injection de dépendances** corrigée dans `OutputController` et `TideStatsController`
+
+### 🔧 Améliorations techniques
+- **OutputController** : Migration vers l'injection de dépendances (DI) au lieu de l'instanciation manuelle
+- **TideStatsController** : Migration vers l'injection de dépendances (DI)
+- **Bridge legacy** : Création d'un fichier `post-ffp3-data.php` fonctionnel qui délègue au contrôleur moderne
+- **Redirections 301** : Ajout de redirections propres pour les alias legacy (`/ffp3-data` → `/aquaponie`, `/heartbeat.php` → `/heartbeat`)
+
+### 🧹 Nettoyage OTA
+- **Metadata.json nettoyé** : Suppression des références aux firmwares manquants (ESP32-S3, environnement TEST)
+- **Firmwares OTA** : Seuls les firmwares disponibles sont déclarés (ESP32-WROOM v11.30, firmware par défaut v9.98)
+
+### 📊 Impact
+- **Mode LIVE restauré** : Les API temps réel fonctionnent à nouveau
+- **Interface de contrôle accessible** : La page `/control` est maintenant fonctionnelle
+- **Compatibilité ESP32** : Les ESP32 configurés sur l'ancien endpoint continuent de fonctionner
+- **Performance améliorée** : Suppression des instanciations manuelles coûteuses
+
+---
+
+## [4.6.4] - 2025-01-27 🗂️ ARCHIVAGE - Nettoyage fichiers legacy
+
+### 🧹 Archivage et nettoyage
+- **Archivage des dossiers legacy** dans `unused/` :
+  - `ffp3control/` - Ancienne interface de contrôle GPIO (remplacée par l'interface Slim moderne)
+  - `ffp3gallery/` - Galerie photos ESP32-CAM (non utilisée)
+  - `ffp3datas_prov/` - Ancienne version provisoire du projet (doublon)
+- **Archivage des fichiers legacy** à la racine dans `unused/` :
+  - Fichiers de pont/redirection : `index.php`, `ffp3-data.php`, `ffp3-data2.php`, `post-ffp3-data.php`, `post-ffp3-data2.php`, `ffp3-config2.php`, `legacy_bridge.php`
+  - Scripts obsolètes : `cronpompe.php`, `install.php`, `index.html`
+  - Fichiers de démonstration : `demo_ui_improvements.html`, `test_font_awesome.html`, `test`, `temp_old_aquaponie.txt`
+- **Archivage de la documentation obsolète** dans `docs/archive/` :
+  - Rapports de corrections dans `docs/archive/corrections/`
+  - Résumés d'implémentations dans `docs/archive/implementations/`
+  - Diagnostics dans `docs/archive/diagnostics/`
+  - Rapports de nettoyage dans `docs/archive/cleanup/`
+  - Scripts de déploiement dans `docs/archive/deployment/`
+
+### 📊 Bénéfices
+- **Réduction de ~42%** des fichiers de documentation à la racine
+- **Structure claire** : code actif vs legacy archivé
+- **Historique préservé** dans les dossiers d'archive
+- **Maintenance simplifiée** du projet
+- **Navigation plus facile** dans le projet
+
+---
+
 ## [4.6.3] - 2025-01-27 🔧 CORRECTION - Erreur 500 page de contrôle
 
 ### 🐛 Correction bug critique
