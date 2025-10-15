@@ -32,9 +32,6 @@ class RealtimeDataService
      */
     public function getLatestReadings(): array
     {
-        // S'assurer que l'environnement est chargé
-        \App\Config\Env::load();
-        
         $lastReadings = $this->sensorReadRepo->getLastReadings();
         
         if (!$lastReadings) {
@@ -110,9 +107,6 @@ class RealtimeDataService
      */
     public function getSystemHealth(): array
     {
-        // S'assurer que l'environnement est chargé
-        \App\Config\Env::load();
-        
         $lastReadingDateStr = $this->sensorReadRepo->getLastReadingDate();
         
         if ($lastReadingDateStr === null) {
@@ -161,9 +155,6 @@ class RealtimeDataService
      */
     public function getOutputsState(): array
     {
-        // S'assurer que l'environnement est chargé
-        \App\Config\Env::load();
-        
         $outputs = $this->outputRepo->findAll();
         
         $result = [];

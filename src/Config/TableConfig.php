@@ -24,6 +24,19 @@ class TableConfig
         
         return ($_ENV['ENV'] ?? 'prod') === 'test';
     }
+    
+    /**
+     * Retourne l'environnement actuel (prod ou test)
+     */
+    public static function getEnvironment(): string
+    {
+        // Charge les variables d'environnement si pas encore fait
+        if (!isset($_ENV['ENV'])) {
+            Env::load();
+        }
+        
+        return $_ENV['ENV'] ?? 'prod';
+    }
 
     /**
      * Retourne le nom de la table principale des données capteurs

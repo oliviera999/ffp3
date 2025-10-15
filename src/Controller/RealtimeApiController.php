@@ -26,9 +26,6 @@ class RealtimeApiController
     public function getLatestSensors(Request $request, Response $response): Response
     {
         try {
-            // S'assurer que l'environnement est chargé
-            \App\Config\Env::load();
-            
             error_log("RealtimeApiController::getLatestSensors - Début");
             $data = $this->realtimeService->getLatestReadings();
             error_log("RealtimeApiController::getLatestSensors - Données récupérées");
@@ -72,9 +69,6 @@ class RealtimeApiController
     public function getOutputsState(Request $request, Response $response): Response
     {
         try {
-            // S'assurer que l'environnement est chargé
-            \App\Config\Env::load();
-            
             error_log("RealtimeApiController::getOutputsState - Début");
             $data = $this->realtimeService->getOutputsState();
             error_log("RealtimeApiController::getOutputsState - Données récupérées");
@@ -98,9 +92,6 @@ class RealtimeApiController
      */
     public function getSystemHealth(Request $request, Response $response): Response
     {
-        // S'assurer que l'environnement est chargé
-        \App\Config\Env::load();
-        
         $health = $this->realtimeService->getSystemHealth();
         
         return $this->jsonResponse($response, $health);

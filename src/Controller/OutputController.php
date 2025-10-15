@@ -32,9 +32,6 @@ class OutputController
     public function showInterface(Request $request, Response $response): Response
     {
         try {
-            // S'assurer que l'environnement est chargé
-            \App\Config\Env::load();
-            
             // DEBUG: Log du début de la méthode
             error_log("OutputController::showInterface - Début");
             
