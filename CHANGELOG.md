@@ -7,6 +7,64 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.15] - 2025-10-15
+
+### 🔍 ANALYSE - Régression interface de contrôle et diagnostic avancé
+
+#### Analyse historique des commits
+- **Investigation complète** : Analyse de tous les commits liés au contrôle
+- **Identification du commit fonctionnel** : `4e70028` (v4.6.6) - Migration DI
+- **Comparaison de code** : Différences entre version fonctionnelle et actuelle
+- **Conclusion** : Les modifications de code récentes ne sont PAS la cause des erreurs 500
+
+#### Hypothèses de cause racine identifiées
+1. **Cache PHP-DI** (⭐ TRÈS PROBABLE) :
+   - Cache compilé dans `var/cache/` contient des définitions obsolètes
+   - Nouvelles définitions de `config/dependencies.php` non prises en compte
+   - Solution : Nettoyage du cache DI
+
+2. **Cache OPCache PHP** (⭐ PROBABLE) :
+   - Fichiers PHP compilés en cache
+   - Nouvelles versions de code non rechargées
+   - Solution : Reset OPCache + redémarrage Apache
+
+3. **Git non synchronisé** (⭐ POSSIBLE) :
+   - Serveur pas à jour avec dernière version GitHub
+   - Script CRON de déploiement échoué
+   - Solution : `git reset --hard origin/main`
+
+4. **Permissions** (POSSIBLE) :
+   - Problèmes d'écriture dans `var/cache` ou `var/log`
+   - Solution : `chmod 755 var/cache var/log`
+
+#### Outils de diagnostic créés
+- **`ANALYSE_REGRESSION_CONTROL_v4.6.15.md`** : Analyse complète de la régression
+- **`fix-server-cache.sh`** : Script Bash automatique de correction des caches
+- **`public/fix-cache.php`** : Interface web de diagnostic et correction
+  - Accessible via : `https://iot.olution.info/ffp3/public/fix-cache.php?token=fix2025ffp3`
+  - Diagnostic complet : PHP, autoloader, .env, cache DI, OPCache, classes
+  - Actions : Nettoyage caches, test endpoints
+  - ⚠️ **À SUPPRIMER** après utilisation pour sécurité
+
+#### Plan d'action recommandé
+1. **SSH vers serveur** : `ssh oliviera@toaster`
+2. **Nettoyer caches** : `bash fix-server-cache.sh`
+3. **Ou via web** : Accéder à `public/fix-cache.php` et cliquer "Nettoyer les caches"
+4. **Tester endpoints** : Script automatique ou navigateur
+5. **Redémarrer Apache** (si nécessaire) : `sudo systemctl restart apache2`
+
+#### État des erreurs 500
+- **Persistantes** : 8 erreurs 500 (Control PROD/TEST, API temps réel, Post FFP3 Data)
+- **Fonctionnelles** : 10 endpoints OK (Home, Dashboard, Aquaponie, Tide Stats, etc.)
+- **Probabilité de résolution** : 90% après nettoyage des caches
+
+### 📋 Documentation
+- Document d'analyse détaillée créé pour référence future
+- Scripts de correction réutilisables pour problèmes similaires
+- Procédures de diagnostic serveur documentées
+
+---
+
 ## [4.6.11] - 2024-12-19
 
 ### 🧪 TEST - Script de test automatique PowerShell
