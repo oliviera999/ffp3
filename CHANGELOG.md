@@ -7,6 +7,29 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.4] - 2025-01-27 🎨 OPTIMISATION UX - Colonnes équilibrées et formulaire unifié
+
+### 🎨 Amélioration interface
+- **Colonnes de hauteur égale** avec `height: 100%` et `align-items: start`
+- **Formulaire unifié** : Un seul formulaire englobant les deux colonnes
+- **Bouton Enregistrer global** : Suppression des boutons redondants dans chaque colonne
+- **Bouton Enregistrer amélioré** : Design moderne avec "Enregistrer tous les paramètres"
+- Interface plus cohérente et professionnelle
+
+### 🔧 Optimisation technique
+- Structure HTML simplifiée avec un seul `<form>` parent
+- Suppression de la duplication des boutons d'enregistrement
+- Grille CSS optimisée avec `align-items: start` pour l'alignement
+- Bouton global centré avec style moderne et responsive
+
+### ✨ Avantages utilisateur
+- **Moins de confusion** : Un seul bouton pour sauvegarder tous les paramètres
+- **Interface équilibrée** : Colonnes de même hauteur pour un aspect professionnel
+- **Expérience simplifiée** : Action unique pour sauvegarder toutes les modifications
+- **Design cohérent** : Bouton principal avec style moderne et attractif
+
+---
+
 ## [4.6.3] - 2025-01-27 🎨 AMÉLIORATION UX - Organisation en 2 colonnes équilibrées
 
 ### 🎨 Amélioration interface
@@ -74,6 +97,28 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 - Filtrage intelligent des outputs pour éviter les répétitions
 
 ---
+
+## [4.6.1] - 2025-01-27 🎨 HARMONISATION COMPLÈTE - Interface cohérente et esthétique
+
+### 🎨 Interface harmonisée
+- **Suppression du header hero** qui ne s'intégrait pas bien
+- **Style cohérent** avec la page d'accueil et de contrôle
+- **Banner info système** avec gradient harmonisé
+- **Cartes de données modernisées** avec animations fluides
+- **Section headers uniformisés** avec icônes et effets hover
+
+### ✨ Améliorations esthétiques
+- **Navigation claire** et intuitive
+- **Hiérarchie visuelle** cohérente (tailles de titres harmonisées)
+- **Palette de couleurs** unifiée avec la charte olution.info
+- **Responsive design** optimisé pour tous les écrans
+- **Animations subtiles** et professionnelles
+
+### 🔧 Refonte technique
+- **Template complètement refait** pour la cohérence
+- **CSS modernisé** avec Flexbox et Grid
+- **Structure simplifiée** et maintenable
+- **Performance optimisée** avec animations CSS
 
 ## [4.6.0] - 2025-01-27 🎨 AMÉLIORATION MAJEURE - Interface aquaponie modernisée
 
