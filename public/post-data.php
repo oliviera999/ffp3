@@ -44,6 +44,19 @@ $logger->pushHandler(new StreamHandler($logPath . '/post-data.log', Logger::INFO
 // Charger les variables d'environnement
 Env::load();
 
+// CORRECTION ENVIRONNEMENT TEST (v11.37)
+// Détecter si l'endpoint est /post-data-test et forcer l'environnement TEST
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+if (strpos($requestUri, '/post-data-test') !== false) {
+    TableConfig::setEnvironment('test');
+    $logger->info('🔧 ENVIRONNEMENT FORCÉ À TEST', [
+        'uri' => $requestUri,
+        'environment' => TableConfig::getEnvironment(),
+        'dataTable' => TableConfig::getDataTable(),
+        'outputsTable' => TableConfig::getOutputsTable()
+    ]);
+}
+
 // Logs de diagnostic détaillés (v11.37)
 $logger->info('=== DÉBUT REQUÊTE POST-DATA ===', [
     'timestamp' => date('Y-m-d H:i:s'),

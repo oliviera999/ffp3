@@ -1,0 +1,550 @@
+<!DOCTYPE HTML>
+<!--
+    olution iot datas - Page Aquaponie FFP3
+    Interface harmonisée et moderne
+-->
+<html>
+    <head>
+        <title>n3 iot datas - Aquaponie FFP3</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <meta name="theme-color" content="#008B74" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="stylesheet" href="https://iot.olution.info/assets/css/main.css" />
+        <noscript><link rel="stylesheet" href="https://iot.olution.info/assets/css/noscript.css" /></noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="stylesheet" href="/ffp3/assets/css/realtime-styles.css" />
+        <link rel="manifest" href="/ffp3/manifest.json" />
+        <link rel="apple-touch-icon" href="/ffp3/assets/icons/icon-192.png" />
+        <link rel="shortcut icon" type="image/png" href="https://iot.olution.info/images/favico.png"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
+        <script src="https://code.highcharts.com/stock/highstock.js"></script>
+        <script src="https://code.highcharts.com/modules/boost.js"></script>
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>
+        <script src="https://code.highcharts.com/modules/export-data.js"></script>
+        <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+        
+        <style>
+            /* =================================================================
+               STYLES COHÉRENTS AVEC LE DESIGN GLOBAL
+            ================================================================= */
+            
+            /* Info banner cohérent avec la page d'accueil */
+            .system-info-banner {
+                background: linear-gradient(135deg, #008B74 0%, #00B794 100%);
+                color: white;
+                padding: 25px;
+                border-radius: 16px;
+                margin: 20px 0;
+                text-align: center;
+            }
+            
+            .system-info-banner h3 {
+                margin: 0 0 15px 0;
+                font-size: 1.4em;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .system-info-banner p {
+                margin: 8px 0;
+                opacity: 0.9;
+                line-height: 1.5;
+            }
+            
+            /* Stats grid cohérent */
+            .stats-overview {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+                margin: 30px 0;
+            }
+            
+            .stat-overview-card {
+                background: #f8f9fa;
+                padding: 20px;
+                border-radius: 12px;
+                text-align: center;
+                border-left: 4px solid #008B74;
+                transition: all 0.3s ease;
+            }
+            
+            .stat-overview-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 16px rgba(0,139,116,0.2);
+            }
+            
+            .stat-overview-value {
+                font-size: 2em;
+                font-weight: bold;
+                color: #008B74;
+                margin: 8px 0;
+                display: block;
+            }
+            
+            .stat-overview-label {
+                font-size: 0.9em;
+                color: #666;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            
+            .stat-overview-icon {
+                font-size: 1.5em;
+                color: #008B74;
+                margin-bottom: 10px;
+            }
+            
+            /* Section headers cohérents */
+            .section-header {
+                display: flex !important;
+                align-items: center !important;
+                gap: 15px !important;
+                margin: 40px 0 25px 0 !important;
+                padding: 15px 0 !important;
+                border-bottom: 3px solid #008B74 !important;
+                position: relative;
+            }
+            
+            .section-header::after {
+                content: '';
+                position: absolute;
+                bottom: -3px;
+                left: 0;
+                width: 60px;
+                height: 3px;
+                background: #00B794;
+                border-radius: 2px;
+            }
+            
+            .section-header h2, .section-header h3 {
+                margin: 0 !important;
+                color: #008B74 !important;
+                font-size: 1.6em !important;
+                font-weight: 700 !important;
+            }
+            
+            .section-header i {
+                font-size: 1.8em !important;
+                color: #008B74 !important;
+                padding: 8px;
+                background: rgba(0,139,116,0.1);
+                border-radius: 10px;
+                transition: all 0.3s ease;
+            }
+            
+            .section-header:hover i {
+                background: rgba(0,139,116,0.2);
+                transform: scale(1.05);
+            }
+            
+            /* Cartes de données harmonisées */
+            .data-cards-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 25px;
+                margin: 25px 0;
+            }
+            
+            .data-card {
+                background: white;
+                border-radius: 16px;
+                padding: 25px;
+                box-shadow: 0 4px 16px rgba(0,139,116,0.15);
+                text-align: center;
+                transition: all 0.3s ease;
+                border-top: 5px solid #008B74;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .data-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 5px;
+                background: linear-gradient(90deg, #008B74, #00B794);
+                transition: height 0.3s;
+            }
+            
+            .data-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 12px 28px rgba(0,139,116,0.25);
+            }
+            
+            .data-card:hover::before {
+                height: 8px;
+            }
+            
+            .data-card-icon {
+                font-size: 2.5em;
+                margin-bottom: 15px;
+                display: block;
+                color: #008B74;
+                transition: all 0.3s ease;
+            }
+            
+            .data-card:hover .data-card-icon {
+                transform: scale(1.1);
+            }
+            
+            .data-card-value {
+                font-size: 2.2em;
+                font-weight: bold;
+                color: #2c3e50;
+                margin: 15px 0;
+                line-height: 1;
+            }
+            
+            .data-card-label {
+                font-size: 1em;
+                color: #7f8c8d;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-weight: 600;
+                margin-bottom: 15px;
+            }
+            
+            .data-card-unit {
+                font-size: 0.7em;
+                color: #95a5a6;
+                font-weight: 400;
+            }
+            
+            /* Progress bars harmonisés */
+            .progress-bar-container {
+                width: 100%;
+                height: 10px;
+                background: #f8f9fa;
+                border-radius: 8px;
+                overflow: hidden;
+                margin: 15px 0;
+                position: relative;
+            }
+            
+            .progress-bar {
+                height: 100%;
+                background: linear-gradient(90deg, #008B74, #00B794);
+                border-radius: 8px;
+                transition: width 0.8s ease;
+                position: relative;
+            }
+            
+            .progress-bar::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                animation: shimmer 2s infinite;
+            }
+            
+            @keyframes shimmer {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(100%); }
+            }
+            
+            /* Couleurs par type de capteur */
+            .data-card.water { 
+                border-top-color: #008B74;
+            }
+            .data-card.water .data-card-icon { color: #008B74; }
+            .data-card.water .progress-bar { 
+                background: linear-gradient(90deg, #008B74, #00B794) !important; 
+            }
+            
+            .data-card.temp { 
+                border-top-color: #e74c3c;
+            }
+            .data-card.temp .data-card-icon { color: #e74c3c; }
+            .data-card.temp .progress-bar { 
+                background: linear-gradient(90deg, #e74c3c, #ff6b6b) !important; 
+            }
+            
+            .data-card.humidity { 
+                border-top-color: #3498db;
+            }
+            .data-card.humidity .data-card-icon { color: #3498db; }
+            .data-card.humidity .progress-bar { 
+                background: linear-gradient(90deg, #3498db, #5dade2) !important; 
+            }
+            
+            .data-card.light { 
+                border-top-color: #f39c12;
+            }
+            .data-card.light .data-card-icon { color: #f39c12; }
+            .data-card.light .progress-bar { 
+                background: linear-gradient(90deg, #f39c12, #f1c40f) !important; 
+            }
+            
+            /* Responsive design */
+            @media (max-width: 768px) {
+                .stats-overview {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 15px;
+                }
+                
+                .data-cards-grid {
+                    grid-template-columns: 1fr;
+                    gap: 20px;
+                }
+                
+                .section-header {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 10px;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .stats-overview {
+                    grid-template-columns: 1fr;
+                }
+                
+                .system-info-banner {
+                    padding: 20px;
+                }
+                
+                .system-info-banner h3 {
+                    font-size: 1.2em;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+            }
+        </style>
+    </head>
+    <body class="is-preload">
+        <!-- Wrapper -->
+        <div id="wrapper" class="fade-in">
+            <!-- Header -->
+            <header id="header">
+                <a href="https://iot.olution.info/ffp3/" class="logo">n3 iot datas</a>
+            </header>
+
+            <!-- Nav -->
+            <nav id="nav">
+                <ul class="links">
+                    <li><a href="https://iot.olution.info/ffp3/">Accueil</a></li>
+                    <li class="active"><a href="https://iot.olution.info/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}">L'aquaponie (FFP3)</a></li>
+                    <li><a href="https://iot.olution.info/msp1/msp1datas/msp1-data.php">Le potager</a></li>
+                    <li><a href="https://iot.olution.info/n3pp/n3ppdatas/n3pp-data.php">L'élevage d'insectes</a></li>
+                </ul>
+                <ul class="icons">
+                    <li><a href="https://olution.info/course/view.php?id=511" class="icon solid fa-leaf"><span class="label">olution</span></a></li>
+                    <li><a href="https://farmflow.marout.org/" class="icon solid fa-fish"><span class="label">farmflow</span></a></li>
+                </ul>
+            </nav>
+
+            <!-- Main -->
+            <div id="main">
+                <!-- Featured Post -->
+                <article class="post featured">
+                    <header class="major">
+                        <h1 style="margin-bottom: 20px;">
+                            <i class="icon solid fa-fish"></i>
+                            Système Aquaponie FFP3
+                            <i class="icon solid fa-fish"></i>
+                        </h1>
+                        <p style="font-size: 1.2em; line-height: 1.6;">
+                            Surveillance intelligente et contrôle automatisé de votre écosystème aquaponique.
+                            <br>
+                            Le système est suivi grâce à la carte de développement ESP-32 qui mesure et présente différents paramètres du système.
+                        </p>
+                        <hr />
+                    </header>
+
+                    <!-- Banner info système -->
+                    <div class="system-info-banner">
+                        <h3><i class="fas fa-microchip"></i> Informations système</h3>
+                        <p>
+                            <strong>Environnement:</strong> {{ environment|upper }} • 
+                            <strong>Version:</strong> {{ version }} • 
+                            {% if firmware_version %}<strong>Firmware ESP32:</strong> {{ firmware_version }}{% endif %}
+                        </p>
+                        <p>
+                            <i class="fas fa-chart-line"></i> Données en temps réel • 
+                            <i class="fas fa-database"></i> {{ measure_count }} mesures • 
+                            <i class="fas fa-calendar"></i> {{ timepastbegin }} jours d'activité
+                        </p>
+                    </div>
+
+                    <!-- Vue d'ensemble des statistiques -->
+                    <div class="section-header">
+                        <i class="fas fa-chart-bar"></i>
+                        <h2>Vue d'ensemble</h2>
+                    </div>
+
+                    <div class="stats-overview">
+                        <div class="stat-overview-card">
+                            <i class="fas fa-database stat-overview-icon"></i>
+                            <span class="stat-overview-value">{{ measure_count }}</span>
+                            <span class="stat-overview-label">Mesures</span>
+                        </div>
+                        <div class="stat-overview-card">
+                            <i class="fas fa-clock stat-overview-icon"></i>
+                            <span class="stat-overview-value">{{ duration_str|split(',')[0]|trim }}</span>
+                            <span class="stat-overview-label">Période</span>
+                        </div>
+                        <div class="stat-overview-card">
+                            <i class="fas fa-calendar stat-overview-icon"></i>
+                            <span class="stat-overview-value">{{ timepastbegin }}</span>
+                            <span class="stat-overview-label">Jours actifs</span>
+                        </div>
+                        <div class="stat-overview-card">
+                            <i class="fas fa-thermometer-half stat-overview-icon"></i>
+                            <span class="stat-overview-value">{{ last_reading_tempair|default(0)|round(1) }}°C</span>
+                            <span class="stat-overview-label">Température</span>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <i class="fas fa-chart-line"></i>
+                        <h2>Synthèse des mesures du {{ start_date|date('d/m/Y H:i:s') }} au {{ end_date|date('d/m/Y H:i:s') }}</h2>
+                    </div>
+
+                    <!-- Section Niveaux d'eau -->
+                    <div class="section-header">
+                        <i class="fas fa-tint"></i>
+                        <h3>Niveaux d'eau</h3>
+                    </div>
+                    
+                    <div class="data-cards-grid">
+                        <!-- Aquarium -->
+                        <div class="data-card water">
+                            <i class="fas fa-fish data-card-icon"></i>
+                            <div class="data-card-label">Aquarium</div>
+                            <div class="data-card-value" id="eauaqua-display">{{ last_reading_eauaqua|default(0)|round(0) }} <span class="data-card-unit">cm</span></div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="eauaqua-progress" style="width: {{ (last_reading_eauaqua|default(0) / 100 * 100)|round(0) }}%;"></div>
+                            </div>
+                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                <div>Moy: <span id="eauaqua-avg">{{ avg_eauaqua|default(0)|round(1) }}</span> cm | ET: <span id="eauaqua-stddev">{{ stddev_eauaqua|default(0)|round(2) }}</span></div>
+                                <div>Min: <span id="eauaqua-min">{{ min_eauaqua|default(0) }}</span> cm | Max: <span id="eauaqua-max">{{ max_eauaqua|default(0) }}</span> cm</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Réserve -->
+                        <div class="data-card water">
+                            <i class="fas fa-droplet data-card-icon"></i>
+                            <div class="data-card-label">Réserve</div>
+                            <div class="data-card-value" id="eaureserve-display">{{ last_reading_eaureserve|default(0)|round(0) }} <span class="data-card-unit">cm</span></div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="eaureserve-progress" style="width: {{ (last_reading_eaureserve|default(0) / 100 * 100)|round(0) }}%;"></div>
+                            </div>
+                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                <div>Moy: <span id="eaureserve-avg">{{ avg_eaureserve|default(0)|round(1) }}</span> cm | ET: <span id="eaureserve-stddev">{{ stddev_eaureserve|default(0)|round(2) }}</span></div>
+                                <div>Min: <span id="eaureserve-min">{{ min_eaureserve|default(0) }}</span> cm | Max: <span id="eaureserve-max">{{ max_eaureserve|default(0) }}</span> cm</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Potager -->
+                        <div class="data-card water">
+                            <i class="fas fa-seedling data-card-icon"></i>
+                            <div class="data-card-label">Potager</div>
+                            <div class="data-card-value" id="eaupota-display">{{ last_reading_eaupota|default(0)|round(0) }} <span class="data-card-unit">cm</span></div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="eaupota-progress" style="width: {{ (last_reading_eaupota|default(0) / 100 * 100)|round(0) }}%;"></div>
+                            </div>
+                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                <div>Moy: <span id="eaupota-avg">{{ avg_eaupota|default(0)|round(1) }}</span> cm | ET: <span id="eaupota-stddev">{{ stddev_eaupota|default(0)|round(2) }}</span></div>
+                                <div>Min: <span id="eaupota-min">{{ min_eaupota|default(0) }}</span> cm | Max: <span id="eaupota-max">{{ max_eaupota|default(0) }}</span> cm</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="chart-niveauxeaux" class="container"></div>
+                    <hr />
+
+                    <!-- Section Paramètres physiques -->
+                    <div class="section-header">
+                        <i class="fas fa-thermometer-half"></i>
+                        <h3>Paramètres physiques</h3>
+                    </div>
+                    
+                    <div class="data-cards-grid">
+                        <!-- Température eau -->
+                        <div class="data-card temp">
+                            <i class="fas fa-water data-card-icon"></i>
+                            <div class="data-card-label">Température eau</div>
+                            <div class="data-card-value" id="tempeau-display">{{ last_reading_tempeau|default(0)|round(1) }} <span class="data-card-unit">°C</span></div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="tempeau-progress" style="width: {{ (last_reading_tempeau|default(0) / 40 * 100)|round(0) }}%;"></div>
+                            </div>
+                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                <div>Moy: <span id="tempeau-avg">{{ avg_tempeau|default(0)|round(1) }}</span> °C | ET: <span id="tempeau-stddev">{{ stddev_tempeau|default(0)|round(2) }}</span></div>
+                                <div>Min: <span id="tempeau-min">{{ min_tempeau|default(0) }}</span> °C | Max: <span id="tempeau-max">{{ max_tempeau|default(0) }}</span> °C</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Température air -->
+                        <div class="data-card temp">
+                            <i class="fas fa-temperature-high data-card-icon"></i>
+                            <div class="data-card-label">Température air</div>
+                            <div class="data-card-value" id="tempair-display">{{ last_reading_tempair|default(0)|round(1) }} <span class="data-card-unit">°C</span></div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="tempair-progress" style="width: {{ (last_reading_tempair|default(0) / 40 * 100)|round(0) }}%;"></div>
+                            </div>
+                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                <div>Moy: <span id="tempair-avg">{{ avg_tempair|default(0)|round(1) }}</span> °C | ET: <span id="tempair-stddev">{{ stddev_tempair|default(0)|round(2) }}</span></div>
+                                <div>Min: <span id="tempair-min">{{ min_tempair|default(0) }}</span> °C | Max: <span id="tempair-max">{{ max_tempair|default(0) }}</span> °C</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Humidité -->
+                        <div class="data-card humidity">
+                            <i class="fas fa-droplet data-card-icon"></i>
+                            <div class="data-card-label">Humidité</div>
+                            <div class="data-card-value" id="humi-display">{{ last_reading_humi|default(0)|round(1) }} <span class="data-card-unit">%</span></div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="humi-progress" style="width: {{ last_reading_humi|default(0) }}%;"></div>
+                            </div>
+                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                <div>Moy: <span id="humi-avg">{{ avg_humi|default(0)|round(1) }}</span> % | ET: <span id="humi-stddev">{{ stddev_humi|default(0)|round(2) }}</span></div>
+                                <div>Min: <span id="humi-min">{{ min_humi|default(0) }}</span> % | Max: <span id="humi-max">{{ max_humi|default(0) }}</span> %</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Luminosité -->
+                        <div class="data-card light">
+                            <i class="fas fa-lightbulb data-card-icon"></i>
+                            <div class="data-card-label">Luminosité</div>
+                            <div class="data-card-value" id="lumi-display">{{ last_reading_lumi|default(0)|round(0) }} <span class="data-card-unit">UA</span></div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="lumi-progress" style="width: {{ (last_reading_lumi|default(0) / 4000 * 100)|round(0) }}%;"></div>
+                            </div>
+                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                <div>Moy: <span id="lumi-avg">{{ avg_lumi|default(0)|round(0) }}</span> UA | ET: <span id="lumi-stddev">{{ stddev_lumi|default(0)|round(2) }}</span></div>
+                                <div>Min: <span id="lumi-min">{{ min_lumi|default(0) }}</span> UA | Max: <span id="lumi-max">{{ max_lumi|default(0) }}</span> UA</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="chart-parametresphys" class="container"></div>
+                    <hr />
+
+                    <!-- Reste du contenu existant (graphiques, filtres, etc.) -->
+                    <!-- Ici on peut ajouter le reste du contenu du template original -->
+                    
+                </article>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="https://iot.olution.info/assets/js/jquery.min.js"></script>
+        <script src="https://iot.olution.info/assets/js/jquery.scrollex.min.js"></script>
+        <script src="https://iot.olution.info/assets/js/jquery.scrolly.min.js"></script>
+        <script src="https://iot.olution.info/assets/js/browser.min.js"></script>
+        <script src="https://iot.olution.info/assets/js/breakpoints.min.js"></script>
+        <script src="https://iot.olution.info/assets/js/util.js"></script>
+        <script src="https://iot.olution.info/assets/js/main.js"></script>
+    </body>
+</html>
