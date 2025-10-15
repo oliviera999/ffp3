@@ -26,6 +26,9 @@ class OutputService
      */
     public function getAllOutputs(): array
     {
+        // S'assurer que l'environnement est chargé
+        \App\Config\Env::load();
+        
         return $this->outputRepository->findAll();
     }
 
@@ -90,6 +93,9 @@ class OutputService
      */
     public function getActiveBoardsForCurrentEnvironment(): array
     {
+        // S'assurer que l'environnement est chargé
+        \App\Config\Env::load();
+        
         $table = \App\Config\TableConfig::getOutputsTable();
         return $this->boardRepository->findActiveForEnvironment($table);
     }

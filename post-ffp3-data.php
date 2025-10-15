@@ -36,8 +36,9 @@ try {
     // Créer une réponse
     $response = $responseFactory->createResponse();
     
-    // Déléguer au contrôleur moderne
-    $controller = new \App\Controller\PostDataController();
+    // Utiliser le container DI pour obtenir le contrôleur
+    $container = require __DIR__ . '/config/container.php';
+    $controller = $container->get(\App\Controller\PostDataController::class);
     $result = $controller->handle($request, $response);
     
     // Envoyer la réponse
