@@ -20,6 +20,15 @@ try {
         echo "OK\n";
     } else {
         echo "ÉCHEC - Fichier manquant\n";
+        echo "Chemin testé: " . __DIR__ . '/../vendor/autoload.php' . "\n";
+        echo "Répertoire courant: " . __DIR__ . "\n";
+        echo "Fichiers dans le répertoire courant:\n";
+        $files = scandir(__DIR__);
+        foreach ($files as $file) {
+            if ($file !== '.' && $file !== '..') {
+                echo "  - $file\n";
+            }
+        }
         exit(1);
     }
     
