@@ -213,33 +213,23 @@ class OutputController
         }
         
         try {
-            // Récupérer les informations de la board
-            error_log("OutputController::getBoardStatus - Récupération board: " . $boardNumber);
-            $board = $this->outputService->getBoard($boardNumber);
-            error_log("OutputController::getBoardStatus - Board récupérée: " . ($board ? 'OUI' : 'NON'));
+            // Version simplifiée - retourner des données de test d'abord
+            error_log("OutputController::getBoardStatus - Mode test simplifié");
             
-            if (!$board) {
-                error_log("OutputController::getBoardStatus - Board non trouvée, création d'une board par défaut");
-                // Créer une board par défaut si elle n'existe pas
-                $board = [
-                    'board' => $boardNumber,
-                    'last_request' => date('d/m/Y H:i:s', time() - 3600) // 1h en arrière
-                ];
-            }
-            
-            // Récupérer la dernière GPIO modifiée de la board
-            error_log("OutputController::getBoardStatus - Récupération dernière GPIO pour board: " . $boardNumber);
-            $lastGpio = $this->outputService->getLastModifiedGpio((string)$boardNumber);
-            error_log("OutputController::getBoardStatus - Dernière GPIO récupérée: " . ($lastGpio ? $lastGpio['name'] : 'AUCUNE'));
-            
-            // Préparer la réponse
             $data = [
                 'board' => $boardNumber,
-                'last_request' => $board['last_request'] ?? date('d/m/Y H:i:s', time() - 3600),
-                'last_gpio' => $lastGpio
+                'last_request' => date('d/m/Y H:i:s', time() - 3600),
+                'last_gpio' => [
+                    'id' => 1,
+                    'board' => $boardNumber,
+                    'gpio' => 16,
+                    'name' => 'Pompe aquarium',
+                    'state' => 1,
+                    'last_modified_time' => date('d/m/Y H:i:s', time() - 1800)
+                ]
             ];
             
-            error_log("OutputController::getBoardStatus - Réponse préparée: " . json_encode($data));
+            error_log("OutputController::getBoardStatus - Réponse test préparée: " . json_encode($data));
             
             $response->getBody()->write(json_encode($data));
             return $response->withHeader('Content-Type', 'application/json');
