@@ -106,6 +106,17 @@ class OutputService
     }
 
     /**
+     * Récupère la dernière GPIO modifiée d'une board spécifique
+     * 
+     * @param string $board Numéro de la board
+     * @return array<string, mixed>|null
+     */
+    public function getLastModifiedGpio(string $board): ?array
+    {
+        return $this->outputRepository->findLastModifiedGpio($board);
+    }
+
+    /**
      * Récupère une board spécifique
      * 
      * @param string $board Nom de la board

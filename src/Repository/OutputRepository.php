@@ -171,6 +171,52 @@ class OutputRepository
     }
 
     /**
+     * Récupère la dernière GPIO modifiée d'une board spécifique
+     * 
+     * @param string $board Numéro de la board
+     * @return array<string, mixed>|null
+     */
+    public function findLastModifiedGpio(string $board): ?array
+    {
+        $table = TableConfig::getOutputsTable();
+        // Conversion de l'heure européenne vers l'heure marocaine (retrancher 1h)
+        $sql = "SELECT id, board, gpio, name, state, 
+                       DATE_FORMAT(DATE_SUB(requestTime, INTERVAL 1 HOUR), '%d/%m/%Y %H:%i:%s') as last_modified_time
+                FROM {$table} 
+                WHERE board = :board AND name IS NOT NULL AND name != '' AND requestTime IS NOT NULL
+                ORDER BY requestTime DESC 
+                LIMIT 1";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':board' => $board]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($result === false) {
+            return null;
+        }
+        
+        // Normaliser les valeurs booléennes pour les GPIOs spéciaux
+        $gpio = (int)$result['gpio'];
+        if ($gpio < 100 || in_array($gpio, [101, 108, 109, 110, 115])) {
+            // GPIOs booléens : convertir en entier
+            $state = $result['state'];
+            if (is_string($state)) {
+                // Gérer les cas comme 'checked', 'true', 'on', etc.
+                $normalizedState = match (strtolower($state)) {
+                    'checked', 'true', 'on', '1', 'yes' => 1,
+                    'unchecked', 'false', 'off', '0', 'no' => 0,
+                    default => is_numeric($state) ? (int)$state : 0
+                };
+                $result['state'] = $normalizedState;
+            } else {
+                $result['state'] = (int)$state;
+            }
+        }
+        
+        return $result;
+    }
+
+    /**
      * Synchronise les états des GPIO depuis les données capteurs
      * Met à jour ffp3Outputs ou ffp3Outputs2 selon l'environnement
      * 

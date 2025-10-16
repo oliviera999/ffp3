@@ -51,6 +51,34 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.42] - 2025-01-27
+
+### ✨ Amélioration - Affichage dernière GPIO sollicitée
+
+#### Simplification de l'affichage Board 1
+- **Focus sur l'essentiel** : Affichage uniquement de la dernière GPIO modifiée au lieu de toutes les GPIO
+- **Information pertinente** : Nom de la GPIO, état (actif/inactif), numéro GPIO et heure de modification
+- **Mise à jour temps réel** : L'affichage se met à jour automatiquement toutes les 10 secondes
+- **Interface épurée** : Une seule GPIO affichée avec toutes les informations nécessaires
+
+#### Détails techniques
+- **Repository** : Nouvelle méthode `findLastModifiedGpio()` dans `OutputRepository` pour récupérer la dernière GPIO modifiée
+- **Service** : Nouvelle méthode `getLastModifiedGpio()` dans `OutputService`
+- **Contrôleur** : Modification de `OutputController` pour utiliser la dernière GPIO au lieu de toutes les GPIO
+- **Template** : Simplification de `control.twig` avec affichage d'une seule GPIO
+- **JavaScript** : Adaptation du code temps réel pour la dernière GPIO uniquement
+
+#### Interface utilisateur
+- **Affichage simplifié** : Une seule carte GPIO avec nom, état et heure de modification
+- **Icônes visuelles** : ✓ pour GPIO actif, ✗ pour GPIO inactif
+- **Couleurs** : Vert pour actif, rouge pour inactif
+- **Timestamp** : Heure de dernière modification en temps marocain
+
+### 🎯 Impact
+- ✅ Affichage plus simple et pertinent de la dernière GPIO sollicitée
+- ✅ Interface épurée sans surcharge d'informations
+- ✅ Mise à jour temps réel de la dernière activité GPIO
+
 ## [4.6.41] - 2025-01-27
 
 ### 🐛 Corrigé

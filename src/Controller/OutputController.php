@@ -45,10 +45,10 @@ class OutputController
             $boards = $this->outputService->getActiveBoardsForCurrentEnvironment();
             error_log("OutputController::showInterface - Boards récupérés: " . count($boards));
             
-            // Enrichir chaque board avec ses GPIO
+            // Enrichir chaque board avec sa dernière GPIO modifiée
             foreach ($boards as &$board) {
-                $board['gpios'] = $this->outputService->getBoardGpios((string)$board['board']);
-                error_log("OutputController::showInterface - GPIOs récupérés pour board {$board['board']}: " . count($board['gpios']));
+                $board['last_gpio'] = $this->outputService->getLastModifiedGpio((string)$board['board']);
+                error_log("OutputController::showInterface - Dernière GPIO récupérée pour board {$board['board']}: " . ($board['last_gpio'] ? $board['last_gpio']['name'] : 'Aucune'));
             }
             
             // Déterminer l'environnement
@@ -217,14 +217,14 @@ class OutputController
                 return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
             }
             
-            // Récupérer les GPIO de la board
-            $gpios = $this->outputService->getBoardGpios((string)$boardNumber);
+            // Récupérer la dernière GPIO modifiée de la board
+            $lastGpio = $this->outputService->getLastModifiedGpio((string)$boardNumber);
             
             // Préparer la réponse
             $data = [
                 'board' => $boardNumber,
                 'last_request' => $board['last_request'],
-                'gpios' => $gpios
+                'last_gpio' => $lastGpio
             ];
             
             $response->getBody()->write(json_encode($data));

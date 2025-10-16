@@ -1352,22 +1352,29 @@
                                     <i class="fas fa-clock"></i> Dernière requête : <span class="last-request-time">{{ board.last_request }}</span>
                                 </p>
                                 
-                                {% if board.gpios is defined and board.gpios|length > 0 %}
-                                    <div class="gpio-status" style="margin-top: 8px;">
+                                {% if board.last_gpio is defined and board.last_gpio %}
+                                    <div class="last-gpio-status" style="margin-top: 8px;">
                                         <p style="margin: 0 0 5px 0; font-size: 0.85em; color: #555; font-weight: bold;">
-                                            <i class="fas fa-cogs"></i> État des GPIO :
+                                            <i class="fas fa-history"></i> Dernière GPIO sollicitée :
                                         </p>
-                                        <div class="gpio-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 5px; font-size: 0.8em;">
-                                            {% for gpio in board.gpios %}
-                                                <div class="gpio-item" style="display: flex; align-items: center; gap: 5px; padding: 3px 6px; background: {% if gpio.state == 1 %}#d4edda{% else %}#f8d7da{% endif %}; border-radius: 4px; border-left: 3px solid {% if gpio.state == 1 %}#28a745{% else %}#dc3545{% endif %};">
-                                                    <span class="gpio-state" style="color: {% if gpio.state == 1 %}#28a745{% else %}#dc3545{% endif %};">
-                                                        <i class="fas {% if gpio.state == 1 %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
-                                                    </span>
-                                                    <span class="gpio-name" style="flex: 1; color: #333;">{{ gpio.name }}</span>
-                                                    <span class="gpio-number" style="color: #666; font-size: 0.75em;">GPIO {{ gpio.gpio }}</span>
+                                        <div class="last-gpio-item" style="display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: {% if board.last_gpio.state == 1 %}#d4edda{% else %}#f8d7da{% endif %}; border-radius: 6px; border-left: 4px solid {% if board.last_gpio.state == 1 %}#28a745{% else %}#dc3545{% endif %};">
+                                            <span class="gpio-state" style="color: {% if board.last_gpio.state == 1 %}#28a745{% else %}#dc3545{% endif %};">
+                                                <i class="fas {% if board.last_gpio.state == 1 %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+                                            </span>
+                                            <div style="flex: 1;">
+                                                <span class="gpio-name" style="color: #333; font-weight: bold;">{{ board.last_gpio.name }}</span>
+                                                <div style="font-size: 0.75em; color: #666; margin-top: 2px;">
+                                                    <i class="fas fa-microchip"></i> GPIO {{ board.last_gpio.gpio }} • 
+                                                    <span class="last-gpio-time">{{ board.last_gpio.last_modified_time }}</span>
                                                 </div>
-                                            {% endfor %}
+                                            </div>
                                         </div>
+                                    </div>
+                                {% else %}
+                                    <div class="no-gpio-status" style="margin-top: 8px;">
+                                        <p style="margin: 0; font-size: 0.85em; color: #888; font-style: italic;">
+                                            <i class="fas fa-info-circle"></i> Aucune GPIO récemment modifiée
+                                        </p>
                                     </div>
                                 {% endif %}
                             </div>
@@ -2071,28 +2078,45 @@
                         lastRequestElement.textContent = data.last_request;
                     }
                     
-                    // Mettre à jour les états des GPIO
-                    if (data.gpios && data.gpios.length > 0) {
-                        const gpioList = boardCard.querySelector('.gpio-list');
-                        if (gpioList) {
-                            gpioList.innerHTML = data.gpios.map(gpio => {
-                                const isActive = gpio.state == 1;
-                                const bgColor = isActive ? '#d4edda' : '#f8d7da';
-                                const borderColor = isActive ? '#28a745' : '#dc3545';
-                                const iconClass = isActive ? 'fa-check-circle' : 'fa-times-circle';
-                                const textColor = isActive ? '#28a745' : '#dc3545';
-                                
-                                return `
-                                    <div class="gpio-item" style="display: flex; align-items: center; gap: 5px; padding: 3px 6px; background: ${bgColor}; border-radius: 4px; border-left: 3px solid ${borderColor};">
-                                        <span class="gpio-state" style="color: ${textColor};">
-                                            <i class="fas ${iconClass}"></i>
-                                        </span>
-                                        <span class="gpio-name" style="flex: 1; color: #333;">${gpio.name}</span>
-                                        <span class="gpio-number" style="color: #666; font-size: 0.75em;">GPIO ${gpio.gpio}</span>
+                    // Mettre à jour la dernière GPIO modifiée
+                    const lastGpioStatus = boardCard.querySelector('.last-gpio-status');
+                    const noGpioStatus = boardCard.querySelector('.no-gpio-status');
+                    
+                    if (data.last_gpio) {
+                        // Afficher la dernière GPIO
+                        if (noGpioStatus) noGpioStatus.style.display = 'none';
+                        
+                        if (lastGpioStatus) {
+                            lastGpioStatus.style.display = 'block';
+                            
+                            const isActive = data.last_gpio.state == 1;
+                            const bgColor = isActive ? '#d4edda' : '#f8d7da';
+                            const borderColor = isActive ? '#28a745' : '#dc3545';
+                            const iconClass = isActive ? 'fa-check-circle' : 'fa-times-circle';
+                            const textColor = isActive ? '#28a745' : '#dc3545';
+                            
+                            lastGpioStatus.innerHTML = `
+                                <p style="margin: 0 0 5px 0; font-size: 0.85em; color: #555; font-weight: bold;">
+                                    <i class="fas fa-history"></i> Dernière GPIO sollicitée :
+                                </p>
+                                <div class="last-gpio-item" style="display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: ${bgColor}; border-radius: 6px; border-left: 4px solid ${borderColor};">
+                                    <span class="gpio-state" style="color: ${textColor};">
+                                        <i class="fas ${iconClass}"></i>
+                                    </span>
+                                    <div style="flex: 1;">
+                                        <span class="gpio-name" style="color: #333; font-weight: bold;">${data.last_gpio.name}</span>
+                                        <div style="font-size: 0.75em; color: #666; margin-top: 2px;">
+                                            <i class="fas fa-microchip"></i> GPIO ${data.last_gpio.gpio} • 
+                                            <span class="last-gpio-time">${data.last_gpio.last_modified_time}</span>
+                                        </div>
                                     </div>
-                                `;
-                            }).join('');
+                                </div>
+                            `;
                         }
+                    } else {
+                        // Aucune GPIO récente
+                        if (lastGpioStatus) lastGpioStatus.style.display = 'none';
+                        if (noGpioStatus) noGpioStatus.style.display = 'block';
                     }
                     
                     console.log(`[Board ${boardNumber}] ✅ Données mises à jour`);
