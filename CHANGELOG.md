@@ -7,6 +7,19 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.29] - 2025-10-16
+
+### 🔧 Corrigé
+- **Conflit de routes manifest.json** : Suppression de la route dupliquée dans le groupe TEST qui causait une erreur FastRoute
+- **Erreur FastRoute\BadRouteException** : Résolution du conflit "Cannot register two routes matching '/ffp3/manifest.json'"
+
+### 📝 Détails techniques
+- **Problème** : Deux groupes de routes (PROD et TEST) définissaient la même route `/manifest.json`
+- **Solution** : Suppression de la route dupliquée dans le groupe TEST, conservation dans le groupe PROD
+- **Impact** : L'application peut maintenant démarrer sans erreur de conflit de routes
+
+---
+
 ## [4.6.26] - 2025-01-27
 
 ### ✨ Amélioration - Panneau d'état du système sur la page de contrôle

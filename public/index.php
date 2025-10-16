@@ -236,14 +236,7 @@ $app->group('', function ($group) {
     // ====================================================================
     // Fichiers statiques TEST (fallback si serveur web ne les sert pas)
     // ====================================================================
-    $group->get('/manifest.json', function (Request $request, Response $response) {
-        $manifestPath = __DIR__ . '/manifest.json';
-        if (file_exists($manifestPath)) {
-            $response->getBody()->write(file_get_contents($manifestPath));
-            return $response->withHeader('Content-Type', 'application/json');
-        }
-        return $response->withStatus(404);
-    });
+    // Note: manifest.json géré par le groupe PROD pour éviter les conflits de routes
     
     $group->get('/assets/js/{filename}', function (Request $request, Response $response, $args) {
         $filename = $args['filename'];
