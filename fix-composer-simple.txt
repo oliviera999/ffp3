@@ -1,0 +1,22 @@
+# Commandes pour corriger Composer après reset
+# À exécuter sur le serveur iot.olution.info
+
+# 1. Aller dans le répertoire du projet
+cd /home4/oliviera/iot.olution.info/ffp3/
+
+# 2. Nettoyer complètement
+rm -rf vendor/
+rm -f composer.lock
+
+# 3. Réinstaller les dépendances
+composer install --no-dev --optimize-autoloader
+
+# 4. Nettoyer le cache DI
+rm -rf var/cache/di/*
+mkdir -p var/cache/di
+
+# 5. Tester l'application
+php -r "require_once 'vendor/autoload.php'; echo 'Autoloader OK';"
+
+# 6. Tester le site
+curl -I https://iot.olution.info/ffp3/
