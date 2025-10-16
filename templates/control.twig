@@ -1130,6 +1130,28 @@
                     </p>
                 </div>
 
+
+                <!-- État des connexions -->
+                <div class="section-header">
+                    <i class="fas fa-satellite-dish"></i>
+                    <h2>État des connexions</h2>
+                </div>
+                
+                <div class="control-card" style="margin-bottom: 25px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        {% for board in boards %}
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #008B74;">
+                                <h4 style="margin: 0 0 8px 0; color: #008B74; font-size: 1em;">
+                                    <i class="fas fa-microchip"></i> Board {{ board.board }}
+                                </h4>
+                                <p style="margin: 0; font-size: 0.9em; color: #666;">
+                                    Dernière requête : {{ board.last_request }}
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
                 <!-- Panneau d'état du système (temps réel) -->
                 <div class="system-health-panel">
                     <h3>
@@ -1256,27 +1278,6 @@
                     <!-- Conteneur des logs -->
                     <div class="logs-container" id="logs-container">
                         <!-- Les logs seront ajoutés dynamiquement ici -->
-                    </div>
-                </div>
-
-                <!-- État des connexions -->
-                <div class="section-header">
-                    <i class="fas fa-satellite-dish"></i>
-                    <h2>État des connexions</h2>
-                </div>
-                
-                <div class="control-card" style="margin-bottom: 25px;">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                        {% for board in boards %}
-                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #008B74;">
-                                <h4 style="margin: 0 0 8px 0; color: #008B74; font-size: 1em;">
-                                    <i class="fas fa-microchip"></i> Board {{ board.board }}
-                                </h4>
-                                <p style="margin: 0; font-size: 0.9em; color: #666;">
-                                    Dernière requête : {{ board.last_request }}
-                                </p>
-                            </div>
-                        {% endfor %}
                     </div>
                 </div>
 

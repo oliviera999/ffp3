@@ -7,6 +7,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.31] - 2025-01-27
+
+### 🎨 Amélioré
+- **Réorganisation des sections de contrôle** : Déplacement des sections "État du système" et "Logs temps réel" sous la section "État de connexion" sur les pages de contrôle
+- **Amélioration de l'expérience utilisateur** : Meilleure organisation logique des informations de monitoring
+
+### 📝 Détails techniques
+- **Fichier modifié** : `templates/control.twig` - Réorganisation de l'ordre des sections
+- **Impact** : Interface plus intuitive avec les informations de connexion en premier, suivies des détails système et des logs
+
+---
+
 ## [4.6.30] - 2025-01-27
 
 ### 🔧 Corrigé
