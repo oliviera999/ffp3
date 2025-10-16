@@ -7,6 +7,28 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.7.2] - 2025-01-27
+
+### 🧹 Nettoyage
+- **Suppression massive de fichiers obsolètes** : 54 fichiers supprimés pour simplifier la structure du projet
+  - 15 fichiers .md de rapports de corrections terminées
+  - 7 fichiers .txt d'instructions temporaires
+  - 14 scripts .sh de correction/déploiement obsolètes
+  - 4 scripts .ps1 PowerShell temporaires
+  - 14 scripts .php de diagnostic/test temporaires
+
+### 🔧 Maintenance
+- **Correction de l'anomalie de versionnage** : Mise à jour du fichier `VERSION` de 4.6.42 → 4.7.0 pour correspondre au CHANGELOG
+- **Documentation simplifiée** : Seuls les fichiers de documentation actifs conservés à la racine
+- **Structure optimisée** : Navigation facilitée, maintenance améliorée
+
+### 📝 Détails techniques
+- **Fichiers supprimés** : Rapports de corrections v4.4.x à v4.6.x, scripts de diagnostic temporaires, instructions de déploiement obsolètes
+- **Fichiers conservés** : README.md, CHANGELOG.md, ESP32_GUIDE.md, scripts de déploiement actifs
+- **Impact** : Projet plus maintenable, moins de confusion entre fichiers actifs et obsolètes
+
+---
+
 ## [4.6.33] - 2025-01-27
 
 ### 🔄 Modifié
