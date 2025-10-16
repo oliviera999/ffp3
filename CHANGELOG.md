@@ -7,6 +7,27 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.17] - 2025-10-16
+
+### 🐛 Correction - Erreur de syntaxe OutputRepository
+
+#### Problème résolu
+- **Parse error** : `Unclosed '{' on line 17 in OutputRepository.php on line 152`
+- **Cause** : Accolade fermante `}` manquante pour la classe `OutputRepository`
+- **Impact** : Empêchait le chargement de la classe et causait des erreurs de parsing
+
+#### Correction appliquée
+- **Ajout de l'accolade fermante** : Ajouté `}` à la fin du fichier `src/Repository/OutputRepository.php`
+- **Validation** : Aucune erreur de linting détectée
+- **Test** : Classe `App\Service\OutputService` maintenant chargée avec succès ✅
+
+#### Fichiers modifiés
+- `src/Repository/OutputRepository.php` : Ajout de l'accolade fermante manquante
+- `VERSION` : Incrémenté vers 4.6.17
+- `CHANGELOG.md` : Documentation de la correction
+
+---
+
 ## [4.6.16] - 2025-10-16
 
 ### 🐛 Correction - Erreur fatale TableConfig
