@@ -55,7 +55,8 @@ class PumpService
 
     /**
      * Modifie l'état d'un GPIO donné.
-     * Utilise INSERT ... ON DUPLICATE KEY UPDATE pour éviter les doublons.
+     * CORRECTION v11.38 : Ne met à jour QUE les GPIO existants avec des noms définis.
+     * Évite la création de lignes NULL/inutiles.
      *
      * @param int $gpio  Numéro du GPIO
      * @param int $state Nouvel état (1=ON, 0=OFF)
@@ -64,18 +65,24 @@ class PumpService
     {
         $table = TableConfig::getOutputsTable();
         
-        // Utiliser INSERT ... ON DUPLICATE KEY UPDATE pour éviter les doublons
-        // Nécessite que la table ait une contrainte UNIQUE sur gpio
+        // CORRECTION v11.38 : Ne mettre à jour QUE les GPIO qui ont des noms définis
+        // Cela évite la création de lignes NULL/inutiles
         $stmt = $this->pdo->prepare(
-            "INSERT INTO {$table} (gpio, state, name, board) 
-             VALUES (:gpio, :state, '', '') 
-             ON DUPLICATE KEY UPDATE state = :state2"
+            "UPDATE {$table} 
+             SET state = :state 
+             WHERE gpio = :gpio 
+               AND name IS NOT NULL 
+               AND name != ''"
         );
         $stmt->execute([
             ':gpio' => $gpio, 
-            ':state' => $state,
-            ':state2' => $state
+            ':state' => $state
         ]);
+        
+        // Log si le GPIO n'a pas été trouvé avec un nom
+        if ($stmt->rowCount() === 0) {
+            error_log("PumpService: GPIO {$gpio} ignoré - pas de nom défini dans la table");
+        }
     }
 
     // ---------------------------------------------------------------------

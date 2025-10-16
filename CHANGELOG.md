@@ -11,15 +11,20 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ### 🐛 Corrigé - Régénération Automatique de Lignes NULL
 - **Problème identifié** : L'ESP32 créait automatiquement des lignes avec `name=NULL` dans la table `ffp3outputs` qui se régénéraient après suppression
-- **Cause** : La synchronisation `syncStatesFromSensorData()` mettait à jour tous les GPIO sans vérifier s'ils avaient des noms définis
-- **Solution** : Modification de la logique pour ne mettre à jour QUE les GPIO qui ont des noms définis (`name IS NOT NULL AND name != ''`)
+- **Cause principale** : `PumpService::setState()` utilisait `INSERT ... ON DUPLICATE KEY UPDATE` avec `name=''` (chaîne vide)
+- **Cause secondaire** : `syncStatesFromSensorData()` mettait à jour tous les GPIO sans vérifier s'ils avaient des noms définis
+- **Solution** : 
+  - Modification de `PumpService::setState()` pour utiliser `UPDATE` au lieu d'`INSERT`
+  - Ajout de conditions `name IS NOT NULL AND name != ''` dans les deux méthodes
+  - Les GPIO sans nom ne seront plus créés ni mis à jour automatiquement
 
 ### 🧹 Nettoyage
 - **Migration SQL** : `migrations/CLEAN_NULL_OUTPUTS_v11.38.sql` pour supprimer les lignes NULL existantes
 - **Logging amélioré** : Distinction entre GPIO protégés (modification web récente) et GPIO ignorés (pas de nom défini)
 
-### 🔧 Modifié - OutputRepository
-- **syncStatesFromSensorData()** : Ajout de conditions pour éviter la mise à jour des GPIO sans nom
+### 🔧 Modifié - Services de Synchronisation
+- **OutputRepository::syncStatesFromSensorData()** : Ajout de conditions pour éviter la mise à jour des GPIO sans nom
+- **PumpService::setState()** : Remplacement d'INSERT par UPDATE pour éviter la création de lignes vides
 - **Logs détaillés** : Messages d'erreur plus précis pour diagnostiquer les problèmes de synchronisation
 
 ---
