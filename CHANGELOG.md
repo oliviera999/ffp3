@@ -19,6 +19,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.37] - 2025-01-27
+
+### 🐛 Corrigé
+- **Décalage horaire Board 1** : Correction du décalage de +2h sur l'affichage de la dernière requête des boards
+- **Conversion timezone** : Remplacement de la conversion hardcodée `CONVERT_TZ('+00:00', '+01:00')` par `CONVERT_TZ('Europe/Paris', 'Africa/Casablanca')`
+- **Affichage correct** : L'heure affichée est maintenant l'heure marocaine (Casablanca) comme souhaité
+
+### 📝 Détails techniques
+- **Fichier modifié** : `src/Repository/BoardRepository.php` - Correction dans 3 méthodes (`findAll()`, `findActiveForEnvironment()`, `findByName()`)
+- **Conversion automatique** : MySQL gère maintenant automatiquement les changements d'heure été/hiver entre Paris et Casablanca
+- **Impact** : Affichage de l'heure correcte pour toutes les boards, respect de l'architecture timezone hybride du projet
+
 ## [4.6.36] - 2025-01-27
 
 ### 🐛 Corrigé
