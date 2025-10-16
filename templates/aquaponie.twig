@@ -1998,18 +1998,6 @@
                                 },
                                 series: [
                                     { 
-                                        name: 'Eau aquarium', 
-                                        type: 'areaspline',
-                                        data: EauAquarium, 
-                                        color: '#FF6300',
-                                        fillColor: {
-                                            linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
-                                            stops: [[0, 'rgba(255,99,0,0.3)'], [1, 'rgba(255,99,0,0.05)']]
-                                        },
-                                        lineWidth: 2,
-                                        tooltip: { valueSuffix: ' cm' } 
-                                    },
-                                    { 
                                         name: 'Eau réserve', 
                                         type: 'areaspline',
                                         data: EauReserve, 
@@ -2032,6 +2020,18 @@
                                             stops: [[0, 'rgba(39,189,160,0.3)'], [1, 'rgba(39,189,160,0.05)']]
                                         },
                                         lineWidth: 1.5,
+                                        tooltip: { valueSuffix: ' cm' } 
+                                    },
+                                    { 
+                                        name: 'Eau aquarium', 
+                                        type: 'areaspline',
+                                        data: EauAquarium, 
+                                        color: '#FF6300',
+                                        fillColor: {
+                                            linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+                                            stops: [[0, 'rgba(255,99,0,0.3)'], [1, 'rgba(255,99,0,0.05)']]
+                                        },
+                                        lineWidth: 2,
                                         tooltip: { valueSuffix: ' cm' } 
                                     },
                                     { 

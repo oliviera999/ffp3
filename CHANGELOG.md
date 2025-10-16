@@ -19,6 +19,19 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.39] - 2025-01-27
+
+### 🔄 Modifié
+- **Ordre des séries du graphique des niveaux d'eau** : La courbe "Eau aquarium" est maintenant au premier plan
+- **Amélioration de la visibilité** : La série la plus importante (aquarium) est maintenant dessinée en dernier pour être plus visible
+
+### 📝 Détails techniques
+- **Fichier modifié** : `templates/aquaponie.twig` - Réorganisation de l'ordre des séries dans le graphique
+- **Ordre actuel** : Eau réserve → Eau potager → Eau aquarium (premier plan)
+- **Impact** : Meilleure visibilité de la courbe aquarium qui passe au-dessus des autres
+
+---
+
 ## [4.6.38] - 2025-01-27
 
 ### ✨ Ajouté
