@@ -51,6 +51,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.41] - 2025-01-27
+
+### 🐛 Corrigé
+- **Erreur type OutputController** : Correction de l'erreur "Argument #1 ($board) must be of type string, int given" dans `getBoardGpios()`
+- **Conversion type** : Ajout de `(string)` pour convertir l'ID de board en chaîne avant l'appel à `getBoardGpios()`
+- **Impact** : Résolution de l'erreur 500 sur l'affichage des boards avec GPIO
+
+### 📝 Détails techniques
+- **Fichier modifié** : `src/Controller/OutputController.php` - Lignes 50 et 221
+- **Cause** : `$board['board']` retourne un entier depuis la base de données, mais `getBoardGpios()` attend une chaîne
+- **Solution** : Cast explicite `(string)$board['board']` dans les deux méthodes concernées
+
 ## [4.6.40] - 2025-01-27
 
 ### ✨ Nouveau - Affichage temps réel des boards avec GPIO

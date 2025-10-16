@@ -47,7 +47,7 @@ class OutputController
             
             // Enrichir chaque board avec ses GPIO
             foreach ($boards as &$board) {
-                $board['gpios'] = $this->outputService->getBoardGpios($board['board']);
+                $board['gpios'] = $this->outputService->getBoardGpios((string)$board['board']);
                 error_log("OutputController::showInterface - GPIOs récupérés pour board {$board['board']}: " . count($board['gpios']));
             }
             
@@ -218,7 +218,7 @@ class OutputController
             }
             
             // Récupérer les GPIO de la board
-            $gpios = $this->outputService->getBoardGpios($boardNumber);
+            $gpios = $this->outputService->getBoardGpios((string)$boardNumber);
             
             // Préparer la réponse
             $data = [
