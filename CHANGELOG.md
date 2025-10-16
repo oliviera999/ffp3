@@ -7,6 +7,25 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.22] - 2025-01-27
+
+### 🐛 Correction - Normalisation des valeurs booléennes GPIO
+
+#### Problème GPIO 101 résolu
+- **Problème résolu** : Le GPIO 101 (mailNotif) affichait des valeurs `NaN` dans la synchronisation temps réel
+- **Cause** : Incohérence de types entre string et booléen pour les GPIOs booléens dans la base de données
+- **Solution** : Normalisation des valeurs booléennes dans `OutputRepository::findAll()` et `findByGpio()`
+- **Impact** : Les GPIOs booléens (101, 108, 109, 110, 115) retournent maintenant des entiers (0/1) au lieu de strings
+- **Fichier modifié** : `src/Repository/OutputRepository.php` (lignes 51-71, 96-116)
+
+#### GPIOs concernés
+- GPIO 101 (mailNotif) : notifications email
+- GPIO 108, 109, 110 : switches spéciaux
+- GPIO 115 (WakeUp) : forçage réveil
+- Tous les GPIOs < 100 (switches physiques)
+
+---
+
 ## [4.6.21] - 2025-01-27
 
 ### 🐛 Correction - Route API pour sauvegarde des paramètres
