@@ -19,6 +19,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.36] - 2025-01-27
+
+### 🐛 Corrigé
+- **Erreur de syntaxe JavaScript** : Suppression du code JavaScript restant lié à la santé du système qui causait une erreur "Unexpected token '}'"
+- **Code orphelin** : Nettoyage complet des fonctions `updateSystemHealth`, `updateHealthDisplay`, `updateSystemStatus`, `startCountdown`, etc.
+
+### 📝 Détails techniques
+- **Fichier modifié** : `templates/control.twig` - Suppression du code JavaScript restant
+- **Impact** : Plus d'erreur de syntaxe JavaScript, page de contrôle fonctionne correctement
+
+---
+
 ## [4.6.35] - 2025-01-27
 
 ### 🗑️ Supprimé
