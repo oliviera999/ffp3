@@ -145,8 +145,8 @@ class OutputController
             15 => 'light',         // Lumière
             16 => 'pump_aqua',     // Pompe aquarium
             18 => 'pump_tank',     // Pompe réservoir
-            12 => 'bouffeGros',    // Servo gros
-            13 => 'bouffePetits',  // Servo petits
+            108 => 'bouffePetits', // Servo petits (CORRIGÉ: était 13)
+            109 => 'bouffeGros',   // Servo gros (CORRIGÉ: était 12)
             // Paramètres de configuration (GPIO 100-116)
             100 => 'mail',
             101 => 'mailNotif',
