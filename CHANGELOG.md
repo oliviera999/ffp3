@@ -7,6 +7,20 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.30] - 2025-01-27
+
+### 🔧 Corrigé
+- **Conflit de routes FastRoute** : Résolution de l'erreur "Cannot register two routes matching '/ffp3/assets/js/([^/]+)' for method 'GET'"
+- **Duplication de routes statiques** : Suppression des routes dupliquées pour les assets JS, CSS et icons entre les groupes PROD et TEST
+
+### 📝 Détails techniques
+- **Problème** : Les groupes de routes PROD et TEST définissaient des routes identiques pour `/assets/js/{filename}`, `/assets/css/{filename}`, `/assets/icons/{filename}` et `/service-worker.js`
+- **Solution** : Déplacement des routes statiques vers un groupe global partagé, éliminant la duplication
+- **Impact** : L'application Slim peut maintenant démarrer sans erreur FastRoute\BadRouteException
+- **Fichiers modifiés** : `public/index.php` - Restructuration des routes statiques
+
+---
+
 ## [4.6.29] - 2025-10-16
 
 ### 🔧 Corrigé
