@@ -94,6 +94,7 @@ $app->group('', function ($group) {
     $group->get('/api/outputs/toggle', [OutputController::class, 'toggleOutput']);
     $group->get('/api/outputs/state', [OutputController::class, 'getOutputsState']);
     $group->post('/api/outputs/parameters', [OutputController::class, 'updateParameters']);
+    $group->get('/api/outputs/board/{board}/status', [OutputController::class, 'getBoardStatus']);
 
     // ====================================================================
     // API Temps Réel PROD
@@ -152,6 +153,7 @@ $app->group('', function ($group) {
     $group->get('/api/outputs-test/toggle', [OutputController::class, 'toggleOutput']);
     $group->get('/api/outputs-test/state', [OutputController::class, 'getOutputsState']);
     $group->post('/api/outputs-test/parameters', [OutputController::class, 'updateParameters']);
+    $group->get('/api/outputs-test/board/{board}/status', [OutputController::class, 'getBoardStatus']);
     
     // API Temps Réel TEST
     $group->get('/api/realtime-test/sensors/latest', [RealtimeApiController::class, 'getLatestSensors']);

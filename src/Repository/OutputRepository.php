@@ -130,6 +130,47 @@ class OutputRepository
     }
 
     /**
+     * Récupère tous les GPIO d'une board spécifique avec leurs noms et états
+     * 
+     * @param string $board Numéro de la board
+     * @return array<int, array<string, mixed>>
+     */
+    public function findByBoard(string $board): array
+    {
+        $table = TableConfig::getOutputsTable();
+        $sql = "SELECT id, board, gpio, name, state 
+                FROM {$table} 
+                WHERE board = :board AND name IS NOT NULL AND name != ''
+                ORDER BY gpio ASC";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':board' => $board]);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Normaliser les valeurs booléennes pour les GPIOs spéciaux
+        foreach ($results as &$result) {
+            $gpio = (int)$result['gpio'];
+            if ($gpio < 100 || in_array($gpio, [101, 108, 109, 110, 115])) {
+                // GPIOs booléens : convertir en entier
+                $state = $result['state'];
+                if (is_string($state)) {
+                    // Gérer les cas comme 'checked', 'true', 'on', etc.
+                    $normalizedState = match (strtolower($state)) {
+                        'checked', 'true', 'on', '1', 'yes' => 1,
+                        'unchecked', 'false', 'off', '0', 'no' => 0,
+                        default => is_numeric($state) ? (int)$state : 0
+                    };
+                    $result['state'] = $normalizedState;
+                } else {
+                    $result['state'] = (int)$state;
+                }
+            }
+        }
+        
+        return $results;
+    }
+
+    /**
      * Synchronise les états des GPIO depuis les données capteurs
      * Met à jour ffp3Outputs ou ffp3Outputs2 selon l'environnement
      * 

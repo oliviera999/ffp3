@@ -51,6 +51,34 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.40] - 2025-01-27
+
+### ✨ Nouveau - Affichage temps réel des boards avec GPIO
+
+#### Amélioration de l'affichage Board 1
+- **Affichage enrichi** : La dernière requête affiche maintenant le nom et l'état de chaque GPIO
+- **Mise à jour temps réel** : L'affichage se met à jour automatiquement toutes les 10 secondes
+- **Interface visuelle** : Chaque GPIO affiché avec son nom, état (actif/inactif) et numéro
+- **API dédiée** : Nouveau endpoint `/api/outputs/board/{board}/status` pour récupérer les données temps réel
+
+#### Détails techniques
+- **Repository** : Nouvelle méthode `findByBoard()` dans `OutputRepository` pour récupérer les GPIO d'une board
+- **Service** : Nouvelle méthode `getBoardGpios()` dans `OutputService` 
+- **Contrôleur** : Nouvelle méthode `getBoardStatus()` dans `OutputController` pour l'API
+- **Template** : Amélioration de `control.twig` avec affichage visuel des GPIO et JavaScript temps réel
+- **Routes** : Ajout des routes API pour PROD et TEST (`/api/outputs/board/{board}/status`)
+
+#### Interface utilisateur
+- **Affichage GPIO** : Chaque GPIO affiché avec icône (✓/✗), nom et numéro
+- **Couleurs** : Vert pour GPIO actif, rouge pour GPIO inactif
+- **Mise à jour automatique** : Rafraîchissement toutes les 10 secondes sans rechargement de page
+- **Responsive** : Grille adaptative pour l'affichage des GPIO
+
+### 🎯 Impact
+- ✅ Affichage temps réel de l'état des GPIO pour Board 1
+- ✅ Interface plus informative avec nom et état des actionneurs
+- ✅ Mise à jour automatique sans intervention utilisateur
+
 ## [4.6.38] - 2025-01-27
 
 ### 🐛 Corrigé

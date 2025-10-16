@@ -45,6 +45,12 @@ class OutputController
             $boards = $this->outputService->getActiveBoardsForCurrentEnvironment();
             error_log("OutputController::showInterface - Boards récupérés: " . count($boards));
             
+            // Enrichir chaque board avec ses GPIO
+            foreach ($boards as &$board) {
+                $board['gpios'] = $this->outputService->getBoardGpios($board['board']);
+                error_log("OutputController::showInterface - GPIOs récupérés pour board {$board['board']}: " . count($board['gpios']));
+            }
+            
             // Déterminer l'environnement
             error_log("OutputController::showInterface - Détermination de l'environnement");
             $environment = TableConfig::getEnvironment();
@@ -188,5 +194,47 @@ class OutputController
         
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * API: Récupère le statut d'une board spécifique (dernière requête + GPIO)
+     */
+    public function getBoardStatus(Request $request, Response $response): Response
+    {
+        $routeParams = $request->getAttribute('route')->getArguments();
+        $boardNumber = $routeParams['board'] ?? null;
+        
+        if (!$boardNumber) {
+            $response->getBody()->write(json_encode(['error' => 'Board number required']));
+            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+        }
+        
+        try {
+            // Récupérer les informations de la board
+            $board = $this->outputService->getBoard($boardNumber);
+            if (!$board) {
+                $response->getBody()->write(json_encode(['error' => 'Board not found']));
+                return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+            }
+            
+            // Récupérer les GPIO de la board
+            $gpios = $this->outputService->getBoardGpios($boardNumber);
+            
+            // Préparer la réponse
+            $data = [
+                'board' => $boardNumber,
+                'last_request' => $board['last_request'],
+                'gpios' => $gpios
+            ];
+            
+            $response->getBody()->write(json_encode($data));
+            return $response->withHeader('Content-Type', 'application/json');
+            
+        } catch (\Throwable $e) {
+            error_log("OutputController::getBoardStatus - ERREUR: " . $e->getMessage());
+            
+            $response->getBody()->write(json_encode(['error' => 'Internal server error']));
+            return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
+        }
     }
 }

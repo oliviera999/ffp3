@@ -95,6 +95,17 @@ class OutputService
     }
 
     /**
+     * Récupère tous les GPIO d'une board spécifique avec leurs noms et états
+     * 
+     * @param string $board Numéro de la board
+     * @return array<int, array<string, mixed>>
+     */
+    public function getBoardGpios(string $board): array
+    {
+        return $this->outputRepository->findByBoard($board);
+    }
+
+    /**
      * Récupère une board spécifique
      * 
      * @param string $board Nom de la board
