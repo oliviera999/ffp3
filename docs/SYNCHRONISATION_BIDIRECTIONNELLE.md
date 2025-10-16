@@ -39,23 +39,20 @@ Interface Web (control.twig)
 
 ### Problème 1: Conflit de Synchronisation Bidirectionnelle
 
-**Symptôme**: Les changements faits sur l'interface web sont écrasés 2-3 minutes plus tard par l'ESP32.
+**Symptôme**: Les changements faits sur l'interface web sont écrasés par l'ESP32.
 
 **Cause**: L'ESP32 envoie ses états actuels via `syncStatesFromSensorData()` qui écrase systématiquement la base de données.
 
-**Solution Implémentée**: **Logique de Priorité Temporaire**
-- Les modifications web ont priorité pendant **5 minutes**
-- L'ESP32 ne peut écraser un état web que si la dernière modification web date de plus de 5 minutes
-- Nouvelle colonne `lastModifiedBy` pour tracker la source des modifications
+**Solution Implémentée**: **Pas de Protection Nécessaire**
+- L'ESP32 récupère les états toutes les **4 secondes** (pas 2-3 minutes)
+- Les changements web sont appliqués très rapidement par l'ESP32
+- Nouvelle colonne `lastModifiedBy` pour tracker la source des modifications (debugging)
 
 ```sql
--- Logique de protection dans syncStatesFromSensorData()
+-- Logique simplifiée dans syncStatesFromSensorData()
 UPDATE ffp3Outputs2 
 SET state = :state, requestTime = NOW(), lastModifiedBy = 'esp32'
-WHERE gpio = :gpio 
-  AND (lastModifiedBy != 'web' 
-       OR lastModifiedBy IS NULL 
-       OR requestTime < NOW() - INTERVAL 5 MINUTE)
+WHERE gpio = :gpio AND name IS NOT NULL AND name != ''
 ```
 
 ### Problème 2: Logique Inversée GPIO 18 Inconsistante
@@ -100,15 +97,15 @@ WHERE gpio = :gpio
 
 ## ⏱️ Délais et Limitations
 
-### Délais Incompressibles
+### Délais de Synchronisation
 
-1. **Délai de synchronisation ESP32**: 2-3 minutes
-   - L'ESP32 ne réagit qu'au prochain cycle de communication
-   - Imposé par la fréquence de polling de l'ESP32
+1. **Délai de synchronisation ESP32**: 4 secondes maximum
+   - L'ESP32 récupère les états toutes les 4 secondes
+   - Vos changements web sont appliqués très rapidement
 
-2. **Protection des changements web**: 5 minutes
-   - Fenêtre de protection contre l'écrasement par l'ESP32
-   - Configurable dans le code (constante `PROTECTION_WINDOW`)
+2. **Pas de protection nécessaire**: 
+   - Avec un polling de 4 secondes, la protection est inutile
+   - Comportement simple et prévisible
 
 ### Limitations Techniques
 

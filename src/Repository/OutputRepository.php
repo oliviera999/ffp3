@@ -295,16 +295,14 @@ class OutputRepository
                     
                     // CORRECTION v11.38 : Ne mettre à jour QUE les GPIO qui ont des noms définis
                     // Cela évite la création de lignes NULL inutiles
+                    // PAS DE PROTECTION : L'ESP32 poll toutes les 4 secondes, donc pas besoin de protection
                     $sql = "UPDATE {$table} 
                             SET state = :state, 
                                 requestTime = NOW(), 
                                 lastModifiedBy = 'esp32'
                             WHERE gpio = :gpio 
                               AND name IS NOT NULL 
-                              AND name != ''
-                              AND (lastModifiedBy != 'web' 
-                                   OR lastModifiedBy IS NULL 
-                                   OR requestTime < NOW() - INTERVAL 5 MINUTE)";
+                              AND name != ''";
                     
                     $stmt = $this->pdo->prepare($sql);
                     $stmt->execute([
@@ -312,7 +310,7 @@ class OutputRepository
                         ':state' => $stateValue
                     ]);
                     
-                    // Log si un GPIO a été protégé (modification web récente) ou n'existe pas
+                    // Log si un GPIO n'existe pas
                     if ($stmt->rowCount() === 0) {
                         // Vérifier si le GPIO existe avec un nom
                         $checkSql = "SELECT COUNT(*) FROM {$table} WHERE gpio = :gpio AND name IS NOT NULL AND name != ''";
@@ -320,9 +318,7 @@ class OutputRepository
                         $checkStmt->execute([':gpio' => $gpio]);
                         $exists = $checkStmt->fetchColumn();
                         
-                        if ($exists > 0) {
-                            error_log("GPIO {$gpio} protégé : modification web récente (< 5 min)");
-                        } else {
+                        if ($exists === 0) {
                             error_log("GPIO {$gpio} ignoré : pas de nom défini dans la table");
                         }
                     }

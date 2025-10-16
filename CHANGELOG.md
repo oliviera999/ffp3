@@ -7,6 +7,19 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.7.6] - 2025-01-16
+
+### 🎨 Amélioré - Interface Logs Temps Réel
+- **Design moderne et discret** : Refonte complète de l'interface des logs temps réel
+- **Filtres par badges** : Remplacement des checkboxes par des badges modernes avec icônes
+- **Boutons harmonisés** : Style cohérent avec le reste de l'interface (gradients subtils, animations)
+- **Responsive optimisé** : Mise en page adaptative sur tous les écrans (desktop, tablette, mobile)
+- **Animations fluides** : Effets de survol et transitions avec cubic-bezier pour un rendu professionnel
+- **Panneau intégré** : Design harmonisé avec bordures arrondies et ombres subtiles
+- **Scrollbar personnalisée** : Barre de défilement stylisée pour une meilleure intégration visuelle
+
+---
+
 ## [4.7.5] - 2025-01-16
 
 ### 🐛 Corrigé - Régénération Automatique de Lignes NULL
@@ -32,9 +45,9 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 ## [4.7.4] - 2025-01-15
 
 ### 🔄 Corrigé - Synchronisation Bidirectionnelle Interface Web ↔ ESP32
-- **Résolution du conflit de synchronisation** : Les changements faits sur l'interface web ne sont plus écrasés par l'ESP32
-- **Logique de priorité temporaire** : Les modifications web ont priorité pendant 5 minutes avant que l'ESP32 puisse les écraser
-- **Nouvelle colonne BDD** : Ajout de `lastModifiedBy` pour tracker la source des modifications (web/esp32)
+- **Résolution du conflit de synchronisation** : Les changements faits sur l'interface web sont maintenant appliqués rapidement par l'ESP32
+- **Suppression de la protection inutile** : L'ESP32 poll toutes les 4 secondes, donc pas besoin de protection de 5 minutes
+- **Nouvelle colonne BDD** : Ajout de `lastModifiedBy` pour tracker la source des modifications (debugging)
 
 ### 🎨 Amélioré - Interface de Contrôle
 - **Indicateurs visuels de synchronisation** : Badges en temps réel montrant l'état de sync (SYNC, EN ATTENTE ESP32, ESP32 SYNC, ERREUR)
@@ -55,7 +68,7 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 - **Affichage correct** : L'état affiché correspond maintenant à l'état réel de la pompe réserve
 
 ### ⚠️ Limitations
-- **Délai incompressible** : L'ESP32 ne réagira qu'au prochain poll (2-3 minutes)
+- **Délai de synchronisation** : L'ESP32 applique les changements web en 4 secondes maximum
 - **Remplissage manuel autonome** : Restera autonome (comportement voulu pour sécurité)
 - **Migration BDD requise** : Nécessite mise à jour des tables en production
 
