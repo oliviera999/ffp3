@@ -7,6 +7,27 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.16] - 2025-10-16
+
+### 🐛 Correction - Erreur fatale TableConfig
+
+#### Problème résolu
+- **Erreur fatale** : `Cannot redeclare App\Config\TableConfig::getEnvironment()` 
+- **Cause** : Méthode `getEnvironment()` déclarée deux fois dans `src/Config/TableConfig.php`
+- **Impact** : Empêchait le chargement de la classe et causait des erreurs 500
+
+#### Correction appliquée
+- **Suppression de la duplication** : Supprimé la seconde déclaration de `getEnvironment()` (lignes 76-83)
+- **Conservation de la première** : Gardé la déclaration originale (lignes 31-39)
+- **Validation** : Aucune erreur de linting détectée
+
+#### Fichiers modifiés
+- `src/Config/TableConfig.php` : Suppression de la méthode dupliquée
+- `VERSION` : Incrémenté vers 4.6.16
+- `CHANGELOG.md` : Documentation de la correction
+
+---
+
 ## [4.6.15] - 2025-10-15
 
 ### 🔍 ANALYSE - Régression interface de contrôle et diagnostic avancé

@@ -68,19 +68,6 @@ class TableConfig
         return self::isTest() ? 'ffp3Heartbeat2' : 'ffp3Heartbeat';
     }
 
-    /**
-     * Retourne l'environnement actuel
-     * 
-     * @return string 'prod' ou 'test'
-     */
-    public static function getEnvironment(): string
-    {
-        if (!isset($_ENV['ENV'])) {
-            Env::load();
-        }
-        
-        return $_ENV['ENV'] ?? 'prod';
-    }
 
     /**
      * Force un environnement spécifique (utile pour les routes de test)
