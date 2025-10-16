@@ -19,6 +19,17 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.34] - 2025-01-27
+
+### 🐛 Corrigé
+- **Conflit de routes FastRoute** : Suppression du doublon de la route `/api/realtime/system/health` qui causait une exception "Cannot register two routes matching"
+
+### 📝 Détails techniques
+- **Fichier modifié** : `public/index.php` - Suppression de la route dupliquée
+- **Impact** : L'application Slim fonctionne maintenant sans erreur de conflit de routes
+
+---
+
 ## [4.6.33] - 2025-01-27
 
 ### 🐛 Corrigé
