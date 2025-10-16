@@ -7,6 +7,34 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.24] - 2025-01-27
+
+### 🐛 Correction - Mise à jour des timestamps requestTime
+
+#### Problème des timestamps figés résolu
+- **Problème résolu** : Les timestamps `requestTime` dans la table `ffp3Outputs2` n'étaient plus mis à jour lors des requêtes ESP32
+- **Cause** : La méthode `syncStatesFromSensorData()` ne mettait à jour que les `state` mais pas les `requestTime`
+- **Solution** : 
+  - Modification de `OutputRepository::syncStatesFromSensorData()` pour inclure `requestTime = NOW()` dans les UPDATE
+  - Ajout de la mise à jour du timestamp de la board via `BoardRepository::updateLastRequest()`
+- **Impact** : Les timestamps "Dernière requête" sont maintenant correctement mis à jour à chaque requête ESP32
+- **Fichiers modifiés** : 
+  - `src/Repository/OutputRepository.php` (ligne 179)
+  - `src/Controller/PostDataController.php` (lignes 142-144)
+- **Test** : Script `test_requesttime_fix.php` créé pour vérifier la correction
+
+## [4.6.23] - 2025-01-27
+
+### 🐛 Correction - Timezone des timestamps des boards
+
+#### Problème de datation des dernières requêtes résolu
+- **Problème résolu** : Les timestamps "Dernière requête" sur la page control-test affichaient une heure incorrecte
+- **Cause** : Les timestamps MySQL n'étaient pas convertis du timezone UTC vers Europe/Paris
+- **Solution** : Utilisation de `CONVERT_TZ()` dans les requêtes SQL pour convertir UTC vers +01:00
+- **Impact** : Les timestamps des boards affichent maintenant la bonne heure de Paris
+- **Fichier modifié** : `src/Repository/BoardRepository.php` (méthodes `findAll()`, `findActiveForEnvironment()`, `findByName()`)
+- **Format** : Les dates restent au format français (dd/mm/yyyy hh:mm:ss) mais avec la bonne timezone
+
 ## [4.6.22] - 2025-01-27
 
 ### 🐛 Correction - Normalisation des valeurs booléennes GPIO

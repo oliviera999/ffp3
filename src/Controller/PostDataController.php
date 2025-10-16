@@ -139,6 +139,10 @@ class PostDataController
             $outputRepo = new OutputRepository($pdo);
             $outputRepo->syncStatesFromSensorData($data);
 
+            // Mettre à jour le timestamp de la dernière requête de la board
+            $boardRepo = new \App\Repository\BoardRepository($pdo);
+            $boardRepo->updateLastRequest('1'); // Board 1 par défaut
+
             $this->logger->info('Données capteurs insérées et outputs synchronisés', ['sensor' => $data->sensor, 'version' => $data->version]);
             
             $response->getBody()->write('Données enregistrées avec succès');

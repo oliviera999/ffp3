@@ -22,7 +22,7 @@ class BoardRepository
      */
     public function findAll(): array
     {
-        $sql = "SELECT board, DATE_FORMAT(last_request, '%d/%m/%Y %H:%i:%s') as last_request 
+        $sql = "SELECT board, DATE_FORMAT(CONVERT_TZ(last_request, '+00:00', '+01:00'), '%d/%m/%Y %H:%i:%s') as last_request 
                 FROM Boards 
                 ORDER BY board ASC";
         
@@ -39,7 +39,7 @@ class BoardRepository
      */
     public function findActiveForEnvironment(string $outputsTable): array
     {
-        $sql = "SELECT DISTINCT b.board, DATE_FORMAT(b.last_request, '%d/%m/%Y %H:%i:%s') as last_request 
+        $sql = "SELECT DISTINCT b.board, DATE_FORMAT(CONVERT_TZ(b.last_request, '+00:00', '+01:00'), '%d/%m/%Y %H:%i:%s') as last_request 
                 FROM Boards b
                 INNER JOIN {$outputsTable} o ON b.board = o.board
                 WHERE o.name IS NOT NULL AND o.name != ''
@@ -57,7 +57,7 @@ class BoardRepository
      */
     public function findByName(string $board): ?array
     {
-        $sql = "SELECT board, DATE_FORMAT(last_request, '%d/%m/%Y %H:%i:%s') as last_request 
+        $sql = "SELECT board, DATE_FORMAT(CONVERT_TZ(last_request, '+00:00', '+01:00'), '%d/%m/%Y %H:%i:%s') as last_request 
                 FROM Boards 
                 WHERE board = :board";
         

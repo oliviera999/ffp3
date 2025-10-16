@@ -175,7 +175,8 @@ class OutputRepository
                     // Conversion en string pour compatibilité avec le type varchar(64)
                     $stateValue = (string)$value;
                     
-                    $sql = "UPDATE {$table} SET state = :state WHERE gpio = :gpio";
+                    // Mettre à jour l'état ET le timestamp de la dernière requête
+                    $sql = "UPDATE {$table} SET state = :state, requestTime = NOW() WHERE gpio = :gpio";
                     $stmt = $this->pdo->prepare($sql);
                     $stmt->execute([
                         ':gpio' => $gpio,
