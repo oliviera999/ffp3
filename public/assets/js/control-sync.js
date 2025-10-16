@@ -206,7 +206,8 @@ class ControlSync {
             if (switchElement) {
                 // Mettre à jour l'état du switch sans déclencher l'événement onchange
                 const currentChecked = switchElement.checked;
-                const shouldBeChecked = change.newState === 1;
+                // Pour GPIO 18 (pompe réserve), inverser la logique
+                const shouldBeChecked = change.gpio === 18 ? change.newState === 0 : change.newState === 1;
                 
                 if (currentChecked !== shouldBeChecked) {
                     // Animation flash pour indiquer le changement
@@ -312,7 +313,8 @@ class ControlSync {
         const switches = document.querySelectorAll('input[data-gpio]');
         switches.forEach(switchEl => {
             const gpio = parseInt(switchEl.dataset.gpio);
-            const state = switchEl.checked ? 1 : 0;
+            // Pour GPIO 18 (pompe réserve), inverser la logique
+            const state = gpio === 18 ? (switchEl.checked ? 0 : 1) : (switchEl.checked ? 1 : 0);
             this.lastStates[gpio] = state;
             this.switches.set(gpio, switchEl);
         });

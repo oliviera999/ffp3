@@ -7,6 +7,75 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.26] - 2025-01-27
+
+### ✨ Amélioration - Panneau d'état du système sur la page de contrôle
+
+#### Ajout d'informations de synchronisation détaillées
+- **Nouveau** : Panneau d'état du système similaire aux pages de suivi sur la page de contrôle
+- **Fonctionnalités ajoutées** :
+  - Affichage du statut du système (En ligne/Hors ligne/Erreur)
+  - Dernière réception de données avec timestamp
+  - Uptime du système sur 30 jours
+  - Nombre de lectures aujourd'hui
+  - Compteur de mise à jour en temps réel
+  - Contrôles de synchronisation intégrés (Mode Live, Fréquence, Sync manuel)
+- **Interface** :
+  - Design harmonisé avec les autres pages du système
+  - Responsive et adaptatif mobile
+  - Animations et transitions fluides
+  - Indicateurs visuels de statut colorés
+- **JavaScript** :
+  - Système de polling automatique configurable
+  - Gestion des erreurs de connexion
+  - API `/ffp3/api/health` pour les données de santé
+  - Compteur à rebours pour les mises à jour
+
+## [4.6.27] - 2025-01-27
+
+### ✨ Nouvelle fonctionnalité - Panneau de logs temps réel
+
+#### Système de logs complet pour le suivi des événements
+- **Nouvelle fonctionnalité** : Ajout d'un panneau de logs temps réel sur la page de contrôle
+- **Fonctionnalités** :
+  - Affichage en temps réel de tous les événements (changements GPIO, erreurs, synchronisation, etc.)
+  - Filtres par niveau de log (Info, Succès, Attention, Erreur, GPIO, Sync)
+  - Contrôles (Pause/Reprendre, Vider, Exporter)
+  - Interface sombre style terminal avec couleurs distinctives
+  - Limite de 1000 logs en mémoire avec export JSON
+- **Événements loggés** :
+  - Changements d'état des GPIO avec noms des équipements
+  - Appels API et leurs résultats (succès/erreur)
+  - Synchronisation temps réel (connexion, changements détectés)
+  - Sauvegarde des paramètres
+  - Mise à jour des données de santé du système
+- **Interface** :
+  - Panneau dédié avec design harmonisé
+  - Scroll automatique vers les nouveaux logs
+  - Animation d'apparition pour les nouvelles entrées
+  - Responsive design pour mobile
+- **Intégration** : Complètement intégré avec tous les systèmes existants
+- **Fichiers modifiés** :
+  - `templates/control.twig` : Ajout du panneau et du système de logging JavaScript
+  - `VERSION` : Incrémenté vers 4.6.27
+
+## [4.6.25] - 2025-01-27
+
+### 🐛 Correction - États paradoxaux des switches pompe réserve
+
+#### Problème des switches incohérents résolu
+- **Problème résolu** : Les switches de la pompe réserve affichaient des états paradoxaux (switch ON mais état "Désactivé")
+- **Cause** : La pompe réserve (GPIO 18) utilise une logique inversée côté hardware mais l'interface web n'appliquait pas cette inversion
+- **Solution** : 
+  - Correction du template `control.twig` pour inverser la logique d'affichage des switches GPIO 18
+  - Correction de la fonction JavaScript `updateOutput()` pour prendre en compte la logique inversée
+  - Correction du fichier `control-sync.js` pour la synchronisation temps réel
+- **Impact** : Les switches de la pompe réserve affichent maintenant des états cohérents avec le fonctionnement réel
+- **Fichiers modifiés** :
+  - `templates/control.twig` : Logique d'affichage des switches et textes de statut
+  - `public/assets/js/control-sync.js` : Synchronisation temps réel
+  - `VERSION` : Incrémenté vers 4.6.25
+
 ## [4.6.24] - 2025-01-27
 
 ### 🐛 Correction - Mise à jour des timestamps requestTime

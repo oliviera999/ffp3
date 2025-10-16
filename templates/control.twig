@@ -478,6 +478,590 @@
             50% { background-color: #ffc107; }
             100% { background-color: #f8f9fa; }
         }
+        
+        /* ========================================
+           STYLES POUR LE PANNEAU D'ÉTAT DU SYSTÈME
+           ======================================== */
+        
+        /* Panneau d'état du système (temps réel) */
+        .system-health-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e8e8e8;
+            transition: all 0.3s ease;
+        }
+        
+        .system-health-panel:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .system-health-panel h3 {
+            margin: 0 0 20px 0;
+            color: #008B74;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .refresh-spinner {
+            margin-left: auto;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .refresh-spinner.spinning i {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Grille de santé */
+        .health-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .health-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #008B74;
+            transition: all 0.3s ease;
+        }
+        
+        .health-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 139, 116, 0.2);
+        }
+        
+        .health-item-label {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .health-item-value {
+            font-size: 1.1em;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        /* Indicateurs de statut */
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-indicator.status-online {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: white;
+        }
+        
+        .status-indicator.status-offline {
+            background: linear-gradient(135deg, #bdbdbd, #9e9e9e);
+            color: white;
+        }
+        
+        .status-indicator.status-warning {
+            background: linear-gradient(135deg, #ffa726, #fb8c00);
+            color: white;
+        }
+        
+        .status-indicator.status-error {
+            background: linear-gradient(135deg, #ef5350, #e53935);
+            color: white;
+        }
+        
+        /* Compteur de mise à jour */
+        .next-update-countdown {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 8px;
+            color: #495057;
+            font-size: 0.9em;
+            border: 1px solid #dee2e6;
+        }
+        
+        .next-update-countdown strong {
+            color: #008B74;
+            font-weight: 700;
+        }
+        
+        /* Contrôles mode live */
+        .live-controls-integrated {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .live-control-row {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .live-control-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #e8e8e8;
+            transition: all 0.3s ease;
+        }
+        
+        .live-control-item:hover {
+            background: #e9ecef;
+            border-color: #008B74;
+        }
+        
+        .live-control-label {
+            font-size: 0.9em;
+            font-weight: 500;
+            color: #495057;
+            white-space: nowrap;
+        }
+        
+        /* Switch live */
+        .live-toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            cursor: pointer;
+        }
+        
+        .live-toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+        
+        .live-toggle-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #ddd;
+            border-radius: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .live-toggle-button {
+            position: absolute;
+            content: '';
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .live-toggle-switch input:checked + .live-toggle-slider {
+            background: #008B74;
+        }
+        
+        .live-toggle-switch input:checked + .live-toggle-slider .live-toggle-button {
+            transform: translateX(20px);
+        }
+        
+        /* Sélecteur de fréquence */
+        .live-control-select {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            font-size: 0.85em;
+            color: #495057;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .live-control-select:focus {
+            outline: none;
+            border-color: #008B74;
+            box-shadow: 0 0 0 2px rgba(0, 139, 116, 0.1);
+        }
+        
+        /* Bouton de sync manuel */
+        .live-control-btn {
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #008B74, #00A896);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .live-control-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 139, 116, 0.3);
+        }
+        
+        .live-control-btn:active {
+            transform: translateY(0);
+        }
+        
+         /* ========================================
+            STYLES POUR LE PANNEAU DE LOGS TEMPS RÉEL
+            ======================================== */
+         
+         /* Panneau de logs */
+         .realtime-logs-panel {
+             background: white;
+             border-radius: 12px;
+             padding: 25px;
+             margin-bottom: 25px;
+             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+             border: 1px solid #e8e8e8;
+             transition: all 0.3s ease;
+         }
+         
+         .realtime-logs-panel:hover {
+             transform: translateY(-1px);
+             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+         }
+         
+         .realtime-logs-panel h3 {
+             margin: 0 0 20px 0;
+             color: #008B74;
+             font-size: 1.3em;
+             display: flex;
+             align-items: center;
+             gap: 10px;
+             padding-bottom: 10px;
+             border-bottom: 2px solid #f0f0f0;
+         }
+         
+         /* Conteneur de logs */
+         .logs-container {
+             background: #1a1a1a;
+             border-radius: 8px;
+             padding: 15px;
+             font-family: 'Courier New', monospace;
+             font-size: 0.85em;
+             line-height: 1.4;
+             max-height: 400px;
+             overflow-y: auto;
+             border: 1px solid #333;
+             position: relative;
+         }
+         
+         .logs-container::-webkit-scrollbar {
+             width: 8px;
+         }
+         
+         .logs-container::-webkit-scrollbar-track {
+             background: #2a2a2a;
+             border-radius: 4px;
+         }
+         
+         .logs-container::-webkit-scrollbar-thumb {
+             background: #555;
+             border-radius: 4px;
+         }
+         
+         .logs-container::-webkit-scrollbar-thumb:hover {
+             background: #777;
+         }
+         
+         /* Entrées de log */
+         .log-entry {
+             margin-bottom: 8px;
+             padding: 6px 10px;
+             border-radius: 4px;
+             border-left: 3px solid transparent;
+             transition: all 0.2s ease;
+             word-wrap: break-word;
+         }
+         
+         .log-entry:hover {
+             background: rgba(255, 255, 255, 0.05);
+         }
+         
+         .log-entry.log-info {
+             color: #e8e8e8;
+             border-left-color: #008B74;
+         }
+         
+         .log-entry.log-success {
+             color: #a8e6a3;
+             border-left-color: #4caf50;
+         }
+         
+         .log-entry.log-warning {
+             color: #ffd54f;
+             border-left-color: #ff9800;
+         }
+         
+         .log-entry.log-error {
+             color: #ffcdd2;
+             border-left-color: #f44336;
+         }
+         
+         .log-entry.log-debug {
+             color: #bbdefb;
+             border-left-color: #2196f3;
+         }
+         
+         .log-entry.log-gpio {
+             color: #f8bbd9;
+             border-left-color: #e91e63;
+         }
+         
+         .log-entry.log-sync {
+             color: #c8e6c9;
+             border-left-color: #4caf50;
+         }
+         
+         /* Timestamp des logs */
+         .log-timestamp {
+             color: #888;
+             font-size: 0.75em;
+             margin-right: 10px;
+             display: inline-block;
+             min-width: 70px;
+         }
+         
+         /* Niveau de log */
+         .log-level {
+             font-weight: bold;
+             margin-right: 10px;
+             display: inline-block;
+             min-width: 60px;
+             text-transform: uppercase;
+             font-size: 0.8em;
+         }
+         
+         .log-level.info { color: #008B74; }
+         .log-level.success { color: #4caf50; }
+         .log-level.warning { color: #ff9800; }
+         .log-level.error { color: #f44336; }
+         .log-level.debug { color: #2196f3; }
+         .log-level.gpio { color: #e91e63; }
+         .log-level.sync { color: #4caf50; }
+         
+         /* Message de log */
+         .log-message {
+             flex: 1;
+             color: inherit;
+         }
+         
+         /* Contrôles des logs */
+         .logs-controls {
+             display: flex;
+             gap: 15px;
+             align-items: center;
+             margin-bottom: 15px;
+             flex-wrap: wrap;
+         }
+         
+         .logs-control-item {
+             display: flex;
+             align-items: center;
+             gap: 8px;
+         }
+         
+         .logs-control-label {
+             font-size: 0.9em;
+             font-weight: 500;
+             color: #495057;
+         }
+         
+         /* Filtres de logs */
+         .log-filter-checkbox {
+             margin-right: 8px;
+         }
+         
+         .log-filter-checkbox:checked + label {
+             color: #008B74;
+             font-weight: 600;
+         }
+         
+         /* Boutons de contrôle */
+         .logs-btn {
+             padding: 6px 12px;
+             background: linear-gradient(135deg, #008B74, #00A896);
+             color: white;
+             border: none;
+             border-radius: 6px;
+             font-size: 0.8em;
+             font-weight: 500;
+             cursor: pointer;
+             transition: all 0.3s ease;
+             display: flex;
+             align-items: center;
+             gap: 4px;
+         }
+         
+         .logs-btn:hover {
+             transform: translateY(-1px);
+             box-shadow: 0 3px 8px rgba(0, 139, 116, 0.3);
+         }
+         
+         .logs-btn.secondary {
+             background: linear-gradient(135deg, #6c757d, #5a6268);
+         }
+         
+         .logs-btn.danger {
+             background: linear-gradient(135deg, #dc3545, #c82333);
+         }
+         
+         /* Indicateur de statut des logs */
+         .logs-status {
+             display: inline-flex;
+             align-items: center;
+             gap: 6px;
+             padding: 4px 8px;
+             border-radius: 12px;
+             font-size: 0.75em;
+             font-weight: 600;
+             text-transform: uppercase;
+             letter-spacing: 0.5px;
+         }
+         
+         .logs-status.active {
+             background: linear-gradient(135deg, #4caf50, #43a047);
+             color: white;
+         }
+         
+         .logs-status.paused {
+             background: linear-gradient(135deg, #ff9800, #f57c00);
+             color: white;
+         }
+         
+         /* Animation pour les nouvelles entrées */
+         .log-entry.new-entry {
+             animation: logEntryAppear 0.5s ease-out;
+         }
+         
+         @keyframes logEntryAppear {
+             0% {
+                 opacity: 0;
+                 transform: translateX(-20px);
+             }
+             100% {
+                 opacity: 1;
+                 transform: translateX(0);
+             }
+         }
+         
+         /* Responsive pour le panneau de logs */
+         @media (max-width: 768px) {
+             .logs-controls {
+                 flex-direction: column;
+                 align-items: stretch;
+                 gap: 10px;
+             }
+             
+             .logs-control-item {
+                 justify-content: space-between;
+             }
+             
+             .realtime-logs-panel {
+                 padding: 20px;
+             }
+             
+             .logs-container {
+                 max-height: 300px;
+                 font-size: 0.8em;
+             }
+         }
+         
+         @media (max-width: 480px) {
+             .logs-container {
+                 max-height: 250px;
+                 padding: 12px;
+             }
+             
+             .log-entry {
+                 padding: 4px 8px;
+                 font-size: 0.75em;
+             }
+             
+             .log-timestamp {
+                 min-width: 60px;
+                 font-size: 0.7em;
+             }
+             
+             .log-level {
+                 min-width: 50px;
+                 font-size: 0.7em;
+             }
+         }
+         
+         /* Responsive pour le panneau d'état */
+         @media (max-width: 768px) {
+             .health-grid {
+                 grid-template-columns: 1fr;
+                 gap: 15px;
+             }
+             
+             .live-control-row {
+                 flex-direction: column;
+                 gap: 15px;
+             }
+             
+             .live-control-item {
+                 width: 100%;
+                 justify-content: space-between;
+             }
+             
+             .system-health-panel {
+                 padding: 20px;
+             }
+         }
+         
+         @media (max-width: 480px) {
+             .health-grid {
+                 grid-template-columns: 1fr;
+             }
+             
+             .health-item {
+                 padding: 12px;
+             }
+             
+             .live-control-item {
+                 padding: 8px 12px;
+             }
+         }
     </style>
 </head>
 <body class="is-preload">
@@ -544,6 +1128,135 @@
                         <i class="fas fa-microchip"></i> {{ outputs|length }} actionneurs • 
                         <i class="fas fa-server"></i> {{ boards|length }} boards connectées
                     </p>
+                </div>
+
+                <!-- Panneau d'état du système (temps réel) -->
+                <div class="system-health-panel">
+                    <h3>
+                        <i class="fas fa-heartbeat"></i>
+                        État du système
+                        <span class="refresh-spinner" id="health-spinner">
+                            <i class="fas fa-sync-alt"></i>
+                        </span>
+                    </h3>
+                    
+                    <div class="health-grid">
+                        <div class="health-item">
+                            <div class="health-item-label">Statut</div>
+                            <div id="system-status-indicator" class="status-indicator status-online">
+                                <i class="fas fa-check-circle"></i> En ligne
+                            </div>
+                        </div>
+                        
+                        <div class="health-item">
+                            <div class="health-item-label">Dernière réception</div>
+                            <div class="health-item-value" id="last-reading-time">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="health-item">
+                            <div class="health-item-label">Uptime (30j)</div>
+                            <div class="health-item-value" id="system-uptime">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="health-item">
+                            <div class="health-item-label">Lectures aujourd'hui</div>
+                            <div class="health-item-value" id="readings-today">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="next-update-countdown" id="next-update-info">
+                        Prochaine mise à jour dans <strong id="countdown-seconds">15</strong> secondes
+                    </div>
+
+                    <!-- Contrôles mode live intégrés -->
+                    <div class="live-controls-integrated">
+                        <div class="live-control-row">
+                            <!-- Mode Live ON/OFF -->
+                            <div class="live-control-item">
+                                <span class="live-control-label">Mode Live</span>
+                                <label class="live-toggle-switch">
+                                    <input type="checkbox" id="live-mode-toggle" checked>
+                                    <span class="live-toggle-slider">
+                                        <span class="live-toggle-button"></span>
+                                    </span>
+                                </label>
+                            </div>
+                            
+                            <!-- Fréquence de mise à jour -->
+                            <div class="live-control-item">
+                                <span class="live-control-label">Fréquence</span>
+                                <select id="poll-interval-select" class="live-control-select">
+                                    <option value="5">5s</option>
+                                    <option value="10" selected>10s</option>
+                                    <option value="15">15s</option>
+                                    <option value="30">30s</option>
+                                    <option value="60">1min</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Bouton de synchronisation manuelle -->
+                            <div class="live-control-item">
+                                <button id="manual-sync-btn" class="live-control-btn">
+                                    <i class="fas fa-sync-alt"></i> Sync
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+
+                <!-- Panneau de logs temps réel -->
+                <div class="realtime-logs-panel">
+                    <h3>
+                        <i class="fas fa-terminal"></i>
+                        Logs temps réel
+                        <span class="logs-status active" id="logs-status">
+                            <i class="fas fa-circle"></i> Actif
+                        </span>
+                    </h3>
+                    
+                    <!-- Contrôles des logs -->
+                    <div class="logs-controls">
+                        <!-- Filtres de niveau -->
+                        <div class="logs-control-item">
+                            <span class="logs-control-label">Filtres:</span>
+                            <input type="checkbox" class="log-filter-checkbox" id="filter-info" checked>
+                            <label for="filter-info">Info</label>
+                            <input type="checkbox" class="log-filter-checkbox" id="filter-success" checked>
+                            <label for="filter-success">Succès</label>
+                            <input type="checkbox" class="log-filter-checkbox" id="filter-warning" checked>
+                            <label for="filter-warning">Attention</label>
+                            <input type="checkbox" class="log-filter-checkbox" id="filter-error" checked>
+                            <label for="filter-error">Erreur</label>
+                            <input type="checkbox" class="log-filter-checkbox" id="filter-gpio" checked>
+                            <label for="filter-gpio">GPIO</label>
+                            <input type="checkbox" class="log-filter-checkbox" id="filter-sync" checked>
+                            <label for="filter-sync">Sync</label>
+                        </div>
+                        
+                        <!-- Boutons de contrôle -->
+                        <div class="logs-control-item">
+                            <button id="pause-logs-btn" class="logs-btn secondary">
+                                <i class="fas fa-pause"></i> Pause
+                            </button>
+                            <button id="clear-logs-btn" class="logs-btn danger">
+                                <i class="fas fa-trash"></i> Vider
+                            </button>
+                            <button id="export-logs-btn" class="logs-btn">
+                                <i class="fas fa-download"></i> Exporter
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Conteneur des logs -->
+                    <div class="logs-container" id="logs-container">
+                        <!-- Les logs seront ajoutés dynamiquement ici -->
+                    </div>
                 </div>
 
                 <!-- État des connexions -->
@@ -629,7 +1342,13 @@
                                                 <div class="action-button-info">
                                                     <div class="action-button-label">{{ display_name }}</div>
                                                     <div class="action-button-status">
-                                                        <span class="status-text">{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
+                                                        <span class="status-text">
+                                                            {% if output.gpio == 18 %}
+                                                                {{ output.state == 0 ? 'Activé' : 'Désactivé' }}
+                                                            {% else %}
+                                                                {{ output.state == 1 ? 'Activé' : 'Désactivé' }}
+                                                            {% endif %}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -639,7 +1358,7 @@
                                                        id="{{ output.id }}" 
                                                        data-id="{{ output.id }}"
                                                        data-gpio="{{ output.gpio }}"
-                                                       {{ output.state == 1 ? 'checked' : '' }}>
+                                                       {% if output.gpio == 18 %}{{ output.state == 0 ? 'checked' : '' }}{% else %}{{ output.state == 1 ? 'checked' : '' }}{% endif %}>
                                                 <span class="modern-switch-slider">
                                                     <span class="modern-switch-button"></span>
                                                 </span>
@@ -969,7 +1688,22 @@
             var card = element.closest('.action-button-card');
             var statusText = card ? card.querySelector('.status-text') : null;
             
+            // Récupérer le nom de l'élément pour les logs
+            var elementName = '';
+            if (card) {
+                var labelElement = card.querySelector('.action-button-label');
+                if (labelElement) {
+                    elementName = labelElement.textContent.trim();
+                }
+            }
+            
             console.log("Toggle ID " + id + " (GPIO " + gpio + ") to state " + state);
+            
+            // Log de l'action utilisateur
+            if (realtimeLogger) {
+                realtimeLogger.logGpioChange(gpio, state === 1 ? 0 : 1, state, elementName);
+                realtimeLogger.logApiCall('GET', url, 'En cours...');
+            }
             
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
@@ -985,11 +1719,22 @@
                             statusText.style.fontWeight = state === 1 ? '600' : '400';
                         }
                         
+                        // Log du succès
+                        if (realtimeLogger) {
+                            realtimeLogger.log('success', `Changement d'état réussi: ${elementName || 'GPIO ' + gpio}`, 'GPIO');
+                        }
+                        
                         if (controlSync) {
                             setTimeout(() => controlSync.forceSync(), 500);
                         }
                     } else {
                         console.error("Toggle failed!");
+                        
+                        // Log de l'erreur
+                        if (realtimeLogger) {
+                            realtimeLogger.logError(`Échec du changement d'état pour ${elementName || 'GPIO ' + gpio} (HTTP ${this.status})`, 'GPIO');
+                        }
+                        
                         alert("Erreur lors du changement d'état (ID " + id + ")");
                         element.checked = !element.checked;
                     }
@@ -1008,6 +1753,11 @@
             // Utiliser la route API correcte selon l'environnement
             var apiUrl = API_BASE + "/parameters";
             
+            // Log de la sauvegarde
+            if (realtimeLogger) {
+                realtimeLogger.log('info', `Sauvegarde paramètre: ${paramName} = ${paramValue}`, 'Paramètres');
+            }
+            
             var xhr = new XMLHttpRequest();
             xhr.open("POST", apiUrl, true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -1016,8 +1766,14 @@
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         showSuccessIndicator(paramName);
+                        if (realtimeLogger) {
+                            realtimeLogger.log('success', `Paramètre ${paramName} sauvegardé`, 'Paramètres');
+                        }
                     } else {
                         showErrorIndicator(paramName);
+                        if (realtimeLogger) {
+                            realtimeLogger.logError(`Échec sauvegarde ${paramName} (HTTP ${xhr.status})`, 'Paramètres');
+                        }
                     }
                 }
             };
@@ -1125,9 +1881,16 @@
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(checkFontAwesomeLoaded, 500);
             
+            // Initialiser le système de logs temps réel
+            realtimeLogger = new RealtimeLogger();
+            window.realtimeLogger = realtimeLogger; // Exposer globalement pour debug
+            
             const controlValuesUpdater = new ControlValuesUpdater();
             controlValuesUpdater.init();
             window.controlValuesUpdater = controlValuesUpdater;
+            
+            // Initialiser le panneau d'état du système
+            initializeSystemHealthPanel();
             
             const syncScript = document.createElement('script');
             syncScript.src = '/ffp3/assets/js/control-sync.js';
@@ -1142,6 +1905,15 @@
                     onStateChange: function(changes) {
                         console.log('[Control] State changes detected:', changes);
                         
+                        // Log des changements d'état détectés
+                        if (realtimeLogger && changes.length > 0) {
+                            changes.forEach(change => {
+                                const gpioName = getGpioName(change.gpio);
+                                realtimeLogger.logSyncEvent(`Changement détecté: ${gpioName || 'GPIO ' + change.gpio}`, 
+                                    `${change.oldState} → ${change.newState}`);
+                            });
+                        }
+                        
                         if (window.controlValuesUpdater) {
                             changes.forEach(change => {
                                 if (change.gpio >= 100) {
@@ -1153,6 +1925,18 @@
                     
                     onStatusChange: function(status) {
                         console.log('[Control] Sync status:', status);
+                        
+                        // Log des changements de statut de synchronisation
+                        if (realtimeLogger) {
+                            const statusMessages = {
+                                'connecting': 'Connexion en cours...',
+                                'online': 'Synchronisation active',
+                                'offline': 'Synchronisation interrompue',
+                                'error': 'Erreur de synchronisation',
+                                'warning': 'Attention synchronisation'
+                            };
+                            realtimeLogger.logSyncEvent('Statut', statusMessages[status] || status);
+                        }
                     }
                 });
                 
@@ -1168,6 +1952,515 @@
             
             document.head.appendChild(syncScript);
         });
+        
+        // Fonction d'initialisation du panneau d'état du système
+        function initializeSystemHealthPanel() {
+            console.log('[Control] Initializing system health panel...');
+            
+            // Variables pour le système de santé
+            let healthUpdateInterval = null;
+            let countdownInterval = null;
+            let currentCountdown = 15;
+            let isLiveMode = true;
+            let pollInterval = 10; // secondes
+            
+            // Éléments DOM
+            const liveModeToggle = document.getElementById('live-mode-toggle');
+            const pollIntervalSelect = document.getElementById('poll-interval-select');
+            const manualSyncBtn = document.getElementById('manual-sync-btn');
+            const healthSpinner = document.getElementById('health-spinner');
+            const systemStatusIndicator = document.getElementById('system-status-indicator');
+            const lastReadingTime = document.getElementById('last-reading-time');
+            const systemUptime = document.getElementById('system-uptime');
+            const readingsToday = document.getElementById('readings-today');
+            const countdownSeconds = document.getElementById('countdown-seconds');
+            const nextUpdateInfo = document.getElementById('next-update-info');
+            
+             // Fonction pour mettre à jour les données de santé
+             async function updateSystemHealth() {
+                 if (!isLiveMode) return;
+                 
+                 try {
+                     console.log('[Control] Updating system health...');
+                     
+                     // Log du début de la mise à jour
+                     if (realtimeLogger) {
+                         realtimeLogger.log('info', 'Mise à jour des données de santé du système', 'Santé');
+                     }
+                     
+                     // Ajouter l'animation de rotation au spinner
+                     if (healthSpinner) {
+                         healthSpinner.classList.add('spinning');
+                     }
+                     
+                     // Utiliser l'API de santé du système (si disponible)
+                     const apiUrl = '/ffp3/api/health{{ environment == "test" ? "-test" : "" }}';
+                     
+                     const response = await fetch(apiUrl, {
+                         method: 'GET',
+                         headers: {
+                             'Accept': 'application/json',
+                             'Cache-Control': 'no-cache'
+                         }
+                     });
+                     
+                     if (response.ok) {
+                         const healthData = await response.json();
+                         updateHealthDisplay(healthData);
+                         updateSystemStatus('online');
+                         
+                         // Log du succès
+                         if (realtimeLogger) {
+                             realtimeLogger.log('success', 'Données de santé mises à jour avec succès', 'Santé');
+                         }
+                     } else {
+                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                     }
+                     
+                 } catch (error) {
+                     console.error('[Control] Health update failed:', error);
+                     updateSystemStatus('error');
+                     updateHealthDisplay({
+                         lastReadingTime: 'Erreur de connexion',
+                         systemUptime: 'N/A',
+                         readingsToday: 'N/A'
+                     });
+                     
+                     // Log de l'erreur
+                     if (realtimeLogger) {
+                         realtimeLogger.logError(`Échec mise à jour santé: ${error.message}`, 'Santé');
+                     }
+                 } finally {
+                     // Retirer l'animation de rotation
+                     if (healthSpinner) {
+                         healthSpinner.classList.remove('spinning');
+                     }
+                 }
+             }
+            
+            // Fonction pour mettre à jour l'affichage des données de santé
+            function updateHealthDisplay(data) {
+                if (lastReadingTime && data.lastReadingTime) {
+                    lastReadingTime.innerHTML = `<i class="fas fa-clock"></i> ${data.lastReadingTime}`;
+                }
+                
+                if (systemUptime && data.systemUptime) {
+                    systemUptime.innerHTML = `<i class="fas fa-server"></i> ${data.systemUptime}`;
+                }
+                
+                if (readingsToday && data.readingsToday) {
+                    readingsToday.innerHTML = `<i class="fas fa-chart-line"></i> ${data.readingsToday}`;
+                }
+            }
+            
+            // Fonction pour mettre à jour le statut du système
+            function updateSystemStatus(status) {
+                if (!systemStatusIndicator) return;
+                
+                // Retirer toutes les classes de statut
+                systemStatusIndicator.className = 'status-indicator';
+                
+                switch (status) {
+                    case 'online':
+                        systemStatusIndicator.classList.add('status-online');
+                        systemStatusIndicator.innerHTML = '<i class="fas fa-check-circle"></i> En ligne';
+                        break;
+                    case 'offline':
+                        systemStatusIndicator.classList.add('status-offline');
+                        systemStatusIndicator.innerHTML = '<i class="fas fa-times-circle"></i> Hors ligne';
+                        break;
+                    case 'warning':
+                        systemStatusIndicator.classList.add('status-warning');
+                        systemStatusIndicator.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Attention';
+                        break;
+                    case 'error':
+                        systemStatusIndicator.classList.add('status-error');
+                        systemStatusIndicator.innerHTML = '<i class="fas fa-exclamation-circle"></i> Erreur';
+                        break;
+                }
+            }
+            
+            // Fonction pour démarrer le compte à rebours
+            function startCountdown() {
+                currentCountdown = pollInterval;
+                updateCountdownDisplay();
+                
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                }
+                
+                countdownInterval = setInterval(() => {
+                    currentCountdown--;
+                    updateCountdownDisplay();
+                    
+                    if (currentCountdown <= 0) {
+                        clearInterval(countdownInterval);
+                        if (isLiveMode) {
+                            updateSystemHealth();
+                            startCountdown();
+                        }
+                    }
+                }, 1000);
+            }
+            
+            // Fonction pour mettre à jour l'affichage du compte à rebours
+            function updateCountdownDisplay() {
+                if (countdownSeconds) {
+                    countdownSeconds.textContent = currentCountdown;
+                }
+                
+                if (nextUpdateInfo) {
+                    if (isLiveMode) {
+                        nextUpdateInfo.style.display = 'block';
+                    } else {
+                        nextUpdateInfo.style.display = 'none';
+                    }
+                }
+            }
+            
+            // Fonction pour démarrer/arrêter le mode live
+            function toggleLiveMode() {
+                isLiveMode = !isLiveMode;
+                
+                if (isLiveMode) {
+                    console.log('[Control] Live mode enabled');
+                    updateSystemHealth();
+                    startCountdown();
+                } else {
+                    console.log('[Control] Live mode disabled');
+                    if (healthUpdateInterval) {
+                        clearInterval(healthUpdateInterval);
+                    }
+                    if (countdownInterval) {
+                        clearInterval(countdownInterval);
+                    }
+                    updateCountdownDisplay();
+                }
+            }
+            
+            // Fonction pour changer la fréquence de mise à jour
+            function changePollInterval(newInterval) {
+                pollInterval = parseInt(newInterval);
+                console.log('[Control] Poll interval changed to:', pollInterval, 'seconds');
+                
+                if (isLiveMode) {
+                    startCountdown();
+                }
+            }
+            
+            // Fonction de synchronisation manuelle
+            async function manualSync() {
+                console.log('[Control] Manual sync triggered');
+                
+                if (manualSyncBtn) {
+                    manualSyncBtn.disabled = true;
+                    manualSyncBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sync...';
+                }
+                
+                try {
+                    await updateSystemHealth();
+                    if (isLiveMode) {
+                        startCountdown();
+                    }
+                } finally {
+                    if (manualSyncBtn) {
+                        manualSyncBtn.disabled = false;
+                        manualSyncBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Sync';
+                    }
+                }
+            }
+            
+            // Attacher les événements
+            if (liveModeToggle) {
+                liveModeToggle.addEventListener('change', toggleLiveMode);
+            }
+            
+            if (pollIntervalSelect) {
+                pollIntervalSelect.addEventListener('change', (e) => {
+                    changePollInterval(e.target.value);
+                });
+            }
+            
+            if (manualSyncBtn) {
+                manualSyncBtn.addEventListener('click', manualSync);
+            }
+            
+            // Initialisation
+            console.log('[Control] System health panel initialized');
+            
+            // Démarrer en mode live par défaut
+            if (isLiveMode) {
+                updateSystemHealth();
+                startCountdown();
+            }
+            
+             // Exposer les fonctions globalement pour debug
+             window.systemHealthPanel = {
+                 updateHealth: updateSystemHealth,
+                 toggleLive: toggleLiveMode,
+                 manualSync: manualSync,
+                 changeInterval: changePollInterval
+             };
+         }
+         
+         // ========================================
+         // SYSTÈME DE LOGS TEMPS RÉEL
+         // ========================================
+         
+         // Classe pour gérer les logs temps réel
+         class RealtimeLogger {
+             constructor() {
+                 this.logs = [];
+                 this.maxLogs = 1000; // Limite de logs en mémoire
+                 this.isPaused = false;
+                 this.filters = {
+                     info: true,
+                     success: true,
+                     warning: true,
+                     error: true,
+                     debug: true,
+                     gpio: true,
+                     sync: true
+                 };
+                 
+                 // Éléments DOM
+                 this.logsContainer = document.getElementById('logs-container');
+                 this.logsStatus = document.getElementById('logs-status');
+                 this.pauseBtn = document.getElementById('pause-logs-btn');
+                 this.clearBtn = document.getElementById('clear-logs-btn');
+                 this.exportBtn = document.getElementById('export-logs-btn');
+                 
+                 // Initialiser les événements
+                 this.initializeEvents();
+                 
+                 // Message de bienvenue
+                 this.log('info', 'Système de logs temps réel initialisé', 'Système');
+             }
+             
+             // Initialiser les événements
+             initializeEvents() {
+                 // Bouton pause/reprendre
+                 if (this.pauseBtn) {
+                     this.pauseBtn.addEventListener('click', () => {
+                         this.togglePause();
+                     });
+                 }
+                 
+                 // Bouton vider
+                 if (this.clearBtn) {
+                     this.clearBtn.addEventListener('click', () => {
+                         this.clearLogs();
+                     });
+                 }
+                 
+                 // Bouton exporter
+                 if (this.exportBtn) {
+                     this.exportBtn.addEventListener('click', () => {
+                         this.exportLogs();
+                     });
+                 }
+                 
+                 // Filtres
+                 const filterCheckboxes = document.querySelectorAll('.log-filter-checkbox');
+                 filterCheckboxes.forEach(checkbox => {
+                     checkbox.addEventListener('change', (e) => {
+                         const level = e.target.id.replace('filter-', '');
+                         this.filters[level] = e.target.checked;
+                         this.refreshDisplay();
+                     });
+                 });
+             }
+             
+             // Ajouter un log
+             log(level, message, category = '') {
+                 if (this.isPaused) return;
+                 
+                 const timestamp = new Date();
+                 const logEntry = {
+                     timestamp: timestamp,
+                     level: level,
+                     message: message,
+                     category: category,
+                     id: Date.now() + Math.random()
+                 };
+                 
+                 // Ajouter au tableau des logs
+                 this.logs.unshift(logEntry);
+                 
+                 // Limiter le nombre de logs
+                 if (this.logs.length > this.maxLogs) {
+                     this.logs = this.logs.slice(0, this.maxLogs);
+                 }
+                 
+                 // Afficher si le filtre le permet
+                 if (this.filters[level]) {
+                     this.displayLog(logEntry);
+                 }
+                 
+                 // Console pour debug
+                 console.log(`[RealtimeLogger] ${level.toUpperCase()}: ${message}`);
+             }
+             
+             // Afficher un log dans l'interface
+             displayLog(logEntry) {
+                 if (!this.logsContainer) return;
+                 
+                 const logElement = document.createElement('div');
+                 logElement.className = `log-entry log-${logEntry.level} new-entry`;
+                 logElement.id = `log-${logEntry.id}`;
+                 
+                 const timeStr = logEntry.timestamp.toLocaleTimeString('fr-FR', {
+                     hour: '2-digit',
+                     minute: '2-digit',
+                     second: '2-digit'
+                 });
+                 
+                 const categoryStr = logEntry.category ? `[${logEntry.category}] ` : '';
+                 
+                 logElement.innerHTML = `
+                     <span class="log-timestamp">${timeStr}</span>
+                     <span class="log-level ${logEntry.level}">${logEntry.level}</span>
+                     <span class="log-message">${categoryStr}${logEntry.message}</span>
+                 `;
+                 
+                 // Ajouter en haut du conteneur
+                 this.logsContainer.insertBefore(logElement, this.logsContainer.firstChild);
+                 
+                 // Auto-scroll vers le haut
+                 this.logsContainer.scrollTop = 0;
+                 
+                 // Retirer l'animation après 500ms
+                 setTimeout(() => {
+                     logElement.classList.remove('new-entry');
+                 }, 500);
+                 
+                 // Limiter l'affichage (garder seulement les 100 derniers visibles)
+                 const visibleLogs = this.logsContainer.querySelectorAll('.log-entry');
+                 if (visibleLogs.length > 100) {
+                     visibleLogs[visibleLogs.length - 1].remove();
+                 }
+             }
+             
+             // Rafraîchir l'affichage selon les filtres
+             refreshDisplay() {
+                 if (!this.logsContainer) return;
+                 
+                 // Vider le conteneur
+                 this.logsContainer.innerHTML = '';
+                 
+                 // Réafficher les logs selon les filtres
+                 this.logs.forEach(logEntry => {
+                     if (this.filters[logEntry.level]) {
+                         this.displayLog(logEntry);
+                     }
+                 });
+             }
+             
+             // Basculer pause/reprendre
+             togglePause() {
+                 this.isPaused = !this.isPaused;
+                 
+                 if (this.isPaused) {
+                     this.logsStatus.className = 'logs-status paused';
+                     this.logsStatus.innerHTML = '<i class="fas fa-pause"></i> En pause';
+                     this.pauseBtn.innerHTML = '<i class="fas fa-play"></i> Reprendre';
+                     this.log('warning', 'Logs mis en pause', 'Système');
+                 } else {
+                     this.logsStatus.className = 'logs-status active';
+                     this.logsStatus.innerHTML = '<i class="fas fa-circle"></i> Actif';
+                     this.pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                     this.log('info', 'Logs repris', 'Système');
+                 }
+             }
+             
+             // Vider les logs
+             clearLogs() {
+                 this.logs = [];
+                 if (this.logsContainer) {
+                     this.logsContainer.innerHTML = '';
+                 }
+                 this.log('info', 'Logs vidés', 'Système');
+             }
+             
+             // Exporter les logs
+             exportLogs() {
+                 const exportData = this.logs.map(log => {
+                     return {
+                         timestamp: log.timestamp.toISOString(),
+                         level: log.level,
+                         category: log.category,
+                         message: log.message
+                     };
+                 });
+                 
+                 const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+                     type: 'application/json'
+                 });
+                 
+                 const url = URL.createObjectURL(blob);
+                 const a = document.createElement('a');
+                 a.href = url;
+                 a.download = `ffp3-control-logs-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+                 document.body.appendChild(a);
+                 a.click();
+                 document.body.removeChild(a);
+                 URL.revokeObjectURL(url);
+                 
+                 this.log('success', 'Logs exportés', 'Système');
+             }
+             
+             // Méthodes spécialisées pour différents types d'événements
+             logGpioChange(gpio, oldState, newState, name = '') {
+                 const stateText = newState === 1 ? 'Activé' : 'Désactivé';
+                 const nameStr = name ? `${name} (GPIO ${gpio})` : `GPIO ${gpio}`;
+                 this.log('gpio', `${nameStr}: ${stateText}`, 'GPIO');
+             }
+             
+             logSyncEvent(event, details = '') {
+                 this.log('sync', `${event}${details ? ': ' + details : ''}`, 'Synchronisation');
+             }
+             
+             logError(error, context = '') {
+                 const contextStr = context ? `[${context}] ` : '';
+                 this.log('error', `${contextStr}${error}`, 'Erreur');
+             }
+             
+             logApiCall(method, url, status = null) {
+                 const statusStr = status ? ` (${status})` : '';
+                 this.log('info', `${method} ${url}${statusStr}`, 'API');
+             }
+         }
+         
+        // Instance globale du logger
+        let realtimeLogger = null;
+        
+        // Fonction utilitaire pour obtenir le nom d'un GPIO
+        function getGpioName(gpio) {
+            const gpioNames = {
+                2: 'Radiateur',
+                15: 'Lumière',
+                16: 'Pompe aquarium',
+                18: 'Pompe réserve',
+                100: 'Email',
+                101: 'Notifications',
+                102: 'Seuil aquarium',
+                103: 'Seuil réserve',
+                104: 'Température min',
+                105: 'Nourrissage matin',
+                106: 'Nourrissage midi',
+                107: 'Nourrissage soir',
+                108: 'Nourrisseur petits',
+                109: 'Nourrisseur gros',
+                110: 'Reset ESP',
+                111: 'Temps gros poissons',
+                112: 'Temps petits poissons',
+                113: 'Temps remplissage',
+                114: 'Limite débordement',
+                115: 'Forçage réveil',
+                116: 'Fréquence réveil'
+            };
+            return gpioNames[gpio] || null;
+        }
         
         // Fonction de vérification Font Awesome
         async function checkFontAwesomeLoaded() {
