@@ -742,10 +742,95 @@
              color: #495057;
          }
          
-         /* Filtres de logs */
-         .log-filter-checkbox {
-             margin-right: 8px;
-         }
+        /* Filtres de logs */
+        .log-filter-checkbox {
+            margin-right: 8px;
+        }
+        
+        /* ========================================
+           INDICATEURS DE SYNCHRONISATION
+           ======================================== */
+        
+        /* Badge de statut de synchronisation */
+        .sync-status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sync-status-badge.sync-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .sync-status-badge.sync-synced {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .sync-status-badge.sync-conflict {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .sync-status-badge.sync-esp32 {
+            background: #cce5ff;
+            color: #004085;
+            border: 1px solid #99d6ff;
+        }
+        
+        /* Animation de pulsation pour les changements en attente */
+        .sync-status-badge.sync-pending {
+            animation: pulse-warning 2s infinite;
+        }
+        
+        @keyframes pulse-warning {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        /* Indicateur de dernière synchronisation ESP32 */
+        .esp32-sync-info {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 5px;
+            padding: 5px 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #008B74;
+        }
+        
+        .esp32-sync-info .sync-timestamp {
+            font-weight: 600;
+            color: #008B74;
+        }
+        
+        /* Amélioration des cartes avec statut de sync */
+        .control-card.has-sync-status {
+            border-left: 4px solid #e9ecef;
+            transition: border-left-color 0.3s ease;
+        }
+        
+        .control-card.has-sync-status.sync-pending {
+            border-left-color: #ffc107;
+        }
+        
+        .control-card.has-sync-status.sync-conflict {
+            border-left-color: #dc3545;
+        }
+        
+        .control-card.has-sync-status.sync-synced {
+            border-left-color: #28a745;
+        }
          
          .log-filter-checkbox:checked + label {
              color: #008B74;
@@ -950,6 +1035,24 @@
                         <i class="fas fa-microchip"></i> {{ outputs|length }} actionneurs • 
                         <i class="fas fa-server"></i> {{ boards|length }} boards connectées
                     </p>
+                    
+                    <!-- Informations de synchronisation -->
+                    <div class="esp32-sync-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Synchronisation ESP32 :</strong> 
+                        <span class="sync-timestamp" id="esp32-last-sync">
+                            {% if boards|length > 0 and boards[0].last_gpio %}
+                                Dernière sync: {{ boards[0].last_gpio.last_modified_time|default('Inconnue') }}
+                            {% else %}
+                                Dernière sync: Inconnue
+                            {% endif %}
+                        </span>
+                        <br>
+                        <small>
+                            <i class="fas fa-clock"></i> Délai de synchronisation: 2-3 minutes • 
+                            <i class="fas fa-shield-alt"></i> Protection changements web: 5 minutes
+                        </small>
+                    </div>
                 </div>
 
 
@@ -1010,11 +1113,16 @@
                                             {% set display_name = clean_name %}
                                         {% endif %}
                                         
-                                        <div class="action-button-card action-button-blue" data-state="{{ output.state }}">
+                                        <div class="action-button-card action-button-blue" data-state="{{ output.state }}" data-gpio="{{ output.gpio }}">
                                             <div class="action-button-content">
                                                 <i class="fas {{ icon }} action-icon-simple" style="color: {{ color }};"></i>
                                                 <div class="action-button-info">
-                                                    <div class="action-button-label">{{ display_name }}</div>
+                                                    <div class="action-button-label">
+                                                        {{ display_name }}
+                                                        <span class="sync-status-badge sync-synced" id="sync-badge-{{ output.gpio }}">
+                                                            <i class="fas fa-sync-alt"></i> SYNC
+                                                        </span>
+                                                    </div>
                                                     <div class="action-button-status">
                                                         <span class="status-text">
                                                             {% if output.gpio == 18 %}
@@ -1456,6 +1564,36 @@
         let controlSync = null;
         let boardUpdateInterval = null;
         
+        /**
+         * Met à jour le badge de statut de synchronisation pour un GPIO donné
+         * @param {number} gpio - Numéro du GPIO
+         * @param {string} status - Statut: 'pending', 'synced', 'conflict', 'esp32'
+         * @param {string} text - Texte à afficher
+         */
+        function updateSyncBadge(gpio, status, text) {
+            const badge = document.getElementById(`sync-badge-${gpio}`);
+            if (!badge) return;
+            
+            // Retirer toutes les classes de statut
+            badge.classList.remove('sync-pending', 'sync-synced', 'sync-conflict', 'esp32');
+            
+            // Ajouter la nouvelle classe
+            badge.classList.add(`sync-${status}`);
+            
+            // Mettre à jour le texte
+            const icons = {
+                'pending': '<i class="fas fa-clock"></i>',
+                'synced': '<i class="fas fa-sync-alt"></i>',
+                'conflict': '<i class="fas fa-exclamation-triangle"></i>',
+                'esp32': '<i class="fas fa-microchip"></i>'
+            };
+            
+            badge.innerHTML = `${icons[status] || '<i class="fas fa-sync-alt"></i>'} ${text || status.toUpperCase()}`;
+        }
+        
+        // Rendre la fonction globale pour access depuis control-sync.js
+        window.updateSyncBadge = updateSyncBadge;
+        
         function updateOutput(element) {
             var id = element.getAttribute('data-id');
             var gpio = element.getAttribute('data-gpio');
@@ -1475,6 +1613,9 @@
             }
             
             console.log("Toggle ID " + id + " (GPIO " + gpio + ") to state " + state);
+            
+            // Mettre à jour le badge de synchronisation vers "en attente"
+            updateSyncBadge(gpio, 'pending', 'EN ATTENTE ESP32');
             
             // Log de l'action utilisateur
             if (realtimeLogger) {
@@ -1501,6 +1642,9 @@
                             realtimeLogger.log('success', `Changement d'état réussi: ${elementName || 'GPIO ' + gpio}`, 'GPIO');
                         }
                         
+                        // Le badge reste en "pending" jusqu'à ce que l'ESP32 confirme la sync
+                        // Il sera mis à jour par le polling automatique
+                        
                         if (controlSync) {
                             setTimeout(() => controlSync.forceSync(), 500);
                         }
@@ -1511,6 +1655,9 @@
                         if (realtimeLogger) {
                             realtimeLogger.logError(`Échec du changement d'état pour ${elementName || 'GPIO ' + gpio} (HTTP ${this.status})`, 'GPIO');
                         }
+                        
+                        // Mettre à jour le badge vers "conflit"
+                        updateSyncBadge(gpio, 'conflict', 'ERREUR');
                         
                         alert("Erreur lors du changement d'état (ID " + id + ")");
                         element.checked = !element.checked;

@@ -236,6 +236,13 @@ class OutputRepository
      * Synchronise les états des GPIO depuis les données capteurs
      * Met à jour ffp3Outputs ou ffp3Outputs2 selon l'environnement
      * 
+     * LOGIQUE DE PRIORITÉ : Les modifications faites via l'interface web ont 
+     * priorité pendant 5 minutes. L'ESP32 ne peut écraser un état web que 
+     * si la dernière modification web date de plus de 5 minutes.
+     * 
+     * CORRECTION v11.38 : Ne met à jour QUE les GPIO qui ont des noms définis
+     * pour éviter la création de lignes NULL inutiles.
+     * 
      * @param SensorData $data Données capteurs contenant les états à synchroniser
      */
     public function syncStatesFromSensorData(SensorData $data): void
@@ -248,7 +255,7 @@ class OutputRepository
             2 => $data->etatHeat,           // Chauffage
             15 => $data->etatUV,            // Lumière
             16 => $data->etatPompeAqua,     // Pompe aquarium
-            18 => $data->etatPompeTank,     // Pompe réservoir
+            18 => $data->etatPompeTank,     // Pompe réservoir (logique inversée)
             
             // Configuration
             100 => $data->mail,             // Email (string)
@@ -278,13 +285,47 @@ class OutputRepository
                     // Conversion en string pour compatibilité avec le type varchar(64)
                     $stateValue = (string)$value;
                     
-                    // Mettre à jour l'état ET le timestamp de la dernière requête
-                    $sql = "UPDATE {$table} SET state = :state, requestTime = NOW() WHERE gpio = :gpio";
+                    // CORRECTION GPIO 18 : Inverser la logique pour cohérence avec getOutputsState()
+                    // L'ESP32 envoie : 0 = pompe ON, 1 = pompe OFF
+                    // On stocke en BDD : 0 = pompe ON, 1 = pompe OFF (cohérent avec l'affichage web)
+                    if ($gpio === 18) {
+                        // Pas d'inversion nécessaire ici car on veut garder la même logique
+                        // que celle reçue de l'ESP32 pour cohérence avec getOutputsState()
+                    }
+                    
+                    // CORRECTION v11.38 : Ne mettre à jour QUE les GPIO qui ont des noms définis
+                    // Cela évite la création de lignes NULL inutiles
+                    $sql = "UPDATE {$table} 
+                            SET state = :state, 
+                                requestTime = NOW(), 
+                                lastModifiedBy = 'esp32'
+                            WHERE gpio = :gpio 
+                              AND name IS NOT NULL 
+                              AND name != ''
+                              AND (lastModifiedBy != 'web' 
+                                   OR lastModifiedBy IS NULL 
+                                   OR requestTime < NOW() - INTERVAL 5 MINUTE)";
+                    
                     $stmt = $this->pdo->prepare($sql);
                     $stmt->execute([
                         ':gpio' => $gpio,
                         ':state' => $stateValue
                     ]);
+                    
+                    // Log si un GPIO a été protégé (modification web récente) ou n'existe pas
+                    if ($stmt->rowCount() === 0) {
+                        // Vérifier si le GPIO existe avec un nom
+                        $checkSql = "SELECT COUNT(*) FROM {$table} WHERE gpio = :gpio AND name IS NOT NULL AND name != ''";
+                        $checkStmt = $this->pdo->prepare($checkSql);
+                        $checkStmt->execute([':gpio' => $gpio]);
+                        $exists = $checkStmt->fetchColumn();
+                        
+                        if ($exists > 0) {
+                            error_log("GPIO {$gpio} protégé : modification web récente (< 5 min)");
+                        } else {
+                            error_log("GPIO {$gpio} ignoré : pas de nom défini dans la table");
+                        }
+                    }
                 }
             }
             

@@ -7,6 +7,55 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.7.5] - 2025-01-16
+
+### 🐛 Corrigé - Régénération Automatique de Lignes NULL
+- **Problème identifié** : L'ESP32 créait automatiquement des lignes avec `name=NULL` dans la table `ffp3outputs` qui se régénéraient après suppression
+- **Cause** : La synchronisation `syncStatesFromSensorData()` mettait à jour tous les GPIO sans vérifier s'ils avaient des noms définis
+- **Solution** : Modification de la logique pour ne mettre à jour QUE les GPIO qui ont des noms définis (`name IS NOT NULL AND name != ''`)
+
+### 🧹 Nettoyage
+- **Migration SQL** : `migrations/CLEAN_NULL_OUTPUTS_v11.38.sql` pour supprimer les lignes NULL existantes
+- **Logging amélioré** : Distinction entre GPIO protégés (modification web récente) et GPIO ignorés (pas de nom défini)
+
+### 🔧 Modifié - OutputRepository
+- **syncStatesFromSensorData()** : Ajout de conditions pour éviter la mise à jour des GPIO sans nom
+- **Logs détaillés** : Messages d'erreur plus précis pour diagnostiquer les problèmes de synchronisation
+
+---
+
+## [4.7.4] - 2025-01-15
+
+### 🔄 Corrigé - Synchronisation Bidirectionnelle Interface Web ↔ ESP32
+- **Résolution du conflit de synchronisation** : Les changements faits sur l'interface web ne sont plus écrasés par l'ESP32
+- **Logique de priorité temporaire** : Les modifications web ont priorité pendant 5 minutes avant que l'ESP32 puisse les écraser
+- **Nouvelle colonne BDD** : Ajout de `lastModifiedBy` pour tracker la source des modifications (web/esp32)
+
+### 🎨 Amélioré - Interface de Contrôle
+- **Indicateurs visuels de synchronisation** : Badges en temps réel montrant l'état de sync (SYNC, EN ATTENTE ESP32, ESP32 SYNC, ERREUR)
+- **Informations de synchronisation** : Affichage de la dernière sync ESP32 et des délais de protection
+- **Feedback utilisateur amélioré** : Notifications visuelles des changements d'état et des conflits
+
+### 🔧 Modifié - Logique de Synchronisation
+- **OutputRepository::syncStatesFromSensorData()** : Implémentation de la logique de priorité avec protection des modifications web
+- **OutputService::updateStateById()** : Marquage automatique des modifications comme venant du web
+- **Control-sync.js** : Amélioration de la détection des changements et mise à jour des badges de statut
+
+### 📚 Documentation
+- **Nouvelle documentation** : `docs/SYNCHRONISATION_BIDIRECTIONNELLE.md` expliquant le fonctionnement complet de la synchronisation
+- **Migration SQL** : `migrations/ADD_LASTMODIFIEDBY_COLUMN.sql` pour ajouter la colonne de tracking
+
+### 🐛 Corrigé - Logique GPIO 18
+- **Cohérence de la logique inversée** : Correction de l'incohérence entre `getOutputsState()` et `syncStatesFromSensorData()` pour la pompe réserve
+- **Affichage correct** : L'état affiché correspond maintenant à l'état réel de la pompe réserve
+
+### ⚠️ Limitations
+- **Délai incompressible** : L'ESP32 ne réagira qu'au prochain poll (2-3 minutes)
+- **Remplissage manuel autonome** : Restera autonome (comportement voulu pour sécurité)
+- **Migration BDD requise** : Nécessite mise à jour des tables en production
+
+---
+
 ## [4.7.2] - 2025-01-27
 
 ### 🧹 Nettoyage

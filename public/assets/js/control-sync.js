@@ -220,7 +220,24 @@ class ControlSync {
                     // Mettre à jour le switch
                     switchElement.checked = shouldBeChecked;
                     
+                    // Mettre à jour le badge de synchronisation vers "synchronisé par ESP32"
+                    if (window.updateSyncBadge) {
+                        window.updateSyncBadge(change.gpio, 'esp32', 'ESP32 SYNC');
+                        
+                        // Après 3 secondes, remettre en "synchronisé"
+                        setTimeout(() => {
+                            if (window.updateSyncBadge) {
+                                window.updateSyncBadge(change.gpio, 'synced', 'SYNC');
+                            }
+                        }, 3000);
+                    }
+                    
                     this.log(`Updated switch GPIO ${change.gpio} to ${shouldBeChecked}`);
+                } else {
+                    // Même si l'état n'a pas changé, marquer comme synchronisé (confirmation ESP32)
+                    if (window.updateSyncBadge) {
+                        window.updateSyncBadge(change.gpio, 'synced', 'SYNC');
+                    }
                 }
             }
         });

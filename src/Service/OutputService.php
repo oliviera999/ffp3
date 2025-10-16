@@ -144,10 +144,26 @@ class OutputService
         $table = \App\Config\TableConfig::getOutputsTable();
         $pdo = \App\Config\Database::getConnection();
         
-        $sql = "UPDATE {$table} SET state = :state WHERE id = :id";
+        // Marquer la modification comme venant de l'interface web
+        // Cela donne priorité à cette modification pendant 5 minutes
+        $sql = "UPDATE {$table} 
+                SET state = :state, 
+                    requestTime = NOW(), 
+                    lastModifiedBy = 'web'
+                WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         
-        return $stmt->execute([':state' => $state, ':id' => $id]);
+        $result = $stmt->execute([
+            ':state' => $state, 
+            ':id' => $id
+        ]);
+        
+        // Log pour debugging
+        if ($result) {
+            error_log("Output ID {$id} mis à jour par l'interface web vers state={$state}");
+        }
+        
+        return $result;
     }
 
     /**
@@ -197,7 +213,11 @@ class OutputService
                         $value = is_numeric($value) ? (int)$value : 0;
                     }
                     
-                    $sql = "UPDATE {$table} SET state = :state WHERE gpio = :gpio";
+                    $sql = "UPDATE {$table} 
+                            SET state = :state, 
+                                requestTime = NOW(), 
+                                lastModifiedBy = 'web'
+                            WHERE gpio = :gpio";
                     $stmt = $pdo->prepare($sql);
                     if ($stmt->execute([':state' => $value, ':gpio' => $gpio])) {
                         $updated++;
