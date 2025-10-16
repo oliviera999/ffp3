@@ -7,6 +7,30 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.33] - 2025-01-27
+
+### 🔄 Modifié
+- **Réorganisation de l'interface de contrôle** : Déplacement de la section "État des connexions" après "Actions rapides" dans `control.twig`
+- **Amélioration de l'expérience utilisateur** : Les informations de connexion sont maintenant affichées en fin de page pour un accès plus facile après les actions principales
+
+### 📝 Détails techniques
+- **Fichier modifié** : `templates/control.twig` - Réorganisation de l'ordre des sections
+- **Impact** : Interface plus logique avec les actions rapides en premier, suivies des informations de connexion
+
+---
+
+## [4.6.33] - 2025-01-27
+
+### 🐛 Corrigé
+- **Route manquante pour endpoint de santé** : Ajout de la route `/api/realtime/system/health-test` qui était appelée par le JavaScript mais n'existait pas
+- **Incohérence URL template vs routes** : Le template générait `/api/realtime/system/health-test` mais seule la route `/api/health-test` existait
+
+### 📝 Détails techniques
+- **Fichier modifié** : `public/index.php` - Ajout des routes manquantes pour les deux environnements
+- **Impact** : Les appels JavaScript vers l'endpoint de santé fonctionnent maintenant correctement sur les environnements PROD et TEST
+
+---
+
 ## [4.6.32] - 2025-01-27
 
 ### 🐛 Corrigé

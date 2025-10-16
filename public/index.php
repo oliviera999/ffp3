@@ -106,6 +106,7 @@ $app->group('', function ($group) {
     
     // Alias de compatibilité pour l'ancienne URL
     $group->get('/api/health', [RealtimeApiController::class, 'getSystemHealth']);
+    $group->get('/api/realtime/system/health', [RealtimeApiController::class, 'getSystemHealth']);
 
     // ====================================================================
     // Heartbeat ESP32 PROD
@@ -162,6 +163,7 @@ $app->group('', function ($group) {
     
     // Alias de compatibilité pour l'ancienne URL TEST
     $group->get('/api/health-test', [RealtimeApiController::class, 'getSystemHealth']);
+    $group->get('/api/realtime/system/health-test', [RealtimeApiController::class, 'getSystemHealth']);
     
     // Heartbeat ESP32 TEST
     $group->post('/heartbeat-test', [HeartbeatController::class, 'handle']);
