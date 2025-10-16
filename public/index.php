@@ -103,6 +103,9 @@ $app->group('', function ($group) {
     $group->get('/api/realtime/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
     $group->get('/api/realtime/system/health', [RealtimeApiController::class, 'getSystemHealth']);
     $group->get('/api/realtime/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
+    
+    // Alias de compatibilité pour l'ancienne URL
+    $group->get('/api/health', [RealtimeApiController::class, 'getSystemHealth']);
 
     // ====================================================================
     // Heartbeat ESP32 PROD
@@ -156,6 +159,9 @@ $app->group('', function ($group) {
     $group->get('/api/realtime-test/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
     $group->get('/api/realtime-test/system/health', [RealtimeApiController::class, 'getSystemHealth']);
     $group->get('/api/realtime-test/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
+    
+    // Alias de compatibilité pour l'ancienne URL TEST
+    $group->get('/api/health-test', [RealtimeApiController::class, 'getSystemHealth']);
     
     // Heartbeat ESP32 TEST
     $group->post('/heartbeat-test', [HeartbeatController::class, 'handle']);

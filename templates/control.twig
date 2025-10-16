@@ -1995,7 +1995,7 @@
                      }
                      
                      // Utiliser l'API de santé du système (si disponible)
-                     const apiUrl = '/ffp3/api/health{{ environment == "test" ? "-test" : "" }}';
+                     const apiUrl = '/ffp3/api/realtime/system/health{{ environment == "test" ? "-test" : "" }}';
                      
                      const response = await fetch(apiUrl, {
                          method: 'GET',

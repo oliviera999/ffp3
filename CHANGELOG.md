@@ -7,6 +7,19 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.32] - 2025-01-27
+
+### 🐛 Corrigé
+- **Endpoint de santé manquant** : Ajout de l'endpoint `/api/health` qui était référencé dans le JavaScript mais n'existait pas
+- **Erreurs 404 sur les appels API** : Correction des erreurs "HTTP 404" lors de la mise à jour des données de santé du système
+
+### 📝 Détails techniques
+- **Fichier modifié** : `templates/control.twig` - Correction de l'URL de l'endpoint de santé
+- **Fichier modifié** : `public/index.php` - Ajout des routes d'alias `/api/health` et `/api/health-test` pour la compatibilité
+- **Impact** : Les appels JavaScript vers l'API de santé fonctionnent maintenant correctement, éliminant les erreurs 404 dans la console
+
+---
+
 ## [4.6.31] - 2025-01-27
 
 ### 🎨 Amélioré
