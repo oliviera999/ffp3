@@ -111,6 +111,90 @@ $app->group('', function ($group) {
     $group->post('/heartbeat.php', function (Request $request, Response $response) {
         return $response->withHeader('Location', '/ffp3/heartbeat')->withStatus(301);
     }); // Redirection legacy vers heartbeat
+
+    // ====================================================================
+    // Fichiers statiques PROD (fallback si serveur web ne les sert pas)
+    // ====================================================================
+    $group->get('/manifest.json', function (Request $request, Response $response) {
+        $manifestPath = __DIR__ . '/manifest.json';
+        if (file_exists($manifestPath)) {
+            $response->getBody()->write(file_get_contents($manifestPath));
+            return $response->withHeader('Content-Type', 'application/json');
+        }
+        return $response->withStatus(404);
+    });
+    
+    $group->get('/assets/js/{filename}', function (Request $request, Response $response, $args) {
+        $filename = $args['filename'];
+        $allowedFiles = [
+            'control-values-updater.js',
+            'control-sync.js', 
+            'chart-updater.js',
+            'stats-updater.js',
+            'realtime-updater.js',
+            'toast-notifications.js',
+            'pwa-init.js',
+            'mobile-gestures.js'
+        ];
+        
+        if (!in_array($filename, $allowedFiles)) {
+            return $response->withStatus(404);
+        }
+        
+        $filePath = __DIR__ . '/assets/js/' . $filename;
+        if (file_exists($filePath)) {
+            $response->getBody()->write(file_get_contents($filePath));
+            return $response->withHeader('Content-Type', 'application/javascript');
+        }
+        return $response->withStatus(404);
+    });
+    
+    $group->get('/assets/css/{filename}', function (Request $request, Response $response, $args) {
+        $filename = $args['filename'];
+        $allowedFiles = [
+            'mobile-optimized.css',
+            'realtime-styles.css'
+        ];
+        
+        if (!in_array($filename, $allowedFiles)) {
+            return $response->withStatus(404);
+        }
+        
+        $filePath = __DIR__ . '/assets/css/' . $filename;
+        if (file_exists($filePath)) {
+            $response->getBody()->write(file_get_contents($filePath));
+            return $response->withHeader('Content-Type', 'text/css');
+        }
+        return $response->withStatus(404);
+    });
+    
+    $group->get('/assets/icons/{filename}', function (Request $request, Response $response, $args) {
+        $filename = $args['filename'];
+        $allowedFiles = [
+            'icon-72.png', 'icon-96.png', 'icon-128.png', 'icon-144.png',
+            'icon-152.png', 'icon-192.png', 'icon-384.png', 'icon-512.png'
+        ];
+        
+        if (!in_array($filename, $allowedFiles)) {
+            return $response->withStatus(404);
+        }
+        
+        $filePath = __DIR__ . '/assets/icons/' . $filename;
+        if (file_exists($filePath)) {
+            $response->getBody()->write(file_get_contents($filePath));
+            return $response->withHeader('Content-Type', 'image/png');
+        }
+        return $response->withStatus(404);
+    });
+    
+    $group->get('/service-worker.js', function (Request $request, Response $response) {
+        $swPath = __DIR__ . '/service-worker.js';
+        if (file_exists($swPath)) {
+            $response->getBody()->write(file_get_contents($swPath));
+            return $response->withHeader('Content-Type', 'application/javascript');
+        }
+        return $response->withStatus(404);
+    });
 })->add(new EnvironmentMiddleware('prod'));
 
 // ====================================================================
@@ -148,6 +232,90 @@ $app->group('', function ($group) {
     // Heartbeat ESP32 TEST
     $group->post('/heartbeat-test', [HeartbeatController::class, 'handle']);
     $group->post('/heartbeat-test.php', [HeartbeatController::class, 'handle']); // Alias legacy
+    
+    // ====================================================================
+    // Fichiers statiques TEST (fallback si serveur web ne les sert pas)
+    // ====================================================================
+    $group->get('/manifest.json', function (Request $request, Response $response) {
+        $manifestPath = __DIR__ . '/manifest.json';
+        if (file_exists($manifestPath)) {
+            $response->getBody()->write(file_get_contents($manifestPath));
+            return $response->withHeader('Content-Type', 'application/json');
+        }
+        return $response->withStatus(404);
+    });
+    
+    $group->get('/assets/js/{filename}', function (Request $request, Response $response, $args) {
+        $filename = $args['filename'];
+        $allowedFiles = [
+            'control-values-updater.js',
+            'control-sync.js', 
+            'chart-updater.js',
+            'stats-updater.js',
+            'realtime-updater.js',
+            'toast-notifications.js',
+            'pwa-init.js',
+            'mobile-gestures.js'
+        ];
+        
+        if (!in_array($filename, $allowedFiles)) {
+            return $response->withStatus(404);
+        }
+        
+        $filePath = __DIR__ . '/assets/js/' . $filename;
+        if (file_exists($filePath)) {
+            $response->getBody()->write(file_get_contents($filePath));
+            return $response->withHeader('Content-Type', 'application/javascript');
+        }
+        return $response->withStatus(404);
+    });
+    
+    $group->get('/assets/css/{filename}', function (Request $request, Response $response, $args) {
+        $filename = $args['filename'];
+        $allowedFiles = [
+            'mobile-optimized.css',
+            'realtime-styles.css'
+        ];
+        
+        if (!in_array($filename, $allowedFiles)) {
+            return $response->withStatus(404);
+        }
+        
+        $filePath = __DIR__ . '/assets/css/' . $filename;
+        if (file_exists($filePath)) {
+            $response->getBody()->write(file_get_contents($filePath));
+            return $response->withHeader('Content-Type', 'text/css');
+        }
+        return $response->withStatus(404);
+    });
+    
+    $group->get('/assets/icons/{filename}', function (Request $request, Response $response, $args) {
+        $filename = $args['filename'];
+        $allowedFiles = [
+            'icon-72.png', 'icon-96.png', 'icon-128.png', 'icon-144.png',
+            'icon-152.png', 'icon-192.png', 'icon-384.png', 'icon-512.png'
+        ];
+        
+        if (!in_array($filename, $allowedFiles)) {
+            return $response->withStatus(404);
+        }
+        
+        $filePath = __DIR__ . '/assets/icons/' . $filename;
+        if (file_exists($filePath)) {
+            $response->getBody()->write(file_get_contents($filePath));
+            return $response->withHeader('Content-Type', 'image/png');
+        }
+        return $response->withStatus(404);
+    });
+    
+    $group->get('/service-worker.js', function (Request $request, Response $response) {
+        $swPath = __DIR__ . '/service-worker.js';
+        if (file_exists($swPath)) {
+            $response->getBody()->write(file_get_contents($swPath));
+            return $response->withHeader('Content-Type', 'application/javascript');
+        }
+        return $response->withStatus(404);
+    });
     
 })->add(new EnvironmentMiddleware('test'));
 
