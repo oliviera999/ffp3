@@ -38,6 +38,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.38] - 2025-01-27
+
+### 🐛 Corrigé
+- **Affichage Board 1** : Correction du problème d'affichage vide de la dernière requête des boards
+- **Conversion timezone** : Remplacement de `CONVERT_TZ()` par `DATE_SUB(last_request, INTERVAL 1 HOUR)` pour retrancher 1h
+- **Affichage correct** : L'heure affichée est maintenant l'heure marocaine (heure européenne - 1h) comme souhaité
+
+### 📝 Détails techniques
+- **Fichier modifié** : `src/Repository/BoardRepository.php` - Correction dans 3 méthodes (`findAll()`, `findActiveForEnvironment()`, `findByName()`)
+- **Solution simple** : Utilisation de `DATE_SUB()` pour éviter les problèmes de reconnaissance des noms de timezone par MySQL
+- **Impact** : Affichage de l'heure marocaine correcte pour toutes les boards (heure européenne - 1h)
+
 ## [4.6.37] - 2025-01-27
 
 ### 🐛 Corrigé
