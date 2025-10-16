@@ -2178,7 +2178,9 @@
         // Démarrer la mise à jour temps réel au chargement de la page
         document.addEventListener('DOMContentLoaded', function() {
             // Attendre un peu pour que la page soit complètement chargée
-            setTimeout(startBoardUpdates, 1000);
+            // TEMPORAIRE: Désactivé en attendant la correction de l'API
+            console.log('[Boards] ⏸️ Mise à jour temps réel temporairement désactivée (API en cours de correction)');
+            // setTimeout(startBoardUpdates, 1000);
         });
         
         // Arrêter la mise à jour quand l'utilisateur quitte la page

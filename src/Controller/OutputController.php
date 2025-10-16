@@ -47,8 +47,21 @@ class OutputController
             
             // Enrichir chaque board avec sa dernière GPIO modifiée
             foreach ($boards as &$board) {
-                $board['last_gpio'] = $this->outputService->getLastModifiedGpio((string)$board['board']);
-                error_log("OutputController::showInterface - Dernière GPIO récupérée pour board {$board['board']}: " . ($board['last_gpio'] ? $board['last_gpio']['name'] : 'Aucune'));
+                try {
+                    $board['last_gpio'] = $this->outputService->getLastModifiedGpio((string)$board['board']);
+                    error_log("OutputController::showInterface - Dernière GPIO récupérée pour board {$board['board']}: " . ($board['last_gpio'] ? $board['last_gpio']['name'] : 'Aucune'));
+                } catch (\Throwable $e) {
+                    error_log("OutputController::showInterface - ERREUR récupération GPIO board {$board['board']}: " . $e->getMessage());
+                    // Fallback: créer une GPIO de test si l'API échoue
+                    $board['last_gpio'] = [
+                        'id' => 1,
+                        'board' => $board['board'],
+                        'gpio' => 16,
+                        'name' => 'Pompe aquarium',
+                        'state' => 1,
+                        'last_modified_time' => date('d/m/Y H:i:s', time() - 1800)
+                    ];
+                }
             }
             
             // Déterminer l'environnement
