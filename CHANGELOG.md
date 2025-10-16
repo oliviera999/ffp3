@@ -7,6 +7,66 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.19] - 2025-10-16
+
+### 🎨 Amélioration - Interface de contrôle harmonisée
+
+#### Interface unifiée
+- **Harmonisation complète** : L'interface de contrôle utilise maintenant le même design que la page aquaponie
+- **Cohérence visuelle** : Banner système, section headers, cartes et boutons harmonisés
+- **Styles modernes** : Gradients, ombres, animations et transitions cohérentes
+- **Responsive design** : Adaptation mobile et tablette optimisée
+
+#### Améliorations visuelles
+- **Banner système** : Informations système avec gradient et icônes cohérentes
+- **Cartes de contrôle** : Design moderne avec effets hover et transitions fluides
+- **Boutons d'action** : Switches modernes avec couleurs harmonisées par type
+- **Paramètres** : Inputs et labels avec focus states et validation visuelle
+- **Actions rapides** : Section dédiée avec liens stylisés et effets hover
+
+#### Fonctionnalités conservées
+- **Temps réel** : Synchronisation et badge de statut maintenus
+- **Auto-sauvegarde** : Paramètres sauvegardés automatiquement avec indicateurs visuels
+- **Contrôle GPIO** : Tous les actionneurs (pompes, chauffage, nourrissage, système)
+- **Environnements** : Support PROD et TEST avec indicateurs visuels
+
+#### Structure technique
+- **Template harmonisé** : `control.twig` complètement refactorisé
+- **CSS cohérent** : Styles alignés avec l'interface aquaponie
+- **JavaScript optimisé** : Fonctions de contrôle et validation maintenues
+- **Accessibilité** : Icônes Font Awesome et navigation améliorées
+
+## [4.6.18] - 2025-10-16
+
+### 🔧 Correction - Erreurs 404 fichiers statiques
+
+#### Problème résolu
+- **Erreurs 404** : `Failed to load resource: the server responded with a status of 404`
+- **Fichiers manquants** : `control-values-updater.js` et `manifest.json` non accessibles sur le serveur distant
+- **Cause** : Aucune route Slim configurée pour servir les fichiers statiques (assets, manifest, service-worker)
+- **Impact** : JavaScript non fonctionnel, PWA non opérationnelle, erreurs console
+
+#### Correction appliquée
+- **Ajout de routes statiques** : Routes Slim pour servir les fichiers statiques en fallback
+- **Fichiers couverts** :
+  - `/manifest.json` - Manifest PWA
+  - `/assets/js/{filename}` - Scripts JavaScript (control-values-updater.js, etc.)
+  - `/assets/css/{filename}` - Feuilles de style CSS
+  - `/assets/icons/{filename}` - Icônes PWA
+  - `/service-worker.js` - Service Worker PWA
+- **Sécurité** : Liste blanche des fichiers autorisés pour éviter l'accès non autorisé
+- **Environnements** : Routes ajoutées pour PROD et TEST
+- **Content-Type** : Headers appropriés (application/json, application/javascript, text/css, image/png)
+
+#### Impact
+- ✅ Résolution des erreurs 404 sur les fichiers statiques
+- ✅ JavaScript `ControlValuesUpdater` maintenant accessible
+- ✅ PWA manifest et service worker fonctionnels
+- ✅ Interface de contrôle entièrement opérationnelle
+- ✅ Amélioration de la robustesse du déploiement
+
+---
+
 ## [4.6.17] - 2025-10-16
 
 ### 🐛 Correction - Erreur de syntaxe OutputRepository
