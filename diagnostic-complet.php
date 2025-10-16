@@ -18,8 +18,9 @@ echo "Version PHP: " . PHP_VERSION . "\n";
 echo "Extensions PHP:\n";
 $requiredExtensions = ['pdo', 'pdo_mysql', 'json', 'mbstring', 'curl'];
 foreach ($requiredExtensions as $ext) {
-    echo "  " . ($extension_loaded($ext) ? "✅" : "❌") . " $ext\n";
-    if (!extension_loaded($ext)) {
+    $loaded = extension_loaded($ext);
+    echo "  " . ($loaded ? "✅" : "❌") . " $ext\n";
+    if (!$loaded) {
         $errors[] = "Extension PHP manquante: $ext";
     }
 }
@@ -70,9 +71,25 @@ echo "\n⚙️ 4. Test de configuration\n";
 echo "--------------------------\n";
 try {
     if (file_exists('.env')) {
-        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-        $dotenv->load();
-        echo "✅ Fichier .env chargé\n";
+        if (class_exists('Dotenv\Dotenv')) {
+            $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+            $dotenv->load();
+            echo "✅ Fichier .env chargé\n";
+        } else {
+            // Chargement manuel du .env si Dotenv n'est pas disponible
+            $envContent = file_get_contents('.env');
+            $lines = explode("\n", $envContent);
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if (!empty($line) && substr($line, 0, 1) !== '#') {
+                    $parts = explode('=', $line, 2);
+                    if (count($parts) === 2) {
+                        $_ENV[trim($parts[0])] = trim($parts[1]);
+                    }
+                }
+            }
+            echo "✅ Fichier .env chargé (mode manuel)\n";
+        }
         
         // Vérifier les variables critiques
         $requiredVars = ['DB_HOST', 'DB_NAME', 'DB_USER', 'DB_PASS'];
