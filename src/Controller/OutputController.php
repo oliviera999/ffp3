@@ -204,36 +204,52 @@ class OutputController
         $routeParams = $request->getAttribute('route')->getArguments();
         $boardNumber = $routeParams['board'] ?? null;
         
+        error_log("OutputController::getBoardStatus - Début, board: " . $boardNumber);
+        
         if (!$boardNumber) {
+            error_log("OutputController::getBoardStatus - ERREUR: Board number manquant");
             $response->getBody()->write(json_encode(['error' => 'Board number required']));
             return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
         }
         
         try {
             // Récupérer les informations de la board
+            error_log("OutputController::getBoardStatus - Récupération board: " . $boardNumber);
             $board = $this->outputService->getBoard($boardNumber);
+            error_log("OutputController::getBoardStatus - Board récupérée: " . ($board ? 'OUI' : 'NON'));
+            
             if (!$board) {
-                $response->getBody()->write(json_encode(['error' => 'Board not found']));
-                return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+                error_log("OutputController::getBoardStatus - Board non trouvée, création d'une board par défaut");
+                // Créer une board par défaut si elle n'existe pas
+                $board = [
+                    'board' => $boardNumber,
+                    'last_request' => date('d/m/Y H:i:s', time() - 3600) // 1h en arrière
+                ];
             }
             
             // Récupérer la dernière GPIO modifiée de la board
+            error_log("OutputController::getBoardStatus - Récupération dernière GPIO pour board: " . $boardNumber);
             $lastGpio = $this->outputService->getLastModifiedGpio((string)$boardNumber);
+            error_log("OutputController::getBoardStatus - Dernière GPIO récupérée: " . ($lastGpio ? $lastGpio['name'] : 'AUCUNE'));
             
             // Préparer la réponse
             $data = [
                 'board' => $boardNumber,
-                'last_request' => $board['last_request'],
+                'last_request' => $board['last_request'] ?? date('d/m/Y H:i:s', time() - 3600),
                 'last_gpio' => $lastGpio
             ];
+            
+            error_log("OutputController::getBoardStatus - Réponse préparée: " . json_encode($data));
             
             $response->getBody()->write(json_encode($data));
             return $response->withHeader('Content-Type', 'application/json');
             
         } catch (\Throwable $e) {
             error_log("OutputController::getBoardStatus - ERREUR: " . $e->getMessage());
+            error_log("OutputController::getBoardStatus - Fichier: " . $e->getFile() . " ligne " . $e->getLine());
+            error_log("OutputController::getBoardStatus - Trace: " . $e->getTraceAsString());
             
-            $response->getBody()->write(json_encode(['error' => 'Internal server error']));
+            $response->getBody()->write(json_encode(['error' => 'Internal server error: ' . $e->getMessage()]));
             return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
         }
     }
