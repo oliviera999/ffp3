@@ -7,6 +7,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.21] - 2025-01-27
+
+### 🐛 Correction - Route API pour sauvegarde des paramètres
+
+#### Route API corrigée pour autoSaveParameter
+- **Problème résolu** : La fonction `autoSaveParameter` utilisait une route inexistante `/ffp3/post-data.php` (404 Not Found)
+- **Solution** : Utilisation de la route API correcte `API_BASE + "/parameters"` qui pointe vers `/ffp3/api/outputs/parameters` (PROD) ou `/ffp3/api/outputs-test/parameters` (TEST)
+- **Impact** : Les paramètres peuvent maintenant être sauvegardés correctement via l'API
+- **Fichier modifié** : `templates/control.twig` (ligne 1009)
+
+---
+
 ## [4.6.20] - 2025-01-27
 
 ### 🐛 Correction - Interface de contrôle
