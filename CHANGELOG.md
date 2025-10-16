@@ -7,6 +7,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.20] - 2025-01-27
+
+### 🐛 Correction - Interface de contrôle
+
+#### Fonction autoSaveParameter corrigée
+- **Problème résolu** : La fonction `autoSaveParameter` était définie dans le scope local de `createOutput` et n'était pas accessible globalement
+- **Solution** : Déplacement des fonctions `autoSaveParameter`, `showSaveIndicator`, `showSuccessIndicator` et `showErrorIndicator` vers le scope global
+- **Impact** : Les champs de paramètres (seuils, horaires, email) peuvent maintenant être modifiés sans erreur JavaScript
+- **Fichier modifié** : `templates/control.twig` (lignes 1002-1084)
+
+---
+
 ## [4.6.19] - 2025-10-16
 
 ### 🎨 Amélioration - Interface de contrôle harmonisée

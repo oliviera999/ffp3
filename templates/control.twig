@@ -999,6 +999,90 @@
             xhr.send();
         }
 
+        // Fonctions globales pour la sauvegarde automatique des paramètres
+        function autoSaveParameter(paramName, paramValue) {
+            showSaveIndicator(paramName);
+            
+            var httpRequestData = paramName + "=" + encodeURIComponent(paramValue);
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/ffp3/post-data.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        showSuccessIndicator(paramName);
+                    } else {
+                        showErrorIndicator(paramName);
+                    }
+                }
+            };
+            
+            xhr.send(httpRequestData);
+        }
+        
+        function showSaveIndicator(paramName) {
+            var input = document.getElementById(paramName);
+            if (input) {
+                input.style.borderColor = '#ffa500';
+                input.style.backgroundColor = '#fff8e1';
+                
+                var indicator = document.createElement('span');
+                indicator.id = 'save-indicator-' + paramName;
+                indicator.innerHTML = ' 💾';
+                indicator.style.color = '#ffa500';
+                indicator.style.fontSize = '0.8em';
+                input.parentNode.appendChild(indicator);
+            }
+        }
+        
+        function showSuccessIndicator(paramName) {
+            var input = document.getElementById(paramName);
+            var indicator = document.getElementById('save-indicator-' + paramName);
+            
+            if (input) {
+                input.style.borderColor = '#4caf50';
+                input.style.backgroundColor = '#e8f5e9';
+                
+                if (indicator) {
+                    indicator.innerHTML = ' ✅';
+                    indicator.style.color = '#4caf50';
+                    
+                    setTimeout(function() {
+                        if (indicator && indicator.parentNode) {
+                            indicator.parentNode.removeChild(indicator);
+                        }
+                        input.style.borderColor = '';
+                        input.style.backgroundColor = '';
+                    }, 2000);
+                }
+            }
+        }
+        
+        function showErrorIndicator(paramName) {
+            var input = document.getElementById(paramName);
+            var indicator = document.getElementById('save-indicator-' + paramName);
+            
+            if (input) {
+                input.style.borderColor = '#f44336';
+                input.style.backgroundColor = '#ffebee';
+                
+                if (indicator) {
+                    indicator.innerHTML = ' ❌';
+                    indicator.style.color = '#f44336';
+                    
+                    setTimeout(function() {
+                        if (indicator && indicator.parentNode) {
+                            indicator.parentNode.removeChild(indicator);
+                        }
+                        input.style.borderColor = '';
+                        input.style.backgroundColor = '';
+                    }, 3000);
+                }
+            }
+        }
+
         function createOutput() {
             var xhr = new XMLHttpRequest();
             xhr.open("POST", API_BASE + "/parameters", true);
@@ -1029,88 +1113,6 @@
 
             var httpRequestData = "mail="+mail+"&aqThr="+aqThr+"&tempsRemplissageSec="+tempsRemplissageSec+"&limFlood="+limFlood+"&taThr="+taThr+"&chauff="+chauff+"&bouffeMat="+bouffeMat+"&bouffeMid="+bouffeMid+"&bouffeSoir="+bouffeSoir+"&tempsGros="+tempsGros+"&tempsPetits="+tempsPetits+"&FreqWakeUp="+FreqWakeUp;
             
-            function autoSaveParameter(paramName, paramValue) {
-                showSaveIndicator(paramName);
-                
-                var httpRequestData = paramName + "=" + encodeURIComponent(paramValue);
-                
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", "/ffp3/post-data.php", true);
-                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
-                            showSuccessIndicator(paramName);
-                        } else {
-                            showErrorIndicator(paramName);
-                        }
-                    }
-                };
-                
-                xhr.send(httpRequestData);
-            }
-            
-            function showSaveIndicator(paramName) {
-                var input = document.getElementById(paramName);
-                if (input) {
-                    input.style.borderColor = '#ffa500';
-                    input.style.backgroundColor = '#fff8e1';
-                    
-                    var indicator = document.createElement('span');
-                    indicator.id = 'save-indicator-' + paramName;
-                    indicator.innerHTML = ' 💾';
-                    indicator.style.color = '#ffa500';
-                    indicator.style.fontSize = '0.8em';
-                    input.parentNode.appendChild(indicator);
-                }
-            }
-            
-            function showSuccessIndicator(paramName) {
-                var input = document.getElementById(paramName);
-                var indicator = document.getElementById('save-indicator-' + paramName);
-                
-                if (input) {
-                    input.style.borderColor = '#4caf50';
-                    input.style.backgroundColor = '#e8f5e9';
-                    
-                    if (indicator) {
-                        indicator.innerHTML = ' ✅';
-                        indicator.style.color = '#4caf50';
-                        
-                        setTimeout(function() {
-                            if (indicator && indicator.parentNode) {
-                                indicator.parentNode.removeChild(indicator);
-                            }
-                            input.style.borderColor = '';
-                            input.style.backgroundColor = '';
-                        }, 2000);
-                    }
-                }
-            }
-            
-            function showErrorIndicator(paramName) {
-                var input = document.getElementById(paramName);
-                var indicator = document.getElementById('save-indicator-' + paramName);
-                
-                if (input) {
-                    input.style.borderColor = '#f44336';
-                    input.style.backgroundColor = '#ffebee';
-                    
-                    if (indicator) {
-                        indicator.innerHTML = ' ❌';
-                        indicator.style.color = '#f44336';
-                        
-                        setTimeout(function() {
-                            if (indicator && indicator.parentNode) {
-                                indicator.parentNode.removeChild(indicator);
-                            }
-                            input.style.borderColor = '';
-                            input.style.backgroundColor = '';
-                        }, 3000);
-                    }
-                }
-            }
             xhr.send(httpRequestData);
             
             return false;
