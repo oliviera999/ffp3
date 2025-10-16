@@ -19,6 +19,25 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.38] - 2025-01-27
+
+### ✨ Ajouté
+- **Lignes de tendance pour les graphiques de niveaux d'eau** :
+  - Régressions linéaires (droites pointillées) pour aquarium, réserve et potager
+  - Moyennes mobiles (lignes continues) pour lissage des courbes
+  - Affichage masqué par défaut, activable via la légende Highcharts
+  - Recalcul automatique lors du changement de plage temporelle
+  - Calculs JavaScript côté client pour réactivité immédiate
+
+### 📝 Détails techniques
+- **Fichier modifié** : `templates/aquaponie.twig`
+- **Fonctions ajoutées** : `calculateLinearRegression()` et `calculateMovingAverage()`
+- **6 nouvelles séries** : 3 régressions linéaires + 3 moyennes mobiles
+- **Configuration** : Séries masquées par défaut, couleurs harmonisées avec les données principales
+- **Interactivité** : Toggle via légende, recalcul dynamique sur changement de plage
+
+---
+
 ## [4.6.37] - 2025-01-27
 
 ### 🐛 Corrigé

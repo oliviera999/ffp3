@@ -1786,6 +1786,34 @@
                         }
 
                         // ==============================================
+                        // Calcul des lignes de tendance pour les niveaux d'eau
+                        // ==============================================
+                        
+                        // Calcul des tendances pour EauAquarium
+                        var EauAquariumTrendLine = null;
+                        var EauAquariumMovingAvg = null;
+                        if (EauAquarium && EauAquarium.length >= 2) {
+                            EauAquariumTrendLine = calculateLinearRegression(EauAquarium);
+                            EauAquariumMovingAvg = calculateMovingAverage(EauAquarium, 20);
+                        }
+                        
+                        // Calcul des tendances pour EauReserve
+                        var EauReserveTrendLine = null;
+                        var EauReserveMovingAvg = null;
+                        if (EauReserve && EauReserve.length >= 2) {
+                            EauReserveTrendLine = calculateLinearRegression(EauReserve);
+                            EauReserveMovingAvg = calculateMovingAverage(EauReserve, 20);
+                        }
+                        
+                        // Calcul des tendances pour EauPotager
+                        var EauPotagerTrendLine = null;
+                        var EauPotagerMovingAvg = null;
+                        if (EauPotager && EauPotager.length >= 2) {
+                            EauPotagerTrendLine = calculateLinearRegression(EauPotager);
+                            EauPotagerMovingAvg = calculateMovingAverage(EauPotager, 20);
+                        }
+
+                        // ==============================================
                         // Configuration globale du timezone
                         // ==============================================
                         
@@ -1800,6 +1828,64 @@
                                 useUTC: false
                             }
                         });
+                        
+                        // ==============================================
+                        // Fonctions de calcul des lignes de tendance
+                        // ==============================================
+                        
+                        // Calcul de régression linéaire (y = ax + b)
+                        function calculateLinearRegression(data) {
+                            if (!data || data.length < 2) return null;
+                            
+                            let n = data.length;
+                            let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+                            
+                            // Calcul des sommes
+                            for (let i = 0; i < n; i++) {
+                                let x = i; // index temporel
+                                let y = data[i][1]; // valeur
+                                sumX += x;
+                                sumY += y;
+                                sumXY += x * y;
+                                sumXX += x * x;
+                            }
+                            
+                            // Calcul des coefficients
+                            let a = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+                            let b = (sumY - a * sumX) / n;
+                            
+                            // Génération des points de la droite de tendance
+                            let trendData = [];
+                            for (let i = 0; i < n; i++) {
+                                let x = i;
+                                let y = a * x + b;
+                                trendData.push([data[i][0], y]); // [timestamp, valeur calculée]
+                            }
+                            
+                            return {
+                                data: trendData,
+                                slope: a,
+                                intercept: b
+                            };
+                        }
+                        
+                        // Calcul de moyenne mobile
+                        function calculateMovingAverage(data, window = 20) {
+                            if (!data || data.length < window) return null;
+                            
+                            let movingAvgData = [];
+                            
+                            for (let i = window - 1; i < data.length; i++) {
+                                let sum = 0;
+                                for (let j = 0; j < window; j++) {
+                                    sum += data[i - j][1];
+                                }
+                                let avg = sum / window;
+                                movingAvgData.push([data[i][0], avg]);
+                            }
+                            
+                            return movingAvgData;
+                        }
                         
                         // ==============================================
                         // Graphiques Stock Navigator + Aires colorées
@@ -1823,7 +1909,54 @@
                                 },
                                 title: { text: null },
                                 xAxis: {
-                                    type: 'datetime'
+                                    type: 'datetime',
+                                    events: {
+                                        afterSetExtremes: function(e) {
+                                            // Recalculer les tendances pour la fenêtre visible
+                                            if (e.min && e.max) {
+                                                var visibleData = {
+                                                    EauAquarium: EauAquarium.filter(point => point[0] >= e.min && point[0] <= e.max),
+                                                    EauReserve: EauReserve.filter(point => point[0] >= e.min && point[0] <= e.max),
+                                                    EauPotager: EauPotager.filter(point => point[0] >= e.min && point[0] <= e.max)
+                                                };
+                                                
+                                                // Recalculer les tendances pour les données visibles
+                                                var newTrends = {};
+                                                Object.keys(visibleData).forEach(key => {
+                                                    if (visibleData[key].length >= 2) {
+                                                        newTrends[key + 'TrendLine'] = calculateLinearRegression(visibleData[key]);
+                                                        newTrends[key + 'MovingAvg'] = calculateMovingAverage(visibleData[key], 20);
+                                                    }
+                                                });
+                                                
+                                                // Mettre à jour les séries de tendance
+                                                var chart = this.chart;
+                                                var series = chart.series;
+                                                
+                                                // Mettre à jour les séries de régression linéaire (index 6, 7, 8)
+                                                for (var i = 6; i <= 8; i++) {
+                                                    if (series[i] && series[i].name.includes('linéaire')) {
+                                                        var dataKey = series[i].name.includes('aquarium') ? 'EauAquarium' : 
+                                                                     series[i].name.includes('réserve') ? 'EauReserve' : 'EauPotager';
+                                                        if (newTrends[dataKey + 'TrendLine']) {
+                                                            series[i].setData(newTrends[dataKey + 'TrendLine'].data);
+                                                        }
+                                                    }
+                                                }
+                                                
+                                                // Mettre à jour les séries de moyenne mobile (index 9, 10, 11)
+                                                for (var i = 9; i <= 11; i++) {
+                                                    if (series[i] && series[i].name.includes('moy. mobile')) {
+                                                        var dataKey = series[i].name.includes('aquarium') ? 'EauAquarium' : 
+                                                                     series[i].name.includes('réserve') ? 'EauReserve' : 'EauPotager';
+                                                        if (newTrends[dataKey + 'MovingAvg']) {
+                                                            series[i].setData(newTrends[dataKey + 'MovingAvg']);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 },
                                 yAxis: { 
                                     labels: { format: '{value} cm' },
@@ -1853,7 +1986,15 @@
                                     enabled: true,
                                     align: 'center',
                                     verticalAlign: 'bottom',
-                                    layout: 'horizontal'
+                                    layout: 'horizontal',
+                                    itemStyle: {
+                                        fontSize: '11px'
+                                    },
+                                    maxHeight: 120,
+                                    navigation: {
+                                        activeColor: '#3E6F7A',
+                                        inactiveColor: '#CCC'
+                                    }
                                 },
                                 series: [
                                     { 
@@ -1919,6 +2060,89 @@
                                         marker: { symbol: 'triangle', radius: 4 },
                                         showInNavigator: false,
                                         tooltip: { pointFormat: 'Chauffage: <b>ON</b>' }
+                                    },
+                                    // Lignes de tendance - régression linéaire
+                                    { 
+                                        name: 'Tendance aquarium (linéaire)', 
+                                        type: 'line', 
+                                        data: EauAquariumTrendLine ? EauAquariumTrendLine.data : [],
+                                        color: '#FF6300',
+                                        lineWidth: 2,
+                                        dashStyle: 'Dash',
+                                        visible: false,
+                                        showInLegend: true,
+                                        enableMouseTracking: false,
+                                        showInNavigator: false,
+                                        tooltip: { valueSuffix: ' cm' }
+                                    },
+                                    { 
+                                        name: 'Tendance réserve (linéaire)', 
+                                        type: 'line', 
+                                        data: EauReserveTrendLine ? EauReserveTrendLine.data : [],
+                                        color: '#007E61',
+                                        lineWidth: 2,
+                                        dashStyle: 'Dash',
+                                        visible: false,
+                                        showInLegend: true,
+                                        enableMouseTracking: false,
+                                        showInNavigator: false,
+                                        tooltip: { valueSuffix: ' cm' }
+                                    },
+                                    { 
+                                        name: 'Tendance potager (linéaire)', 
+                                        type: 'line', 
+                                        data: EauPotagerTrendLine ? EauPotagerTrendLine.data : [],
+                                        color: '#27BDA0',
+                                        lineWidth: 2,
+                                        dashStyle: 'Dash',
+                                        visible: false,
+                                        showInLegend: true,
+                                        enableMouseTracking: false,
+                                        showInNavigator: false,
+                                        tooltip: { valueSuffix: ' cm' }
+                                    },
+                                    // Lignes de tendance - moyenne mobile
+                                    { 
+                                        name: 'Tendance aquarium (moy. mobile)', 
+                                        type: 'line', 
+                                        data: EauAquariumMovingAvg || [],
+                                        color: '#FF6300',
+                                        lineWidth: 2,
+                                        dashStyle: 'Solid',
+                                        opacity: 0.7,
+                                        visible: false,
+                                        showInLegend: true,
+                                        enableMouseTracking: false,
+                                        showInNavigator: false,
+                                        tooltip: { valueSuffix: ' cm' }
+                                    },
+                                    { 
+                                        name: 'Tendance réserve (moy. mobile)', 
+                                        type: 'line', 
+                                        data: EauReserveMovingAvg || [],
+                                        color: '#007E61',
+                                        lineWidth: 2,
+                                        dashStyle: 'Solid',
+                                        opacity: 0.7,
+                                        visible: false,
+                                        showInLegend: true,
+                                        enableMouseTracking: false,
+                                        showInNavigator: false,
+                                        tooltip: { valueSuffix: ' cm' }
+                                    },
+                                    { 
+                                        name: 'Tendance potager (moy. mobile)', 
+                                        type: 'line', 
+                                        data: EauPotagerMovingAvg || [],
+                                        color: '#27BDA0',
+                                        lineWidth: 2,
+                                        dashStyle: 'Solid',
+                                        opacity: 0.7,
+                                        visible: false,
+                                        showInLegend: true,
+                                        enableMouseTracking: false,
+                                        showInNavigator: false,
+                                        tooltip: { valueSuffix: ' cm' }
                                     }
                                 ],
                                 navigator: { 
