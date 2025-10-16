@@ -179,13 +179,29 @@ class OutputRepository
     public function findLastModifiedGpio(string $board): ?array
     {
         $table = TableConfig::getOutputsTable();
-        // Conversion de l'heure européenne vers l'heure marocaine (retrancher 1h)
-        $sql = "SELECT id, board, gpio, name, state, 
-                       DATE_FORMAT(DATE_SUB(requestTime, INTERVAL 1 HOUR), '%d/%m/%Y %H:%i:%s') as last_modified_time
-                FROM {$table} 
-                WHERE board = :board AND name IS NOT NULL AND name != '' AND requestTime IS NOT NULL
-                ORDER BY requestTime DESC 
-                LIMIT 1";
+        
+        // Vérifier si la colonne requestTime existe
+        $checkColumnSql = "SHOW COLUMNS FROM {$table} LIKE 'requestTime'";
+        $checkStmt = $this->pdo->query($checkColumnSql);
+        $hasRequestTime = $checkStmt->fetch() !== false;
+        
+        if ($hasRequestTime) {
+            // Conversion de l'heure européenne vers l'heure marocaine (retrancher 1h)
+            $sql = "SELECT id, board, gpio, name, state, 
+                           DATE_FORMAT(DATE_SUB(requestTime, INTERVAL 1 HOUR), '%d/%m/%Y %H:%i:%s') as last_modified_time
+                    FROM {$table} 
+                    WHERE board = :board AND name IS NOT NULL AND name != '' AND requestTime IS NOT NULL
+                    ORDER BY requestTime DESC 
+                    LIMIT 1";
+        } else {
+            // Fallback: utiliser la première GPIO trouvée avec l'heure actuelle
+            $sql = "SELECT id, board, gpio, name, state, 
+                           DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR), '%d/%m/%Y %H:%i:%s') as last_modified_time
+                    FROM {$table} 
+                    WHERE board = :board AND name IS NOT NULL AND name != ''
+                    ORDER BY gpio ASC 
+                    LIMIT 1";
+        }
         
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':board' => $board]);

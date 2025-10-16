@@ -51,6 +51,31 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.7.1] - 2025-01-27
+
+### 🐛 Corrigé - Erreur 500 API et amélioration affichage GPIO
+
+#### Correction erreur API temps réel
+- **Problème résolu** : Erreur 500 sur `/api/outputs-test/board/1/status` causée par la colonne `requestTime` manquante
+- **Solution** : Détection automatique de l'existence de la colonne avec fallback vers `NOW()`
+- **Impact** : L'API fonctionne maintenant même si la colonne `requestTime` n'existe pas
+
+#### Amélioration affichage état GPIO
+- **Badge d'état** : Ajout d'un badge "ACTIF" (vert) ou "INACTIF" (rouge) à côté du nom de la GPIO
+- **Interface améliorée** : Affichage plus clair de l'état avec icônes et couleurs
+- **Mise à jour temps réel** : Le badge d'état se met à jour automatiquement toutes les 10 secondes
+
+#### Détails techniques
+- **Repository** : Modification de `findLastModifiedGpio()` pour gérer l'absence de la colonne `requestTime`
+- **Template** : Ajout du badge d'état dans `control.twig` avec styles inline
+- **JavaScript** : Mise à jour du code temps réel pour inclure le badge d'état
+- **Fallback** : Utilisation de `NOW()` si `requestTime` n'existe pas
+
+### 🎯 Impact
+- ✅ Résolution de l'erreur 500 sur l'API temps réel
+- ✅ Affichage clair de l'état ACTIF/INACTIF de la GPIO
+- ✅ Mise à jour temps réel fonctionnelle
+
 ## [4.6.42] - 2025-01-27
 
 ### ✨ Amélioration - Affichage dernière GPIO sollicitée
