@@ -19,6 +19,19 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.6.35] - 2025-01-27
+
+### 🗑️ Supprimé
+- **Section "État du système"** : Suppression complète de la section de santé du système de la page de contrôle
+- **Code JavaScript associé** : Nettoyage de tout le code JavaScript lié à la santé du système
+- **Styles CSS** : Suppression des styles CSS pour le panneau de santé et les contrôles live
+
+### 📝 Détails techniques
+- **Fichier modifié** : `templates/control.twig` - Suppression de la section HTML, CSS et JavaScript
+- **Impact** : Interface de contrôle simplifiée, focus sur les actions plutôt que le monitoring, élimination des erreurs 404 sur l'endpoint de santé
+
+---
+
 ## [4.6.34] - 2025-01-27
 
 ### 🐛 Corrigé
