@@ -31,6 +31,25 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
   - API `/ffp3/api/health` pour les données de santé
   - Compteur à rebours pour les mises à jour
 
+## [4.6.28] - 2025-01-27
+
+### 🐛 Correction - Problème d'affichage de l'heure Board 1
+
+#### Correction du décalage de 2h sur l'affichage des boards
+- **Problème résolu** : Le Board 1 affichait une heure en avance de 2h par rapport à l'heure réelle
+- **Cause identifiée** : Conversion timezone hardcodée `CONVERT_TZ(last_request, '+00:00', '+01:00')` dans `BoardRepository.php`
+- **Solution appliquée** :
+  - Suppression des conversions timezone hardcodées dans toutes les méthodes du repository
+  - Utilisation du timezone configuré dans l'application (`APP_TIMEZONE=Europe/Paris`)
+  - Le frontend gère la conversion vers `Africa/Casablanca` via moment-timezone
+- **Méthodes corrigées** :
+  - `findAll()` : Affichage de toutes les boards
+  - `findActiveForEnvironment()` : Affichage des boards actives
+  - `findByName()` : Affichage d'une board spécifique
+- **Architecture respectée** : Conformité avec l'architecture timezone hybride documentée
+  - Backend PHP : `Europe/Paris` (stockage)
+  - Frontend JS : `Africa/Casablanca` (affichage)
+
 ## [4.6.27] - 2025-01-27
 
 ### ✨ Nouvelle fonctionnalité - Panneau de logs temps réel
