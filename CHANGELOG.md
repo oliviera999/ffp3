@@ -7,6 +7,12 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.8.2] - 2025-01-16
+
+### 🎨 Amélioration - Icône Badge Humidité
+- **Changement d'icône** : Remplacement de l'icône goutte d'eau (`fa-droplet`) par un nuage (`fa-cloud`) pour le badge d'humidité
+- **Cohérence visuelle** : L'icône nuage est plus appropriée pour représenter l'humidité de l'air
+
 ## [4.8.1] - 2025-01-16
 
 ### 🎨 Amélioration - Interface Header Page Aquaponie
