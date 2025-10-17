@@ -7,6 +7,35 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.8.1] - 2025-01-16
+
+### 🎨 Amélioration - Interface Header Page Aquaponie
+- **Affichage période détaillé** : La période affiche maintenant les jours, heures, minutes et secondes au lieu de seulement jours, heures et minutes
+- **Suppression cadre température** : Retrait du cadre température du header pour simplifier l'interface
+- **Optimisation espace** : Réduction du nombre d'éléments dans les statistiques rapides du header
+
+## [4.8.0] - 2025-01-16
+
+### 📱 Nouveau - Graphiques Responsive Mobile/Tablette
+- **Configuration responsive Highcharts** : Adaptation automatique des graphiques selon la taille d'écran
+- **Breakpoints optimisés** : 
+  - Mobile (≤480px) : Hauteur réduite (350px/450px), boutons compacts, légendes adaptées
+  - Tablette (481-768px) : Hauteur intermédiaire (450px/550px), boutons moyens
+  - Desktop (769px+) : Hauteur complète (500px/600px), interface complète
+- **RangeSelector adaptatif** : Boutons réduits sur mobile, désactivation des champs de saisie sur petits écrans
+- **Légendes optimisées** : Tailles de police et symboles adaptés à chaque breakpoint
+- **Navigator tactile** : Hauteur réduite sur mobile pour économiser l'espace
+- **Redimensionnement dynamique** : Gestion automatique des changements d'orientation et de taille d'écran
+- **Scrollbar tactile** : Style optimisé pour les interactions tactiles sur mobile
+- **Axes adaptatifs** : Tailles de police des labels et titres ajustées selon l'écran
+
+### 🎯 Amélioré - Expérience Utilisateur Mobile
+- **Navigation tactile améliorée** : Boutons et contrôles optimisés pour les doigts
+- **Espacement adaptatif** : Marges et espacements réduits sur petits écrans
+- **Performance optimisée** : Redimensionnement avec debounce pour éviter les recalculs excessifs
+
+---
+
 ## [4.7.6] - 2025-01-16
 
 ### 🎨 Amélioré - Interface Logs Temps Réel
@@ -771,7 +800,7 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
-## [4.6.4] - 2025-01-27 🗂️ ARCHIVAGE - Nettoyage fichiers legacy
+## [4.7.6] - 2025-01-27 🗂️ ARCHIVAGE - Nettoyage fichiers legacy
 
 ### 🧹 Archivage et nettoyage
 - **Archivage des dossiers legacy** dans `unused/` :

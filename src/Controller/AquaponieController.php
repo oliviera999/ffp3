@@ -192,8 +192,9 @@ class AquaponieController
         $days = (int) floor($duration_seconds / 86400);
         $hours = (int) floor(($duration_seconds % 86400) / 3600);
         $minutes = (int) floor(($duration_seconds % 3600) / 60);
+        $seconds = (int) ($duration_seconds % 60);
         
-        return "$days jours, $hours heures, $minutes minutes";
+        return "$days jours, $hours heures, $minutes minutes, $seconds secondes";
     }
 
     /**

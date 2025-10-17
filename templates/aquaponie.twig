@@ -485,11 +485,6 @@
                                 <span class="quick-stat-value">{{ timepastbegin }}</span>
                                 <span class="quick-stat-label">Jours actifs</span>
                             </div>
-                            <div class="quick-stat">
-                                <i class="fas fa-thermometer-half quick-stat-icon"></i>
-                                <span class="quick-stat-value">{{ last_reading_tempair|default(0)|round(1) }}°C</span>
-                                <span class="quick-stat-label">Température</span>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -1888,13 +1883,184 @@
                         }
                         
                         // ==============================================
+                        // Fonction de redimensionnement responsive
+                        // ==============================================
+                        
+                        function handleChartResize() {
+                            // Redimensionner les graphiques existants
+                            if (window.chartEau) {
+                                var newHeight = window.innerWidth < 768 ? 400 : (window.innerWidth < 1024 ? 500 : 600);
+                                window.chartEau.setSize(null, newHeight);
+                            }
+                            if (window.chartTemp) {
+                                var newHeight = window.innerWidth < 768 ? 500 : (window.innerWidth < 1024 ? 600 : 700);
+                                window.chartTemp.setSize(null, newHeight);
+                            }
+                        }
+                        
+                        // Écouter les changements de taille d'écran
+                        window.addEventListener('resize', function() {
+                            clearTimeout(window.resizeTimeout);
+                            window.resizeTimeout = setTimeout(handleChartResize, 250);
+                        });
+                        
+                        // Écouter les changements d'orientation
+                        window.addEventListener('orientationchange', function() {
+                            setTimeout(handleChartResize, 500);
+                        });
+                        
+                        // ==============================================
                         // Graphiques Stock Navigator + Aires colorées
                         // ==============================================
                         
                         function createVersionD() {
                             // 1. Stock Chart Niveaux d'eau avec aires
-                            Highcharts.stockChart('chart-stock-area-eau-D', {
-                                chart: { height: 600 },
+                            window.chartEau = Highcharts.stockChart('chart-stock-area-eau-D', {
+                                chart: { 
+                                    height: window.innerWidth < 768 ? 400 : (window.innerWidth < 1024 ? 500 : 600),
+                                    spacingTop: 20,
+                                    spacingRight: 20,
+                                    spacingBottom: 20,
+                                    spacingLeft: 20
+                                },
+                                responsive: {
+                                    rules: [{
+                                        condition: {
+                                            maxWidth: 480
+                                        },
+                                        chartOptions: {
+                                            chart: {
+                                                height: 350,
+                                                spacingTop: 10,
+                                                spacingRight: 10,
+                                                spacingBottom: 10,
+                                                spacingLeft: 10
+                                            },
+                                            rangeSelector: {
+                                                buttons: [
+                                                    { type: 'hour', count: 1, text: '1h' },
+                                                    { type: 'hour', count: 6, text: '6h' },
+                                                    { type: 'day', count: 1, text: '1j' },
+                                                    { type: 'all', text: 'Tout' }
+                                                ],
+                                                buttonTheme: {
+                                                    width: 40,
+                                                    height: 20,
+                                                    style: {
+                                                        fontSize: '10px'
+                                                    }
+                                                },
+                                                inputEnabled: false
+                                            },
+                                            legend: {
+                                                enabled: true,
+                                                align: 'center',
+                                                verticalAlign: 'bottom',
+                                                layout: 'horizontal',
+                                                itemStyle: {
+                                                    fontSize: '10px'
+                                                },
+                                                symbolHeight: 8,
+                                                symbolWidth: 8,
+                                                symbolRadius: 2
+                                            },
+                                            navigator: {
+                                                enabled: true,
+                                                height: 25
+                                            },
+                                            scrollbar: {
+                                                enabled: true,
+                                                barBackgroundColor: '#ccc',
+                                                barBorderRadius: 7,
+                                                barBorderWidth: 0,
+                                                buttonBackgroundColor: '#ccc',
+                                                buttonBorderWidth: 0,
+                                                buttonBorderRadius: 7,
+                                                trackBackgroundColor: 'none',
+                                                trackBorderWidth: 1,
+                                                trackBorderRadius: 8,
+                                                trackBorderColor: '#CCC'
+                                            }
+                                        }
+                                    }, {
+                                        condition: {
+                                            minWidth: 481,
+                                            maxWidth: 768
+                                        },
+                                        chartOptions: {
+                                            chart: {
+                                                height: 450,
+                                                spacingTop: 15,
+                                                spacingRight: 15,
+                                                spacingBottom: 15,
+                                                spacingLeft: 15
+                                            },
+                                            rangeSelector: {
+                                                buttons: [
+                                                    { type: 'hour', count: 1, text: '1h' },
+                                                    { type: 'hour', count: 6, text: '6h' },
+                                                    { type: 'day', count: 1, text: '1j' },
+                                                    { type: 'week', count: 1, text: '1s' },
+                                                    { type: 'all', text: 'Tout' }
+                                                ],
+                                                buttonTheme: {
+                                                    width: 50,
+                                                    height: 25,
+                                                    style: {
+                                                        fontSize: '11px'
+                                                    }
+                                                },
+                                                inputEnabled: false
+                                            },
+                                            legend: {
+                                                enabled: true,
+                                                align: 'center',
+                                                verticalAlign: 'bottom',
+                                                layout: 'horizontal',
+                                                itemStyle: {
+                                                    fontSize: '11px'
+                                                },
+                                                symbolHeight: 10,
+                                                symbolWidth: 10,
+                                                symbolRadius: 3
+                                            },
+                                            navigator: {
+                                                enabled: true,
+                                                height: 35
+                                            }
+                                        }
+                                    }, {
+                                        condition: {
+                                            minWidth: 769,
+                                            maxWidth: 1024
+                                        },
+                                        chartOptions: {
+                                            chart: {
+                                                height: 500
+                                            },
+                                            rangeSelector: {
+                                                buttonTheme: {
+                                                    width: 60,
+                                                    height: 30,
+                                                    style: {
+                                                        fontSize: '12px'
+                                                    }
+                                                }
+                                            },
+                                            legend: {
+                                                itemStyle: {
+                                                    fontSize: '12px'
+                                                },
+                                                symbolHeight: 12,
+                                                symbolWidth: 12,
+                                                symbolRadius: 4
+                                            },
+                                            navigator: {
+                                                height: 40
+                                            }
+                                        }
+                                    }]
+                                },
                                 rangeSelector: {
                                     buttons: [
                                         { type: 'hour', count: 1, text: '1h' },
@@ -2154,8 +2320,219 @@
                             });
                             
                             // 2. Stock Chart Paramètres physiques avec aires
-                            Highcharts.stockChart('chart-stock-area-temp-D', {
-                                chart: { height: 700 },
+                            window.chartTemp = Highcharts.stockChart('chart-stock-area-temp-D', {
+                                chart: { 
+                                    height: window.innerWidth < 768 ? 500 : (window.innerWidth < 1024 ? 600 : 700),
+                                    spacingTop: 20,
+                                    spacingRight: 20,
+                                    spacingBottom: 20,
+                                    spacingLeft: 20
+                                },
+                                responsive: {
+                                    rules: [{
+                                        condition: {
+                                            maxWidth: 480
+                                        },
+                                        chartOptions: {
+                                            chart: {
+                                                height: 450,
+                                                spacingTop: 10,
+                                                spacingRight: 10,
+                                                spacingBottom: 10,
+                                                spacingLeft: 10
+                                            },
+                                            rangeSelector: {
+                                                buttons: [
+                                                    { type: 'hour', count: 1, text: '1h' },
+                                                    { type: 'hour', count: 6, text: '6h' },
+                                                    { type: 'day', count: 1, text: '1j' },
+                                                    { type: 'all', text: 'Tout' }
+                                                ],
+                                                buttonTheme: {
+                                                    width: 40,
+                                                    height: 20,
+                                                    style: {
+                                                        fontSize: '10px'
+                                                    }
+                                                },
+                                                inputEnabled: false
+                                            },
+                                            legend: {
+                                                enabled: true,
+                                                align: 'center',
+                                                verticalAlign: 'bottom',
+                                                layout: 'horizontal',
+                                                itemStyle: {
+                                                    fontSize: '10px'
+                                                },
+                                                symbolHeight: 8,
+                                                symbolWidth: 8,
+                                                symbolRadius: 2
+                                            },
+                                            navigator: {
+                                                enabled: true,
+                                                height: 25
+                                            },
+                                            scrollbar: {
+                                                enabled: true,
+                                                barBackgroundColor: '#ccc',
+                                                barBorderRadius: 7,
+                                                barBorderWidth: 0,
+                                                buttonBackgroundColor: '#ccc',
+                                                buttonBorderWidth: 0,
+                                                buttonBorderRadius: 7,
+                                                trackBackgroundColor: 'none',
+                                                trackBorderWidth: 1,
+                                                trackBorderRadius: 8,
+                                                trackBorderColor: '#CCC'
+                                            },
+                                            yAxis: [{
+                                                labels: { 
+                                                    format: '{value}°C',
+                                                    style: { fontSize: '10px' }
+                                                },
+                                                title: { 
+                                                    text: 'Températures (°C)',
+                                                    style: { fontSize: '11px' }
+                                                },
+                                                height: '25%',
+                                                lineWidth: 2
+                                            }, {
+                                                labels: { 
+                                                    format: '{value}%',
+                                                    style: { fontSize: '10px' }
+                                                },
+                                                title: { 
+                                                    text: 'Humidité (%)',
+                                                    style: { fontSize: '11px' }
+                                                },
+                                                top: '30%',
+                                                height: '25%',
+                                                offset: 0,
+                                                lineWidth: 2
+                                            }, {
+                                                labels: { 
+                                                    format: '{value} UA',
+                                                    style: { fontSize: '10px' }
+                                                },
+                                                title: { 
+                                                    text: 'Luminosité (UA)',
+                                                    style: { fontSize: '11px' }
+                                                },
+                                                top: '60%',
+                                                height: '25%',
+                                                offset: 0,
+                                                lineWidth: 2
+                                            }, {
+                                                labels: { enabled: false },
+                                                title: { text: '' },
+                                                top: '88%',
+                                                height: '10%',
+                                                offset: 0,
+                                                max: 1.5
+                                            }]
+                                        }
+                                    }, {
+                                        condition: {
+                                            minWidth: 481,
+                                            maxWidth: 768
+                                        },
+                                        chartOptions: {
+                                            chart: {
+                                                height: 550,
+                                                spacingTop: 15,
+                                                spacingRight: 15,
+                                                spacingBottom: 15,
+                                                spacingLeft: 15
+                                            },
+                                            rangeSelector: {
+                                                buttons: [
+                                                    { type: 'hour', count: 1, text: '1h' },
+                                                    { type: 'hour', count: 6, text: '6h' },
+                                                    { type: 'day', count: 1, text: '1j' },
+                                                    { type: 'week', count: 1, text: '1s' },
+                                                    { type: 'all', text: 'Tout' }
+                                                ],
+                                                buttonTheme: {
+                                                    width: 50,
+                                                    height: 25,
+                                                    style: {
+                                                        fontSize: '11px'
+                                                    }
+                                                },
+                                                inputEnabled: false
+                                            },
+                                            legend: {
+                                                enabled: true,
+                                                align: 'center',
+                                                verticalAlign: 'bottom',
+                                                layout: 'horizontal',
+                                                itemStyle: {
+                                                    fontSize: '11px'
+                                                },
+                                                symbolHeight: 10,
+                                                symbolWidth: 10,
+                                                symbolRadius: 3
+                                            },
+                                            navigator: {
+                                                enabled: true,
+                                                height: 35
+                                            },
+                                            yAxis: [{
+                                                labels: { 
+                                                    style: { fontSize: '11px' }
+                                                },
+                                                title: { 
+                                                    style: { fontSize: '12px' }
+                                                }
+                                            }, {
+                                                labels: { 
+                                                    style: { fontSize: '11px' }
+                                                },
+                                                title: { 
+                                                    style: { fontSize: '12px' }
+                                                }
+                                            }, {
+                                                labels: { 
+                                                    style: { fontSize: '11px' }
+                                                },
+                                                title: { 
+                                                    style: { fontSize: '12px' }
+                                                }
+                                            }]
+                                        }
+                                    }, {
+                                        condition: {
+                                            minWidth: 769,
+                                            maxWidth: 1024
+                                        },
+                                        chartOptions: {
+                                            chart: {
+                                                height: 600
+                                            },
+                                            rangeSelector: {
+                                                buttonTheme: {
+                                                    width: 60,
+                                                    height: 30,
+                                                    style: {
+                                                        fontSize: '12px'
+                                                    }
+                                                }
+                                            },
+                                            legend: {
+                                                itemStyle: {
+                                                    fontSize: '12px'
+                                                },
+                                                symbolHeight: 12,
+                                                symbolWidth: 12,
+                                                symbolRadius: 4
+                                            },
+                                            navigator: {
+                                                height: 40
+                                            }
+                                        }
+                                    }]
+                                },
                                 rangeSelector: {
                                     buttons: [
                                         { type: 'hour', count: 1, text: '1h' },
