@@ -152,36 +152,11 @@ class OutputController
 
     /**
      * API: Récupère l'état actuel de tous les outputs (pour ESP32)
+     * Version 11.68: Format simplifié - GPIO numériques uniquement
      */
     public function getOutputsState(Request $request, Response $response): Response
     {
         $outputs = $this->outputService->getAllOutputs();
-        
-        // Mapping GPIO → noms pour compatibilité ESP32
-        // L'ESP32 attend des clés par nom (light, heat, etc.) ET par numéro GPIO
-        $gpioMapping = [
-            2 => 'heat',           // Radiateurs
-            15 => 'light',         // Lumière
-            16 => 'pump_aqua',     // Pompe aquarium
-            18 => 'pump_tank',     // Pompe réservoir
-            108 => 'bouffePetits', // Servo petits (CORRIGÉ: était 13)
-            109 => 'bouffeGros',   // Servo gros (CORRIGÉ: était 12)
-            // Paramètres de configuration (GPIO 100-116)
-            100 => 'mail',
-            101 => 'mailNotif',
-            102 => 'aqThr',
-            103 => 'taThr',
-            104 => 'chauff',
-            105 => 'bouffeMat',
-            106 => 'bouffeMid',
-            107 => 'bouffeSoir',
-            111 => 'tempsGros',
-            112 => 'tempsPetits',
-            113 => 'tempsRemplissageSec',
-            114 => 'limFlood',
-            115 => 'WakeUp',
-            116 => 'FreqWakeUp',
-        ];
         
         $result = [];
         foreach ($outputs as $output) {
@@ -196,13 +171,8 @@ class OutputController
                 $state = $state === 0 ? 1 : 0;
             }
             
-            // Ajouter par numéro GPIO (rétrocompatibilité)
+            // Format simple: GPIO numérique uniquement
             $result[(string)$gpio] = $state;
-            
-            // Ajouter par nom si mapping existe (nouveau format)
-            if (isset($gpioMapping[$gpio])) {
-                $result[$gpioMapping[$gpio]] = $state;
-            }
         }
         
         $response->getBody()->write(json_encode($result));
