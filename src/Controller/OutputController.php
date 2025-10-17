@@ -163,13 +163,11 @@ class OutputController
             $gpio = (int)$output['gpio'];
             $state = $output['state'];
             
-            // Inverser la logique pour la pompe réservoir (GPIO 18)
-            // car elle utilise une logique inversée côté hardware
-            // GPIO 18 = 0 → pompe ON → on envoie pump_tank=1 à l'ESP32
-            // GPIO 18 = 1 → pompe OFF → on envoie pump_tank=0 à l'ESP32
-            if ($gpio === 18) {
-                $state = $state === 0 ? 1 : 0;
-            }
+            // v11.69: Suppression inversion logique GPIO 18
+            // L'ESP32 gère correctement la logique, le serveur ne doit pas inverser
+            // GPIO 18 = 0 → pompe OFF → ESP32 reçoit pump_tank=0
+            // GPIO 18 = 1 → pompe ON → ESP32 reçoit pump_tank=1
+            // Pas d'inversion nécessaire
             
             // Format simple: GPIO numérique uniquement
             $result[(string)$gpio] = $state;
