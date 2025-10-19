@@ -7,6 +7,13 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.8.3] - 2025-01-16
+
+### 🐛 Correction - Logique GPIO 18
+- **Unification de la logique** : Suppression de la logique inversée pour le GPIO 18 (pompe tank)
+- **Cohérence interface** : Tous les GPIO suivent maintenant la même logique : `state = 1` = "Activé", `state = 0` = "Désactivé"
+- **Simplification** : Le switch et le texte "Activé/Désactivé" sont maintenant cohérents pour tous les actionneurs
+
 ## [4.8.2] - 2025-01-16
 
 ### 🎨 Amélioration - Icône Badge Humidité

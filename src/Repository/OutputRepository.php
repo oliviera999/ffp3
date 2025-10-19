@@ -285,24 +285,21 @@ class OutputRepository
                     // Conversion en string pour compatibilité avec le type varchar(64)
                     $stateValue = (string)$value;
                     
-                    // CORRECTION GPIO 18 : Inverser la logique pour cohérence avec getOutputsState()
-                    // L'ESP32 envoie : 0 = pompe ON, 1 = pompe OFF
-                    // On stocke en BDD : 0 = pompe ON, 1 = pompe OFF (cohérent avec l'affichage web)
-                    if ($gpio === 18) {
-                        // Pas d'inversion nécessaire ici car on veut garder la même logique
-                        // que celle reçue de l'ESP32 pour cohérence avec getOutputsState()
-                    }
                     
-                    // CORRECTION v11.38 : Ne mettre à jour QUE les GPIO qui ont des noms définis
-                    // Cela évite la création de lignes NULL inutiles
-                    // PAS DE PROTECTION : L'ESP32 poll toutes les 4 secondes, donc pas besoin de protection
+                    // CORRECTION v11.70 : Protection contre écrasement des changements web récents
+                    // Ne pas écraser si modification web dans les 10 dernières secondes
                     $sql = "UPDATE {$table} 
                             SET state = :state, 
                                 requestTime = NOW(), 
                                 lastModifiedBy = 'esp32'
                             WHERE gpio = :gpio 
                               AND name IS NOT NULL 
-                              AND name != ''";
+                              AND name != ''
+                              AND (
+                                  lastModifiedBy != 'web' 
+                                  OR requestTime IS NULL 
+                                  OR requestTime < DATE_SUB(NOW(), INTERVAL 10 SECOND)
+                              )";
                     
                     $stmt = $this->pdo->prepare($sql);
                     $stmt->execute([

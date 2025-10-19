@@ -1319,11 +1319,7 @@
                                                     </div>
                                                     <div class="action-button-status">
                                                         <span class="status-text">
-                                                            {% if output.gpio == 18 %}
-                                                                {{ output.state == 0 ? 'Activé' : 'Désactivé' }}
-                                                            {% else %}
-                                                                {{ output.state == 1 ? 'Activé' : 'Désactivé' }}
-                                                            {% endif %}
+                                                            {{ output.state == 1 ? 'Activé' : 'Désactivé' }}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -1334,7 +1330,7 @@
                                                        id="{{ output.id }}" 
                                                        data-id="{{ output.id }}"
                                                        data-gpio="{{ output.gpio }}"
-                                                       {% if output.gpio == 18 %}{{ output.state == 0 ? 'checked' : '' }}{% else %}{{ output.state == 1 ? 'checked' : '' }}{% endif %}>
+                                                       {{ output.state == 1 ? 'checked' : '' }}>
                                                 <span class="modern-switch-slider">
                                                     <span class="modern-switch-button"></span>
                                                 </span>
