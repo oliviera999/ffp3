@@ -7,6 +7,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.0] - 2025-10-20
+
+### 🎨 Refonte UI/UX – Page contrôle
+- Nouvelle mise en page triptyque : colonne contexte/rapide, panneau principal actionneurs, colonne logs fixe.
+- Cartes actionneurs homogènes (icônes, badges sync, descriptions) et paramètres regroupés par rubriques.
+- Feedback visuel clarifié (badges synchronisation, animations `value-updated`, harmonisation couleurs).
+- Panneau statut temps réel compact (statut, dernière commande, uptime, lectures).
+- Grille `ControlValuesUpdater` fiabilisée via data-attributes (`data-board`, `data-parameter`).
+- Suppression des reliquats legacy (formulaire `createOutput`, styles inline dépassés).
+
+---
+
 ## [4.8.9] - 2025-10-20
 
 ### 🎨 Améliorations UI/UX
