@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.8.4] - 2025-10-20
+
+### 🐛 Correction - Traitement GPIO directs
+- **Correction post-data.php** : Amélioration du traitement des GPIO directs pour une meilleure stabilité
+- **Fiabilité communication** : Correction des problèmes de communication entre ESP32 et serveur pour les commandes GPIO
+- **Cohérence endpoints** : Harmonisation du traitement des données GPIO dans l'endpoint post-data
+
+---
+
 ## [4.8.3] - 2025-01-16
 
 ### 🐛 Correction - Logique GPIO 18
