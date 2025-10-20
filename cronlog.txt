@@ -30779,3 +30779,6 @@
 [2025-08-02 09:30:03] [INFO] Nettoyage : 2 valeur(s) basse(s) supprimée(s) pour la colonne TempEau.
 [2025-08-02 09:30:04] [INFO] Nettoyage des données terminé.
 [2025-08-02 09:30:04] [WARNING] Problème de marée détecté (stddev: 0.3727). Redémarrage de la pompe de l'aquarium.
+[2025-10-20 22:55:25] [INFO] Test message
+[2025-10-20 22:55:25] [DEBUG] NAME
+[2025-10-20 22:55:25] [INFO] TASK
