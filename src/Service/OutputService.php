@@ -132,9 +132,10 @@ class OutputService
      * 
      * @param int $id ID de l'output
      * @param int $state Nouvel état (0 ou 1)
+     * @param string $modifiedBy Source de la modification ('web', 'esp32', etc.)
      * @return bool Succès de l'opération
      */
-    public function updateStateById(int $id, int $state): bool
+    public function updateStateById(int $id, int $state, string $modifiedBy = 'web'): bool
     {
         // Validation de l'état
         if ($state !== 0 && $state !== 1) {
@@ -144,18 +145,19 @@ class OutputService
         $table = \App\Config\TableConfig::getOutputsTable();
         $pdo = \App\Config\Database::getConnection();
         
-        // Marquer la modification comme venant de l'interface web
-        // Cela donne priorité à cette modification pendant 5 minutes
+        // Marquer la modification avec la source spécifiée
+        // Cela permet de gérer la priorité des modifications
         $sql = "UPDATE {$table} 
                 SET state = :state, 
                     requestTime = NOW(), 
-                    lastModifiedBy = 'web'
+                    lastModifiedBy = :modifiedBy
                 WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         
         $result = $stmt->execute([
             ':state' => $state, 
-            ':id' => $id
+            ':id' => $id,
+            ':modifiedBy' => $modifiedBy
         ]);
         
         // Log pour debugging

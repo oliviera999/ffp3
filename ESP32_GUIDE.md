@@ -2,8 +2,9 @@
 
 **Project**: FFP3 Aquaponie IoT  
 **Server Version**: 4.4.0  
-**Date**: October 11, 2025  
-**Server**: https://iot.olution.info/ffp3/
+**Date**: January 16, 2025  
+**Server**: https://iot.olution.info/ffp3/  
+**ESP32 Version**: v11.70 (Clés JSON standardisées)
 
 ---
 
@@ -15,8 +16,9 @@
 4. [Authentication & Security](#authentication--security)
 5. [Example Code (Arduino/ESP32)](#example-code-arduinoesp32)
 6. [GPIO Mapping](#gpio-mapping)
-7. [Troubleshooting](#troubleshooting)
-8. [Configuration (PROD vs TEST)](#configuration-prod-vs-test)
+7. [JSON Key Standardization (v11.70+)](#json-key-standardization-v1170)
+8. [Troubleshooting](#troubleshooting)
+9. [Configuration (PROD vs TEST)](#configuration-prod-vs-test)
 
 ---
 
@@ -564,6 +566,47 @@ String calculateHMAC(String data, String secret) {
 | **114** | Overflow Threshold | Maximum level (cm) | Config (int) |
 | **115** | Force Wake | Force wake mode | Config (0/1) |
 | **116** | WakeUp Frequency | Wake interval (seconds) | Config (int) |
+
+---
+
+## 📋 JSON Key Standardization (v11.70+)
+
+### Overview
+Starting from ESP32 firmware v11.70, all JSON keys have been standardized across ESP32, server, and web interface to eliminate data conversion overhead and improve system consistency.
+
+### Standardized Keys
+
+| Parameter | JSON Key | Type | Description |
+|-----------|----------|------|-------------|
+| Email Address | `mail` | string | Notification email |
+| Email Notifications | `mailNotif` | string | Enable/disable ("checked" or empty) |
+| Large Feeding Duration | `tempsGros` | int | Duration in seconds |
+| Small Feeding Duration | `tempsPetits` | int | Duration in seconds |
+| Tank Filling Duration | `tempsRemplissageSec` | int | Duration in seconds |
+| Heating Threshold | `chauffageThreshold` | float | Temperature in °C |
+| Aquarium Threshold | `aqThreshold` | int | Water level in cm |
+| Tank Threshold | `tankThreshold` | int | Water level in cm |
+| Overflow Limit | `limFlood` | int | Maximum level in cm |
+| Force Wake | `WakeUp` | int | Force wake mode (0/1) |
+| Wake Frequency | `FreqWakeUp` | int | Wake interval in seconds |
+
+### Feeding Times (GPIO Numbers)
+Feeding times use GPIO numbers directly (no named keys):
+- GPIO 105: Morning feeding hour (0-23)
+- GPIO 106: Noon feeding hour (0-23) 
+- GPIO 107: Evening feeding hour (0-23)
+
+### Benefits
+- ✅ **Eliminated 218 lines** of conversion code
+- ✅ **No more memory duplication** (JSON copy eliminated)
+- ✅ **Improved performance** (direct parsing)
+- ✅ **System consistency** (same keys everywhere)
+- ✅ **Easier maintenance** (single source of truth)
+
+### Migration Notes
+- **Backward Compatible**: Server already accepted these keys
+- **No Interface Changes**: Web interface already used these keys
+- **ESP32 Only**: Only ESP32 firmware needed updates (v11.70+)
 
 ---
 

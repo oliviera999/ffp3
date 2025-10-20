@@ -279,6 +279,40 @@ try {
         116 => isset($_POST['FreqWakeUp']) ? $data->freqWakeUp : null,
     ];
     
+    // CORRECTION CRITIQUE (v11.84): Traitement des GPIO directs envoyés par l'ESP32
+    // L'ESP32 envoie des paramètres comme "108=0", "109=0", "pump_tank=0" dans extraPairs
+    // Ces paramètres doivent être traités pour remettre à zéro les GPIO correspondants
+    
+    // Mapping des alias vers GPIO
+    $gpioAliases = [
+        'pump_tank' => 18,      // Alias pour etatPompeTank (GPIO 18)
+        'pump_tankCmd' => 18,   // Commande pompe réservoir (même GPIO)
+        'etatPompeTank' => 18,  // État pompe réservoir
+        'etatPompeAqua' => 16,  // État pompe aquarium
+        'etatHeat' => 2,        // État chauffage
+        'etatUV' => 15,         // État lumière UV
+        'bouffePetits' => 108,  // Nourrissage petits poissons
+        'bouffeGros' => 109,    // Nourrissage gros poissons
+    ];
+    
+    // Traitement des GPIO directs (ex: "108=0", "109=0")
+    foreach ($_POST as $key => $value) {
+        // GPIO numériques directs (ex: "108", "109")
+        if (is_numeric($key) && in_array((int)$key, [16, 18, 2, 15, 108, 109, 110, 111, 112, 113, 114, 115, 116, 100, 101, 102, 103, 104, 105, 106, 107])) {
+            $gpio = (int)$key;
+            if (!isset($outputsToUpdate[$gpio]) || $outputsToUpdate[$gpio] === null) {
+                $outputsToUpdate[$gpio] = (int)$value; // Force la valeur envoyée
+                $logger->info("GPIO direct mis à jour", ['gpio' => $gpio, 'value' => $value]);
+            }
+        }
+        // Traitement des alias (ex: "pump_tank=0")
+        elseif (isset($gpioAliases[$key]) && !isset($outputsToUpdate[$gpioAliases[$key]])) {
+            $gpio = $gpioAliases[$key];
+            $outputsToUpdate[$gpio] = (int)$value;
+            $logger->info("GPIO alias mis à jour", ['alias' => $key, 'gpio' => $gpio, 'value' => $value]);
+        }
+    }
+    
     $updatedCount = 0;
     foreach ($outputsToUpdate as $gpio => $state) {
         if ($state !== null && $state !== '') {
