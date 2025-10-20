@@ -7,6 +7,25 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.8.9] - 2025-10-20
+
+### 🎨 Améliorations UI/UX
+- Badges de contexte (environnement, table source, firmware, version) ajoutés sur `dashboard.twig` et `aquaponie.twig` pour clarifier l'origine des données.
+- Grille de liens rapides depuis le dashboard vers les vues aquaponie, contrôle des actionneurs et diagnostics API.
+- Harmonisation visuelle des panneaux d'état : nouveaux badges de statut animés, info bulles de dernière réception, formats enrichis pour les compteurs.
+
+### ⚙️ Temps réel & feedback
+- `realtime-updater.js` affiche désormais la durée depuis la dernière lecture avec horodatage, gère les états « non disponible » et met en avant le statut temps réel par badges colorés.
+- `realtime-styles.css` enrichi (pills, animations, styles warning/paused/error) pour différencier les états réseau.
+
+### ⚙️ API & Contrôle
+- Les bascules GPIO (`/api/outputs/toggle`) acceptent désormais des requêtes POST JSON sécurisées (fin des GET querystring, meilleure compatibilité caches/proxies).
+- `OutputController::updateParameters` et l'auto-save des formulaires envoient des payloads JSON normalisés (`param`/`value`) ; réponses JSON harmonisées côté front.
+- `ControlValuesUpdater` lit les éléments de statut via data-attributes (`.board-card`, `data-parameter`), ce qui supprime les sélecteurs fragiles basés sur du texte.
+- Refactor JS (`control.twig`, `control-values-updater.js`) pour utiliser `fetch` et gestion d'erreurs centralisée.
+
+---
+
 ## [4.8.8] - 2025-10-20
 
 ### 🎨 Améliorations UI/UX
