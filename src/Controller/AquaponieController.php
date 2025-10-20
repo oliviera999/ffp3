@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Config\Database;
+use App\Service\LogService;
 use App\Config\TableConfig;
 use App\Config\Version;
 use App\Repository\SensorReadRepository;
@@ -19,17 +19,23 @@ class AquaponieController
     private StatisticsAggregatorService $statsAggregator;
     private ChartDataService $chartDataService;
     private WaterBalanceService $waterBalanceService;
+    private TemplateRenderer $renderer;
+    private LogService $logger;
 
     public function __construct(
         SensorReadRepository $sensorReadRepo,
         StatisticsAggregatorService $statsAggregator,
         ChartDataService $chartDataService,
-        WaterBalanceService $waterBalanceService
+        WaterBalanceService $waterBalanceService,
+        TemplateRenderer $renderer,
+        LogService $logger
     ) {
         $this->sensorReadRepo = $sensorReadRepo;
         $this->statsAggregator = $statsAggregator;
         $this->chartDataService = $chartDataService;
         $this->waterBalanceService = $waterBalanceService;
+        $this->renderer = $renderer;
+        $this->logger = $logger;
     }
 
     /**
@@ -38,27 +44,9 @@ class AquaponieController
     public function show(): void
     {
         try {
-            // DEBUG: Log du début de la méthode
-            error_log("AquaponieController::show - Début");
-            
-            // Support des redirections legacy avec transfert de session
-            error_log("AquaponieController::show - Gestion des sessions");
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
-            }
-        
-            if (isset($_SESSION['post_data_transfer'])) {
-                $_POST = array_merge($_POST, $_SESSION['post_data_transfer']);
-                unset($_SESSION['post_data_transfer']);
-                session_write_close();
-            }
-            
-            // Période d'analyse
-            error_log("AquaponieController::show - Récupération de la dernière date");
             $lastDate = $this->sensorReadRepo->getLastReadingDate();
             $defaultEndDate = $lastDate ?: date('Y-m-d H:i:s');
             $defaultStartDate = date('Y-m-d H:i:s', strtotime($defaultEndDate . ' -6 hours'));
-            error_log("AquaponieController::show - Période: $defaultStartDate à $defaultEndDate");
 
         // Récupération des paramètres de période (nouveau format datetime-local ou ancien format séparé)
         [$startDate, $endDate] = $this->extractDateRange($defaultStartDate, $defaultEndDate);
@@ -105,7 +93,7 @@ class AquaponieController
         // Environnement actuel
         $environment = TableConfig::getEnvironment();
 
-        echo TemplateRenderer::render('aquaponie.twig', array_merge([
+        echo $this->renderer->render('aquaponie.twig', array_merge([
             'start_date' => $startDate,
             'end_date'   => $endDate,
             'reading_time' => $reading_time,
@@ -125,10 +113,12 @@ class AquaponieController
         ], $statsFlattened, $waterBalance));
         
         } catch (\Throwable $e) {
-            error_log("AquaponieController::show - ERREUR: " . $e->getMessage());
-            error_log("AquaponieController::show - Fichier: " . $e->getFile() . " ligne " . $e->getLine());
-            error_log("AquaponieController::show - Trace: " . $e->getTraceAsString());
-            
+            $this->logger->error('AquaponieController::show failure', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
             echo "ERREUR AquaponieController: " . $e->getMessage();
             exit(1);
         }

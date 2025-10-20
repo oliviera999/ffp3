@@ -7,14 +7,21 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
-## [4.8.5] - 2025-10-20
+## [4.8.6] - 2025-10-20
 
-### 🐛 Correction - API contrôle et nettoyage Aquaponie
-- **Sortie test remplacée** : `OutputController::getBoardStatus()` retourne désormais les données réelles (BoardRepository + OutputRepository) au lieu d'un stub
-- **Service dédié** : `OutputService::getBoardStatus()` expose le statut complet d'une board pour les contrôleurs et scripts front
-- **Harmonisation JS** : Calcul de la base API dans `control.twig` respectant les routes `/outputs` / `/outputs-test`
-- **Nettoyage Aquaponie** : Suppression des appels PDO directs dans `AquaponieController` et retrait des variables legacy (`timepastbegin`, `first_reading_*`) du template
-- **Timezone UI** : Libellés de formulaire simplifiés (plus de rappel casablanca/Paris) et indicateurs superflus retirés
+### 🚿 Nettoyage des endpoints legacy
+- Suppression des scripts `public/*.php` historiques au profit des routes Slim (`post-data`, diagnostics, tests).
+- `public/index.php` n’expose plus la page `debug-slim` ni les alias procéduraux.
+
+### ⚙️ Refactor contrôleurs (Aquaponie / Dashboard / Output / API temps réel)
+- `TemplateRenderer` devient une instance injectée, configurée via le container (cache activé uniquement en prod).
+- `AquaponieController` et `OutputController` n’utilisent plus `error_log` ni le `TemplateRenderer` statique; logs gérés via `LogService`.
+- `DashboardController` s’appuie exclusivement sur Twig (suppression du mode legacy). 
+- `RealtimeApiController` simplifié : pas de logs `error_log`, gestion d’erreur centralisée.
+
+### 🧱 Divers
+- Renommage et injection des dépendances nécessaires dans le container (ajout de `LogService` / `TemplateRenderer`).
+- Nettoyage des imports inutilisés (`Database` dans certains contrôleurs).
 
 ---
 

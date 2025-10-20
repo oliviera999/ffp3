@@ -107,7 +107,10 @@ return [
     },
 
     TemplateRenderer::class => function (ContainerInterface $c) {
-        return new TemplateRenderer();
+        return new TemplateRenderer(
+            __DIR__ . '/../templates',
+            ($_ENV['ENV'] ?? 'prod') === 'prod'
+        );
     },
 
     RealtimeDataService::class => function (ContainerInterface $c) {
@@ -146,7 +149,9 @@ return [
             $c->get(\App\Repository\SensorReadRepository::class),
             $c->get(\App\Service\StatisticsAggregatorService::class),
             $c->get(\App\Service\ChartDataService::class),
-            $c->get(\App\Service\WaterBalanceService::class)
+            $c->get(\App\Service\WaterBalanceService::class),
+            $c->get(\App\Service\TemplateRenderer::class),
+            $c->get(\App\Service\LogService::class)
         );
     },
 

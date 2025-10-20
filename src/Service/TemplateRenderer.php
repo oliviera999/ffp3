@@ -7,33 +7,25 @@ use Twig\Loader\FilesystemLoader;
 
 class TemplateRenderer
 {
-    private static ?Environment $twig = null;
+    private Environment $twig;
 
-    /**
-     * Initialise Twig s'il ne l'est pas encore et retourne l'instance.
-     */
-    private static function getTwig(): Environment
+    public function __construct(string $templatesPath, bool $useCache = true)
     {
-        if (self::$twig === null) {
-            $loader = new FilesystemLoader(dirname(__DIR__, 2) . '/templates');
-            
-            // Activer le cache en production
-            $cacheConfig = false;
-            if (($_ENV['ENV'] ?? 'prod') === 'prod') {
-                $cacheDir = dirname(__DIR__, 2) . '/var/cache/twig';
-                if (!is_dir($cacheDir)) {
-                    @mkdir($cacheDir, 0755, true);
-                }
-                $cacheConfig = $cacheDir;
+        $loader = new FilesystemLoader($templatesPath);
+
+        $cacheConfig = false;
+        if ($useCache) {
+            $cacheDir = dirname(__DIR__, 2) . '/var/cache/twig';
+            if (!is_dir($cacheDir)) {
+                @mkdir($cacheDir, 0755, true);
             }
-            
-            self::$twig = new Environment($loader, [
-                'cache' => $cacheConfig,
-                'autoescape' => 'html',
-            ]);
+            $cacheConfig = $cacheDir;
         }
 
-        return self::$twig;
+        $this->twig = new Environment($loader, [
+            'cache' => $cacheConfig,
+            'autoescape' => 'html',
+        ]);
     }
 
     /**
@@ -42,8 +34,8 @@ class TemplateRenderer
      * @param string $template Nom de fichier (ex: 'dashboard.twig')
      * @param array<string,mixed> $context Variables passées au template
      */
-    public static function render(string $template, array $context = []): string
+    public function render(string $template, array $context = []): string
     {
-        return self::getTwig()->render($template, $context);
+        return $this->twig->render($template, $context);
     }
 }

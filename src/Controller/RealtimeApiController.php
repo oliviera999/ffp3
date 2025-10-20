@@ -26,16 +26,10 @@ class RealtimeApiController
     public function getLatestSensors(Request $request, Response $response): Response
     {
         try {
-            error_log("RealtimeApiController::getLatestSensors - Début");
             $data = $this->realtimeService->getLatestReadings();
-            error_log("RealtimeApiController::getLatestSensors - Données récupérées");
-            
+
             return $this->jsonResponse($response, $data);
         } catch (\Throwable $e) {
-            error_log("RealtimeApiController::getLatestSensors - ERREUR: " . $e->getMessage());
-            error_log("RealtimeApiController::getLatestSensors - Fichier: " . $e->getFile() . " ligne " . $e->getLine());
-            error_log("RealtimeApiController::getLatestSensors - Trace: " . $e->getTraceAsString());
-            
             return $this->jsonResponse($response, ['error' => $e->getMessage()], 500);
         }
     }
@@ -69,19 +63,13 @@ class RealtimeApiController
     public function getOutputsState(Request $request, Response $response): Response
     {
         try {
-            error_log("RealtimeApiController::getOutputsState - Début");
             $data = $this->realtimeService->getOutputsState();
-            error_log("RealtimeApiController::getOutputsState - Données récupérées");
-            
+
             return $this->jsonResponse($response, [
                 'timestamp' => time(),
                 'outputs' => $data,
             ]);
         } catch (\Throwable $e) {
-            error_log("RealtimeApiController::getOutputsState - ERREUR: " . $e->getMessage());
-            error_log("RealtimeApiController::getOutputsState - Fichier: " . $e->getFile() . " ligne " . $e->getLine());
-            error_log("RealtimeApiController::getOutputsState - Trace: " . $e->getTraceAsString());
-            
             return $this->jsonResponse($response, ['error' => $e->getMessage()], 500);
         }
     }

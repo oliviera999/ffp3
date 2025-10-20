@@ -32,50 +32,20 @@ class OutputController
     public function showInterface(Request $request, Response $response): Response
     {
         try {
-            // DEBUG: Log du début de la méthode
-            error_log("OutputController::showInterface - Début");
-            
-            // Récupérer tous les outputs
-            error_log("OutputController::showInterface - Récupération des outputs");
             $outputs = $this->outputService->getAllOutputs();
-            error_log("OutputController::showInterface - Outputs récupérés: " . count($outputs));
-            
-            // Récupérer uniquement les boards actives pour cet environnement
-            error_log("OutputController::showInterface - Récupération des boards");
             $boards = $this->outputService->getActiveBoardsForCurrentEnvironment();
-            error_log("OutputController::showInterface - Boards récupérés: " . count($boards));
-            
-            // Enrichir chaque board avec sa dernière GPIO modifiée
+
             foreach ($boards as &$board) {
                 try {
                     $board['last_gpio'] = $this->outputService->getLastModifiedGpio((string)$board['board']);
-                    error_log("OutputController::showInterface - Dernière GPIO récupérée pour board {$board['board']}: " . ($board['last_gpio'] ? $board['last_gpio']['name'] : 'Aucune'));
                 } catch (\Throwable $e) {
-                    error_log("OutputController::showInterface - ERREUR récupération GPIO board {$board['board']}: " . $e->getMessage());
-                    // Fallback: créer une GPIO de test si l'API échoue
-                    $board['last_gpio'] = [
-                        'id' => 1,
-                        'board' => $board['board'],
-                        'gpio' => 16,
-                        'name' => 'Pompe aquarium',
-                        'state' => 1,
-                        'last_modified_time' => date('d/m/Y H:i:s', time() - 1800)
-                    ];
+                    $board['last_gpio'] = null;
                 }
             }
-            
-            // Déterminer l'environnement
-            error_log("OutputController::showInterface - Détermination de l'environnement");
+
             $environment = TableConfig::getEnvironment();
-            error_log("OutputController::showInterface - Environnement: " . $environment);
-            
-            // Récupérer la version du firmware ESP32
-            error_log("OutputController::showInterface - Récupération de la version firmware");
             $firmwareVersion = $this->sensorReadRepo->getFirmwareVersion();
-            error_log("OutputController::showInterface - Version firmware: " . $firmwareVersion);
-            
-            // Préparer les données pour le template
-            error_log("OutputController::showInterface - Préparation des données");
+
             $data = [
                 'outputs' => $outputs,
                 'boards' => $boards,
@@ -85,21 +55,12 @@ class OutputController
                 'firmware_version' => $firmwareVersion,
             ];
             
-            // Rendre le template Twig et écrire dans la réponse
-            error_log("OutputController::showInterface - Rendu du template");
             $html = $this->renderer->render('control.twig', $data);
-            error_log("OutputController::showInterface - Template rendu");
-            
             $response->getBody()->write($html);
-            error_log("OutputController::showInterface - Réponse écrite");
-            
+
             return $response;
-            
+
         } catch (\Throwable $e) {
-            error_log("OutputController::showInterface - ERREUR: " . $e->getMessage());
-            error_log("OutputController::showInterface - Fichier: " . $e->getFile() . " ligne " . $e->getLine());
-            error_log("OutputController::showInterface - Trace: " . $e->getTraceAsString());
-            
             $response->getBody()->write("ERREUR OutputController: " . $e->getMessage());
             return $response->withStatus(500);
         }

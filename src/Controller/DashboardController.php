@@ -70,24 +70,17 @@ class DashboardController
         $environment = TableConfig::getEnvironment();
 
         // Sélection du template : legacy ou Twig
-        $useLegacy = isset($_GET['legacy']);
-        if ($useLegacy) {
-            $startDate = $startDate; $endDate = $endDate; // alias pour template PHP
-            $readingsCount = $readingsCount;
-            include __DIR__ . '/../../templates/dashboard.php';
-        } else {
-            echo $this->renderer->render('dashboard.twig', [
-                'startDate'     => $startDate,
-                'endDate'       => $endDate,
-                'duration'      => $duration,
-                'readingsCount' => $readingsCount,
-                'lastReading'   => $lastReading,
-                'stats'         => $stats,
-                'version'       => Version::getWithPrefix(),
-                'firmware_version' => $firmwareVersion,
-                'environment'   => $environment,
-            ]);
-        }
+        echo $this->renderer->render('dashboard.twig', [
+            'startDate'     => $startDate,
+            'endDate'       => $endDate,
+            'duration'      => $duration,
+            'readingsCount' => $readingsCount,
+            'lastReading'   => $lastReading,
+            'stats'         => $stats,
+            'version'       => Version::getWithPrefix(),
+            'firmware_version' => $firmwareVersion,
+            'environment'   => $environment,
+        ]);
     }
     
     /**

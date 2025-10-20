@@ -13,8 +13,6 @@ use App\Controller\PostDataController;
 use App\Controller\RealtimeApiController;
 use App\Controller\TideStatsController;
 use App\Middleware\EnvironmentMiddleware;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Factory\AppFactory;
 
 // Charge les variables d'environnement (.env)
@@ -58,15 +56,6 @@ $app->group('', function ($group) {
     $group->get('/', [HomeController::class, 'show']);
     $group->get('/index.html', function (Request $request, Response $response) {
         return $response->withHeader('Location', '/ffp3/')->withStatus(301);
-    });
-
-    // Route de diagnostic temporaire
-    $group->get('/debug-slim', function (Request $request, Response $response) {
-        ob_start();
-        include __DIR__ . '/debug_slim.php';
-        $content = ob_get_clean();
-        $response->getBody()->write($content);
-        return $response->withHeader('Content-Type', 'text/html');
     });
 
     // Dashboard
