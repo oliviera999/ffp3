@@ -61,28 +61,14 @@ class ControlValuesUpdater {
      */
     initParameterElements() {
         // Mapping des GPIOs vers les IDs d'inputs
-        const gpioInputMap = {
-            100: 'mail',
-            102: 'aqThr',
-            103: 'taThr',
-            104: 'chauff',
-            105: 'bouffeMat',
-            106: 'bouffeMid',
-            107: 'bouffeSoir',
-            111: 'tempsGros',
-            112: 'tempsPetits',
-            113: 'tempsRemplissageSec',
-            114: 'limFlood',
-            116: 'FreqWakeUp'
-        };
-        
-        for (const [gpio, inputId] of Object.entries(gpioInputMap)) {
-            const inputElement = document.getElementById(inputId);
-            if (inputElement) {
-                this.parameterElements.set(parseInt(gpio), inputElement);
-                this.log(`Found parameter element for GPIO ${gpio} (${inputId})`);
+        const inputs = document.querySelectorAll('[data-parameter-gpio]');
+        inputs.forEach(inputElement => {
+            const gpio = parseInt(inputElement.dataset.parameterGpio, 10);
+            if (!isNaN(gpio)) {
+                this.parameterElements.set(gpio, inputElement);
+                this.log(`Found parameter element for GPIO ${gpio} (${inputElement.id || 'input'})`);
             }
-        }
+        });
     }
     
     /**

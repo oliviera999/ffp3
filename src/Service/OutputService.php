@@ -225,7 +225,7 @@ class OutputService
         try {
             $updated = 0;
             foreach ($parameterMap as $paramName => $gpio) {
-                if (isset($params[$paramName])) {
+                if (array_key_exists($paramName, $params)) {
                     $value = $params[$paramName];
                     
                     // Cas spéciaux

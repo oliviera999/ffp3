@@ -71,26 +71,70 @@ class OutputController
      */
     public function toggleOutput(Request $request, Response $response): Response
     {
-        $params = $request->getQueryParams();
-        
-        $id = (int)($params['id'] ?? 0);
-        $state = (int)($params['state'] ?? 0);
-        
-        if ($id === 0) {
-            $response->getBody()->write('ERROR: ID missing');
-            return $response->withStatus(400);
+        $params = [];
+
+        if ($request->getMethod() === 'POST') {
+            $contentType = strtolower($request->getHeaderLine('Content-Type'));
+
+            if (str_contains($contentType, 'application/json')) {
+                $rawBody = (string)$request->getBody();
+                $decoded = json_decode($rawBody, true);
+                if (is_array($decoded)) {
+                    $params = $decoded;
+                }
+            }
+
+            if ($params === []) {
+                $parsedBody = $request->getParsedBody();
+                if (is_array($parsedBody)) {
+                    $params = $parsedBody;
+                }
+            }
         }
-        
-        // Déléguer au service avec marquage web
+
+        if ($params === []) {
+            $params = $request->getQueryParams();
+        }
+
+        $id = isset($params['id']) ? (int)$params['id'] : 0;
+        $state = isset($params['state']) ? (int)$params['state'] : 0;
+
+        if ($id === 0 || ($state !== 0 && $state !== 1)) {
+            $payload = json_encode([
+                'status' => 'error',
+                'message' => 'Invalid parameters',
+            ]);
+
+            $response->getBody()->write($payload);
+            return $response
+                ->withStatus(400)
+                ->withHeader('Content-Type', 'application/json');
+        }
+
         $success = $this->outputService->updateStateById($id, $state, 'web');
-        
+
         if ($success) {
-            $response->getBody()->write('OK');
-            return $response->withStatus(200);
-        } else {
-            $response->getBody()->write('ERROR: Failed to update output');
-            return $response->withStatus(500);
+            $payload = json_encode([
+                'status' => 'ok',
+                'id' => $id,
+                'state' => $state,
+            ]);
+
+            $response->getBody()->write($payload);
+            return $response
+                ->withStatus(200)
+                ->withHeader('Content-Type', 'application/json');
         }
+
+        $payload = json_encode([
+            'status' => 'error',
+            'message' => 'Failed to update output',
+        ]);
+
+        $response->getBody()->write($payload);
+        return $response
+            ->withStatus(500)
+            ->withHeader('Content-Type', 'application/json');
     }
 
     /**
@@ -98,16 +142,63 @@ class OutputController
      */
     public function updateParameters(Request $request, Response $response): Response
     {
-        $params = $request->getParsedBody();
-        
+        $payload = [];
+
+        if ($request->getMethod() === 'POST') {
+            $contentType = strtolower($request->getHeaderLine('Content-Type'));
+
+            if (str_contains($contentType, 'application/json')) {
+                $rawBody = (string)$request->getBody();
+                $decoded = json_decode($rawBody, true);
+                if (is_array($decoded)) {
+                    if (isset($decoded['param'])) {
+                        $payload[$decoded['param']] = $decoded['value'] ?? null;
+                    } else {
+                        $payload = $decoded;
+                    }
+                }
+            }
+
+            if ($payload === []) {
+                $parsed = $request->getParsedBody();
+                if (is_array($parsed)) {
+                    $payload = $parsed;
+                }
+            }
+        }
+
+        if ($payload === []) {
+            $payload = $request->getQueryParams();
+        }
+
+        if (!is_array($payload) || $payload === []) {
+            $response->getBody()->write(json_encode([
+                'status' => 'error',
+                'message' => 'No parameters provided',
+            ]));
+            return $response
+                ->withStatus(400)
+                ->withHeader('Content-Type', 'application/json');
+        }
+
         try {
-            $updated = $this->outputService->updateMultipleParameters($params);
-            
-            $response->getBody()->write("OK: {$updated} parameters updated");
-            return $response->withStatus(200);
-        } catch (\Exception $e) {
-            $response->getBody()->write("ERROR: " . $e->getMessage());
-            return $response->withStatus(500);
+            $updated = $this->outputService->updateMultipleParameters($payload);
+
+            $response->getBody()->write(json_encode([
+                'status' => 'ok',
+                'updated' => $updated,
+            ]));
+            return $response
+                ->withStatus(200)
+                ->withHeader('Content-Type', 'application/json');
+        } catch (\Throwable $e) {
+            $response->getBody()->write(json_encode([
+                'status' => 'error',
+                'message' => 'Failed to persist parameters',
+            ]));
+            return $response
+                ->withStatus(500)
+                ->withHeader('Content-Type', 'application/json');
         }
     }
 
