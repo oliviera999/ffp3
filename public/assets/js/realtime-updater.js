@@ -209,8 +209,19 @@ class RealtimeUpdater {
     updateSystemStatus(health) {
         // Dernière réception
         const lastReadingEl = document.getElementById('last-reading-time');
-        if (lastReadingEl && health.last_reading_ago_seconds !== null) {
-            lastReadingEl.textContent = this.formatTimeSince(health.last_reading_ago_seconds);
+        if (lastReadingEl) {
+            if (health.last_reading_ago_seconds !== null) {
+                const ago = this.formatTimeSince(health.last_reading_ago_seconds);
+                const at = health.last_reading ? this.formatTimestamp(health.last_reading) : null;
+
+                lastReadingEl.innerHTML = `
+                    <span class="reading-ago">${ago}</span>
+                    ${at ? `<span class="reading-timestamp">(${at})</span>` : ''}
+                `;
+            } else if (!lastReadingEl.dataset.defaultHandled) {
+                lastReadingEl.innerHTML = '<span class="reading-none">Aucune donnée récente</span>';
+                lastReadingEl.dataset.defaultHandled = 'true';
+            }
         }
 
         // Uptime
@@ -221,20 +232,33 @@ class RealtimeUpdater {
 
         // Lectures aujourd'hui
         const readingsTodayEl = document.getElementById('readings-today');
-        if (readingsTodayEl && health.readings_today !== undefined) {
-            readingsTodayEl.textContent = health.readings_today;
+        if (readingsTodayEl) {
+            if (health.readings_today !== undefined) {
+                readingsTodayEl.innerHTML = `
+                    <span class="reading-count">${health.readings_today}</span>
+                    <span class="reading-hint">/ jour</span>
+                `;
+            } else if (!readingsTodayEl.dataset.defaultHandled) {
+                readingsTodayEl.innerHTML = '<span class="reading-none">Non disponible</span>';
+                readingsTodayEl.dataset.defaultHandled = 'true';
+            }
         }
 
         // Statut online/offline
         const statusIndicator = document.getElementById('system-status-indicator');
         if (statusIndicator) {
-            if (health.online) {
-                statusIndicator.className = 'status-indicator status-online';
-                statusIndicator.innerHTML = '<i class="fas fa-check-circle"></i> En ligne';
-            } else {
-                statusIndicator.className = 'status-indicator status-offline';
-                statusIndicator.innerHTML = '<i class="fas fa-times-circle"></i> Hors ligne';
-            }
+            const nextStatusClass = health.online ? 'status-online' : 'status-offline';
+            statusIndicator.className = `status-indicator ${nextStatusClass} ${health.online ? 'is-animated' : ''}`.trim();
+
+            const statusBadge = health.online
+                ? '<span class="status-pill"><i class="fas fa-circle"></i><strong>TEMPS RÉEL</strong></span>'
+                : '<span class="status-pill"><i class="fas fa-exclamation-circle"></i><strong>SUPERVISION</strong></span>';
+
+            const statusLabel = health.online
+                ? '<i class="fas fa-check-circle"></i><span>En ligne</span>'
+                : '<i class="fas fa-times-circle"></i><span>Hors ligne</span>';
+
+            statusIndicator.innerHTML = `${statusBadge}<span class="status-text">${statusLabel}</span>`;
         }
 
         // Mettre à jour le badge LIVE en fonction du statut système réel
@@ -255,6 +279,26 @@ class RealtimeUpdater {
         if (seconds < 3600) return `${Math.floor(seconds / 60)}min`;
         if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
         return `${Math.floor(seconds / 86400)}j`;
+    }
+
+    /**
+     * Formate un timestamp ISO en heure locale lisible
+     */
+    formatTimestamp(timestamp) {
+        try {
+            const date = new Date(timestamp.replace(' ', 'T'));
+            const options = {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                day: '2-digit',
+                month: '2-digit'
+            };
+            return date.toLocaleString('fr-FR', options);
+        } catch (error) {
+            console.warn('[RealtimeUpdater] Unable to format timestamp', timestamp, error);
+            return timestamp;
+        }
     }
 
     /**

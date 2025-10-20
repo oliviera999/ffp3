@@ -202,6 +202,38 @@
     color: #2c3e50;
 }
 
+.health-item-value .reading-ago {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: inherit;
+}
+
+.health-item-value .reading-timestamp {
+    font-size: 0.6em;
+    color: rgba(44, 62, 80, 0.7);
+    display: block;
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+}
+
+.health-item-value .reading-count {
+    font-size: 1.2em;
+}
+
+.health-item-value .reading-hint {
+    font-size: 0.6em;
+    color: rgba(44, 62, 80, 0.6);
+    margin-left: 6px;
+}
+
+.health-item-value .reading-none {
+    font-size: 0.75em;
+    font-weight: 500;
+    color: rgba(114, 28, 36, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
 .status-indicator {
     display: inline-flex;
     align-items: center;
@@ -210,16 +242,104 @@
     border-radius: 20px;
     font-weight: 500;
     font-size: 0.95em;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.status-indicator i {
+    font-size: 0.9em;
+}
+
+.status-indicator strong {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.8em;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.8em;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: inherit;
+    backdrop-filter: blur(6px);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.status-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: inherit;
+}
+
+.status-text span {
+    font-size: 0.9em;
 }
 
 .status-online {
     background: #d4edda;
     color: #155724;
+    box-shadow: 0 3px 10px rgba(21, 87, 36, 0.15);
+}
+
+.status-online i {
+    color: #1d7a2c;
 }
 
 .status-offline {
     background: #f8d7da;
     color: #721c24;
+    box-shadow: 0 3px 10px rgba(114, 28, 36, 0.15);
+}
+
+.status-offline i {
+    color: #b02a37;
+}
+
+.status-warning {
+    background: #fff4e5;
+    color: #a05a00;
+    box-shadow: 0 3px 10px rgba(160, 90, 0, 0.15);
+}
+
+.status-warning i {
+    color: #ff8800;
+}
+
+.status-paused {
+    background: #e2e3e5;
+    color: #383d41;
+    box-shadow: 0 3px 10px rgba(56, 61, 65, 0.15);
+}
+
+.status-paused i {
+    color: #6c757d;
+}
+
+.status-error {
+    background: #fbeaec;
+    color: #b02a37;
+    box-shadow: 0 3px 10px rgba(176, 42, 55, 0.2);
+}
+
+.status-error i {
+    color: #dc3545;
+}
+
+.status-indicator.is-animated {
+    animation: pulse-status 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-status {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
 }
 
 /* =================================================================

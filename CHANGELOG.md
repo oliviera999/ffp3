@@ -7,6 +7,19 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.8.8] - 2025-10-20
+
+### 🎨 Améliorations UI/UX
+- Badges de contexte (environnement, table source, firmware, version) ajoutés sur `dashboard.twig` et `aquaponie.twig` pour clarifier l'origine des données.
+- Grille de liens rapides depuis le dashboard vers les vues aquaponie, contrôle des actionneurs et diagnostics API.
+- Harmonisation visuelle des panneaux d'état : nouveaux badges de statut animés, info bulles de dernière réception, formats enrichis pour les compteurs.
+
+### ⚙️ Temps réel & feedback
+- `realtime-updater.js` affiche désormais la durée depuis la dernière lecture avec horodatage, gère les états « non disponible » et met en avant le statut temps réel par badges colorés.
+- `realtime-styles.css` enrichi (pills, animations, styles warning/paused/error) pour différencier les états réseau.
+
+---
+
 ## [4.8.7] - 2025-10-20
 
 ### 📚 Documentation majeure

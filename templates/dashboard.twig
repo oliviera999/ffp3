@@ -123,6 +123,88 @@
             margin: 20px 0;
             text-align: center;
         }
+
+        .context-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin: 10px 0 25px 0;
+        }
+
+        .context-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 0.85em;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.05);
+            color: #2c3e50;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid rgba(0, 139, 116, 0.15);
+            backdrop-filter: blur(6px);
+        }
+
+        .context-badge i {
+            font-size: 1em;
+        }
+
+        .context-badge-prod {
+            background: rgba(0, 139, 116, 0.1);
+            color: #00523f;
+            border-color: rgba(0, 139, 116, 0.3);
+        }
+
+        .context-badge-test {
+            background: rgba(255, 159, 67, 0.15);
+            color: #a35500;
+            border-color: rgba(255, 159, 67, 0.35);
+        }
+
+        .quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin: 20px 0 35px 0;
+        }
+
+        .quick-link-card {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 18px;
+            border-radius: 14px;
+            text-decoration: none;
+            background: white;
+            color: #2c3e50;
+            border: 1px solid rgba(0,139,116,0.15);
+            box-shadow: 0 2px 10px rgba(0,139,116,0.12);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .quick-link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,139,116,0.22);
+        }
+
+        .quick-link-card i {
+            font-size: 1.6em;
+            color: #008B74;
+        }
+
+        .quick-link-title {
+            font-weight: 700;
+            font-size: 1.05em;
+        }
+
+        .quick-link-description {
+            font-size: 0.85em;
+            color: #546e7a;
+            line-height: 1.35;
+        }
         
         .info-banner-title {
             font-size: 0.9em;
@@ -178,6 +260,10 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
+
+            .quick-links-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -226,6 +312,43 @@
                     </div>
                 </div>
 
+                <div class="context-badges">
+                    <span class="context-badge {{ environment == 'test' ? 'context-badge-test' : 'context-badge-prod' }}">
+                        <i class="fas fa-globe"></i>
+                        <span>{{ environment == 'test' ? 'Environnement : TEST' : 'Environnement : PROD' }}</span>
+                    </span>
+                    <span class="context-badge">
+                        <i class="fas fa-database"></i>
+                        <span>Source : Table {{ environment == 'test' ? 'ffp3Data2' : 'ffp3Data' }}</span>
+                    </span>
+                    <span class="context-badge">
+                        <i class="fas fa-microchip"></i>
+                        <span>Firmware ESP32 v{{ firmware_version }}</span>
+                    </span>
+                    <span class="context-badge">
+                        <i class="fas fa-code-branch"></i>
+                        <span>{{ version }}</span>
+                    </span>
+                </div>
+
+                <div class="quick-links-grid">
+                    <a class="quick-link-card" href="https://iot.olution.info/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}">
+                        <i class="fas fa-water"></i>
+                        <span class="quick-link-title">Vue Aquaponie</span>
+                        <span class="quick-link-description">Graphiques en direct, filtres de période et indicateurs hydriques.</span>
+                    </a>
+                    <a class="quick-link-card" href="https://iot.olution.info/ffp3/control{{ environment == 'test' ? '-test' : '' }}">
+                        <i class="fas fa-sliders-h"></i>
+                        <span class="quick-link-title">Contrôle des actionneurs</span>
+                        <span class="quick-link-description">Pilotez les pompes et vérifiez la synchronisation ESP32.</span>
+                    </a>
+                    <a class="quick-link-card" href="https://iot.olution.info/ffp3/post-data{{ environment == 'test' ? '-test' : '' }}">
+                        <i class="fas fa-satellite-dish"></i>
+                        <span class="quick-link-title">Diagnostics API</span>
+                        <span class="quick-link-description">Surveillez les signatures HMAC, la latence et la santé des endpoints.</span>
+                    </a>
+                </div>
+
                 <!-- Panneau d'état du système (temps réel) -->
                 <div class="system-health-panel">
                     <h3>
@@ -239,15 +362,24 @@
                     <div class="health-grid">
                         <div class="health-item">
                             <div class="health-item-label">Statut</div>
-                            <div id="system-status-indicator" class="status-indicator status-online">
-                                <i class="fas fa-check-circle"></i> En ligne
+                            <div id="system-status-indicator" class="status-indicator status-online is-animated">
+                                <span class="status-pill">
+                                    <i class="fas fa-circle"></i>
+                                    <strong>TEMPS RÉEL</strong>
+                                </span>
+                                <span class="status-text">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>En ligne</span>
+                                </span>
                             </div>
                         </div>
                         
                         <div class="health-item">
                             <div class="health-item-label">Dernière réception</div>
-                            <div class="health-item-value" id="last-reading-time">
-                                <i class="fas fa-spinner fa-spin"></i>
+                            <div class="health-item-value" id="last-reading-time" data-default="pending">
+                                <span class="reading-ago">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </span>
                             </div>
                         </div>
                         
@@ -260,8 +392,10 @@
                         
                         <div class="health-item">
                             <div class="health-item-label">Lectures aujourd'hui</div>
-                            <div class="health-item-value" id="readings-today">
-                                <i class="fas fa-spinner fa-spin"></i>
+                            <div class="health-item-value" id="readings-today" data-default="pending">
+                                <span class="reading-count">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </span>
                             </div>
                         </div>
                     </div>

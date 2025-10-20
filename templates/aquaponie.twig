@@ -414,6 +414,50 @@
                 padding-left: 10px;
                 border-left: 4px solid #008B74;
             }
+
+            .context-badges {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                justify-content: center;
+                margin: 25px auto 0;
+                max-width: 760px;
+            }
+
+            .context-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 18px;
+                border-radius: 999px;
+                font-size: 0.82em;
+                font-weight: 600;
+                background: rgba(255, 255, 255, 0.18);
+                color: #ffffff;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                border: 1px solid rgba(255, 255, 255, 0.35);
+                backdrop-filter: blur(6px);
+                transition: transform 0.3s ease;
+            }
+
+            .context-badge i {
+                font-size: 0.95em;
+            }
+
+            .context-badge:hover {
+                transform: translateY(-2px);
+            }
+
+            .context-badge-test {
+                background: rgba(255, 159, 67, 0.25);
+                border-color: rgba(255, 159, 67, 0.45);
+            }
+
+            .context-badge-prod {
+                background: rgba(46, 213, 115, 0.25);
+                border-color: rgba(46, 213, 115, 0.45);
+            }
         </style>
     </head>
     <body class="is-preload">
@@ -444,32 +488,41 @@
                 <div class="modern-header">
                     <div class="header-content">
                         <div class="header-title">
+                            <i class="fas fa-seedling"></i>
+                            Plateforme Aquaponie FFP3
                             <i class="fas fa-fish"></i>
-                            Système Aquaponie FFP3
-                            <i class="fas fa-fish"></i>
                         </div>
-                        <div class="header-subtitle">
-                            Surveillance intelligente et contrôle automatisé de votre écosystème aquaponique
+                        <p class="header-subtitle">
+                            Supervision en direct des capteurs, pompes et indicateurs de la ferme aquaponique.
+                        </p>
+
+                        <div class="context-badges">
+                            <span class="context-badge {{ environment == 'test' ? 'context-badge-test' : 'context-badge-prod' }}">
+                                <i class="fas fa-globe"></i>
+                                {{ environment == 'test' ? 'Environnement test' : 'Environnement production' }}
+                            </span>
+                            <span class="context-badge">
+                                <i class="fas fa-database"></i>
+                                Table {{ environment == 'test' ? 'ffp3Data2' : 'ffp3Data' }}
+                            </span>
+                            <span class="context-badge">
+                                <i class="fas fa-code-branch"></i>
+                                {{ version }}
+                            </span>
+                            {% if firmware_version %}
+                            <span class="context-badge">
+                                <i class="fas fa-microchip"></i>
+                                Firmware ESP32 v{{ firmware_version }}
+                            </span>
+                            {% endif %}
                         </div>
-                        
-                        <!-- Badges de statut système -->
-                        <div class="system-status-badge">
-                            <i class="fas fa-circle"></i>
-                            <span>Environnement: {{ environment|upper }}</span>
-                        </div>
-                        <div class="system-status-badge">
-                            <i class="fas fa-microchip"></i>
-                            <span>Version: {{ version }}</span>
-                        </div>
-                        {% if firmware_version %}
-                        <div class="system-status-badge">
-                            <i class="fas fa-code"></i>
-                            <span>Firmware: {{ firmware_version }}</span>
-                        </div>
-                        {% endif %}
-                        
-                        <!-- Statistiques rapides -->
+
                         <div class="quick-stats">
+                            <div class="quick-stat">
+                                <i class="fas fa-calendar-day quick-stat-icon"></i>
+                                <span class="quick-stat-value">{{ duration_str }}</span>
+                                <span class="quick-stat-label">Fenêtre actuelle</span>
+                            </div>
                             <div class="quick-stat">
                                 <i class="fas fa-database quick-stat-icon"></i>
                                 <span class="quick-stat-value">{{ measure_count }}</span>
@@ -1275,15 +1328,24 @@
                         <div class="health-grid">
                             <div class="health-item">
                                 <div class="health-item-label">Statut</div>
-                                <div id="system-status-indicator" class="status-indicator status-online">
-                                    <i class="fas fa-check-circle"></i> En ligne
+                                <div id="system-status-indicator" class="status-indicator status-online is-animated">
+                                    <span class="status-pill">
+                                        <i class="fas fa-circle"></i>
+                                        <strong>TEMPS RÉEL</strong>
+                                    </span>
+                                    <span class="status-text">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>En ligne</span>
+                                    </span>
                                 </div>
                             </div>
                             
                             <div class="health-item">
                                 <div class="health-item-label">Dernière réception</div>
-                                <div class="health-item-value" id="last-reading-time">
-                                    <i class="fas fa-spinner fa-spin"></i>
+                                <div class="health-item-value" id="last-reading-time" data-default="pending">
+                                    <span class="reading-ago">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                    </span>
                                 </div>
                             </div>
                             
@@ -1296,8 +1358,10 @@
                             
                             <div class="health-item">
                                 <div class="health-item-label">Lectures aujourd'hui</div>
-                                <div class="health-item-value" id="readings-today">
-                                    <i class="fas fa-spinner fa-spin"></i>
+                                <div class="health-item-value" id="readings-today" data-default="pending">
+                                    <span class="reading-count">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                    </span>
                                 </div>
                             </div>
                         </div>
