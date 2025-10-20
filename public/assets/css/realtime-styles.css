@@ -1,3 +1,13 @@
+@media (prefers-color-scheme: dark) {
+    .value-updated {
+        animation: glowValueDark 0.8s ease-in-out;
+    }
+}
+
+@keyframes glowValueDark {
+    0%, 100% { box-shadow: 0 0 0 rgba(0, 255, 200, 0); }
+    50% { box-shadow: 0 0 14px rgba(0, 255, 200, 0.4); }
+}
 /**
  * Styles pour système temps réel et PWA
  */
@@ -496,12 +506,25 @@
    ANIMATIONS MISE À JOUR TEMPS RÉEL
 ================================================================= */
 .value-updated {
-    animation: flashValue 0.5s ease-out;
+    animation: glowValue 0.9s ease-in-out;
+    background: linear-gradient(90deg, rgba(0, 139, 116, 0.12), rgba(0, 139, 116, 0));
 }
 
-@keyframes flashValue {
-    0% { background-color: rgba(0, 139, 116, 0.3); }
-    100% { background-color: transparent; }
+@keyframes glowValue {
+    0%, 100% { box-shadow: 0 0 0 rgba(0, 139, 116, 0); }
+    50% { box-shadow: 0 0 22px rgba(0, 139, 116, 0.45); }
+}
+
+@media (prefers-color-scheme: dark) {
+    .value-updated {
+        animation: glowValueDark 0.9s ease-in-out;
+        background: linear-gradient(90deg, rgba(0, 255, 200, 0.15), rgba(0, 255, 200, 0));
+    }
+}
+
+@keyframes glowValueDark {
+    0%, 100% { box-shadow: 0 0 0 rgba(0, 255, 200, 0); }
+    50% { box-shadow: 0 0 22px rgba(0, 255, 200, 0.4); }
 }
 
 .progress-updated {

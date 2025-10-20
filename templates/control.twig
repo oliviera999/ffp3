@@ -1163,6 +1163,722 @@
                  padding: 8px 12px;
              }
          }
+
+        :root {
+            --control-bg:#f6f9fc;
+            --panel-bg:#ffffff;
+            --panel-shadow:0 18px 40px rgba(15, 35, 95, 0.08);
+            --border-color:#e3e8ee;
+            --accent:#008B74;
+            --accent-muted:rgba(0, 139, 116, 0.12);
+            --text-muted:#6b7a8a;
+        }
+
+        .control-wrapper {
+            padding: 28px 20px 60px;
+            background: linear-gradient(180deg, var(--control-bg) 0%, #eef2f6 100%);
+        }
+
+        .control-layout {
+            display: grid;
+            grid-template-columns: 320px minmax(0, 1fr) 360px;
+            gap: 24px;
+            align-items: flex-start;
+        }
+
+        .control-sidebar,
+        .logs-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            position: sticky;
+            top: 28px;
+        }
+
+        .control-sidebar {
+            max-height: calc(100vh - 56px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+        .control-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .control-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(27, 42, 75, 0.15);
+            border-radius: 4px;
+        }
+
+        .control-main {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border-radius: 22px;
+            box-shadow: var(--panel-shadow);
+            padding: 26px;
+        }
+
+        .control-main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .control-main-header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            color: #1b2a4b;
+        }
+
+        .control-main-header p {
+            margin: 8px 0 0 0;
+            color: var(--text-muted);
+            line-height: 1.5;
+            font-size: 0.95em;
+        }
+
+        .callout {
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-top: 16px;
+            font-size: 0.95em;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .callout-warning {
+            background: #fff7e6;
+            border: 1px solid #ffd485;
+            color: #cf6e16;
+        }
+
+        .callout-warning i {
+            margin-top: 2px;
+        }
+
+        .context-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .context-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 0.82em;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: var(--accent-muted);
+            color: var(--accent);
+        }
+
+        .context-badge-test {
+            background: rgba(255, 174, 0, 0.15);
+            color: #b16b00;
+        }
+
+        .context-summary {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .context-summary h2 {
+            margin: 0;
+            font-size: 1.4em;
+            color: #1b2a4b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .context-summary p {
+            margin: 0;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .context-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 12px;
+        }
+
+        .context-stat {
+            background: var(--accent-muted);
+            border-radius: 12px;
+            padding: 12px 14px;
+            text-align: center;
+        }
+
+        .context-stat .stat-label {
+            display: block;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            color: var(--accent);
+            letter-spacing: 0.06em;
+        }
+
+        .context-stat .stat-value {
+            display: block;
+            margin-top: 6px;
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #1b2a4b;
+        }
+
+        .quick-actions h3,
+        .boards-status h3,
+        .controls-section h2 {
+            margin: 0 0 18px 0;
+            font-size: 1.2em;
+            color: #1b2a4b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .quick-action-card {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: flex-start;
+            padding: 14px;
+            border-radius: 16px;
+            background: var(--accent-muted);
+            color: #124f43;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .quick-action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 139, 116, 0.25);
+        }
+
+        .boards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .board-card {
+            background: #f5fbf9;
+            border-radius: 16px;
+            padding: 18px;
+            border: 1px solid rgba(0, 139, 116, 0.12);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .board-card header {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .board-activity {
+            border-radius: 12px;
+            padding: 12px;
+            background: #ffffff;
+            border: 1px solid rgba(0, 139, 116, 0.15);
+        }
+
+        .board-activity .activity-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .activity-badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .activity-badge.on { background: #2ecc71; }
+        .activity-badge.off { background: #bdc3c7; }
+
+        .activity-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78em;
+            color: var(--text-muted);
+        }
+
+        .board-empty {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .realtime-status-panel .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .status-card {
+            background: #f9fbff;
+            border-radius: 16px;
+            padding: 18px;
+            border: 1px solid rgba(15, 35, 95, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .status-label {
+            font-size: 0.8em;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .status-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #1b2a4b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .controls-section {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .controls-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+        }
+
+        .control-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .controls-column {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 20px;
+        }
+
+        .controls-column header h2,
+        .controls-group header h2 {
+            margin: 0;
+            font-size: 1.3em;
+            color: #1b2a4b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-card {
+            background: #ffffff;
+            border-radius: 18px;
+            border: 1px solid rgba(27, 42, 75, 0.08);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 30px rgba(15, 35, 95, 0.12);
+        }
+
+        .action-card header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .action-card .action-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--accent-muted);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+
+        .action-card h3 {
+            margin: 0;
+            font-size: 1.1em;
+            color: #1b2a4b;
+        }
+
+        .action-card .action-description {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+
+        .action-card footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .action-card footer span[data-state-label] {
+            font-weight: 600;
+            color: #1b2a4b;
+        }
+
+        .action-card.warning {
+            border-color: rgba(231, 76, 60, 0.25);
+            background: #fff5f4;
+        }
+
+        .parameters-panel h3 {
+            margin: 0 0 12px 0;
+            font-size: 1.1em;
+            color: #1b2a4b;
+        }
+
+        .parameters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 14px;
+        }
+
+        .parameter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.9em;
+        }
+
+        .parameter-item span {
+            font-weight: 600;
+            color: #1b2a4b;
+        }
+
+        .parameter-item input {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 0.95em;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .parameter-item input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 139, 116, 0.18);
+        }
+
+        #control-sync-badge {
+            padding: 10px 22px;
+            border-radius: 999px;
+            font-size: 0.85em;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            background: linear-gradient(135deg, #028067, #00a894);
+            color: #fff;
+            box-shadow: 0 12px 24px rgba(0, 139, 116, 0.25);
+        }
+
+        .logs-sidebar {
+            max-height: calc(100vh - 56px);
+            overflow-y: auto;
+        }
+
+        .realtime-logs-panel header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .realtime-logs-panel header h3 {
+            margin: 0;
+            font-size: 1.2em;
+            color: #1b2a4b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logs-status {
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: rgba(68, 201, 147, 0.15);
+            color: #0f8b66;
+            font-weight: 700;
+        }
+
+        .logs-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .logs-control-btn {
+            background: rgba(27, 42, 75, 0.08);
+            border: none;
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #1b2a4b;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .logs-control-btn:hover {
+            background: rgba(27, 42, 75, 0.15);
+        }
+
+        .logs-filters {
+            margin-top: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .log-filter-badge {
+            border: 1px solid rgba(27, 42, 75, 0.12);
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: #f6f9fc;
+            color: #1b2a4b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .log-filter-badge.active {
+            background: var(--accent);
+            border-color: transparent;
+            color: #fff;
+        }
+
+        .logs-container {
+            margin-top: 18px;
+            max-height: 520px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 6px;
+        }
+
+        .logs-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .logs-container::-webkit-scrollbar-thumb {
+            background: rgba(27, 42, 75, 0.15);
+            border-radius: 4px;
+        }
+
+        .log-entry {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            background: #f7f9fc;
+            border-left: 3px solid transparent;
+        }
+
+        .log-entry.log-info { border-left-color: #0f8b66; }
+        .log-entry.log-success { border-left-color: #2ecc71; background: #f3fbf5; }
+        .log-entry.log-warning { border-left-color: #f1c40f; background: #fff9e6; }
+        .log-entry.log-error { border-left-color: #e74c3c; background: #fff2f0; }
+        .log-entry.log-gpio { border-left-color: #3498db; }
+        .log-entry.log-sync { border-left-color: #8e44ad; }
+
+        .log-timestamp {
+            font-family: 'Roboto Mono', monospace;
+            color: var(--text-muted);
+            font-size: 0.75em;
+        }
+
+        .log-level {
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 0.75em;
+            letter-spacing: 0.05em;
+        }
+
+        .log-message {
+            flex: 1;
+            color: #1b2a4b;
+        }
+
+        .modern-switch {
+            position: relative;
+            display: inline-block;
+            width: 54px;
+            height: 28px;
+        }
+
+        .modern-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .modern-switch-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, #d0d7de, #e5e9ed);
+            border-radius: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .modern-switch-button {
+            position: absolute;
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(15, 35, 95, 0.25);
+        }
+
+        .modern-switch input:checked + .modern-switch-slider {
+            background: linear-gradient(135deg, #05a083, #00c3a1);
+            box-shadow: 0 0 14px rgba(0, 139, 116, 0.35);
+        }
+
+        .modern-switch input:checked + .modern-switch-slider .modern-switch-button {
+            transform: translateX(26px);
+        }
+
+        .sync-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.75em;
+            letter-spacing: 0.06em;
+            background: rgba(15, 35, 95, 0.08);
+            color: #1b2a4b;
+            font-weight: 700;
+        }
+
+        .sync-status-badge.sync-pending { background: rgba(255, 174, 0, 0.2); color: #a8640f; }
+        .sync-status-badge.sync-synced { background: rgba(0, 139, 116, 0.15); color: #006a57; }
+        .sync-status-badge.sync-conflict { background: rgba(231, 76, 60, 0.18); color: #b52d20; }
+        .sync-status-badge.sync-esp32 { background: rgba(46, 134, 222, 0.18); color: #2367b2; }
+
+        .control-sidebar { order: 1; }
+        .control-main { order: 2; }
+        .logs-sidebar { order: 3; }
+
+        @media (max-width: 1440px) {
+            .control-layout {
+                grid-template-columns: 280px minmax(0, 1fr) 320px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .control-layout {
+                grid-template-columns: 260px minmax(0, 1fr);
+            }
+            .logs-sidebar {
+                position: static;
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .control-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .control-sidebar,
+            .logs-sidebar {
+                position: static;
+                max-height: none;
+            }
+            .control-sidebar {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .control-main-header {
+                flex-direction: column;
+                gap: 16px;
+            }
+            .realtime-status-panel .status-grid,
+            .controls-grid,
+            .control-cards-grid,
+            .parameters-grid,
+            .boards-grid,
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+            }
+            .logs-controls {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body class="is-preload">
@@ -1171,7 +1887,7 @@
     <div id="control-sync-badge" class="connecting">CONNEXION...</div>
     
     <!-- Wrapper -->
-    <div id="wrapper" class="fade-in">
+    <div id="wrapper" class="fade-in control-wrapper">
         
         <!-- Header -->
         <header id="header">
@@ -1194,1335 +1910,369 @@
         </nav>
 
         <!-- Main -->
-        <div id="main">
-            <!-- Featured Post -->
-            <article class="post featured">
-                <header class="major">
-                    <h1 style="margin-bottom: 20px;">
-                        <i class="icon solid fa-sliders-h"></i>
-                        Contrôle du Système FFP3
-                        {% if environment == 'test' %}<span style="color: orange;">(TEST)</span>{% endif %}
-                        <i class="icon solid fa-sliders-h"></i>
-                    </h1>
-                    <p style="font-size: 1.2em; line-height: 1.6;">
-                        Interface de contrôle à distance des actionneurs du système aquaponique.
-                        <br>
-                        Permet d'agir sur les pompes, le chauffage, l'éclairage et la programmation automatique.
-                    </p>
-                    <p style="color: #ff6b6b; font-weight: bold; background: #fff3cd; padding: 10px; border-radius: 8px; border-left: 4px solid #ffc107;">
-                        ⚠️ À manipuler avec la plus grande des précautions !
-                    </p>
-                    
-                    <hr />
-                </header>
-                
-                <!-- Banner info système harmonisé -->
-                <div class="system-info-banner">
-                    <h3><i class="fas fa-microchip"></i> Informations système</h3>
-                    <p>
-                        <strong>Environnement:</strong> {{ environment|upper }} • 
-                        <strong>Version:</strong> {{ version }} • 
-                        {% if firmware_version %}<strong>Firmware ESP32:</strong> {{ firmware_version }}{% endif %}
-                    </p>
-                    <p>
-                        <i class="fas fa-network-wired"></i> Contrôle temps réel • 
-                        <i class="fas fa-microchip"></i> {{ outputs|length }} actionneurs • 
-                        <i class="fas fa-server"></i> {{ boards|length }} boards connectées
-                    </p>
-                    
-                    <!-- Informations de synchronisation -->
-                    <div class="esp32-sync-info">
-                        <i class="fas fa-info-circle"></i>
-                        <strong>Synchronisation ESP32 :</strong> 
-                        <span class="sync-timestamp" id="esp32-last-sync">
-                            {% if boards|length > 0 and boards[0].last_gpio %}
-                                Dernière sync: {{ boards[0].last_gpio.last_modified_time|default('Inconnue') }}
-                            {% else %}
-                                Dernière sync: Inconnue
-                            {% endif %}
+        <div id="main" class="control-layout">
+            <aside class="control-sidebar panel">
+                <section class="control-context">
+                    <div class="context-badges">
+                        <span class="context-badge {{ environment == 'test' ? 'context-badge-test' : 'context-badge-prod' }}">
+                            <i class="fas fa-globe"></i>
+                            {{ environment == 'test' ? 'TEST' : 'PROD' }}
                         </span>
-                        <br>
-                        <small>
-                            <i class="fas fa-clock"></i> Délai de synchronisation: 4 secondes maximum • 
-                            <i class="fas fa-sync-alt"></i> Polling ESP32: toutes les 4 secondes
-                        </small>
+                        <span class="context-badge">
+                            <i class="fas fa-code-branch"></i>
+                            {{ version }}
+                        </span>
+                        {% if firmware_version %}
+                        <span class="context-badge">
+                            <i class="fas fa-microchip"></i>
+                            FW {{ firmware_version }}
+                        </span>
+                        {% endif %}
                     </div>
-                </div>
-
-
-
-                <!-- Formulaire de contrôle harmonisé -->
-                <form onsubmit="return createOutput();">
-                    <div class="control-grid-harmonized">
-                        
-                        <!-- Colonne 1: Gestion de l'eau et Nourrissage -->
-                        <div class="control-card">
-                            <h3><i class="fas fa-tint"></i> Gestion de l'eau</h3>
-                            
-                            {% set params = {} %}
-                            {% for output in outputs %}
-                                {% if output.gpio == 100 %}{% set params = params|merge({'mail': output.state}) %}{% endif %}
-                                {% if output.gpio == 101 %}{% set params = params|merge({'mailNotif': output.state}) %}{% endif %}
-                                {% if output.gpio == 102 %}{% set params = params|merge({'aqThr': output.state}) %}{% endif %}
-                                {% if output.gpio == 103 %}{% set params = params|merge({'taThr': output.state}) %}{% endif %}
-                                {% if output.gpio == 104 %}{% set params = params|merge({'chauff': output.state}) %}{% endif %}
-                                {% if output.gpio == 105 %}{% set params = params|merge({'bouffeMat': output.state}) %}{% endif %}
-                                {% if output.gpio == 106 %}{% set params = params|merge({'bouffeMid': output.state}) %}{% endif %}
-                                {% if output.gpio == 107 %}{% set params = params|merge({'bouffeSoir': output.state}) %}{% endif %}
-                                {% if output.gpio == 111 %}{% set params = params|merge({'tempsGros': output.state}) %}{% endif %}
-                                {% if output.gpio == 112 %}{% set params = params|merge({'tempsPetits': output.state}) %}{% endif %}
-                                {% if output.gpio == 113 %}{% set params = params|merge({'tempsRemplissageSec': output.state}) %}{% endif %}
-                                {% if output.gpio == 114 %}{% set params = params|merge({'limFlood': output.state}) %}{% endif %}
-                                {% if output.gpio == 115 %}{% set params = params|merge({'WakeUp': output.state}) %}{% endif %}
-                                {% if output.gpio == 116 %}{% set params = params|merge({'FreqWakeUp': output.state}) %}{% endif %}
-                            {% endfor %}
-                            
-                            <!-- Boutons des pompes -->
-                            {% set pump_outputs = outputs|filter(o => o.name|lower matches '/pompe aqua/' or o.name|lower matches '/pompe.*r.*serve/') %}
-                            {% if pump_outputs|length > 0 %}
-                                <div class="action-buttons-grid">
-                            {% for output in pump_outputs %}
-                                        {% set clean_name = output.name|replace({
-                                            '(stopp&#233;s si relais activ&#233;)': '',
-                                            '(stopp&#233;e si relais activ&#233;)': '',
-                                            '(stoppés si relais activé)': '',
-                                            '(stoppée si relais activé)': '',
-                                            ' (stopp&#233;s si relais activ&#233;)': '',
-                                            ' (stopp&#233;e si relais activ&#233;)': '',
-                                            ' (stoppés si relais activé)': '',
-                                            ' (stoppée si relais activé)': ''
-                                        })|trim %}
-                                        {% set is_inverted = output.gpio == 18 %}
-                                        {% set is_checked = is_inverted ? (output.state == 0) : (output.state == 1) %}
-
-                                        {% if clean_name|lower matches '/pompe aqua/' %}
-                                            {% set icon = 'fa-water' %}
-                                            {% set color = '#2980b9' %}
-                                            {% set display_name = 'Pompe aquarium' %}
-                                        {% elseif clean_name|lower matches '/pompe.*r.*serve/' %}
-                                            {% set icon = 'fa-droplet' %}
-                                            {% set color = '#00bcd4' %}
-                                            {% set display_name = 'Pompe réserve' %}
-                                        {% else %}
-                                            {% set icon = 'fa-circle' %}
-                                            {% set color = '#008B74' %}
-                                            {% set display_name = clean_name %}
-                                        {% endif %}
-                                        
-                                            <div class="action-button-card action-button-blue" data-state="{{ is_checked ? '1' : '0' }}" data-gpio="{{ output.gpio }}" data-inverted="{{ is_inverted ? '1' : '0' }}">
-                                            <div class="action-button-content">
-                                                <i class="fas {{ icon }} action-icon-simple" style="color: {{ color }};"></i>
-                                                <div class="action-button-info">
-                                                    <div class="action-button-label">
-                                                        {{ display_name }}
-                                                        <span class="sync-status-badge sync-synced" id="sync-badge-{{ output.gpio }}">
-                                                            <i class="fas fa-sync-alt"></i> SYNC
-                                                        </span>
-                                                    </div>
-                                                <div class="action-button-status" data-state-label>{{ is_checked ? 'Activé' : 'Désactivé' }}</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <label class="modern-switch">
-                                                <input type="checkbox" 
-                                                       onchange="updateOutput(this)" 
-                                                       id="{{ output.id }}" 
-                                                       data-id="{{ output.id }}"
-                                                       data-gpio="{{ output.gpio }}"
-                                                       data-inverted="{{ is_inverted ? '1' : '0' }}"
-                                                       {{ is_checked ? 'checked' : '' }}>
-                                                <span class="modern-switch-slider">
-                                                    <span class="modern-switch-button"></span>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            
-                            <!-- Paramètres de l'eau -->
-                            <div class="param-box">
-                                <h4><i class="fas fa-cog"></i> Paramètres de niveau</h4>
-                                <div class="param-grid param-grid-2">
-                                    <div>
-                                        <label for="aqThr">Aquarium bas (cm)</label>
-                                        <input type="number" name="aqThr" min="0" id="aqThr" data-parameter="aqThr" value="{{ params.aqThr|default(0) }}" onchange="autoSaveParameter('aqThr', this.value)">
-                                    </div>
-                                    <div>
-                                        <label for="limFlood">Débordement (cm)</label>
-                                        <input type="number" name="limFlood" min="0" id="limFlood" data-parameter="limFlood" value="{{ params.limFlood|default(0) }}" onchange="autoSaveParameter('limFlood', this.value)">
-                                    </div>
-                                    <div>
-                                        <label for="tempsRemplissageSec">Remplissage (s)</label>
-                                        <input type="number" name="tempsRemplissageSec" min="0" id="tempsRemplissageSec" data-parameter="tempsRemplissageSec" value="{{ params.tempsRemplissageSec|default(0) }}" onchange="autoSaveParameter('tempsRemplissageSec', this.value)">
-                                    </div>
-                                    <div>
-                                        <label for="taThr">Réserve basse (cm)</label>
-                                        <input type="number" name="taThr" min="0" id="taThr" data-parameter="taThr" value="{{ params.taThr|default(0) }}" onchange="autoSaveParameter('taThr', this.value)">
-                                    </div>
-                                </div>
+                    <div class="context-summary">
+                        <h2><i class="fas fa-sliders-h"></i> Tableau de bord</h2>
+                        <p class="context-description">
+                            Commandez les pompes, le chauffage et la programmation automatique du système aquaponique. Chaque action est synchronisée avec l’ESP32 en moins de 4 secondes.
+                        </p>
+                        <div class="context-stats">
+                            <div class="context-stat">
+                                <span class="stat-label">Actionneurs</span>
+                                <span class="stat-value">{{ outputs|length }}</span>
                             </div>
-                            
-                            <h3><i class="fas fa-bowl-food"></i> Nourrissage</h3>
-                            
-                            <!-- Boutons de nourrissage -->
-                            {% set feeding_outputs = outputs|filter(o => o.gpio == 108 or o.gpio == 109) %}
-                            {% if feeding_outputs|length > 0 %}
-                                <div class="action-buttons-grid">
-                                    {% for output in feeding_outputs %}
-                                        {% set clean_name = output.gpio == 108 ? 'Petits poissons' : 'Gros poissons' %}
-                                        {% set icon = 'fa-fish' %}
-                                        {% set color = '#e91e63' %}
-                                        
-                                            <div class="action-button-card action-button-pink" data-state="{{ output.state }}" data-inverted="0">
-                                            <div class="action-button-content">
-                                                <i class="fas {{ icon }} action-icon-simple" style="color: {{ color }};"></i>
-                                                <div class="action-button-info">
-                                                    <div class="action-button-label">{{ clean_name }}</div>
-                                                    <div class="action-button-status" data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</div>
-                                                </div>
-                                            </div>
-                                            <label class="modern-switch">
-                                                <input type="checkbox" 
-                                                       onchange="updateOutput(this)" 
-                                                       id="{{ output.id }}" 
-                                                       data-id="{{ output.id }}"
-                                                       data-gpio="{{ output.gpio }}"
-                                                       {{ output.state == 1 ? 'checked' : '' }}>
-                                                <span class="modern-switch-slider">
-                                                    <span class="modern-switch-button"></span>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            
-                            <!-- Paramètres de nourrissage -->
-                            <div class="param-box">
-                                <h4><i class="fas fa-clock"></i> Programmation automatique</h4>
-                                <div class="param-grid">
-                                    <div>
-                                        <label>Horaires (0-23h)</label>
-                                        <div class="param-grid param-grid-3">
-                                            <div>
-                                                <label for="bouffeMat">Matin</label>
-                                                <input type="number" name="bouffeMat" min="0" max="23" id="bouffeMat" data-parameter="bouffeMat" value="{{ params.bouffeMat|default(0) }}" onchange="autoSaveParameter('bouffeMat', this.value)">
-                                            </div>
-                                            <div>
-                                                <label for="bouffeMid">Midi</label>
-                                                <input type="number" name="bouffeMid" min="0" max="23" id="bouffeMid" data-parameter="bouffeMid" value="{{ params.bouffeMid|default(0) }}" onchange="autoSaveParameter('bouffeMid', this.value)">
-                                            </div>
-                                            <div>
-                                                <label for="bouffeSoir">Soir</label>
-                                                <input type="number" name="bouffeSoir" min="0" max="23" id="bouffeSoir" data-parameter="bouffeSoir" value="{{ params.bouffeSoir|default(0) }}" onchange="autoSaveParameter('bouffeSoir', this.value)">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label>Durées (secondes)</label>
-                                        <div class="param-grid param-grid-2">
-                                            <div>
-                                                <label for="tempsGros">Gros poissons</label>
-                                                <input type="number" name="tempsGros" min="0" id="tempsGros" data-parameter="tempsGros" value="{{ params.tempsGros|default(0) }}" onchange="autoSaveParameter('tempsGros', this.value)">
-                                            </div>
-                                            <div>
-                                                <label for="tempsPetits">Petits poissons</label>
-                                                <input type="number" name="tempsPetits" min="0" id="tempsPetits" data-parameter="tempsPetits" value="{{ params.tempsPetits|default(0) }}" onchange="autoSaveParameter('tempsPetits', this.value)">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="context-stat">
+                                <span class="stat-label">Boards</span>
+                                <span class="stat-value">{{ boards|length }}</span>
                             </div>
-                        </div>
-                        
-                        <!-- Colonne 2: Chauffage, Lumière, Email et Système -->
-                        <div class="control-card">
-                            <h3><i class="fas fa-temperature-half"></i> Chauffage & Lumière</h3>
-                            
-                            <!-- Boutons chauffage et lumière -->
-                            {% set heating_light_outputs = outputs|filter(o => o.name|lower matches '/radiateur/' or o.name|lower matches '/lumi.*re/') %}
-                            {% if heating_light_outputs|length > 0 %}
-                                <div class="action-buttons-grid">
-                                    {% for output in heating_light_outputs %}
-                                        {% set clean_name = output.name|replace({
-                                            '(stopp&#233;s si relais activ&#233;)': '',
-                                            '(stopp&#233;e si relais activ&#233;)': '',
-                                            '(stoppés si relais activé)': '',
-                                            '(stoppée si relais activé)': '',
-                                            ' (stopp&#233;s si relais activ&#233;)': '',
-                                            ' (stopp&#233;e si relais activ&#233;)': '',
-                                            ' (stoppés si relais activé)': '',
-                                            ' (stoppée si relais activé)': ''
-                                        })|trim %}
-                                        
-                                        {% if clean_name|lower matches '/radiateur/' %}
-                                            {% set icon = 'fa-temperature-high' %}
-                                            {% set color = '#e74c3c' %}
-                                            {% set display_name = 'Radiateur' %}
-                                        {% elseif clean_name|lower matches '/lumi.*re/' %}
-                                            {% set icon = 'fa-lightbulb' %}
-                                            {% set color = '#f39c12' %}
-                                            {% set display_name = 'Lumière' %}
-                                        {% else %}
-                                            {% set icon = 'fa-circle' %}
-                                            {% set color = '#008B74' %}
-                                            {% set display_name = clean_name %}
-                                        {% endif %}
-                                        
-                                            <div class="action-button-card action-button-red" data-state="{{ output.state }}" data-inverted="0">
-                                            <div class="action-button-content">
-                                                <i class="fas {{ icon }} action-icon-simple" style="color: {{ color }};"></i>
-                                                <div class="action-button-info">
-                                                    <div class="action-button-label">{{ display_name }}</div>
-                                                    <div class="action-button-status" data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</div>
-                                                </div>
-                                            </div>
-                                            <label class="modern-switch">
-                                                <input type="checkbox" 
-                                                       onchange="updateOutput(this)" 
-                                                       id="{{ output.id }}" 
-                                                       data-id="{{ output.id }}"
-                                                       data-gpio="{{ output.gpio }}"
-                                                       {{ output.state == 1 ? 'checked' : '' }}>
-                                                <span class="modern-switch-slider">
-                                                    <span class="modern-switch-button"></span>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            
-                            <!-- Paramètres de température -->
-                            <div class="param-box">
-                                <h4><i class="fas fa-thermometer-half"></i> Paramètres de température</h4>
-                                <div class="param-grid">
-                                    <div>
-                                        <label for="chauff">Température min. (°C)</label>
-                                        <input type="number" name="chauff" min="0" step="0.1" id="chauff" data-parameter="chauff" value="{{ params.chauff|default(0) }}" onchange="autoSaveParameter('chauff', this.value)">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <h3><i class="fas fa-envelope"></i> Email de notification</h3>
-                            
-                            <!-- Bouton notifications -->
-                            {% set notification_outputs = outputs|filter(o => o.gpio == 101) %}
-                            {% if notification_outputs|length > 0 %}
-                                <div class="action-buttons-grid">
-                                    {% for output in notification_outputs %}
-                                        <div class="action-button-card action-button-purple" data-state="{{ output.state }}" data-inverted="0">
-                                            <div class="action-button-content">
-                                                <i class="fas fa-bell action-icon-simple" style="color: #9b59b6;"></i>
-                                                <div class="action-button-info">
-                                                    <div class="action-button-label">Notifications</div>
-                                                    <div class="action-button-status" data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</div>
-                                                </div>
-                                            </div>
-                                            <label class="modern-switch">
-                                                <input type="checkbox" 
-                                                       onchange="updateOutput(this)" 
-                                                       id="{{ output.id }}" 
-                                                       data-id="{{ output.id }}"
-                                                       data-gpio="{{ output.gpio }}"
-                                                       {{ output.state == 1 ? 'checked' : '' }}>
-                                                <span class="modern-switch-slider">
-                                                    <span class="modern-switch-button"></span>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            
-                            <!-- Configuration email -->
-                            <div class="param-box">
-                                <h4><i class="fas fa-cog"></i> Configuration email</h4>
-                                <div class="param-grid">
-                                    <div>
-                                        <label for="mail">Adresse email</label>
-                                        <input type="email" name="mail" id="mail" data-parameter="mail" value="{{ params.mail|default('') }}" placeholder="email@exemple.com" onchange="autoSaveParameter('mail', this.value)">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <h3><i class="fas fa-microchip"></i> Système</h3>
-                            
-                            <!-- Boutons système -->
-                            {% set system_outputs = outputs|filter(o => o.gpio == 110 or o.gpio == 115) %}
-                            {% if system_outputs|length > 0 %}
-                                <div class="action-buttons-grid">
-                                    {% for output in system_outputs %}
-                                        {% if output.gpio == 110 %}
-                                            {% set icon = 'fa-arrows-rotate' %}
-                                            {% set color = '#e74c3c' %}
-                                            {% set display_name = 'Reset ESP' %}
-                                        {% elseif output.gpio == 115 %}
-                                            {% set icon = 'fa-clock' %}
-                                            {% set color = '#e67e22' %}
-                                            {% set display_name = 'Forçage réveil' %}
-                                        {% else %}
-                                            {% set icon = 'fa-circle' %}
-                                            {% set color = '#008B74' %}
-                                            {% set display_name = output.name %}
-                                        {% endif %}
-                                        
-                                        <div class="action-button-card action-button-red" data-state="{{ output.state }}" data-inverted="0">
-                                            <div class="action-button-content">
-                                                <i class="fas {{ icon }} action-icon-simple" style="color: {{ color }};"></i>
-                                                <div class="action-button-info">
-                                                    <div class="action-button-label">{{ display_name }}</div>
-                                                    <div class="action-button-status" data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</div>
-                                                </div>
-                                            </div>
-                                            <label class="modern-switch">
-                                                <input type="checkbox" 
-                                                       onchange="updateOutput(this)" 
-                                                       id="{{ output.id }}" 
-                                                       data-id="{{ output.id }}"
-                                                       data-gpio="{{ output.gpio }}"
-                                                       {{ output.state == 1 ? 'checked' : '' }}>
-                                                <span class="modern-switch-slider">
-                                                    <span class="modern-switch-button"></span>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            
-                            <!-- Paramètres système -->
-                            <div class="param-box">
-                                <h4><i class="fas fa-cog"></i> Paramètres système</h4>
-                                <div class="param-grid">
-                                    <div>
-                                        <label for="FreqWakeUp">Fréquence WakeUp (s)</label>
-                                        <input type="number" name="FreqWakeUp" min="0" id="FreqWakeUp" data-parameter="FreqWakeUp" value="{{ params.FreqWakeUp|default(0) }}" onchange="autoSaveParameter('FreqWakeUp', this.value)">
-                                    </div>
-                                </div>
+                            <div class="context-stat">
+                                <span class="stat-label">Logs actifs</span>
+                                <span class="stat-value" id="logs-counter">0</span>
                             </div>
                         </div>
                     </div>
-                </form>
-                
-                <!-- Section Actions rapides harmonisée -->
-                <div class="actions-section">
-                    <div class="section-header" style="justify-content: center; border: none; margin-bottom: 20px;">
-                        <i class="fas fa-bolt"></i>
-                        <h2>Actions rapides</h2>
-                    </div>
-                    <div class="actions-grid">
-                        <a href="/ffp3/cronpompe.php" class="action-link">
-                            <i class="fas fa-gears"></i> Cron manuel
-                        </a>
-                        <a href="/ffp3/cronlog.txt" class="action-link">
-                            <i class="fas fa-file-lines"></i> Journal du cron
-                        </a>
-                        <a href="/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}" class="action-link">
-                            <i class="fas fa-chart-line"></i> Retour aux données
-                        </a>
-                    </div>
-                </div>
+                </section>
 
-                <!-- État des connexions -->
-                <div class="section-header">
-                    <i class="fas fa-satellite-dish"></i>
-                    <h2>État des connexions</h2>
-                </div>
-                
-                <div class="control-card" style="margin-bottom: 25px;">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <section class="quick-actions">
+                    <h3><i class="fas fa-bolt"></i> Actions rapides</h3>
+                    <div class="quick-actions-grid">
+                        <a href="/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}" class="quick-action-card">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Retour aux données</span>
+                        </a>
+                        <a href="/ffp3/cronpompe.php" class="quick-action-card">
+                            <i class="fas fa-rotate"></i>
+                            <span>Exécuter cron</span>
+                        </a>
+                        <a href="/ffp3/cronlog.txt" class="quick-action-card">
+                            <i class="fas fa-file-lines"></i>
+                            <span>Logs cron</span>
+                        </a>
+                    </div>
+                </section>
+
+                <section class="boards-status">
+                    <h3><i class="fas fa-satellite-dish"></i> Connexions</h3>
+                    <div class="boards-grid">
                         {% for board in boards %}
-                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #008B74;" class="board-card" data-board="{{ board.board }}">
-                                <h4 style="margin: 0 0 8px 0; color: #008B74; font-size: 1em;">
-                                    <i class="fas fa-microchip"></i> Board {{ board.board }}
-                                </h4>
-                                <p style="margin: 0 0 10px 0; font-size: 0.9em; color: #666;">
-                                    <i class="fas fa-clock"></i> Dernière requête : <span class="last-request-time">{{ board.last_request }}</span>
-                                </p>
-                                
-                                {% if board.last_gpio is defined and board.last_gpio %}
-                                    <div class="last-gpio-status" style="margin-top: 8px;">
-                                        <p style="margin: 0 0 5px 0; font-size: 0.85em; color: #555; font-weight: bold;">
-                                            <i class="fas fa-history"></i> Dernière GPIO sollicitée :
-                                        </p>
-                                        <div class="last-gpio-item" style="display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: {% if board.last_gpio.state == 1 %}#d4edda{% else %}#f8d7da{% endif %}; border-radius: 6px; border-left: 4px solid {% if board.last_gpio.state == 1 %}#28a745{% else %}#dc3545{% endif %};">
-                                            <span class="gpio-state" style="color: {% if board.last_gpio.state == 1 %}#28a745{% else %}#dc3545{% endif %};">
-                                                <i class="fas {% if board.last_gpio.state == 1 %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+                            <article class="board-card" data-board="{{ board.board }}">
+                                <header>
+                                    <span class="board-title"><i class="fas fa-microchip"></i> Board {{ board.board }}</span>
+                                    <span class="board-last">Dernière requête&nbsp;: <span class="last-request-time">{{ board.last_request }}</span></span>
+                                </header>
+                                {% if board.last_gpio %}
+                                    <div class="board-activity" data-state="{{ board.last_gpio.state }}">
+                                        <div class="activity-header">
+                                            <strong>{{ board.last_gpio.name }}</strong>
+                                            <span class="activity-badge {{ board.last_gpio.state == 1 ? 'on' : 'off' }}">
+                                                {{ board.last_gpio.state == 1 ? 'ACTIF' : 'INACTIF' }}
                                             </span>
-                                            <div style="flex: 1;">
-                                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 3px;">
-                                                    <span class="gpio-name" style="color: #333; font-weight: bold;">{{ board.last_gpio.name }}</span>
-                                                    <span class="gpio-state-badge" style="padding: 2px 6px; border-radius: 3px; font-size: 0.7em; font-weight: bold; {% if board.last_gpio.state == 1 %}background: #28a745; color: white;{% else %}background: #dc3545; color: white;{% endif %}">
-                                                        {% if board.last_gpio.state == 1 %}ACTIF{% else %}INACTIF{% endif %}
-                                                    </span>
-                                                </div>
-                                                <div style="font-size: 0.75em; color: #666;">
-                                                    <i class="fas fa-microchip"></i> GPIO {{ board.last_gpio.gpio }} • 
-                                                    <i class="fas fa-clock"></i> <span class="last-gpio-time">{{ board.last_gpio.last_modified_time }}</span>
-                                                </div>
-                                            </div>
+                                        </div>
+                                        <div class="activity-meta">
+                                            <span><i class="fas fa-microchip"></i> GPIO {{ board.last_gpio.gpio }}</span>
+                                            <span><i class="fas fa-clock"></i> <span class="last-gpio-time">{{ board.last_gpio.last_modified_time }}</span></span>
                                         </div>
                                     </div>
                                 {% else %}
-                                    <div class="no-gpio-status" style="margin-top: 8px;">
-                                        <p style="margin: 0; font-size: 0.85em; color: #888; font-style: italic;">
-                                            <i class="fas fa-info-circle"></i> Aucune GPIO récemment modifiée
-                                        </p>
+                                    <div class="board-empty">
+                                        <i class="fas fa-circle-notch"></i> Aucune activité récente
                                     </div>
                                 {% endif %}
-                            </div>
+                            </article>
                         {% endfor %}
                     </div>
-                </div>
+                </section>
+            </aside>
 
+            <section class="control-main panel">
+                <header class="control-main-header">
+                    <div class="header-left">
+                        <h1>Contrôle FFP3</h1>
+                        <p>Activez/désactivez les pompes, gérez la programmation automatique et surveillez l’état du système.</p>
+                        <div class="callout callout-warning">
+                            <i class="fas fa-triangle-exclamation"></i>
+                            <span>Les commandes agissent immédiatement sur le système physique. Vérifiez la présence sur site avant d’activer les pompes ou de forcer un reset.</span>
+                        </div>
+                    </div>
+                    <div class="header-right">
+                        <div id="control-sync-badge" class="connecting">CONNEXION...</div>
+                    </div>
+                </header>
 
-                <!-- Panneau de logs temps réel -->
-                <div class="realtime-logs-panel">
-                    <h3>
-                        <i class="fas fa-terminal"></i>
-                        Logs temps réel
+                <section class="realtime-status-panel">
+                    <div class="status-grid">
+                        <div class="status-card">
+                            <div class="status-label">Sync temps réel</div>
+                            <div id="system-status-indicator" class="status-indicator status-online is-animated">
+                                <span class="status-pill"><i class="fas fa-circle"></i><strong>TEMPS RÉEL</strong></span>
+                                <span data-state-label>Synchronisé</span>
+                            </div>
+                        </div>
+                        <div class="status-card">
+                            <div class="status-label">Dernière commande</div>
+                            <div class="status-value" id="last-reading-time" data-default="pending">
+                                <span class="reading-ago"><i class="fas fa-spinner fa-spin"></i></span>
+                            </div>
+                        </div>
+                        <div class="status-card">
+                            <div class="status-label">Lectures aujourd’hui</div>
+                            <div class="status-value" id="readings-today" data-default="pending">
+                                <span class="reading-count"><i class="fas fa-spinner fa-spin"></i></span>
+                            </div>
+                        </div>
+                        <div class="status-card">
+                            <div class="status-label">Uptime (30j)</div>
+                            <div class="status-value" id="system-uptime">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="controls-section">
+                    <div class="controls-group">
+                        <header>
+                            <h2><i class="fas fa-water"></i> Gestion de l’eau</h2>
+                        </header>
+                        <div class="control-cards-grid">
+                            {% for output in outputs if output.gpio in [16,18] %}
+                                {% set is_inverted = output.gpio == 18 %}
+                                {% set is_checked = is_inverted ? (output.state == 0) : (output.state == 1) %}
+                                <article class="action-card" data-state="{{ is_checked ? '1' : '0' }}" data-gpio="{{ output.gpio }}" data-inverted="{{ is_inverted ? '1' : '0' }}">
+                                    <header>
+                                        <div class="action-icon">
+                                            <i class="fas {{ output.gpio == 16 ? 'fa-water' : 'fa-droplet' }}"></i>
+                                        </div>
+                                        <div>
+                                            <h3>{{ output.gpio == 16 ? 'Pompe aquarium' : 'Pompe réserve' }}</h3>
+                                            <span class="sync-status-badge sync-synced" id="sync-badge-{{ output.gpio }}">
+                                                <i class="fas fa-sync-alt"></i> SYNC
+                                            </span>
+                                        </div>
+                                    </header>
+                                    <footer>
+                                        <span data-state-label>{{ is_checked ? 'Activé' : 'Désactivé' }}</span>
+                                        <label class="modern-switch">
+                                            <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" data-inverted="{{ is_inverted ? '1' : '0' }}" {{ is_checked ? 'checked' : '' }}>
+                                            <span class="modern-switch-slider"><span class="modern-switch-button"></span></span>
+                                        </label>
+                                    </footer>
+                                </article>
+                            {% endfor %}
+                        </div>
+                        <section class="parameters-panel">
+                            <h3>Paramètres de niveau</h3>
+                            <div class="parameters-grid">
+                                <label class="parameter-item">
+                                    <span>Aquarium bas (cm)</span>
+                                    <input type="number" name="aqThr" min="0" id="aqThr" data-parameter="aqThr" value="{{ params.aqThr|default(0) }}" onchange="autoSaveParameter('aqThr', this.value)">
+                                </label>
+                                <label class="parameter-item">
+                                    <span>Réserve basse (cm)</span>
+                                    <input type="number" name="taThr" min="0" id="taThr" data-parameter="taThr" value="{{ params.taThr|default(0) }}" onchange="autoSaveParameter('taThr', this.value)">
+                                </label>
+                                <label class="parameter-item">
+                                    <span>Remplissage (s)</span>
+                                    <input type="number" name="tempsRemplissageSec" min="0" id="tempsRemplissageSec" data-parameter="tempsRemplissageSec" value="{{ params.tempsRemplissageSec|default(0) }}" onchange="autoSaveParameter('tempsRemplissageSec', this.value)">
+                                </label>
+                                <label class="parameter-item">
+                                    <span>Débordement (cm)</span>
+                                    <input type="number" name="limFlood" min="0" id="limFlood" data-parameter="limFlood" value="{{ params.limFlood|default(0) }}" onchange="autoSaveParameter('limFlood', this.value)">
+                                </label>
+                            </div>
+                        </section>
+                    </div>
+
+                    <div class="controls-grid">
+                        <article class="controls-column">
+                            <header>
+                                <h2><i class="fas fa-bowl-food"></i> Nourrissage</h2>
+                            </header>
+                            <div class="control-cards-grid">
+                                {% for output in outputs if output.gpio in [108,109] %}
+                                    <article class="action-card" data-state="{{ output.state }}">
+                                        <header>
+                                            <div class="action-icon"><i class="fas fa-fish"></i></div>
+                                            <div>
+                                                <h3>{{ output.gpio == 108 ? 'Petits poissons' : 'Gros poissons' }}</h3>
+                                            </div>
+                                        </header>
+                                        <footer>
+                                            <span data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
+                                            <label class="modern-switch">
+                                                <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" {{ output.state == 1 ? 'checked' : '' }}>
+                                                <span class="modern-switch-slider"><span class="modern-switch-button"></span></span>
+                                            </label>
+                                        </footer>
+                                    </article>
+                                {% endfor %}
+                            </div>
+
+                            <section class="parameters-panel">
+                                <h3>Programmation automatique</h3>
+                                <div class="parameters-grid">
+                                    <label class="parameter-item">
+                                        <span>Matin (h)</span>
+                                        <input type="number" name="bouffeMat" min="0" max="23" id="bouffeMat" data-parameter="bouffeMat" value="{{ params.bouffeMat|default(0) }}" onchange="autoSaveParameter('bouffeMat', this.value)">
+                                    </label>
+                                    <label class="parameter-item">
+                                        <span>Midi (h)</span>
+                                        <input type="number" name="bouffeMid" min="0" max="23" id="bouffeMid" data-parameter="bouffeMid" value="{{ params.bouffeMid|default(0) }}" onchange="autoSaveParameter('bouffeMid', this.value)">
+                                    </label>
+                                    <label class="parameter-item">
+                                        <span>Soir (h)</span>
+                                        <input type="number" name="bouffeSoir" min="0" max="23" id="bouffeSoir" data-parameter="bouffeSoir" value="{{ params.bouffeSoir|default(0) }}" onchange="autoSaveParameter('bouffeSoir', this.value)">
+                                    </label>
+                                    <label class="parameter-item">
+                                        <span>Durée gros (s)</span>
+                                        <input type="number" name="tempsGros" min="0" id="tempsGros" data-parameter="tempsGros" value="{{ params.tempsGros|default(0) }}" onchange="autoSaveParameter('tempsGros', this.value)">
+                                    </label>
+                                    <label class="parameter-item">
+                                        <span>Durée petits (s)</span>
+                                        <input type="number" name="tempsPetits" min="0" id="tempsPetits" data-parameter="tempsPetits" value="{{ params.tempsPetits|default(0) }}" onchange="autoSaveParameter('tempsPetits', this value)">
+                                    </label>
+                                </div>
+                            </section>
+                        </article>
+
+                        <article class="controls-column">
+                            <header>
+                                <h2><i class="fas fa-temperature-half"></i> Chauffage & Lumière</h2>
+                            </header>
+                            <div class="control-cards-grid">
+                                {% for output in outputs if output.gpio in [2,15] %}
+                                    <article class="action-card" data-state="{{ output.state }}">
+                                        <header>
+                                            <div class="action-icon"><i class="fas {{ output.gpio == 2 ? 'fa-temperature-high' : 'fa-lightbulb' }}"></i></div>
+                                            <div>
+                                                <h3>{{ output.gpio == 2 ? 'Radiateur' : 'Lumière' }}</h3>
+                                            </div>
+                                        </header>
+                                        <footer>
+                                            <span data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
+                                            <label class="modern-switch">
+                                                <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" {{ output.state == 1 ? 'checked' : '' }}>
+                                                <span class="modern-switch-slider"><span class="modern-switch-button"></span></span>
+                                            </label>
+                                        </footer>
+                                    </article>
+                                {% endfor %}
+                            </div>
+
+                            <section class="parameters-panel">
+                                <h3>Paramètres environnementaux</h3>
+                                <div class="parameters-grid">
+                                    <label class="parameter-item">
+                                        <span>Température min (°C)</span>
+                                        <input type="number" name="chauff" min="0" step="0.1" id="chauff" data-parameter="chauff" value="{{ params.chauff|default(0) }}" onchange="autoSaveParameter('chauff', this.value)">
+                                    </label>
+                                </div>
+                            </section>
+                        </article>
+
+                        <article class="controls-column">
+                            <header>
+                                <h2><i class="fas fa-envelope"></i> Notifications & Système</h2>
+                            </header>
+                            <div class="control-cards-grid">
+                                {% for output in outputs if output.gpio == 101 %}
+                                    <article class="action-card" data-state="{{ output.state }}">
+                                        <header>
+                                            <div class="action-icon"><i class="fas fa-bell"></i></div>
+                                            <div>
+                                                <h3>Notifications email</h3>
+                                            </div>
+                                        </header>
+                                        <footer>
+                                            <span data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
+                                            <label class="modern-switch">
+                                                <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" {{ output.state == 1 ? 'checked' : '' }}>
+                                                <span class="modern-switch-slider"><span class="modern-switch-button"></span></span>
+                                            </label>
+                                        </footer>
+                                    </article>
+                                {% endfor %}
+                                {% for output in outputs if output.gpio in [110,115] %}
+                                    <article class="action-card warning" data-state="{{ output.state }}">
+                                        <header>
+                                            <div class="action-icon"><i class="fas {{ output.gpio == 110 ? 'fa-arrows-rotate' : 'fa-clock' }}"></i></div>
+                                            <div>
+                                                <h3>{{ output.gpio == 110 ? 'Reset ESP' : 'Forçage réveil' }}</h3>
+                                            </div>
+                                        </header>
+                                        <p class="action-description">{{ output.gpio == 110 ? 'Redémarre le microcontrôleur. À utiliser en dernier recours.' : 'Force le réveil de l’ESP32 pour envoyer toutes les mesures.' }}</p>
+                                        <footer>
+                                            <span data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
+                                            <label class="modern-switch">
+                                                <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" {{ output.state == 1 ? 'checked' : '' }}>
+                                                <span class="modern-switch-slider"><span class="modern-switch-button"></span></span>
+                                            </label>
+                                        </footer>
+                                    </article>
+                                {% endfor %}
+                            </div>
+
+                            <section class="parameters-panel">
+                                <h3>Configuration</h3>
+                                <div class="parameters-grid">
+                                    <label class="parameter-item">
+                                        <span>Email d’alerte</span>
+                                        <input type="email" name="mail" id="mail" data-parameter="mail" value="{{ params.mail|default('') }}" placeholder="email@exemple.com" onchange="autoSaveParameter('mail', this.value)">
+                                    </label>
+                                    <label class="parameter-item">
+                                        <span>Wake Up (s)</span>
+                                        <input type="number" name="FreqWakeUp" min="0" id="FreqWakeUp" data-parameter="FreqWakeUp" value="{{ params.FreqWakeUp|default(0) }}" onchange="autoSaveParameter('FreqWakeUp', this.value)">
+                                    </label>
+                                </div>
+                            </section>
+                        </article>
+                    </div>
+                </section>
+            </section>
+
+            <aside class="logs-sidebar">
+                <section class="realtime-logs-panel panel">
+                    <header>
+                        <h3><i class="fas fa-terminal"></i> Logs temps réel</h3>
                         <span class="logs-status active" id="logs-status">
                             <i class="fas fa-circle"></i> Actif
                         </span>
-                    </h3>
-                    
-                    <!-- Contrôles des logs -->
+                    </header>
+
                     <div class="logs-controls">
-                        <!-- Filtres de niveau -->
-                        <div class="logs-control-item">
-                            <span class="logs-control-label">Filtres:</span>
-                            <div class="log-filter-badge active" data-filter="info">
-                                <i class="fas fa-info-circle"></i>
-                                <span>Info</span>
-                            </div>
-                            <div class="log-filter-badge active" data-filter="success">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Succès</span>
-                            </div>
-                            <div class="log-filter-badge active" data-filter="warning">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <span>Attention</span>
-                            </div>
-                            <div class="log-filter-badge active" data-filter="error">
-                                <i class="fas fa-times-circle"></i>
-                                <span>Erreur</span>
-                            </div>
-                            <div class="log-filter-badge active" data-filter="gpio">
-                                <i class="fas fa-microchip"></i>
-                                <span>GPIO</span>
-                            </div>
-                            <div class="log-filter-badge active" data-filter="sync">
-                                <i class="fas fa-sync-alt"></i>
-                                <span>Sync</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Boutons de contrôle -->
-                        <div class="logs-control-item">
-                            <button id="pause-logs-btn" class="logs-btn secondary">
-                                <i class="fas fa-pause"></i> Pause
-                            </button>
-                            <button id="clear-logs-btn" class="logs-btn danger">
-                                <i class="fas fa-trash"></i> Vider
-                            </button>
-                            <button id="export-logs-btn" class="logs-btn">
-                                <i class="fas fa-download"></i> Exporter
-                            </button>
-                        </div>
+                        <button id="pause-logs-btn" class="logs-control-btn"><i class="fas fa-pause"></i> Pause</button>
+                        <button id="clear-logs-btn" class="logs-control-btn"><i class="fas fa-trash"></i> Vider</button>
+                        <button id="export-logs-btn" class="logs-control-btn"><i class="fas fa-file-export"></i> Exporter</button>
                     </div>
-                    
-                    <!-- Conteneur des logs -->
-                    <div class="logs-container" id="logs-container">
-                        <!-- Les logs seront ajoutés dynamiquement ici -->
+
+                    <div class="logs-filters">
+                        <button class="log-filter-badge active" data-filter="info">Info</button>
+                        <button class="log-filter-badge active" data-filter="success">Succès</button>
+                        <button class="log-filter-badge active" data-filter="warning">Avert.</button>
+                        <button class="log-filter-badge active" data-filter="error">Erreur</button>
+                        <button class="log-filter-badge active" data-filter="gpio">GPIO</button>
+                        <button class="log-filter-badge active" data-filter="sync">Sync</button>
                     </div>
-                </div>
-            </article>
+
+                    <div id="logs-container" class="logs-container"></div>
+                </section>
+            </aside>
         </div>
-        
-        <!-- Footer harmonisé -->
-        <footer id="footer" style="text-align: center; padding: 25px 0; color: #666; font-size: 0.9em; background: #f8f9fa; margin-top: 30px;">
-            <p>
-                <i class="fas fa-microchip"></i> {{ version }} | 
-                <i class="fas fa-microchip"></i> Firmware ESP32: v{{ firmware_version }} | 
-                <i class="fas fa-fish"></i> Système d'aquaponie FFP3 | 
-                <i class="fas fa-copyright"></i> 2025 olution
-            </p>
-        </footer>
-    </div>
-
-    <!-- JavaScript harmonisé -->
-    <script>
-        const API_BASE = '{{ environment == "test" ? "/ffp3/api/outputs-test" : "/ffp3/api/outputs" }}';
-        let controlSync = null;
-        let boardUpdateInterval = null;
-        
-        /**
-         * Met à jour le badge de statut de synchronisation pour un GPIO donné
-         * @param {number} gpio - Numéro du GPIO
-         * @param {string} status - Statut: 'pending', 'synced', 'conflict', 'esp32'
-         * @param {string} text - Texte à afficher
-         */
-        function updateSyncBadge(gpio, status, text) {
-            const badge = document.getElementById(`sync-badge-${gpio}`);
-            if (!badge) return;
-            
-            // Retirer toutes les classes de statut
-            badge.classList.remove('sync-pending', 'sync-synced', 'sync-conflict', 'esp32');
-            
-            // Ajouter la nouvelle classe
-            badge.classList.add(`sync-${status}`);
-            
-            // Mettre à jour le texte
-            const icons = {
-                'pending': '<i class="fas fa-clock"></i>',
-                'synced': '<i class="fas fa-sync-alt"></i>',
-                'conflict': '<i class="fas fa-exclamation-triangle"></i>',
-                'esp32': '<i class="fas fa-microchip"></i>'
-            };
-            
-            badge.innerHTML = `${icons[status] || '<i class="fas fa-sync-alt"></i>'} ${text || status.toUpperCase()}`;
-        }
-        
-        // Rendre la fonction globale pour access depuis control-sync.js
-        window.updateSyncBadge = updateSyncBadge;
-        
-        function updateOutput(element) {
-            var id = element.getAttribute('data-id');
-            var gpio = element.getAttribute('data-gpio');
-            var isInverted = element.getAttribute('data-inverted') === '1';
-            var state = isInverted ? (element.checked ? 0 : 1) : (element.checked ? 1 : 0);
-            var url = API_BASE + "/toggle";
-            
-            var card = element.closest('.action-button-card');
-            var statusLabel = card ? card.querySelector('[data-state-label]') : null;
-            
-            // Récupérer le nom de l'élément pour les logs
-            var elementName = '';
-            if (card) {
-                var labelElement = card.querySelector('.action-button-label');
-                if (labelElement) {
-                    elementName = labelElement.textContent.trim();
-                }
-            }
-            
-            console.log("Toggle ID " + id + " (GPIO " + gpio + ") to state " + state);
-            
-            // Mettre à jour le badge de synchronisation vers "en attente"
-            updateSyncBadge(gpio, 'pending', 'EN ATTENTE (4s)');
-            
-            // Log de l'action utilisateur
-            if (realtimeLogger) {
-                realtimeLogger.logGpioChange(gpio, state === 1 ? 0 : 1, state, elementName);
-                realtimeLogger.logApiCall('POST', url, 'En cours...');
-            }
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ id: id, state: state })
-            }).then(async response => {
-                const isJson = response.headers.get('Content-Type')?.includes('application/json');
-                const payload = isJson ? await response.json() : null;
-
-                if (response.ok) {
-                    if (card) {
-                        card.setAttribute('data-state', element.checked ? '1' : '0');
-                        card.style.transition = 'all 0.3s ease';
-                    }
-                    if (statusLabel) {
-                        var isActive = element.checked;
-                        statusLabel.textContent = isActive ? 'Activé' : 'Désactivé';
-                        statusLabel.style.color = isActive ? '#27ae60' : '#7f8c8d';
-                        statusLabel.style.fontWeight = isActive ? '600' : '400';
-                    }
-
-                    if (realtimeLogger) {
-                        realtimeLogger.log('success', `Changement d'état réussi: ${elementName || 'GPIO ' + gpio}`, 'GPIO');
-                    }
-
-                    if (controlSync) {
-                        setTimeout(() => controlSync.forceSync(), 500);
-                    }
-                } else {
-                    const message = payload?.message || `Erreur lors du changement d'état (HTTP ${response.status})`;
-                    console.error('[Control] Toggle failed', message);
-
-                    if (realtimeLogger) {
-                        realtimeLogger.logError(`${message} (${elementName || 'GPIO ' + gpio})`, 'GPIO');
-                    }
-
-                    updateSyncBadge(gpio, 'conflict', 'ERREUR');
-                    alert(message);
-                    element.checked = !element.checked;
-                }
-            }).catch(error => {
-                console.error('[Control] Toggle failed', error);
-
-                if (realtimeLogger) {
-                    realtimeLogger.logError(`Erreur réseau: ${error.message}`, 'GPIO');
-                }
-
-                updateSyncBadge(gpio, 'conflict', 'ERREUR');
-                alert("Erreur réseau lors du changement d'état");
-                element.checked = !element.checked;
-            });
-        }
-
-        // Fonctions globales pour la sauvegarde automatique des paramètres
-        function autoSaveParameter(paramName, paramValue) {
-            showSaveIndicator(paramName);
-
-            var apiUrl = API_BASE + "/parameters";
-
-            if (realtimeLogger) {
-                realtimeLogger.log('info', `Sauvegarde paramètre: ${paramName} = ${paramValue}`, 'Paramètres');
-            }
-
-            fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ param: paramName, value: paramValue })
-            }).then(async response => {
-                if (response.ok) {
-                    showSuccessIndicator(paramName);
-                    if (realtimeLogger) {
-                        realtimeLogger.log('success', `Paramètre ${paramName} sauvegardé`, 'Paramètres');
-                    }
-                } else {
-                    showErrorIndicator(paramName);
-                    if (realtimeLogger) {
-                        realtimeLogger.logError(`Échec sauvegarde ${paramName} (HTTP ${response.status})`, 'Paramètres');
-                    }
-                }
-            }).catch(error => {
-                showErrorIndicator(paramName);
-                if (realtimeLogger) {
-                    realtimeLogger.logError(`Erreur réseau sauvegarde ${paramName}: ${error.message}`, 'Paramètres');
-                }
-            });
-        }
-        
-        function showSaveIndicator(paramName) {
-            var input = document.getElementById(paramName);
-            if (input) {
-                input.style.borderColor = '#ffa500';
-                input.style.backgroundColor = '#fff8e1';
-                
-                var indicator = document.createElement('span');
-                indicator.id = 'save-indicator-' + paramName;
-                indicator.innerHTML = ' 💾';
-                indicator.style.color = '#ffa500';
-                indicator.style.fontSize = '0.8em';
-                input.parentNode.appendChild(indicator);
-            }
-        }
-        
-        function showSuccessIndicator(paramName) {
-            var input = document.getElementById(paramName);
-            var indicator = document.getElementById('save-indicator-' + paramName);
-            
-            if (input) {
-                input.style.borderColor = '#4caf50';
-                input.style.backgroundColor = '#e8f5e9';
-                
-                if (indicator) {
-                    indicator.innerHTML = ' ✅';
-                    indicator.style.color = '#4caf50';
-                    
-                    setTimeout(function() {
-                        if (indicator && indicator.parentNode) {
-                            indicator.parentNode.removeChild(indicator);
-                        }
-                        input.style.borderColor = '';
-                        input.style.backgroundColor = '';
-                    }, 2000);
-                }
-            }
-        }
-        
-        function showErrorIndicator(paramName) {
-            var input = document.getElementById(paramName);
-            var indicator = document.getElementById('save-indicator-' + paramName);
-            
-            if (input) {
-                input.style.borderColor = '#f44336';
-                input.style.backgroundColor = '#ffebee';
-                
-                if (indicator) {
-                    indicator.innerHTML = ' ❌';
-                    indicator.style.color = '#f44336';
-                    
-                    setTimeout(function() {
-                        if (indicator && indicator.parentNode) {
-                            indicator.parentNode.removeChild(indicator);
-                        }
-                        input.style.borderColor = '';
-                        input.style.backgroundColor = '';
-                    }, 3000);
-                }
-            }
-        }
-
-        // Initialisation harmonisée
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(checkFontAwesomeLoaded, 500);
-            
-            // Initialiser le système de logs temps réel
-            realtimeLogger = new RealtimeLogger();
-            window.realtimeLogger = realtimeLogger; // Exposer globalement pour debug
-            
-            const controlValuesUpdater = new ControlValuesUpdater();
-            controlValuesUpdater.init();
-            window.controlValuesUpdater = controlValuesUpdater;
-            
-            
-            const syncScript = document.createElement('script');
-            syncScript.src = '/ffp3/assets/js/control-sync.js';
-            syncScript.onload = function() {
-                console.log('[Control] Initializing real-time sync...');
-                
-                controlSync = new ControlSync({
-                    apiBase: API_BASE,
-                    pollInterval: 10,
-                    maxRetries: 5,
-                    
-                    onStateChange: function(changes) {
-                        console.log('[Control] State changes detected:', changes);
-                        
-                        // Log des changements d'état détectés
-                        if (realtimeLogger && changes.length > 0) {
-                            changes.forEach(change => {
-                                const gpioName = getGpioName(change.gpio);
-                                realtimeLogger.logSyncEvent(`Changement détecté: ${gpioName || 'GPIO ' + change.gpio}`, 
-                                    `${change.oldState} → ${change.newState}`);
-                            });
-                        }
-                        
-                        if (window.controlValuesUpdater) {
-                            changes.forEach(change => {
-                                if (change.gpio >= 100) {
-                                    controlValuesUpdater.updateParameterDisplay(change.gpio, change.newState);
-                                }
-                            });
-                        }
-                    },
-                    
-                    onStatusChange: function(status) {
-                        console.log('[Control] Sync status:', status);
-                        
-                        // Log des changements de statut de synchronisation
-                        if (realtimeLogger) {
-                            const statusMessages = {
-                                'connecting': 'Connexion en cours...',
-                                'online': 'Synchronisation active',
-                                'offline': 'Synchronisation interrompue',
-                                'error': 'Erreur de synchronisation',
-                                'warning': 'Attention synchronisation'
-                            };
-                            realtimeLogger.logSyncEvent('Statut', statusMessages[status] || status);
-                        }
-                    }
-                });
-                
-                controlSync.initializeFromDOM();
-                controlSync.start();
-                
-                console.log('[Control] Real-time sync started (polling every 10s)');
-            };
-            
-            syncScript.onerror = function() {
-                console.error('[Control] Failed to load control-sync.js');
-            };
-            
-            document.head.appendChild(syncScript);
-        });
-        
-         // ========================================
-         // SYSTÈME DE LOGS TEMPS RÉEL
-         // ========================================
-         
-         // Classe pour gérer les logs temps réel
-         class RealtimeLogger {
-             constructor() {
-                 this.logs = [];
-                 this.maxLogs = 1000; // Limite de logs en mémoire
-                 this.isPaused = false;
-                 this.filters = {
-                     info: true,
-                     success: true,
-                     warning: true,
-                     error: true,
-                     debug: true,
-                     gpio: true,
-                     sync: true
-                 };
-                 
-                 // Éléments DOM
-                 this.logsContainer = document.getElementById('logs-container');
-                 this.logsStatus = document.getElementById('logs-status');
-                 this.pauseBtn = document.getElementById('pause-logs-btn');
-                 this.clearBtn = document.getElementById('clear-logs-btn');
-                 this.exportBtn = document.getElementById('export-logs-btn');
-                 
-                 // Initialiser les événements
-                 this.initializeEvents();
-                 
-                 // Message de bienvenue
-                 this.log('info', 'Système de logs temps réel initialisé', 'Système');
-             }
-             
-             // Initialiser les événements
-             initializeEvents() {
-                 // Bouton pause/reprendre
-                 if (this.pauseBtn) {
-                     this.pauseBtn.addEventListener('click', () => {
-                         this.togglePause();
-                     });
-                 }
-                 
-                 // Bouton vider
-                 if (this.clearBtn) {
-                     this.clearBtn.addEventListener('click', () => {
-                         this.clearLogs();
-                     });
-                 }
-                 
-                 // Bouton exporter
-                 if (this.exportBtn) {
-                     this.exportBtn.addEventListener('click', () => {
-                         this.exportLogs();
-                     });
-                 }
-                 
-                 // Filtres
-                 const filterBadges = document.querySelectorAll('.log-filter-badge');
-                 filterBadges.forEach(badge => {
-                     badge.addEventListener('click', (e) => {
-                         const filter = e.currentTarget.dataset.filter;
-                         const isActive = e.currentTarget.classList.contains('active');
-                         
-                         if (isActive) {
-                             e.currentTarget.classList.remove('active');
-                             this.filters[filter] = false;
-                         } else {
-                             e.currentTarget.classList.add('active');
-                             this.filters[filter] = true;
-                         }
-                         
-                         this.refreshDisplay();
-                     });
-                 });
-             }
-             
-             // Ajouter un log
-             log(level, message, category = '') {
-                 if (this.isPaused) return;
-                 
-                 const timestamp = new Date();
-                 const logEntry = {
-                     timestamp: timestamp,
-                     level: level,
-                     message: message,
-                     category: category,
-                     id: Date.now() + Math.random()
-                 };
-                 
-                 // Ajouter au tableau des logs
-                 this.logs.unshift(logEntry);
-                 
-                 // Limiter le nombre de logs
-                 if (this.logs.length > this.maxLogs) {
-                     this.logs = this.logs.slice(0, this.maxLogs);
-                 }
-                 
-                 // Afficher si le filtre le permet
-                 if (this.filters[level]) {
-                     this.displayLog(logEntry);
-                 }
-                 
-                 // Console pour debug
-                 console.log(`[RealtimeLogger] ${level.toUpperCase()}: ${message}`);
-             }
-             
-             // Afficher un log dans l'interface
-             displayLog(logEntry) {
-                 if (!this.logsContainer) return;
-                 
-                 const logElement = document.createElement('div');
-                 logElement.className = `log-entry log-${logEntry.level} new-entry`;
-                 logElement.id = `log-${logEntry.id}`;
-                 
-                 const timeStr = logEntry.timestamp.toLocaleTimeString('fr-FR', {
-                     hour: '2-digit',
-                     minute: '2-digit',
-                     second: '2-digit'
-                 });
-                 
-                 const categoryStr = logEntry.category ? `[${logEntry.category}] ` : '';
-                 
-                 logElement.innerHTML = `
-                     <span class="log-timestamp">${timeStr}</span>
-                     <span class="log-level ${logEntry.level}">${logEntry.level}</span>
-                     <span class="log-message">${categoryStr}${logEntry.message}</span>
-                 `;
-                 
-                 // Ajouter en haut du conteneur
-                 this.logsContainer.insertBefore(logElement, this.logsContainer.firstChild);
-                 
-                 // Auto-scroll vers le haut
-                 this.logsContainer.scrollTop = 0;
-                 
-                 // Retirer l'animation après 500ms
-                 setTimeout(() => {
-                     logElement.classList.remove('new-entry');
-                 }, 500);
-                 
-                 // Limiter l'affichage (garder seulement les 100 derniers visibles)
-                 const visibleLogs = this.logsContainer.querySelectorAll('.log-entry');
-                 if (visibleLogs.length > 100) {
-                     visibleLogs[visibleLogs.length - 1].remove();
-                 }
-             }
-             
-             // Rafraîchir l'affichage selon les filtres
-             refreshDisplay() {
-                 if (!this.logsContainer) return;
-                 
-                 // Vider le conteneur
-                 this.logsContainer.innerHTML = '';
-                 
-                 // Réafficher les logs selon les filtres
-                 this.logs.forEach(logEntry => {
-                     if (this.filters[logEntry.level]) {
-                         this.displayLog(logEntry);
-                     }
-                 });
-             }
-             
-             // Basculer pause/reprendre
-             togglePause() {
-                 this.isPaused = !this.isPaused;
-                 
-                 if (this.isPaused) {
-                     this.logsStatus.className = 'logs-status paused';
-                     this.logsStatus.innerHTML = '<i class="fas fa-pause"></i> En pause';
-                     this.pauseBtn.innerHTML = '<i class="fas fa-play"></i> Reprendre';
-                     this.log('warning', 'Logs mis en pause', 'Système');
-                 } else {
-                     this.logsStatus.className = 'logs-status active';
-                     this.logsStatus.innerHTML = '<i class="fas fa-circle"></i> Actif';
-                     this.pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
-                     this.log('info', 'Logs repris', 'Système');
-                 }
-             }
-             
-             // Vider les logs
-             clearLogs() {
-                 this.logs = [];
-                 if (this.logsContainer) {
-                     this.logsContainer.innerHTML = '';
-                 }
-                 this.log('info', 'Logs vidés', 'Système');
-             }
-             
-             // Exporter les logs
-             exportLogs() {
-                 const exportData = this.logs.map(log => {
-                     return {
-                         timestamp: log.timestamp.toISOString(),
-                         level: log.level,
-                         category: log.category,
-                         message: log.message
-                     };
-                 });
-                 
-                 const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-                     type: 'application/json'
-                 });
-                 
-                 const url = URL.createObjectURL(blob);
-                 const a = document.createElement('a');
-                 a.href = url;
-                 a.download = `ffp3-control-logs-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
-                 document.body.appendChild(a);
-                 a.click();
-                 document.body.removeChild(a);
-                 URL.revokeObjectURL(url);
-                 
-                 this.log('success', 'Logs exportés', 'Système');
-             }
-             
-             // Méthodes spécialisées pour différents types d'événements
-             logGpioChange(gpio, oldState, newState, name = '') {
-                 const stateText = newState === 1 ? 'Activé' : 'Désactivé';
-                 const nameStr = name ? `${name} (GPIO ${gpio})` : `GPIO ${gpio}`;
-                 this.log('gpio', `${nameStr}: ${stateText}`, 'GPIO');
-             }
-             
-             logSyncEvent(event, details = '') {
-                 this.log('sync', `${event}${details ? ': ' + details : ''}`, 'Synchronisation');
-             }
-             
-             logError(error, context = '') {
-                 const contextStr = context ? `[${context}] ` : '';
-                 this.log('error', `${contextStr}${error}`, 'Erreur');
-             }
-             
-             logApiCall(method, url, status = null) {
-                 const statusStr = status ? ` (${status})` : '';
-                 this.log('info', `${method} ${url}${statusStr}`, 'API');
-             }
-         }
-         
-        // Instance globale du logger
-        let realtimeLogger = null;
-        
-        // Fonction utilitaire pour obtenir le nom d'un GPIO
-        function getGpioName(gpio) {
-            const gpioNames = {
-                2: 'Radiateur',
-                15: 'Lumière',
-                16: 'Pompe aquarium',
-                18: 'Pompe réserve',
-                100: 'Email',
-                101: 'Notifications',
-                102: 'Seuil aquarium',
-                103: 'Seuil réserve',
-                104: 'Température min',
-                105: 'Nourrissage matin',
-                106: 'Nourrissage midi',
-                107: 'Nourrissage soir',
-                108: 'Nourrisseur petits',
-                109: 'Nourrisseur gros',
-                110: 'Reset ESP',
-                111: 'Temps gros poissons',
-                112: 'Temps petits poissons',
-                113: 'Temps remplissage',
-                114: 'Limite débordement',
-                115: 'Forçage réveil',
-                116: 'Fréquence réveil'
-            };
-            return gpioNames[gpio] || null;
-        }
-        
-        // Fonction de vérification Font Awesome
-        async function checkFontAwesomeLoaded() {
-            console.log('[Control] 🔍 Diagnostic Font Awesome démarré...');
-            
-            const testIcon = document.createElement('i');
-            testIcon.className = 'fas fa-check';
-            testIcon.style.cssText = 'position: absolute; left: -9999px; font-family: "Font Awesome 6 Free"; font-weight: 900;';
-            document.body.appendChild(testIcon);
-            
-            const computedFont = window.getComputedStyle(testIcon).fontFamily;
-            const fontDeclared = computedFont.includes('Font Awesome') || computedFont.includes('FontAwesome');
-            console.log('[Control] Test 1 - Font Family:', computedFont, fontDeclared ? '✅' : '❌');
-            
-            const beforeStyle = window.getComputedStyle(testIcon, '::before');
-            const beforeFont = beforeStyle.fontFamily;
-            const beforeContent = beforeStyle.content;
-            const beforeValid = (beforeFont.includes('Font Awesome') || beforeFont.includes('FontAwesome')) && beforeContent !== 'none';
-            console.log('[Control] Test 2 - ::before Font:', beforeFont, '| Content:', beforeContent, beforeValid ? '✅' : '❌');
-            
-            document.body.removeChild(testIcon);
-            
-            let fontLoaded = false;
-            if (document.fonts && document.fonts.check) {
-                try {
-                    fontLoaded = document.fonts.check('900 1em "Font Awesome 6 Free"');
-                    console.log('[Control] Test 3 - WOFF2 chargé:', fontLoaded ? '✅' : '⏳ En cours...');
-                    
-                    if (!fontLoaded) {
-                        await document.fonts.ready;
-                        fontLoaded = document.fonts.check('900 1em "Font Awesome 6 Free"');
-                        console.log('[Control] Test 3 - WOFF2 après attente:', fontLoaded ? '✅' : '❌');
-                    }
-                } catch (e) {
-                    console.warn('[Control] Test 3 - Font Loading API non disponible:', e);
-                }
-            }
-            
-            const allOk = fontDeclared && beforeValid;
-            
-            if (!allOk) {
-                console.error('[Control] ❌ PROBLÈME DÉTECTÉ avec Font Awesome!');
-                
-                const errorDiv = document.createElement('div');
-                errorDiv.id = 'fa-error-notice';
-                errorDiv.style.cssText = 'position: fixed; top: 60px; right: 20px; background: #e74c3c; color: white; padding: 15px; border-radius: 8px; z-index: 10000; max-width: 350px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-size: 0.9em;';
-                
-                let errorMsg = '<strong>⚠️ Icônes Font Awesome</strong><br>';
-                if (!fontDeclared) {
-                    errorMsg += '❌ Police non déclarée<br>';
-                }
-                if (!beforeValid) {
-                    errorMsg += '❌ Pseudo-élément ::before incorrect<br>';
-                }
-                if (!fontLoaded) {
-                    errorMsg += '⏳ Police WOFF2 en chargement...<br>';
-                }
-                errorMsg += '<small>Vérifiez la console (F12) pour détails</small>';
-                
-                errorDiv.innerHTML = errorMsg;
-                document.body.appendChild(errorDiv);
-                
-                setTimeout(() => {
-                    const notice = document.getElementById('fa-error-notice');
-                    if (notice) notice.remove();
-                }, 12000);
-            } else {
-                console.log('[Control] ✅ Font Awesome complètement opérationnel!');
-            }
-            
-            return allOk;
-        }
-
-        // ========================================
-        // MISE À JOUR TEMPS RÉEL DES BOARDS
-        // ========================================
-        
-        /**
-         * Met à jour les données d'une board spécifique
-         */
-        async function updateBoardData(boardNumber) {
-            try {
-                const response = await fetch(`${API_BASE}/board/${boardNumber}/status`);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
-                const data = await response.json();
-                const boardCard = document.querySelector(`[data-board="${boardNumber}"]`);
-                
-                if (boardCard && data) {
-                    // Mettre à jour l'heure de dernière requête
-                    const lastRequestElement = boardCard.querySelector('.last-request-time');
-                    if (lastRequestElement && data.last_request) {
-                        lastRequestElement.textContent = data.last_request;
-                    }
-                    
-                    // Mettre à jour la dernière GPIO modifiée
-                    const lastGpioStatus = boardCard.querySelector('.last-gpio-status');
-                    const noGpioStatus = boardCard.querySelector('.no-gpio-status');
-                    
-                    if (data.last_gpio) {
-                        // Afficher la dernière GPIO
-                        if (noGpioStatus) noGpioStatus.style.display = 'none';
-                        
-                        if (lastGpioStatus) {
-                            lastGpioStatus.style.display = 'block';
-                            
-                            const isActive = data.last_gpio.state == 1;
-                            const bgColor = isActive ? '#d4edda' : '#f8d7da';
-                            const borderColor = isActive ? '#28a745' : '#dc3545';
-                            const iconClass = isActive ? 'fa-check-circle' : 'fa-times-circle';
-                            const textColor = isActive ? '#28a745' : '#dc3545';
-                            
-                            const stateText = isActive ? 'ACTIF' : 'INACTIF';
-                            
-                            lastGpioStatus.innerHTML = `
-                                <p style="margin: 0 0 5px 0; font-size: 0.85em; color: #555; font-weight: bold;">
-                                    <i class="fas fa-history"></i> Dernière GPIO sollicitée :
-                                </p>
-                                <div class="last-gpio-item" style="display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: ${bgColor}; border-radius: 6px; border-left: 4px solid ${borderColor};">
-                                    <span class="gpio-state" style="color: ${textColor};">
-                                        <i class="fas ${iconClass}"></i>
-                                    </span>
-                                    <div style="flex: 1;">
-                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 3px;">
-                                            <span class="gpio-name" style="color: #333; font-weight: bold;">${data.last_gpio.name}</span>
-                                            <span class="gpio-state-badge" style="padding: 2px 6px; border-radius: 3px; font-size: 0.7em; font-weight: bold; background: ${borderColor}; color: white;">
-                                                ${stateText}
-                                            </span>
-                                        </div>
-                                        <div style="font-size: 0.75em; color: #666;">
-                                            <i class="fas fa-microchip"></i> GPIO ${data.last_gpio.gpio} • 
-                                            <i class="fas fa-clock"></i> <span class="last-gpio-time">${data.last_gpio.last_modified_time}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    } else {
-                        // Aucune GPIO récente
-                        if (lastGpioStatus) lastGpioStatus.style.display = 'none';
-                        if (noGpioStatus) noGpioStatus.style.display = 'block';
-                    }
-                    
-                    console.log(`[Board ${boardNumber}] ✅ Données mises à jour`);
-                }
-            } catch (error) {
-                console.error(`[Board ${boardNumber}] ❌ Erreur mise à jour:`, error);
-            }
-        }
-        
-        /**
-         * Met à jour toutes les boards
-         */
-        async function updateAllBoards() {
-            const boardCards = document.querySelectorAll('.board-card');
-            const updatePromises = Array.from(boardCards).map(card => {
-                const boardNumber = card.getAttribute('data-board');
-                return updateBoardData(boardNumber);
-            });
-            
-            await Promise.all(updatePromises);
-        }
-        
-        /**
-         * Démarre la mise à jour périodique des boards
-         */
-        function startBoardUpdates() {
-            // Mise à jour immédiate
-            updateAllBoards();
-            
-            // Mise à jour toutes les 10 secondes
-            boardUpdateInterval = setInterval(updateAllBoards, 10000);
-            
-            console.log('[Boards] ✅ Mise à jour temps réel démarrée (toutes les 10s)');
-        }
-        
-        /**
-         * Arrête la mise à jour périodique des boards
-         */
-        function stopBoardUpdates() {
-            if (boardUpdateInterval) {
-                clearInterval(boardUpdateInterval);
-                boardUpdateInterval = null;
-                console.log('[Boards] ⏹️ Mise à jour temps réel arrêtée');
-            }
-        }
-        
-        // Démarrer la mise à jour temps réel au chargement de la page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Attendre un peu pour que la page soit complètement chargée
-            // TEMPORAIRE: Désactivé en attendant la correction de l'API
-            console.log('[Boards] ⏸️ Mise à jour temps réel temporairement désactivée (API en cours de correction)');
-            // setTimeout(startBoardUpdates, 1000);
-        });
-        
-        // Arrêter la mise à jour quand l'utilisateur quitte la page
-        window.addEventListener('beforeunload', stopBoardUpdates);
-    </script>
-
-    <!-- Scripts -->
-    <script src="https://iot.olution.info/assets/js/jquery.min.js"></script>
-    <script src="https://iot.olution.info/assets/js/jquery.scrollex.min.js"></script>
-    <script src="https://iot.olution.info/assets/js/jquery.scrolly.min.js"></script>
-    <script src="https://iot.olution.info/assets/js/browser.min.js"></script>
-    <script src="https://iot.olution.info/assets/js/breakpoints.min.js"></script>
-    <script src="https://iot.olution.info/assets/js/util.js"></script>
-    <script src="https://iot.olution.info/assets/js/main.js"></script>
-
-    <!-- Module de mise à jour des valeurs affichées -->
-    <script src="/ffp3/assets/js/control-values-updater.js"></script>
-</body>
-</html>
