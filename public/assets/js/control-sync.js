@@ -206,20 +206,29 @@ class ControlSync {
             if (switchElement) {
                 // Mettre à jour l'état du switch sans déclencher l'événement onchange
                 const currentChecked = switchElement.checked;
-                // Pour GPIO 18 (pompe réserve), inverser la logique
-                const shouldBeChecked = change.gpio === 18 ? change.newState === 0 : change.newState === 1;
+                const isInverted = switchElement.dataset.inverted === '1';
+                const shouldBeChecked = isInverted ? change.newState === 0 : change.newState === 1;
                 
                 if (currentChecked !== shouldBeChecked) {
                     // Animation flash pour indiquer le changement
-                    const container = switchElement.closest('div');
+                    const container = switchElement.closest('.action-button-card');
                     if (container) {
                         container.classList.add('state-changed');
                         setTimeout(() => container.classList.remove('state-changed'), 1000);
                     }
-                    
+
                     // Mettre à jour le switch
                     switchElement.checked = shouldBeChecked;
-                    
+                    if (container) {
+                        container.setAttribute('data-state', shouldBeChecked ? '1' : '0');
+                        const statusLabel = container.querySelector('[data-state-label]');
+                        if (statusLabel) {
+                            statusLabel.textContent = shouldBeChecked ? 'Activé' : 'Désactivé';
+                            statusLabel.style.color = shouldBeChecked ? '#27ae60' : '#7f8c8d';
+                            statusLabel.style.fontWeight = shouldBeChecked ? '600' : '400';
+                        }
+                    }
+
                     // Mettre à jour le badge de synchronisation vers "synchronisé par ESP32"
                     if (window.updateSyncBadge) {
                         window.updateSyncBadge(change.gpio, 'esp32', 'ESP32 SYNC');
@@ -237,6 +246,16 @@ class ControlSync {
                     // Même si l'état n'a pas changé, marquer comme synchronisé (confirmation ESP32)
                     if (window.updateSyncBadge) {
                         window.updateSyncBadge(change.gpio, 'synced', 'SYNC');
+                    }
+                    const container = switchElement.closest('.action-button-card');
+                    if (container) {
+                        container.setAttribute('data-state', shouldBeChecked ? '1' : '0');
+                        const statusLabel = container.querySelector('[data-state-label]');
+                        if (statusLabel) {
+                            statusLabel.textContent = shouldBeChecked ? 'Activé' : 'Désactivé';
+                            statusLabel.style.color = shouldBeChecked ? '#27ae60' : '#7f8c8d';
+                            statusLabel.style.fontWeight = shouldBeChecked ? '600' : '400';
+                        }
                     }
                 }
             }
@@ -330,8 +349,8 @@ class ControlSync {
         const switches = document.querySelectorAll('input[data-gpio]');
         switches.forEach(switchEl => {
             const gpio = parseInt(switchEl.dataset.gpio);
-            // Pour GPIO 18 (pompe réserve), inverser la logique
-            const state = gpio === 18 ? (switchEl.checked ? 0 : 1) : (switchEl.checked ? 1 : 0);
+            const isInverted = switchEl.dataset.inverted === '1';
+            const state = isInverted ? (switchEl.checked ? 0 : 1) : (switchEl.checked ? 1 : 0);
             this.lastStates[gpio] = state;
             this.switches.set(gpio, switchEl);
         });

@@ -46,17 +46,12 @@ class ControlValuesUpdater {
      */
     initBoardElements() {
         // Rechercher tous les paragraphes contenant "Board" et "Dernière requête"
-        const boardParagraphs = document.querySelectorAll('p');
+        const boardCards = document.querySelectorAll('.board-card[data-board]');
         
-        boardParagraphs.forEach(p => {
-            const text = p.textContent;
-            const match = text.match(/Board\s+(\d+):\s*Dernière requête le\s+(.+)/);
-            
-            if (match) {
-                const boardId = match[1];
-                this.boardElements.set(boardId, p);
-                this.log(`Found board element for Board ${boardId}`);
-            }
+        boardCards.forEach(card => {
+            const boardId = card.dataset.board;
+            this.boardElements.set(boardId, card);
+            this.log(`Found board element for Board ${boardId}`);
         });
     }
     
@@ -99,16 +94,18 @@ class ControlValuesUpdater {
         if (!this.isInitialized || !boards) return;
         
         boards.forEach(board => {
-            const boardElement = this.boardElements.get(board.board);
+            const boardCard = this.boardElements.get(board.board);
             
-            if (boardElement) {
-                // Mettre à jour le texte
-                boardElement.innerHTML = `<strong>Board ${board.board}:</strong> Dernière requête le ${board.last_request}`;
-                
+            if (boardCard) {
+                const lastRequestEl = boardCard.querySelector('.last-request-time');
+                if (lastRequestEl) {
+                    lastRequestEl.textContent = board.last_request;
+                }
+
                 // Animation flash pour indiquer le changement
-                boardElement.classList.add('value-updated');
+                boardCard.classList.add('value-updated');
                 setTimeout(() => {
-                    boardElement.classList.remove('value-updated');
+                    boardCard.classList.remove('value-updated');
                 }, 500);
                 
                 this.log(`Updated Board ${board.board} status: ${board.last_request}`);

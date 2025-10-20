@@ -1281,7 +1281,7 @@
                             {% set pump_outputs = outputs|filter(o => o.name|lower matches '/pompe aqua/' or o.name|lower matches '/pompe.*r.*serve/') %}
                             {% if pump_outputs|length > 0 %}
                                 <div class="action-buttons-grid">
-                                    {% for output in pump_outputs %}
+                            {% for output in pump_outputs %}
                                         {% set clean_name = output.name|replace({
                                             '(stopp&#233;s si relais activ&#233;)': '',
                                             '(stopp&#233;e si relais activ&#233;)': '',
@@ -1292,7 +1292,9 @@
                                             ' (stoppés si relais activé)': '',
                                             ' (stoppée si relais activé)': ''
                                         })|trim %}
-                                        
+                                        {% set is_inverted = output.gpio == 18 %}
+                                        {% set is_checked = is_inverted ? (output.state == 0) : (output.state == 1) %}
+
                                         {% if clean_name|lower matches '/pompe aqua/' %}
                                             {% set icon = 'fa-water' %}
                                             {% set color = '#2980b9' %}
@@ -1307,7 +1309,7 @@
                                             {% set display_name = clean_name %}
                                         {% endif %}
                                         
-                                        <div class="action-button-card action-button-blue" data-state="{{ output.state }}" data-gpio="{{ output.gpio }}">
+                                            <div class="action-button-card action-button-blue" data-state="{{ is_checked ? '1' : '0' }}" data-gpio="{{ output.gpio }}" data-inverted="{{ is_inverted ? '1' : '0' }}">
                                             <div class="action-button-content">
                                                 <i class="fas {{ icon }} action-icon-simple" style="color: {{ color }};"></i>
                                                 <div class="action-button-info">
@@ -1317,10 +1319,7 @@
                                                             <i class="fas fa-sync-alt"></i> SYNC
                                                         </span>
                                                     </div>
-                                                    <div class="action-button-status">
-                                                        <span class="status-text">
-                                                            {{ output.state == 1 ? 'Activé' : 'Désactivé' }}
-                                                        </span>
+                                                <div class="action-button-status" data-state-label>{{ is_checked ? 'Activé' : 'Désactivé' }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1330,7 +1329,8 @@
                                                        id="{{ output.id }}" 
                                                        data-id="{{ output.id }}"
                                                        data-gpio="{{ output.gpio }}"
-                                                       {{ output.state == 1 ? 'checked' : '' }}>
+                                                       data-inverted="{{ is_inverted ? '1' : '0' }}"
+                                                       {{ is_checked ? 'checked' : '' }}>
                                                 <span class="modern-switch-slider">
                                                     <span class="modern-switch-button"></span>
                                                 </span>
@@ -1374,14 +1374,12 @@
                                         {% set icon = 'fa-fish' %}
                                         {% set color = '#e91e63' %}
                                         
-                                        <div class="action-button-card action-button-pink" data-state="{{ output.state }}">
+                                            <div class="action-button-card action-button-pink" data-state="{{ output.state }}" data-inverted="0">
                                             <div class="action-button-content">
                                                 <i class="fas {{ icon }} action-icon-simple" style="color: {{ color }};"></i>
                                                 <div class="action-button-info">
                                                     <div class="action-button-label">{{ clean_name }}</div>
-                                                    <div class="action-button-status">
-                                                        <span class="status-text">{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
-                                                    </div>
+                                                    <div class="action-button-status" data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</div>
                                                 </div>
                                             </div>
                                             <label class="modern-switch">
@@ -1472,14 +1470,12 @@
                                             {% set display_name = clean_name %}
                                         {% endif %}
                                         
-                                        <div class="action-button-card action-button-red" data-state="{{ output.state }}">
+                                            <div class="action-button-card action-button-red" data-state="{{ output.state }}" data-inverted="0">
                                             <div class="action-button-content">
                                                 <i class="fas {{ icon }} action-icon-simple" style="color: {{ color }};"></i>
                                                 <div class="action-button-info">
                                                     <div class="action-button-label">{{ display_name }}</div>
-                                                    <div class="action-button-status">
-                                                        <span class="status-text">{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
-                                                    </div>
+                                                    <div class="action-button-status" data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</div>
                                                 </div>
                                             </div>
                                             <label class="modern-switch">
@@ -1516,14 +1512,12 @@
                             {% if notification_outputs|length > 0 %}
                                 <div class="action-buttons-grid">
                                     {% for output in notification_outputs %}
-                                        <div class="action-button-card action-button-purple" data-state="{{ output.state }}">
+                                        <div class="action-button-card action-button-purple" data-state="{{ output.state }}" data-inverted="0">
                                             <div class="action-button-content">
                                                 <i class="fas fa-bell action-icon-simple" style="color: #9b59b6;"></i>
                                                 <div class="action-button-info">
                                                     <div class="action-button-label">Notifications</div>
-                                                    <div class="action-button-status">
-                                                        <span class="status-text">{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
-                                                    </div>
+                                                    <div class="action-button-status" data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</div>
                                                 </div>
                                             </div>
                                             <label class="modern-switch">
@@ -1574,14 +1568,12 @@
                                             {% set display_name = output.name %}
                                         {% endif %}
                                         
-                                        <div class="action-button-card action-button-red" data-state="{{ output.state }}">
+                                        <div class="action-button-card action-button-red" data-state="{{ output.state }}" data-inverted="0">
                                             <div class="action-button-content">
                                                 <i class="fas {{ icon }} action-icon-simple" style="color: {{ color }};"></i>
                                                 <div class="action-button-info">
                                                     <div class="action-button-label">{{ display_name }}</div>
-                                                    <div class="action-button-status">
-                                                        <span class="status-text">{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
-                                                    </div>
+                                                    <div class="action-button-status" data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</div>
                                                 </div>
                                             </div>
                                             <label class="modern-switch">
@@ -1799,11 +1791,12 @@
         function updateOutput(element) {
             var id = element.getAttribute('data-id');
             var gpio = element.getAttribute('data-gpio');
-            var state = element.checked ? 1 : 0;
+            var isInverted = element.getAttribute('data-inverted') === '1';
+            var state = isInverted ? (element.checked ? 0 : 1) : (element.checked ? 1 : 0);
             var url = API_BASE + "/toggle?id=" + id + "&state=" + state;
             
             var card = element.closest('.action-button-card');
-            var statusText = card ? card.querySelector('.status-text') : null;
+            var statusLabel = card ? card.querySelector('[data-state-label]') : null;
             
             // Récupérer le nom de l'élément pour les logs
             var elementName = '';
@@ -1830,13 +1823,15 @@
                 if (this.readyState === XMLHttpRequest.DONE) {
                     if (this.status === 200) {
                         if (card) {
-                            card.setAttribute('data-state', state);
+                            card.setAttribute('data-state', element.checked ? '1' : '0');
+                            card.setAttribute('data-inverted-state', isInverted ? '1' : '0');
                             card.style.transition = 'all 0.3s ease';
                         }
-                        if (statusText) {
-                            statusText.textContent = state === 1 ? 'Activé' : 'Désactivé';
-                            statusText.style.color = state === 1 ? '#27ae60' : '#7f8c8d';
-                            statusText.style.fontWeight = state === 1 ? '600' : '400';
+                        if (statusLabel) {
+                            var isActive = element.checked;
+                            statusLabel.textContent = isActive ? 'Activé' : 'Désactivé';
+                            statusLabel.style.color = isActive ? '#27ae60' : '#7f8c8d';
+                            statusLabel.style.fontWeight = isActive ? '600' : '400';
                         }
                         
                         // Log du succès
