@@ -7,6 +7,17 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.8.5] - 2025-10-20
+
+### 🐛 Correction - API contrôle et nettoyage Aquaponie
+- **Sortie test remplacée** : `OutputController::getBoardStatus()` retourne désormais les données réelles (BoardRepository + OutputRepository) au lieu d'un stub
+- **Service dédié** : `OutputService::getBoardStatus()` expose le statut complet d'une board pour les contrôleurs et scripts front
+- **Harmonisation JS** : Calcul de la base API dans `control.twig` respectant les routes `/outputs` / `/outputs-test`
+- **Nettoyage Aquaponie** : Suppression des appels PDO directs dans `AquaponieController` et retrait des variables legacy (`timepastbegin`, `first_reading_*`) du template
+- **Timezone UI** : Libellés de formulaire simplifiés (plus de rappel casablanca/Paris) et indicateurs superflus retirés
+
+---
+
 ## [4.8.4] - 2025-10-20
 
 ### 🐛 Correction - Traitement GPIO directs

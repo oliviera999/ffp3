@@ -128,6 +128,28 @@ class OutputService
     }
 
     /**
+     * Retourne le statut complet d'une board (dernière requête + dernière GPIO modifiée)
+     *
+     * @param string $board Nom de la board
+     * @return array<string, mixed>|null
+     */
+    public function getBoardStatus(string $board): ?array
+    {
+        $boardInfo = $this->boardRepository->findByName($board);
+        if ($boardInfo === null) {
+            return null;
+        }
+
+        $lastGpio = $this->outputRepository->findLastModifiedGpio($board);
+
+        return [
+            'board' => $boardInfo['board'] ?? $board,
+            'last_request' => $boardInfo['last_request'] ?? null,
+            'last_gpio' => $lastGpio,
+        ];
+    }
+
+    /**
      * Met à jour l'état d'un output par son ID
      * 
      * @param int $id ID de l'output

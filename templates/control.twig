@@ -1762,7 +1762,7 @@
 
     <!-- JavaScript harmonisé -->
     <script>
-        const API_BASE = '/ffp3/api/outputs{{ environment == "test" ? "-test" : "" }}';
+        const API_BASE = '{{ environment == "test" ? "/ffp3/api/outputs-test" : "/ffp3/api/outputs" }}';
         let controlSync = null;
         let boardUpdateInterval = null;
         

@@ -480,11 +480,6 @@
                                 <span class="quick-stat-value">{{ duration_str|split(',')[0]|trim }}</span>
                                 <span class="quick-stat-label">Période</span>
                             </div>
-                            <div class="quick-stat">
-                                <i class="fas fa-calendar quick-stat-icon"></i>
-                                <span class="quick-stat-value">{{ timepastbegin }}</span>
-                                <span class="quick-stat-label">Jours actifs</span>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -1197,10 +1192,6 @@
                                     <span class="period-stat-value" id="live-readings-count">0</span>
                                     <span class="period-stat-label">Lectures live reçues</span>
                                 </div>
-                                <div class="period-stat-item">
-                                    <span class="period-stat-value" id="period-uptime">{{ timepastbegin }}j</span>
-                                    <span class="period-stat-label">Fonctionnement total</span>
-                                </div>
                             </div>
                         </div>
 
@@ -1241,9 +1232,6 @@
                                                name="start_datetime" 
                                                value="{{ start_date|date('Y-m-d\\TH:i') }}" 
                                                required>
-                                        <small style="color: #7f8c8d; font-size: 0.85em; margin-top: 4px;">
-                                            <i class="fas fa-clock"></i> Heure de Casablanca (serveur: Paris +1h en hiver, égale en été)
-                                        </small>
                                     </div>
 
                                     <div class="datetime-field">
@@ -1255,9 +1243,6 @@
                                                name="end_datetime" 
                                                value="{{ end_date|date('Y-m-d\\TH:i') }}" 
                                                required>
-                                        <small style="color: #7f8c8d; font-size: 0.85em; margin-top: 4px;">
-                                            <i class="fas fa-clock"></i> Heure de Casablanca (serveur: Paris +1h en hiver, égale en été)
-                                        </small>
                                     </div>
                                 </div>
 
@@ -1275,11 +1260,6 @@
                         </div>
 
                         <!-- Informations système -->
-                        <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f0f0; color: #7f8c8d; font-size: 0.9em;">
-                            <i class="fas fa-info-circle"></i>
-                            Total disponible : {{ first_reading_begin }} enregistrements | 
-                            Premier enregistrement : {{ first_reading_time_begin }}
-                        </div>
                     </div>
 
                     <!-- Panneau d'état du système (temps réel) -->

@@ -235,42 +235,24 @@ class OutputController
         $routeParams = $request->getAttribute('route')->getArguments();
         $boardNumber = $routeParams['board'] ?? null;
         
-        error_log("OutputController::getBoardStatus - Début, board: " . $boardNumber);
-        
         if (!$boardNumber) {
-            error_log("OutputController::getBoardStatus - ERREUR: Board number manquant");
             $response->getBody()->write(json_encode(['error' => 'Board number required']));
             return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
         }
         
         try {
-            // Version simplifiée - retourner des données de test d'abord
-            error_log("OutputController::getBoardStatus - Mode test simplifié");
-            
-            $data = [
-                'board' => $boardNumber,
-                'last_request' => date('d/m/Y H:i:s', time() - 3600),
-                'last_gpio' => [
-                    'id' => 1,
-                    'board' => $boardNumber,
-                    'gpio' => 16,
-                    'name' => 'Pompe aquarium',
-                    'state' => 1,
-                    'last_modified_time' => date('d/m/Y H:i:s', time() - 1800)
-                ]
-            ];
-            
-            error_log("OutputController::getBoardStatus - Réponse test préparée: " . json_encode($data));
-            
-            $response->getBody()->write(json_encode($data));
+            $status = $this->outputService->getBoardStatus($boardNumber);
+
+            if ($status === null) {
+                $response->getBody()->write(json_encode(['error' => 'Board not found']));
+                return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+            }
+
+            $response->getBody()->write(json_encode($status));
             return $response->withHeader('Content-Type', 'application/json');
-            
+
         } catch (\Throwable $e) {
-            error_log("OutputController::getBoardStatus - ERREUR: " . $e->getMessage());
-            error_log("OutputController::getBoardStatus - Fichier: " . $e->getFile() . " ligne " . $e->getLine());
-            error_log("OutputController::getBoardStatus - Trace: " . $e->getTraceAsString());
-            
-            $response->getBody()->write(json_encode(['error' => 'Internal server error: ' . $e->getMessage()]));
+            $response->getBody()->write(json_encode(['error' => 'Internal server error']));
             return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
         }
     }

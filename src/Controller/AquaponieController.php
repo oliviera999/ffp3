@@ -83,16 +83,6 @@ class AquaponieController
         $duration = $this->calculateDuration($startDate, $endDate);
 
         // Métriques supplémentaires legacy
-        $pdo = Database::getConnection();
-        $table = TableConfig::getDataTable();
-        
-        $firstReadingRow = $pdo->query("SELECT MIN(reading_time) AS min_time FROM {$table}")->fetch(\PDO::FETCH_ASSOC);
-        $first_reading_time_begin = $firstReadingRow['min_time'] ?? $defaultStartDate;
-        $timepastbegin = round((strtotime($lastReadingExtracted['time']) - strtotime($first_reading_time_begin)) / 86400, 1);
-
-        $rowMaxId = $pdo->query("SELECT MAX(id) AS max_amount2 FROM {$table}")->fetch(\PDO::FETCH_ASSOC);
-        $first_reading_begin = $rowMaxId['max_amount2'] ?? 0;
-
         // Export CSV si demandé
         if (isset($_POST['export_csv'])) {
             $this->exportCsv($startDate, $endDate);
@@ -121,9 +111,6 @@ class AquaponieController
             'reading_time' => $reading_time,
             'measure_count' => $measure_count,
             'duration_str' => $duration,
-            'first_reading_begin' => $first_reading_begin,
-            'timepastbegin' => $timepastbegin,
-            'first_reading_time_begin' => $first_reading_time_begin,
             'version' => Version::getWithPrefix(),
             'firmware_version' => $firmwareVersion,
             'environment' => $environment,
