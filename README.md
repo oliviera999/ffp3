@@ -1,170 +1,204 @@
 # FFP3 Datas – Plate-forme Aquaponie & IoT
 
-Une petite application PHP 8 dédiée au suivi d’un système d’aquaponie : collecte des mesures via ESP32, supervision depuis un tableau de bord et tâches CRON pour l’entretien automatique.
+Application PHP 8.1+ pour la supervision complète d'un système d'aquaponie piloté par ESP32 : collecte des mesures, visualisation en temps réel, contrôle des actionneurs et automatisations planifiées.
 
-> Framework : **Slim 4** – Rendu : **Twig** – Logs : **Monolog** – Tests : **PHPUnit**
+> Framework : **Slim 4** · Templates : **Twig** · Logs : **Monolog** · DI : **PHP-DI** · Tests : **PHPUnit**
 
 ---
 
 ## Sommaire
 
-1. [Fonctionnalités](#fonctionnalités)  
-2. [Structure du projet](#structure-du-projet)  
+1. [Fonctionnalités principales](#fonctionnalités-principales)  
+2. [Architecture & dossiers](#architecture--dossiers)  
 3. [Installation rapide](#installation-rapide)  
 4. [Configuration `.env`](#configuration-env)  
-5. [Lancement](#lancement)  
-6. [Tâches CRON](#tâches-cron)  
-7. [Tests & Qualité](#tests--qualité)  
-8. [Roadmap & Idées](#roadmap--idées)  
-9. [Licence](#licence)
+5. [Gestion des environnements PROD/TEST](#gestion-des-environnements-prodtest)  
+6. [Lancement & scripts utiles](#lancement--scripts-utiles)  
+7. [Tâches CRON](#tâches-cron)  
+8. [Tests & qualité](#tests--qualité)  
+9. [Documentation associée](#documentation-associée)  
+10. [Support & maintenance](#support--maintenance)
 
 ---
 
-## Fonctionnalités
+## Fonctionnalités principales
 
-* **API POST sécurisée** : Clé API + signature HMAC-SHA256 pour enregistrer les relevés capteurs
-* **Tableau de bord interactif** : Highcharts / Twig –– filtrage par période, export CSV
-* **Supervision avancée** : Détection niveau d'eau, panne marée, système offline
-* **Injection de dépendances** : PHP-DI v7 pour une architecture modulaire et testable
-* **Services métier** :
-  - `ChartDataService` : Préparation données Highcharts
-  - `StatisticsAggregatorService` : Agrégation stats multi-capteurs
-  - `SensorStatisticsService` : Calculs min/max/avg/stddev
-  - `PumpService` : Contrôle GPIO des pompes
-  - `NotificationService` : Alertes e-mail
-  - `TideAnalysisService` : Analyse cycles marée
-* **Middleware Slim** : Gestion erreurs, environnements PROD/TEST
-* **CRONs PHP** : `CleanDataCommand`, `ProcessTasksCommand`, `RestartPumpCommand` verrouillés par *flock*
-* **Tests unitaires** : PHPUnit avec mocks et couverture >50%
+- **Ingestion sécurisée des données capteurs** (`POST /post-data*`) avec double protection : clé API legacy et signature HMAC-SHA256.
+- **Dashboard interactif** (Highcharts) : filtres temporels, exports CSV, courbes personnalisables.
+- **Surveillance aquaponie** : statistiques eau/aquarium/potager, alerte niveau bas, marée et analyse de tendance.
+- **Contrôle des GPIO** via interface web (`/control*`) et API temps réel (synchronisation ESP32 ↔ serveur).
+- **Automatisations planifiées** : commandes Slim (`CleanDataCommand`, `ProcessTasksCommand`, etc.) protégées par verrou `flock`.
+- **Logging centralisé** : `LogService` (Monolog) configurable via `.env`.
+- **Stack prête pour la production** : configuration par environnement, cache Twig, services injectés par container.
 
-## Structure du projet
+---
+
+## Architecture & dossiers
 
 ```
-├── public/              # Front-controller Slim
-│   └── index.php
+├── public/              # Front controller Slim (index.php, assets exposés)
 ├── src/
-│   ├── Config/          # Chargement .env, connexion PDO
-│   ├── Controller/      # Endpoints HTTP (Slim callbacks)
-│   ├── Domain/          # DTO métier
-│   ├── Repository/      # Accès BD (PDO)
-│   ├── Service/         # Log, Statistiques, Pompes, Notifications…
-│   └── Command/         # Jobs CRON exécutables via `php`
-├── templates/           # Vues Twig (Bootstrap 5)
-├── tests/               # PHPUnit
-├── .env.dist            # Exemple de configuration
-└── composer.json
+│   ├── Config/          # Env, PDO, TableConfig, dépendances container
+│   ├── Controller/      # Routes HTTP (Slim)
+│   ├── Domain/          # DTO & objets métiers
+│   ├── Repository/      # Accès MySQL (PDO + requêtes préparées)
+│   ├── Service/         # Logique métier (stats, pompes, notifications…)
+│   └── Command/         # Jobs CLI/CRON (php bin/*)
+├── templates/           # Vues Twig (Bootstrap 5 + Highcharts)
+├── tests/               # Tests unitaires PHPUnit
+├── docs/                # Documentation détaillée & archives
+├── VERSION              # Numéro de version (affiché dans l'UI)
+└── CHANGELOG.md         # Historique des évolutions
 ```
+
+Voir `docs/README.md` pour l'index complet de la documentation.
+
+---
 
 ## Installation rapide
 
-### Pré-requis
-- PHP ≥ 8.1 avec extensions : PDO, PDO_MySQL, JSON, mbstring
-- Composer 2.x
-- MySQL / MariaDB ≥ 5.7
+### Prérequis
 
-### Installation
+- PHP ≥ 8.1 avec extensions : `pdo_mysql`, `mbstring`, `json`, `openssl`
+- Composer 2.x
+- MySQL/MariaDB ≥ 5.7
+- Accès shell (bash ou PowerShell) sur le serveur
 
-```bash
-# 1. Clonage
-$ git clone https://github.com/<org>/ffp3datas.git
-$ cd ffp3datas
-
-# 2. Installation des dépendances
-$ composer install --no-dev   # Production
-$ composer install            # Développement (avec PHPUnit)
-
-# 3. Configuration
-$ cp .env.dist .env
-$ nano .env        # Configurer : DB, API keys, timezone, seuils...
-
-# 4. Créer les dossiers de cache
-$ mkdir -p var/cache/twig var/cache/di
-
-# 5. Base de données
-# Créez la base et les tables (exemple SQL dans database/ffp3_schema.sql)
-```
-
-### Vérification
+### Étapes
 
 ```bash
-# Tester la configuration
-$ php -r "require 'vendor/autoload.php'; \App\Config\Env::load(); echo 'OK';"
+# 1. Cloner le dépôt
+git clone https://github.com/<organisation>/ffp3datas.git
+cd ffp3datas
 
-# Lancer les tests
-$ ./vendor/bin/phpunit
+# 2. Installer les dépendances
+composer install            # En développement (avec dev-tools)
+composer install --no-dev   # En production
+
+# 3. Configurer l'environnement
+cp .env.dist .env
+# Éditer .env (DB, API, timezone, GPIO, email…)
+
+# 4. Créer les répertoires de cache (si nécessaires)
+mkdir -p var/cache/twig var/cache/di
+
+# 5. Préparer la base de données
+# Importer les tables (cf. migrations/ et CREATE_TEST_TABLES.sql)
 ```
+
+### Vérifications rapides
+
+```bash
+# Charger l'environnement et vérifier la configuration
+echo "<?php require 'vendor/autoload.php'; App\\Config\\Env::load(); echo 'OK';" | php
+
+# Lancer la suite de tests (optionnel)
+./vendor/bin/phpunit
+```
+
+---
 
 ## Configuration `.env`
 
-⚠️ **IMPORTANT** : Dans ce projet, le fichier `.env` est **versionné dans Git** (contrairement à la pratique habituelle). Cela permet d'assurer une configuration cohérente sur tous les déploiements. Assurez-vous que les informations sensibles sont protégées par d'autres moyens si nécessaire.
+⚠️ Contrairement aux pratiques usuelles, le fichier `.env` **est versionné**. Mettez à jour les secrets sensibles si nécessaire avant chaque déploiement.
 
-| Variable | Rôle |
-|----------|------|
-| `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` | Connexion MySQL |
-| `API_KEY` | Clé API legacy (ESP32) |
-| `API_SIG_SECRET` | Secret HMAC SHA-256 |
-| `SIG_VALID_WINDOW` | Fenêtre en secondes (déf. 300) |
-| `APP_TIMEZONE` | Fuseau horaire de l'application (déf. `Europe/Paris`) |
-| `GPIO_POMPE_AQUA`, `GPIO_POMPE_TANK`, `GPIO_RESET_MODE` | # GPIO (int) |
-| `AQUA_LOW_LEVEL_THRESHOLD` | Seuil niveau eau (cm/%) |
-| `TIDE_STDDEV_THRESHOLD` | Seuil écart-type marées |
-| `LOG_FILE_PATH` | Fichier de log Monolog (déf. `cronlog.txt`) |
-| `NOTIF_EMAIL_RECIPIENT` | Destinataire alertes |
-| `MAIL_FROM` | Adresse expéditeur |
+| Variable | Description |
+|----------|-------------|
+| `ENV` | Environnement par défaut (`prod` / `test`) pour `TableConfig` |
+| `APP_TIMEZONE` | Fuseau horaire global (défaut : `Europe/Paris`) |
+| `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` | Connexion MySQL/MariaDB |
+| `API_KEY` | Clé API legacy utilisée par certains ESP32 |
+| `API_SIG_SECRET`, `SIG_VALID_WINDOW` | Signature HMAC-SHA256 + fenêtre de validité |
+| `LOG_FILE_PATH` | Chemin du fichier de logs Monolog (ex. `cronlog.txt`) |
+| `GPIO_*` | Mapping des broches pour `PumpService` |
+| `MAIL_FROM`, `NOTIF_EMAIL_RECIPIENT` | Configuration NotificationService |
 
-## Lancement
+> Le fuseau horaire est appliqué automatiquement par `Env::load()`. **Ne jamais** appeler `date_default_timezone_set()` ailleurs dans le code.
+
+---
+
+## Gestion des environnements PROD/TEST
+
+- Les deux environnements partagent le **même code** mais pas les **mêmes tables**.
+- `TableConfig::getEnvironment()` et `TableConfig::getDataTable()` doivent être utilisés partout (pas de noms de table en dur).
+- Routes dédiées : `/aquaponie` vs `/aquaponie-test`, `/post-data` vs `/post-data-test`, etc.
+- `ENV` dans `.env` indique l'environnement par défaut, surchargé si l'URL contient `-test`.
+- Guides détaillés : `ENVIRONNEMENT_TEST.md` et `ESP32_GUIDE.md`.
+
+Résumé des tables :
+
+| Environnement | Données | Outputs |
+|---------------|---------|---------|
+| PROD          | `ffp3Data` | `ffp3Outputs` |
+| TEST          | `ffp3Data2` | `ffp3Outputs2` |
+
+---
+
+## Lancement & scripts utiles
 
 ```bash
 # Dev : serveur PHP intégré
-$ php -S localhost:8080 -t public
+php -S localhost:8080 -t public
 
-# Production : vhost Apache/Nginx pointant vers public/
+# Déploiement automatisé (exemples)
+./deploy-and-test.sh          # Bash
+pwsh ./deploy-and-test.ps1    # PowerShell
 ```
 
-Routes principales :
+Script `deploy-and-test.*` : vérifie les pages clés, API temps réel, endpoints ESP32 et routes TEST.
 
-* `GET  /` ou `/dashboard` – Tableau de bord général
-* `GET|POST /aquaponie` – Page Aquaponie + export CSV
-* `POST /post-data` – Point d’ingestion capteurs (voir API ci-dessous)
-
-### API POST `/post-data`
-
-Corps `application/x-www-form-urlencoded` attend les champs décrits dans `SensorData`.  
-Authentification : `api_key` **et/ou** `timestamp + signature` (HMAC-SHA256).  
-Réponse : *text/plain* (200 OK ou 40x/500).
+---
 
 ## Tâches CRON
 
 ```
 */5 * * * * php /var/www/ffp3datas/bin/clean-data.php
-0 * * * *   php /var/www/ffp3datas/bin/process-tasks.php
+0  * * * * php /var/www/ffp3datas/bin/process-tasks.php
 ```
 
-*Les scripts wrapper dans `bin/` appellent respectivement `CleanDataCommand` et `ProcessTasksCommand`.*
-Chaque commande écrit son PID dans `/tmp/*.lock` afin d’éviter un chevauchement.
+- Les commandes Slim sont verrouillées (`flock`) pour éviter les chevauchements.
+- Les logs d'exécution sont centralisés dans `cronlog.txt` (configurable via `.env`).
+- Scripts d'assistance dans `bin/` et `tools/` pour diagnostics (HTTP 500, synchronisation GPIO, etc.).
 
-## Tests & Qualité
+---
+
+## Tests & qualité
 
 ```bash
-# Exécution des tests
-$ composer require --dev phpunit/phpunit
-$ ./vendor/bin/phpunit
+# Exécuter les tests unitaires
+./vendor/bin/phpunit
 
-# Analyse statique (optionnel)
-$ composer require --dev phpstan/phpstan
-$ ./vendor/bin/phpstan analyse src
+# (Optionnel) Analyse statique
+./vendor/bin/phpstan analyse src
 ```
 
-CI : un fichier `ci.yml` GitHub Actions est recommandé pour lancer PHPUnit + PHPStan automatiquement.
+- Les tests visent la logique métier (services, repositories, sécurité).
+- Pensez à regénérer les données de test et à paramétrer la base TEST avant d'exécuter les suites.
 
-## Roadmap & Idées
+---
 
-* Remplacer `mail()` par **Symfony Mailer** ou **PHPMailer** + SMTP.
-* Ajouter **PHPStan niveau 6**, **Psalm** et un *pre-commit hook*.
-* Conteneur DI (Slim-Psr11, PHP-DI ou Symfony Container) pour éliminer les `new` manuels.
-* Spécification **OpenAPI/Swagger** de l’API `/post-data` + client Postman.
-* Dockerfile + docker-compose avec MariaDB & MailHog pour faciliter la démo.
+## Documentation associée
 
-## Licence
+| Fichier | Contenu |
+|---------|---------|
+| `CHANGELOG.md` | Historique complet des versions (suivre SEMVER) |
+| `docs/README.md` | Index de toute la documentation (guides, archives, diagnostics) |
+| `ENVIRONNEMENT_TEST.md` | Procédures PROD/TEST, mapping des routes |
+| `ESP32_GUIDE.md` | Intégration complète ESP32, exemples de code |
+| `TIMEZONE_MANAGEMENT.md` | Notes sur l'unification des fuseaux horaires |
+| `TODO_AMELIORATIONS_CONTROL.md` | Suivi des évolutions de l'UI de contrôle |
 
-MIT – © 2024 O-Lution – utilisation libre sous réserve de conserver ce fichier de licence.
+> Après **chaque modification** : mettre à jour `VERSION`, consigner dans `CHANGELOG.md`, vérifier l'affichage de la version dans l'interface.
+
+---
+
+## Support & maintenance
+
+- **Logs** : consulter `cronlog.txt`, `error_log`, ou les diagnostics dans `docs/`.
+- **Diagnostic rapide** : scripts `bin/` et `tools/` (ex. `tools/diagnostic_500_errors.php`).
+- **Questions** : se référer aux rapports d'audit (`docs/archive/diagnostics`) ou contacter l'équipe O-Lution.
+- **Licence** : MIT – © 2024-2025 O-Lution. Utilisation libre avec attribution.
+
+---
+
+**Version actuelle** : voir `VERSION`

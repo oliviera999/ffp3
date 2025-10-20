@@ -1,7 +1,7 @@
 # 📚 FFP3 Aquaponie Documentation Index
 
-**Project Version**: 4.4.0  
-**Last Updated**: October 11, 2025
+**Project Version**: 4.8.7  
+**Last Updated**: October 20, 2025
 
 ---
 
@@ -11,9 +11,9 @@
 
 | File | Description | Status |
 |------|-------------|--------|
-| **README.md** | Main project documentation and architecture | ✅ Active |
-| **CHANGELOG.md** | Complete version history and changes | ✅ Active |
-| **VERSION** | Current version number | ✅ Active |
+| **README.md** | Main project documentation and architecture | ✅ Updated (4.8.7) |
+| **CHANGELOG.md** | Complete version history and changes | ✅ Updated (4.8.7) |
+| **VERSION** | Current version number | ✅ Updated (4.8.7) |
 | **ESP32_GUIDE.md** | Complete ESP32 integration guide (consolidated) | ✅ Active |
 | **ENVIRONNEMENT_TEST.md** | PROD/TEST environment configuration guide | ✅ Active |
 | **LEGACY_README.md** | Legacy files explanation and status | ✅ Active |

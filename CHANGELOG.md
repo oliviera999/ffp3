@@ -7,17 +7,27 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.8.7] - 2025-10-20
+
+### 📚 Documentation majeure
+- Refonte du `README.md` principal : structure clarifiée (installation, gestion PROD/TEST, scripts de déploiement, support) et rappel du workflow versionnage.
+- Mise à jour de `docs/README.md` : version courante 4.8.7, date de révision et renvois vers les guides actifs.
+- Harmonisation des renvois vers `ENVIRONNEMENT_TEST.md`, `ESP32_GUIDE.md`, `deploy-and-test.*` et les archives documentaires.
+- Ajout d'un rappel explicite "Modification → VERSION → CHANGELOG → Tests" dans la documentation principale.
+
+---
+
 ## [4.8.6] - 2025-10-20
 
 ### 🚿 Nettoyage des endpoints legacy
 - Suppression des scripts `public/*.php` historiques au profit des routes Slim (`post-data`, diagnostics, tests).
-- `public/index.php` n’expose plus la page `debug-slim` ni les alias procéduraux.
+- `public/index.php` n'expose plus la page `debug-slim` ni les alias procéduraux.
 
 ### ⚙️ Refactor contrôleurs (Aquaponie / Dashboard / Output / API temps réel)
 - `TemplateRenderer` devient une instance injectée, configurée via le container (cache activé uniquement en prod).
-- `AquaponieController` et `OutputController` n’utilisent plus `error_log` ni le `TemplateRenderer` statique; logs gérés via `LogService`.
-- `DashboardController` s’appuie exclusivement sur Twig (suppression du mode legacy). 
-- `RealtimeApiController` simplifié : pas de logs `error_log`, gestion d’erreur centralisée.
+- `AquaponieController` et `OutputController` n'utilisent plus `error_log` ni le `TemplateRenderer` statique; logs gérés via `LogService`.
+- `DashboardController` s'appuie exclusivement sur Twig (suppression du mode legacy). 
+- `RealtimeApiController` simplifié : pas de logs `error_log`, gestion d'erreur centralisée.
 
 ### 🧱 Divers
 - Renommage et injection des dépendances nécessaires dans le container (ajout de `LogService` / `TemplateRenderer`).
