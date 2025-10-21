@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.3] - 2025-10-21
+
+### ⚡ Contrôle des actionneurs
+- Nouveau module `control-actions.js` (fetch POST `/ffp3/api/outputs/toggle`, gestion file d’attente, feedback visuel).
+- `updateOutput` exposé globalement pour conserver les attributs `onchange` existants.
+- Mise à jour de `control.twig` pour charger le script.
+
+---
+
 ## [4.9.2] - 2025-10-21
 
 ### 🔧 Realtime Logger
