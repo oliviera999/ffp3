@@ -71,6 +71,18 @@ class OutputController
      */
     public function toggleOutput(Request $request, Response $response): Response
     {
+        \App\Config\TableConfig::setEnvironment('prod');
+        return $this->handleToggle($request, $response);
+    }
+
+    public function toggleOutputTest(Request $request, Response $response): Response
+    {
+        \App\Config\TableConfig::setEnvironment('test');
+        return $this->handleToggle($request, $response);
+    }
+
+    private function handleToggle(Request $request, Response $response): Response
+    {
         $params = [];
 
         if ($request->getMethod() === 'POST') {
@@ -111,7 +123,8 @@ class OutputController
                 ->withHeader('Content-Type', 'application/json');
         }
 
-        $success = $this->outputService->updateStateById($id, $state, 'web');
+        $isTest = \App\Config\TableConfig::getEnvironment() === 'test';
+        $success = $this->outputService->updateStateById($id, $state, 'web', $isTest);
 
         if ($success) {
             $payload = json_encode([

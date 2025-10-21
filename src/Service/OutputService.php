@@ -157,14 +157,14 @@ class OutputService
      * @param string $modifiedBy Source de la modification ('web', 'esp32', etc.)
      * @return bool Succès de l'opération
      */
-    public function updateStateById(int $id, int $state, string $modifiedBy = 'web'): bool
+    public function updateStateById(int $id, int $state, string $modifiedBy = 'web', bool $isTest = false): bool
     {
         // Validation de l'état
         if ($state !== 0 && $state !== 1) {
             return false;
         }
 
-        $table = \App\Config\TableConfig::getOutputsTable();
+        $table = \App\Config\TableConfig::getOutputsTableFor($isTest ? 'test' : 'prod');
         $pdo = \App\Config\Database::getConnection();
         
         // Marquer la modification avec la source spécifiée

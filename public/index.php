@@ -81,6 +81,7 @@ $app->group('', function ($group) {
     // Interface de contrôle PROD
     $group->get('/control', [OutputController::class, 'showInterface']);
     $group->get('/api/outputs/toggle', [OutputController::class, 'toggleOutput']);
+    $group->get('/api/outputs/toggle-test', [OutputController::class, 'toggleOutputTest']);
     $group->get('/api/outputs/state', [OutputController::class, 'getOutputsState']);
     $group->post('/api/outputs/parameters', [OutputController::class, 'updateParameters']);
     $group->get('/api/outputs/board/{board}/status', [OutputController::class, 'getBoardStatus']);
@@ -139,7 +140,7 @@ $app->group('', function ($group) {
     
     // Interface de contrôle TEST
     $group->get('/control-test', [OutputController::class, 'showInterface']);
-    $group->get('/api/outputs-test/toggle', [OutputController::class, 'toggleOutput']);
+    $group->get('/api/outputs-test/toggle', [OutputController::class, 'toggleOutputTest']);
     $group->get('/api/outputs-test/state', [OutputController::class, 'getOutputsState']);
     $group->post('/api/outputs-test/parameters', [OutputController::class, 'updateParameters']);
     $group->get('/api/outputs-test/board/{board}/status', [OutputController::class, 'getBoardStatus']);

@@ -58,6 +58,11 @@ class TableConfig
         return self::isTest() ? 'ffp3Outputs2' : 'ffp3Outputs';
     }
 
+    public static function getOutputsTableFor(string $environment): string
+    {
+        return $environment === 'test' ? 'ffp3Outputs2' : 'ffp3Outputs';
+    }
+
     /**
      * Retourne le nom de la table heartbeat ESP32
      * 
