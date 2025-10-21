@@ -210,16 +210,38 @@ class RealtimeUpdater {
         // Dernière réception
         const lastReadingEl = document.getElementById('last-reading-time');
         if (lastReadingEl) {
+            const agoSpan = lastReadingEl.querySelector('[data-reading-ago]');
+            const timestampSpan = lastReadingEl.querySelector('[data-reading-timestamp]');
+
             if (health.last_reading_ago_seconds !== null) {
                 const ago = this.formatTimeSince(health.last_reading_ago_seconds);
                 const at = health.last_reading ? this.formatTimestamp(health.last_reading) : null;
 
-                lastReadingEl.innerHTML = `
-                    <span class="reading-ago">${ago}</span>
-                    ${at ? `<span class="reading-timestamp">(${at})</span>` : ''}
-                `;
+                if (agoSpan) {
+                    agoSpan.textContent = ago;
+                }
+
+                if (timestampSpan) {
+                    if (at) {
+                        timestampSpan.textContent = `(${at})`;
+                        timestampSpan.style.display = '';
+                    } else {
+                        timestampSpan.textContent = '';
+                        timestampSpan.style.display = 'none';
+                    }
+                }
+
+                lastReadingEl.dataset.defaultHandled = 'true';
             } else if (!lastReadingEl.dataset.defaultHandled) {
-                lastReadingEl.innerHTML = '<span class="reading-none">Aucune donnée récente</span>';
+                if (agoSpan) {
+                    agoSpan.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                }
+
+                if (timestampSpan) {
+                    timestampSpan.textContent = '';
+                    timestampSpan.style.display = 'none';
+                }
+
                 lastReadingEl.dataset.defaultHandled = 'true';
             }
         }
@@ -233,13 +255,22 @@ class RealtimeUpdater {
         // Lectures aujourd'hui
         const readingsTodayEl = document.getElementById('readings-today');
         if (readingsTodayEl) {
-            if (health.readings_today !== undefined) {
-                readingsTodayEl.innerHTML = `
-                    <span class="reading-count">${health.readings_today}</span>
-                    <span class="reading-hint">/ jour</span>
-                `;
+            const countSpan = readingsTodayEl.querySelector('[data-reading-count]');
+            const hintSpan = readingsTodayEl.querySelector('[data-reading-hint]');
+
+            if (health.readings_today !== undefined && countSpan) {
+                countSpan.textContent = String(health.readings_today);
+                if (hintSpan) {
+                    hintSpan.style.display = '';
+                }
+                readingsTodayEl.dataset.defaultHandled = 'true';
             } else if (!readingsTodayEl.dataset.defaultHandled) {
-                readingsTodayEl.innerHTML = '<span class="reading-none">Non disponible</span>';
+                if (countSpan) {
+                    countSpan.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                }
+                if (hintSpan) {
+                    hintSpan.style.display = 'none';
+                }
                 readingsTodayEl.dataset.defaultHandled = 'true';
             }
         }
@@ -250,15 +281,20 @@ class RealtimeUpdater {
             const nextStatusClass = health.online ? 'status-online' : 'status-offline';
             statusIndicator.className = `status-indicator ${nextStatusClass} ${health.online ? 'is-animated' : ''}`.trim();
 
-            const statusBadge = health.online
-                ? '<span class="status-pill"><i class="fas fa-circle"></i><strong>TEMPS RÉEL</strong></span>'
-                : '<span class="status-pill"><i class="fas fa-exclamation-circle"></i><strong>SUPERVISION</strong></span>';
+            const statusBadge = statusIndicator.querySelector('[data-status-badge]');
+            const statusLabel = statusIndicator.querySelector('[data-status-label]');
 
-            const statusLabel = health.online
-                ? '<i class="fas fa-check-circle"></i><span>En ligne</span>'
-                : '<i class="fas fa-times-circle"></i><span>Hors ligne</span>';
+            if (statusBadge) {
+                statusBadge.innerHTML = health.online
+                    ? '<i class="fas fa-circle"></i><strong>TEMPS RÉEL</strong>'
+                    : '<i class="fas fa-exclamation-circle"></i><strong>SUPERVISION</strong>';
+            }
 
-            statusIndicator.innerHTML = `${statusBadge}<span class="status-text">${statusLabel}</span>`;
+            if (statusLabel) {
+                statusLabel.innerHTML = health.online
+                    ? '<i class="fas fa-check-circle"></i><span>En ligne</span>'
+                    : '<i class="fas fa-times-circle"></i><span>Hors ligne</span>';
+            }
         }
 
         // Mettre à jour le badge LIVE en fonction du statut système réel

@@ -1329,11 +1329,11 @@
                             <div class="health-item">
                                 <div class="health-item-label">Statut</div>
                                 <div id="system-status-indicator" class="status-indicator status-online is-animated">
-                                    <span class="status-pill">
+                                    <span class="status-pill" data-status-badge>
                                         <i class="fas fa-circle"></i>
                                         <strong>TEMPS RÉEL</strong>
                                     </span>
-                                    <span class="status-text">
+                                    <span class="status-text" data-status-label>
                                         <i class="fas fa-check-circle"></i>
                                         <span>En ligne</span>
                                     </span>
@@ -1343,9 +1343,10 @@
                             <div class="health-item">
                                 <div class="health-item-label">Dernière réception</div>
                                 <div class="health-item-value" id="last-reading-time" data-default="pending">
-                                    <span class="reading-ago">
+                                    <span class="reading-ago" data-reading-ago>
                                         <i class="fas fa-spinner fa-spin"></i>
                                     </span>
+                                    <span class="reading-timestamp" data-reading-timestamp style="display: none;"></span>
                                 </div>
                             </div>
                             
@@ -1359,9 +1360,10 @@
                             <div class="health-item">
                                 <div class="health-item-label">Lectures aujourd'hui</div>
                                 <div class="health-item-value" id="readings-today" data-default="pending">
-                                    <span class="reading-count">
+                                    <span class="reading-count" data-reading-count>
                                         <i class="fas fa-spinner fa-spin"></i>
                                     </span>
+                                    <span class="reading-hint" data-reading-hint>/ jour</span>
                                 </div>
                             </div>
                         </div>

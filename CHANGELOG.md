@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.4] - 2025-10-21
+
+### 🛠️ Sync badges & indicateurs temps réel
+- Ajout du polling `RealtimeUpdater` sur la page de contrôle pour synchroniser les badges « Sync temps réel », « Dernière commande », « Lectures aujourd'hui » et « Uptime ».
+- Mise en place d'un DOM non destructif (spans annotés `data-*`) afin de préserver les composants lints et éviter la re-création des éléments lors des mises à jour.
+- Harmonisation des scripts JS (`realtime-updater.js`) pour cibler les nouveaux sélecteurs et ne plus dépendre d'un front dynamique fragilisant.
+
+---
+
 ## [4.9.3] - 2025-10-21
 
 ### ⚡ Contrôle des actionneurs

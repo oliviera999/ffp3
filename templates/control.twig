@@ -2022,20 +2022,22 @@
                         <div class="status-card">
                             <div class="status-label">Sync temps réel</div>
                             <div id="system-status-indicator" class="status-indicator status-online is-animated">
-                                <span class="status-pill"><i class="fas fa-circle"></i><strong>TEMPS RÉEL</strong></span>
-                                <span data-state-label>Synchronisé</span>
+                                <span class="status-pill" data-status-badge><i class="fas fa-circle"></i><strong>TEMPS RÉEL</strong></span>
+                                <span class="status-text" data-status-label><i class="fas fa-check-circle"></i><span>En ligne</span></span>
                             </div>
                         </div>
                         <div class="status-card">
                             <div class="status-label">Dernière commande</div>
                             <div class="status-value" id="last-reading-time" data-default="pending">
-                                <span class="reading-ago"><i class="fas fa-spinner fa-spin"></i></span>
+                                <span class="reading-ago" data-reading-ago><i class="fas fa-spinner fa-spin"></i></span>
+                                <span class="reading-timestamp" data-reading-timestamp style="display: none;"></span>
                             </div>
                         </div>
                         <div class="status-card">
                             <div class="status-label">Lectures aujourd'hui</div>
                             <div class="status-value" id="readings-today" data-default="pending">
-                                <span class="reading-count"><i class="fas fa-spinner fa-spin"></i></span>
+                                <span class="reading-count" data-reading-count><i class="fas fa-spinner fa-spin"></i></span>
+                                <span class="reading-hint" data-reading-hint>/ jour</span>
                             </div>
                         </div>
                         <div class="status-card">
@@ -2326,6 +2328,7 @@
         <script src="/ffp3/assets/js/toast-notifications.js"></script>
         <script src="/ffp3/assets/js/control-actions.js"></script>
         <script src="/ffp3/assets/js/control-auto-save.js"></script>
+        <script src="/ffp3/assets/js/realtime-updater.js"></script>
 
         <script>
             document.addEventListener('DOMContentLoaded', () => {
@@ -2357,6 +2360,13 @@
                 window.controlSync = controlSync;
                 window.controlValuesUpdater = valuesUpdater;
                 window.realtimeLogger = realtimeLogger;
+
+                const realtimeApiBase = '{{ environment == "test" ? "/ffp3/api/realtime-test" : "/ffp3/api/realtime" }}';
+                initRealtimeUpdater({
+                    apiBasePath: realtimeApiBase,
+                    pollInterval: 15000,
+                    enabled: true
+                });
             });
         </script>
 </body>
