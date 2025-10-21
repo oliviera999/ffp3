@@ -29,6 +29,40 @@ class OutputService
         return $this->outputRepository->findAll();
     }
 
+    public function getParametersMap(): array
+    {
+        $outputs = $this->outputRepository->findAll();
+        $parameters = [];
+
+        $parameterMap = [
+            100 => 'mail',
+            101 => 'mailNotif',
+            102 => 'aqThr',
+            103 => 'taThr',
+            104 => 'chauff',
+            105 => 'bouffeMat',
+            106 => 'bouffeMid',
+            107 => 'bouffeSoir',
+            111 => 'tempsGros',
+            112 => 'tempsPetits',
+            113 => 'tempsRemplissageSec',
+            114 => 'limFlood',
+            115 => 'WakeUp',
+            116 => 'FreqWakeUp',
+        ];
+
+        foreach ($outputs as $output) {
+            $gpio = (int)($output['gpio'] ?? -1);
+            $value = $output['state'] ?? null;
+
+            if (isset($parameterMap[$gpio])) {
+                $parameters[$parameterMap[$gpio]] = $value;
+            }
+        }
+
+        return $parameters;
+    }
+
     /**
      * Récupère un output spécifique
      * 

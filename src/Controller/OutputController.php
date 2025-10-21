@@ -34,6 +34,7 @@ class OutputController
         try {
             $outputs = $this->outputService->getAllOutputs();
             $boards = $this->outputService->getActiveBoardsForCurrentEnvironment();
+            $params = $this->outputService->getParametersMap();
 
             foreach ($boards as &$board) {
                 try {
@@ -49,6 +50,7 @@ class OutputController
             $data = [
                 'outputs' => $outputs,
                 'boards' => $boards,
+                'params' => $params,
                 'title' => 'Contrôle du ffp3',
                 'environment' => $environment,
                 'version' => Version::getWithPrefix(),
