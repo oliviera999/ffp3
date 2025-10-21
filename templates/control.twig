@@ -1932,7 +1932,7 @@
                     <div class="context-summary">
                         <h2><i class="fas fa-sliders-h"></i> Tableau de bord</h2>
                         <p class="context-description">
-                            Commandez les pompes, le chauffage et la programmation automatique du système aquaponique. Chaque action est synchronisée avec l’ESP32 en moins de 4 secondes.
+                            Commandez les pompes, le chauffage et la programmation automatique du système aquaponique. Chaque action est synchronisée avec l'ESP32 en moins de 4 secondes.
                         </p>
                         <div class="context-stats">
                             <div class="context-stat">
@@ -2006,10 +2006,10 @@
                 <header class="control-main-header">
                     <div class="header-left">
                         <h1>Contrôle FFP3</h1>
-                        <p>Activez/désactivez les pompes, gérez la programmation automatique et surveillez l’état du système.</p>
+                        <p>Activez/désactivez les pompes, gérez la programmation automatique et surveillez l'état du système.</p>
                         <div class="callout callout-warning">
                             <i class="fas fa-triangle-exclamation"></i>
-                            <span>Les commandes agissent immédiatement sur le système physique. Vérifiez la présence sur site avant d’activer les pompes ou de forcer un reset.</span>
+                            <span>Les commandes agissent immédiatement sur le système physique. Vérifiez la présence sur site avant d'activer les pompes ou de forcer un reset.</span>
                         </div>
                     </div>
                     <div class="header-right">
@@ -2033,7 +2033,7 @@
                             </div>
                         </div>
                         <div class="status-card">
-                            <div class="status-label">Lectures aujourd’hui</div>
+                            <div class="status-label">Lectures aujourd'hui</div>
                             <div class="status-value" id="readings-today" data-default="pending">
                                 <span class="reading-count"><i class="fas fa-spinner fa-spin"></i></span>
                             </div>
@@ -2050,10 +2050,16 @@
                 <section class="controls-section">
                     <div class="controls-group">
                         <header>
-                            <h2><i class="fas fa-water"></i> Gestion de l’eau</h2>
+                            <h2><i class="fas fa-water"></i> Gestion de l'eau</h2>
                         </header>
                         <div class="control-cards-grid">
-                            {% for output in outputs if output.gpio in [16,18] %}
+                            {% set pumpOutputs = [] %}
+                            {% for output in outputs %}
+                                {% if output.gpio in [16, 18] %}
+                                    {% set pumpOutputs = pumpOutputs|merge([output]) %}
+                                {% endif %}
+                            {% endfor %}
+                            {% for output in pumpOutputs %}
                                 {% set is_inverted = output.gpio == 18 %}
                                 {% set is_checked = is_inverted ? (output.state == 0) : (output.state == 1) %}
                                 <article class="action-card" data-state="{{ is_checked ? '1' : '0' }}" data-gpio="{{ output.gpio }}" data-inverted="{{ is_inverted ? '1' : '0' }}">
@@ -2077,7 +2083,7 @@
                                     </footer>
                                 </article>
                             {% endfor %}
-                        </div>
+                                        </div>
                         <section class="parameters-panel">
                             <h3>Paramètres de niveau</h3>
                             <div class="parameters-grid">
@@ -2097,9 +2103,9 @@
                                     <span>Débordement (cm)</span>
                                     <input type="number" name="limFlood" min="0" id="limFlood" data-parameter="limFlood" value="{{ params.limFlood|default(0) }}" onchange="autoSaveParameter('limFlood', this.value)">
                                 </label>
-                            </div>
+                                    </div>
                         </section>
-                    </div>
+                                </div>
 
                     <div class="controls-grid">
                         <article class="controls-column">
@@ -2107,7 +2113,13 @@
                                 <h2><i class="fas fa-bowl-food"></i> Nourrissage</h2>
                             </header>
                             <div class="control-cards-grid">
-                                {% for output in outputs if output.gpio in [108,109] %}
+                                {% set feedingOutputs = [] %}
+                                {% for output in outputs %}
+                                    {% if output.gpio == 108 or output.gpio == 109 %}
+                                        {% set feedingOutputs = feedingOutputs|merge([output]) %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% for output in feedingOutputs %}
                                     <article class="action-card" data-state="{{ output.state }}">
                                         <header>
                                             <div class="action-icon"><i class="fas fa-fish"></i></div>
@@ -2147,7 +2159,7 @@
                                     </label>
                                     <label class="parameter-item">
                                         <span>Durée petits (s)</span>
-                                        <input type="number" name="tempsPetits" min="0" id="tempsPetits" data-parameter="tempsPetits" value="{{ params.tempsPetits|default(0) }}" onchange="autoSaveParameter('tempsPetits', this value)">
+                                        <input type="number" name="tempsPetits" min="0" id="tempsPetits" data-parameter="tempsPetits" value="{{ params.tempsPetits|default(0) }}" onchange="autoSaveParameter('tempsPetits', this.value)">
                                     </label>
                                 </div>
                             </section>
@@ -2158,7 +2170,13 @@
                                 <h2><i class="fas fa-temperature-half"></i> Chauffage & Lumière</h2>
                             </header>
                             <div class="control-cards-grid">
-                                {% for output in outputs if output.gpio in [2,15] %}
+                                {% set heatingOutputs = [] %}
+                                {% for output in outputs %}
+                                    {% if output.gpio == 2 or output.gpio == 15 %}
+                                        {% set heatingOutputs = heatingOutputs|merge([output]) %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% for output in heatingOutputs %}
                                     <article class="action-card" data-state="{{ output.state }}">
                                         <header>
                                             <div class="action-icon"><i class="fas {{ output.gpio == 2 ? 'fa-temperature-high' : 'fa-lightbulb' }}"></i></div>
@@ -2193,7 +2211,13 @@
                                 <h2><i class="fas fa-envelope"></i> Notifications & Système</h2>
                             </header>
                             <div class="control-cards-grid">
-                                {% for output in outputs if output.gpio == 101 %}
+                                {% set notificationOutputs = [] %}
+                                {% for output in outputs %}
+                                    {% if output.gpio == 101 %}
+                                        {% set notificationOutputs = notificationOutputs|merge([output]) %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% for output in notificationOutputs %}
                                     <article class="action-card" data-state="{{ output.state }}">
                                         <header>
                                             <div class="action-icon"><i class="fas fa-bell"></i></div>
@@ -2210,7 +2234,14 @@
                                         </footer>
                                     </article>
                                 {% endfor %}
-                                {% for output in outputs if output.gpio in [110,115] %}
+
+                                {% set systemOutputs = [] %}
+                                {% for output in outputs %}
+                                    {% if output.gpio == 110 or output.gpio == 115 %}
+                                        {% set systemOutputs = systemOutputs|merge([output]) %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% for output in systemOutputs %}
                                     <article class="action-card warning" data-state="{{ output.state }}">
                                         <header>
                                             <div class="action-icon"><i class="fas {{ output.gpio == 110 ? 'fa-arrows-rotate' : 'fa-clock' }}"></i></div>
@@ -2218,7 +2249,7 @@
                                                 <h3>{{ output.gpio == 110 ? 'Reset ESP' : 'Forçage réveil' }}</h3>
                                             </div>
                                         </header>
-                                        <p class="action-description">{{ output.gpio == 110 ? 'Redémarre le microcontrôleur. À utiliser en dernier recours.' : 'Force le réveil de l’ESP32 pour envoyer toutes les mesures.' }}</p>
+                                        <p class="action-description">{{ output.gpio == 110 ? 'Redémarre le microcontrôleur. À utiliser en dernier recours.' : 'Force le réveil de l\'ESP32 pour envoyer toutes les mesures.' }}</p>
                                         <footer>
                                             <span data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
                                             <label class="modern-switch">
@@ -2234,7 +2265,7 @@
                                 <h3>Configuration</h3>
                                 <div class="parameters-grid">
                                     <label class="parameter-item">
-                                        <span>Email d’alerte</span>
+                                        <span>Email d'alerte</span>
                                         <input type="email" name="mail" id="mail" data-parameter="mail" value="{{ params.mail|default('') }}" placeholder="email@exemple.com" onchange="autoSaveParameter('mail', this.value)">
                                     </label>
                                     <label class="parameter-item">
