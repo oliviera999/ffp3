@@ -54,18 +54,24 @@ class ControlActions {
     }
 
     async sendToggleRequest(payload, element) {
-        const endpoint = `${this.apiBase}/toggle`;
+        const isTestEnv = document.body?.dataset?.environment === 'test';
+        const endpoint = isTestEnv ? '/ffp3/api/outputs/toggle-test' : `${this.apiBase}/toggle`;
         element.disabled = true;
         element.closest('.action-card')?.classList.add('is-updating');
 
         try {
-            const response = await fetch(endpoint, {
-                method: 'POST',
+            const query = new URLSearchParams({
+                id: String(payload.id),
+                gpio: String(payload.gpio),
+                state: String(payload.state),
+            });
+
+            const response = await fetch(`${endpoint}?${query.toString()}`, {
+                method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Accept': 'application/json',
+                    'X-Requested-With': 'fetch',
                 },
-                body: JSON.stringify(payload),
                 credentials: 'include',
             });
 
