@@ -2089,19 +2089,23 @@
                             <div class="parameters-grid">
                                 <label class="parameter-item">
                                     <span>Aquarium bas (cm)</span>
-                                    <input type="number" name="aqThr" min="0" id="aqThr" data-parameter="aqThr" value="{{ params.aqThr|default(0) }}" onchange="autoSaveParameter('aqThr', this.value)">
+                                    <input type="number" name="aqThr" min="0" id="aqThr" data-parameter="aqThr" data-parameter-gpio="{{ parameter_gpio_map['aqThr'] }}" value="{{ params.aqThr|default(0) }}">
+                                    <small class="save-indicator" data-save-indicator data-parameter="aqThr" data-state="idle"></small>
                                 </label>
                                 <label class="parameter-item">
                                     <span>Réserve basse (cm)</span>
-                                    <input type="number" name="taThr" min="0" id="taThr" data-parameter="taThr" value="{{ params.taThr|default(0) }}" onchange="autoSaveParameter('taThr', this.value)">
+                                    <input type="number" name="taThr" min="0" id="taThr" data-parameter="taThr" data-parameter-gpio="{{ parameter_gpio_map['taThr'] }}" value="{{ params.taThr|default(0) }}">
+                                    <small class="save-indicator" data-save-indicator data-parameter="taThr" data-state="idle"></small>
                                 </label>
                                 <label class="parameter-item">
                                     <span>Remplissage (s)</span>
-                                    <input type="number" name="tempsRemplissageSec" min="0" id="tempsRemplissageSec" data-parameter="tempsRemplissageSec" value="{{ params.tempsRemplissageSec|default(0) }}" onchange="autoSaveParameter('tempsRemplissageSec', this.value)">
+                                    <input type="number" name="tempsRemplissageSec" min="0" id="tempsRemplissageSec" data-parameter="tempsRemplissageSec" data-parameter-gpio="{{ parameter_gpio_map['tempsRemplissageSec'] }}" value="{{ params.tempsRemplissageSec|default(0) }}">
+                                    <small class="save-indicator" data-save-indicator data-parameter="tempsRemplissageSec" data-state="idle"></small>
                                 </label>
                                 <label class="parameter-item">
                                     <span>Débordement (cm)</span>
-                                    <input type="number" name="limFlood" min="0" id="limFlood" data-parameter="limFlood" value="{{ params.limFlood|default(0) }}" onchange="autoSaveParameter('limFlood', this.value)">
+                                    <input type="number" name="limFlood" min="0" id="limFlood" data-parameter="limFlood" data-parameter-gpio="{{ parameter_gpio_map['limFlood'] }}" value="{{ params.limFlood|default(0) }}">
+                                    <small class="save-indicator" data-save-indicator data-parameter="limFlood" data-state="idle"></small>
                                 </label>
                                     </div>
                         </section>
@@ -2141,25 +2145,30 @@
                             <section class="parameters-panel">
                                 <h3>Programmation automatique</h3>
                                 <div class="parameters-grid">
-                                    <label class="parameter-item">
-                                        <span>Matin (h)</span>
-                                        <input type="number" name="bouffeMat" min="0" max="23" id="bouffeMat" data-parameter="bouffeMat" value="{{ params.bouffeMat|default(0) }}" onchange="autoSaveParameter('bouffeMat', this.value)">
-                                    </label>
-                                    <label class="parameter-item">
-                                        <span>Midi (h)</span>
-                                        <input type="number" name="bouffeMid" min="0" max="23" id="bouffeMid" data-parameter="bouffeMid" value="{{ params.bouffeMid|default(0) }}" onchange="autoSaveParameter('bouffeMid', this.value)">
-                                    </label>
-                                    <label class="parameter-item">
-                                        <span>Soir (h)</span>
-                                        <input type="number" name="bouffeSoir" min="0" max="23" id="bouffeSoir" data-parameter="bouffeSoir" value="{{ params.bouffeSoir|default(0) }}" onchange="autoSaveParameter('bouffeSoir', this.value)">
-                                    </label>
+                                <label class="parameter-item">
+                                    <span>Matin (h)</span>
+                                    <input type="number" name="bouffeMat" min="0" max="23" id="bouffeMat" data-parameter="bouffeMat" data-parameter-gpio="{{ parameter_gpio_map['bouffeMat'] }}" value="{{ params.bouffeMat|default(0) }}">
+                                    <small class="save-indicator" data-save-indicator data-parameter="bouffeMat" data-state="idle"></small>
+                                </label>
+                                <label class="parameter-item">
+                                    <span>Midi (h)</span>
+                                    <input type="number" name="bouffeMid" min="0" max="23" id="bouffeMid" data-parameter="bouffeMid" data-parameter-gpio="{{ parameter_gpio_map['bouffeMid'] }}" value="{{ params.bouffeMid|default(0) }}">
+                                    <small class="save-indicator" data-save-indicator data-parameter="bouffeMid" data-state="idle"></small>
+                                </label>
+                                <label class="parameter-item">
+                                    <span>Soir (h)</span>
+                                    <input type="number" name="bouffeSoir" min="0" max="23" id="bouffeSoir" data-parameter="bouffeSoir" data-parameter-gpio="{{ parameter_gpio_map['bouffeSoir'] }}" value="{{ params.bouffeSoir|default(0) }}">
+                                    <small class="save-indicator" data-save-indicator data-parameter="bouffeSoir" data-state="idle"></small>
+                                </label>
                                     <label class="parameter-item">
                                         <span>Durée gros (s)</span>
-                                        <input type="number" name="tempsGros" min="0" id="tempsGros" data-parameter="tempsGros" value="{{ params.tempsGros|default(0) }}" onchange="autoSaveParameter('tempsGros', this.value)">
+                                        <input type="number" name="tempsGros" min="0" id="tempsGros" data-parameter="tempsGros" data-parameter-gpio="{{ parameter_gpio_map['tempsGros'] }}" value="{{ params.tempsGros|default(0) }}">
+                                        <small class="save-indicator" data-save-indicator data-parameter="tempsGros" data-state="idle"></small>
                                     </label>
                                     <label class="parameter-item">
                                         <span>Durée petits (s)</span>
-                                        <input type="number" name="tempsPetits" min="0" id="tempsPetits" data-parameter="tempsPetits" value="{{ params.tempsPetits|default(0) }}" onchange="autoSaveParameter('tempsPetits', this.value)">
+                                        <input type="number" name="tempsPetits" min="0" id="tempsPetits" data-parameter="tempsPetits" data-parameter-gpio="{{ parameter_gpio_map['tempsPetits'] }}" value="{{ params.tempsPetits|default(0) }}">
+                                        <small class="save-indicator" data-save-indicator data-parameter="tempsPetits" data-state="idle"></small>
                                     </label>
                                 </div>
                             </section>
@@ -2200,7 +2209,8 @@
                                 <div class="parameters-grid">
                                     <label class="parameter-item">
                                         <span>Température min (°C)</span>
-                                        <input type="number" name="chauff" min="0" step="0.1" id="chauff" data-parameter="chauff" value="{{ params.chauff|default(0) }}" onchange="autoSaveParameter('chauff', this.value)">
+                                        <input type="number" name="chauff" min="0" step="0.1" id="chauff" data-parameter="chauff" data-parameter-gpio="{{ parameter_gpio_map['chauff'] }}" value="{{ params.chauff|default(0) }}">
+                                        <small class="save-indicator" data-save-indicator data-parameter="chauff" data-state="idle"></small>
                                     </label>
                                 </div>
                             </section>
@@ -2247,7 +2257,7 @@
                                             <div class="action-icon"><i class="fas {{ output.gpio == 110 ? 'fa-arrows-rotate' : 'fa-clock' }}"></i></div>
                                             <div>
                                                 <h3>{{ output.gpio == 110 ? 'Reset ESP' : 'Forçage réveil' }}</h3>
-                                            </div>
+                                        </div>
                                         </header>
                                         <p class="action-description">{{ output.gpio == 110 ? 'Redémarre le microcontrôleur. À utiliser en dernier recours.' : 'Force le réveil de l\'ESP32 pour envoyer toutes les mesures.' }}</p>
                                         <footer>
@@ -2259,23 +2269,25 @@
                                         </footer>
                                     </article>
                                 {% endfor %}
-                            </div>
+                                        </div>
 
                             <section class="parameters-panel">
                                 <h3>Configuration</h3>
                                 <div class="parameters-grid">
                                     <label class="parameter-item">
                                         <span>Email d'alerte</span>
-                                        <input type="email" name="mail" id="mail" data-parameter="mail" value="{{ params.mail|default('') }}" placeholder="email@exemple.com" onchange="autoSaveParameter('mail', this.value)">
+                                        <input type="email" name="mail" id="mail" data-parameter="mail" data-parameter-gpio="{{ parameter_gpio_map['mail'] }}" value="{{ params.mail|default('') }}" placeholder="email@exemple.com">
+                                        <small class="save-indicator" data-save-indicator data-parameter="mail" data-state="idle"></small>
                                     </label>
                                     <label class="parameter-item">
                                         <span>Wake Up (s)</span>
-                                        <input type="number" name="FreqWakeUp" min="0" id="FreqWakeUp" data-parameter="FreqWakeUp" value="{{ params.FreqWakeUp|default(0) }}" onchange="autoSaveParameter('FreqWakeUp', this.value)">
+                                        <input type="number" name="FreqWakeUp" min="0" id="FreqWakeUp" data-parameter="FreqWakeUp" data-parameter-gpio="{{ parameter_gpio_map['FreqWakeUp'] }}" value="{{ params.FreqWakeUp|default(0) }}">
+                                        <small class="save-indicator" data-save-indicator data-parameter="FreqWakeUp" data-state="idle"></small>
                                     </label>
-                                </div>
+                                    </div>
                             </section>
                         </article>
-                    </div>
+                                </div>
                 </section>
             </section>
 
@@ -2307,3 +2319,43 @@
                 </section>
             </aside>
         </div>
+
+        <script src="/ffp3/assets/js/control-sync.js"></script>
+        <script src="/ffp3/assets/js/control-values-updater.js"></script>
+        <script src="/ffp3/assets/js/toast-notifications.js"></script>
+        <script src="/ffp3/assets/js/control-auto-save.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const controlSync = new ControlSync({
+                    apiBase: '/ffp3/api/outputs',
+                    pollInterval: {{ environment == 'test' ? 6 : 10 }},
+                    maxRetries: 5
+                });
+
+                const valuesUpdater = new ControlValuesUpdater();
+                valuesUpdater.init();
+
+                const realtimeLogger = new RealtimeLogger({
+                    containerId: 'logs-container',
+                    counterId: 'logs-counter',
+                    filtersSelector: '.log-filter-badge'
+                });
+
+                controlSync.onStateChange = changes => {
+                    realtimeLogger.logChanges(changes);
+                };
+
+                controlSync.onStatusChange = status => {
+                    realtimeLogger.logStatus(status);
+                };
+
+                controlSync.start();
+
+                window.controlSync = controlSync;
+                window.controlValuesUpdater = valuesUpdater;
+                window.realtimeLogger = realtimeLogger;
+            });
+        </script>
+</body>
+</html>

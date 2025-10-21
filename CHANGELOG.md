@@ -7,6 +7,16 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.1] - 2025-10-21
+
+### ⚙️ Auto-save formulaires contrôle
+- Nouveau script `control-auto-save.js` pour sauvegarder automatiquement les paramètres des formulaires (champ email inclus).
+- Validation email instantanée côté front, feedback toast et synchronisation avec `controlValuesUpdater`.
+- Ajout d'indicateurs visuels (`.save-indicator`) sur chaque champ pour suivre l'état d'enregistrement (en cours / ok / erreur).
+- Intégration du script dans `control.twig` et délégation des événements `change`/`blur`.
+
+---
+
 ## [4.9.0] - 2025-10-20
 
 ### 🎨 Refonte UI/UX – Page contrôle

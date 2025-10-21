@@ -415,6 +415,51 @@
     cursor: pointer;
 }
 
+
+/* =================================================================
+   SAVE INDICATORS (AUTO-SAVE FORM FIELDS)
+================================================================= */
+.save-indicator {
+    display: block;
+    min-height: 1.2em;
+    margin-top: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: #7f8c8d;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.save-indicator[data-state="saving"] {
+    opacity: 1;
+    transform: translateY(0);
+    color: #2980b9;
+}
+
+.save-indicator[data-state="success"] {
+    opacity: 1;
+    transform: translateY(0);
+    color: #27ae60;
+}
+
+.save-indicator[data-state="error"] {
+    opacity: 1;
+    transform: translateY(0);
+    color: #c0392b;
+}
+
+.save-indicator.state-changed {
+    animation: saveIndicatorPulse 0.45s ease;
+}
+
+@keyframes saveIndicatorPulse {
+    0% { opacity: 0.2; }
+    50% { opacity: 1; }
+    100% { opacity: 0.8; }
+}
+
 .polling-toggle input[type="checkbox"] {
     width: 40px;
     height: 20px;
