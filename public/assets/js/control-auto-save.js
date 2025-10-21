@@ -1,6 +1,7 @@
 (() => {
-    const API_BASE = '/ffp3/api/outputs';
-    const PARAM_ENDPOINT = `${API_BASE}/parameter`;
+    const environment = document.body?.dataset?.environment === 'test' ? 'test' : 'prod';
+    const API_BASE = environment === 'test' ? '/ffp3/api/outputs-test' : '/ffp3/api/outputs';
+    const PARAM_ENDPOINT = `${API_BASE}/parameters`;
 
     const saveState = {
         isSaving: false,
@@ -25,7 +26,7 @@
         const normalizedValue = normalizeValue(value);
         const isEmailField = parameterName.toLowerCase() === 'mail';
         const payload = {
-            parameter: parameterName,
+            param: parameterName,
             value: normalizedValue,
         };
 
