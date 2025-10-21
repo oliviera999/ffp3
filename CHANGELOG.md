@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.2] - 2025-10-21
+
+### 🔧 Realtime Logger
+- Réintroduction du module `RealtimeLogger` pour afficher les changements GPIO et l’état de synchronisation.
+- Chargement du script dans `control.twig` pour éviter l’erreur `RealtimeLogger is not defined`.
+- Habillage CSS du panneau de logs (structure `log-entry`, compteur, scroll).
+
+---
+
 ## [4.9.1] - 2025-10-21
 
 ### ⚙️ Auto-save formulaires contrôle
