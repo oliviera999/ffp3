@@ -13,6 +13,8 @@ use App\Controller\PostDataController;
 use App\Controller\RealtimeApiController;
 use App\Controller\TideStatsController;
 use App\Middleware\EnvironmentMiddleware;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 
 // Charge les variables d'environnement (.env)
@@ -34,14 +36,6 @@ $basePath = str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME'])));
 if ($basePath !== '/' && $basePath !== '') {
     $app->setBasePath($basePath);
 }
-
-// ====================================================================
-// DEBUG TEMPORAIRE - À SUPPRIMER APRÈS DIAGNOSTIC
-// ====================================================================
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/../var/log/php_errors.log');
 
 // ====================================================================
 // Middleware de gestion d'erreurs personnalisé

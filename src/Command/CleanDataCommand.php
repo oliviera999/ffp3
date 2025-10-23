@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Config\Database;
+use App\Service\NotificationService;
 use App\Service\LogService;
 use App\Service\PumpService;
 use App\Service\SensorDataService;
@@ -17,6 +18,7 @@ class CleanDataCommand
     private SensorDataService $sensorDataService;
     private PumpService $pumpService;
     private SensorStatisticsService $statsService;
+    private NotificationService $notificationService;
 
     public function __construct()
     {
@@ -25,6 +27,7 @@ class CleanDataCommand
         $this->sensorDataService = new SensorDataService($pdo, $this->logger);
         $this->pumpService = new PumpService($pdo);
         $this->statsService = new SensorStatisticsService($pdo);
+        $this->notificationService = new NotificationService($this->logger);
     }
 
     /**
@@ -114,11 +117,14 @@ class CleanDataCommand
             $this->pumpService->stopPompeTank();
             $this->logger->addEvent("ALERTE: Niveau d'eau aquarium trop bas ($lastWaterLevel) - Arrêt pompe réservoir");
             
-            // Envoyer une alerte par email
-            $this->logger->sendAlertEmail(
+            $message = sprintf(
+                "Le niveau d'eau de l'aquarium est descendu à %.2f (seuil %.2f).\nLa pompe réservoir a été arrêtée automatiquement pour éviter une panne sèche.",
+                $lastWaterLevel,
+                $lowThreshold
+            );
+            $this->notificationService->sendCustomAlert(
                 "Alerte niveau d'eau aquarium",
-                "Le niveau d'eau de l'aquarium est trop bas ($lastWaterLevel). La pompe du réservoir a été arrêtée automatiquement.",
-                ['niveau' => $lastWaterLevel, 'seuil' => $lowThreshold]
+                $message
             );
         }
 

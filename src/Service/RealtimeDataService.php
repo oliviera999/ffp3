@@ -156,18 +156,33 @@ class RealtimeDataService
     public function getOutputsState(): array
     {
         $outputs = $this->outputRepo->findAll();
-        
+
+        $booleanGpios = [];
+        for ($i = 0; $i < 100; $i++) {
+            $booleanGpios[$i] = true;
+        }
+        foreach ([101, 108, 109, 110, 115] as $specialGpio) {
+            $booleanGpios[$specialGpio] = true;
+        }
+
         $result = [];
         foreach ($outputs as $output) {
+            $gpio = (int)($output['gpio'] ?? 0);
+            $state = $output['state'];
+
+            if (isset($booleanGpios[$gpio])) {
+                $state = (int)$state;
+            }
+
             $result[] = [
-                'id' => $output['id'],
-                'gpio' => $output['gpio'],
+                'id' => isset($output['id']) ? (int)$output['id'] : null,
+                'gpio' => $gpio,
                 'name' => $output['name'],
-                'state' => (int)$output['state'],
+                'state' => $state,
                 'board' => $output['board'] ?? null,
             ];
         }
-        
+
         return $result;
     }
 
