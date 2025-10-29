@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.8] - 2025-01-17
+
+### 🐛 Correction - Suppression scrollbars indésirables page contrôle
+- **Correction overflow** : Ajout de `overflow-x: hidden` sur `.control-sidebar` pour empêcher les scrollbars horizontales indésirables
+- **Correction cartes boards** : Ajout de `overflow: hidden` sur `.board-card` et `.board-activity` pour empêcher toute scrollbar indésirable dans les cadres des boards
+- **Amélioration UX** : Les cadres des informations des boards n'affichent plus d'ascenseurs superflus
+
+---
+
 ## [4.9.7] - 2025-01-17
 
 ### 🐛 Correction - Suppression badge dupliqué page contrôle
