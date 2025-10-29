@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.7] - 2025-01-17
+
+### 🐛 Correction - Suppression badge dupliqué page contrôle
+- **Suppression doublon** : Correction du problème de deux badges `#control-sync-badge` qui se superposaient (un dans le body et un dans le header)
+- **Nettoyage CSS** : Suppression des styles CSS dupliqués pour `#control-sync-badge`
+- **Résolution problème** : Un seul badge reste maintenant, correctement mis à jour par le JavaScript pour afficher l'état réel de la synchronisation
+
+---
+
 ## [4.9.6] - 2025-01-17
 
 ### 🐛 Correction - Badge de synchronisation page contrôle
