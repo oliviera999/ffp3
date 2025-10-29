@@ -7,6 +7,17 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.5] - 2025-10-22
+
+### 🛠️ Durcissement backend & alertes
+- Restauration des imports PSR pour les routes Slim et retrait du bloc debug temporaire (`public/index.php`).
+- Correctif de l'API temps réel : les GPIO non booléens conservent leur valeur (email, seuils) au lieu d'être forcés à `0`.
+- Normalisation des timestamps des boards : stockage en UTC, rendu dans `APP_TIMEZONE` via `DateTimeZone` (`BoardRepository`).
+- `LogService::sendAlertEmail()` marqué obsolète et redirigé vers `NotificationService`; ajout de `NotificationService::sendCustomAlert()`.
+- `CleanDataCommand` envoie désormais une alerte eau basse détaillée via `NotificationService`.
+
+---
+
 ## [4.9.4] - 2025-10-21
 
 ### 🛠️ Sync badges & indicateurs temps réel
@@ -19,7 +30,7 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 ## [4.9.3] - 2025-10-21
 
 ### ⚡ Contrôle des actionneurs
-- Nouveau module `control-actions.js` (fetch POST `/ffp3/api/outputs/toggle`, gestion file d’attente, feedback visuel).
+- Nouveau module `control-actions.js` (fetch POST `/ffp3/api/outputs/toggle`, gestion file d'attente, feedback visuel).
 - `updateOutput` exposé globalement pour conserver les attributs `onchange` existants.
 - Mise à jour de `control.twig` pour charger le script.
 
@@ -28,8 +39,8 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 ## [4.9.2] - 2025-10-21
 
 ### 🔧 Realtime Logger
-- Réintroduction du module `RealtimeLogger` pour afficher les changements GPIO et l’état de synchronisation.
-- Chargement du script dans `control.twig` pour éviter l’erreur `RealtimeLogger is not defined`.
+- Réintroduction du module `RealtimeLogger` pour afficher les changements GPIO et l'état de synchronisation.
+- Chargement du script dans `control.twig` pour éviter l'erreur `RealtimeLogger is not defined`.
 - Habillage CSS du panneau de logs (structure `log-entry`, compteur, scroll).
 
 ---
@@ -3827,168 +3838,4 @@ ance future
 - **Icônes Font Awesome manquantes** : Remplacement des icônes non compatibles
   - `fa-water` → `fa-tint` pour "Niveaux d'eau"
   - `fa-temperature-half` → `fa-thermometer-half` pour "Paramètres physiques"
-  - `fa-water` → `fa-thermometer` pour "Température eau"
-- Les icônes s'affichent maintenant correctement au lieu de rectangles avec croix
-
----
-
-## [2.2.2] - 2025-10-10
-
-### 🎨 Amélioré
-- **Graphiques paramétriques chimiques centrés** : Meilleur alignement visuel des 3 cartes de graphiques
-- **Largeur maximale** des cartes fixée à 650px pour une cohérence visuelle
-- **Grille centrée** avec largeur maximale de 1800px pour éviter l'étirement excessif sur grands écrans
-
----
-
-## [2.2.1] - 2025-10-10
-
-### 🎨 Amélioré
-- **Interface de filtrage des données** complètement redessinée pour une ergonomie optimale
-- **Carte dédiée au filtrage** : Section visuellement distincte avec fond blanc, ombres et bordure colorée
-- **Inputs datetime-local** : Champs date et heure unifiés au lieu de 4 champs séparés
-- **Boutons de période rapide** améliorés avec icônes et effets hover
-- **Panneau d'information** : Affichage en temps réel de la période analysée avec gradient moderne
-- **Statistiques visibles** : Durée d'analyse, nombre d'enregistrements et durée totale de fonctionnement affichés en haut
-- **Bouton CSV intégré** : Export CSV directement dans la section de filtrage, plus besoin de chercher
-- **Design responsive** : Adaptation automatique pour mobile, tablette et desktop
-- **Animations et transitions** : Effets visuels fluides sur hover et focus
-
-### 🔧 Technique
-- **Rétrocompatibilité** : Support des anciens paramètres `start_date`/`start_time` et nouveaux `start_datetime`
-- **Contrôleur adapté** : `AquaponieController` gère les deux formats de dates automatiquement
-- **JavaScript optimisé** : Fonction `setPeriod()` mise à jour pour les nouveaux inputs
-- **Code CSS modulaire** : Classes réutilisables pour les futurs filtres
-
-### 📱 Responsive
-- **Mobile-first** : Layout adapté pour les petits écrans
-- **Grille flexible** : Ajustement automatique selon la taille d'écran
-- **Touch-friendly** : Boutons et inputs dimensionnés pour l'utilisation tactile
-
----
-
-## [2.2.0] - 2025-10-10
-
-### ✨ Ajouté
-- **Cartes de statistiques modernes** sur page aquaponie remplaçant les anciennes jauges semi-circulaires
-- **Icônes Font Awesome** pour chaque type de mesure (💧 eau, 🌡️ température, 💡 lumière, etc.)
-- **Progress bars animées** avec dégradés de couleurs par thématique
-- **Effet hover** sur les cartes de statistiques pour interactivité
-- **Headers de section** avec icônes et bordures colorées
-
-### 🔧 Modifié
-- **Jauges semi-circulaires** → Cartes modernes avec valeurs en grand format
-- **Statistiques visuelles** : Min/Max/Moy affichés de manière compacte sous chaque carte
-- **Palette de couleurs** cohérente : Bleu (eau), Rouge (température), Violet (humidité), Jaune (lumière)
-- **Layout responsive** : Grille adaptative pour mobile, tablette, desktop
-- **JavaScript** : Fonctions modernisées pour mettre à jour les cartes au lieu des jauges
-- **Interface contrôle** : Email en vert clair pour se distinguer des autres paramètres
-
-### 🎨 UX/UI
-- Interface **plus moderne et lisible** avec cartes épurées
-- **Identification rapide** grâce aux icônes et couleurs
-- **Animations fluides** (transform, width transition)
-- **Compatibilité** : Fonctionne avec les mêmes données et APIs
-
----
-
-## [2.1.0] - 2025-10-10
-
-### ✨ Ajouté
-- **Icônes Font Awesome** pour chaque actionneur (💧 eau, 🌡️ température, 💡 lumière, 🐟 poissons, 🔄 reset)
-- **Layout 2 colonnes** sur écran desktop (>1200px) pour éviter le scroll
-- **Version du projet** affichée en pied de page sur toutes les pages
-- **Système de versionnage centralisé** avec fichier `VERSION` et classe `Version.php`
-- **CHANGELOG.md** : Documentation complète de toutes les versions
-
-### 🔧 Modifié
-- **Interface de contrôle** entièrement redesignée avec sections thématiques colorées
-- **Formulaires compacts** : Labels raccourcis, padding réduit, grille optimisée
-- **Actionneurs organisés** en grille responsive avec icônes et switches réduits
-- **Paramètres groupés** par catégorie (📧 Notifications, 💧 Eau, 🌡️ Chauffage, 🐟 Nourrissage, 🔧 Système)
-- **Filtrage des boards** : Affichage uniquement des boards actives pour l'environnement (PROD ou TEST)
-- **Responsive amélioré** : Layout adaptatif selon taille d'écran (desktop, tablette, mobile)
-
-### 🐛 Corrigé
-- **Bug CSS** : Affichage cassé au chargement qui se corrigeait à l'ouverture de l'inspecteur
-  - Ajout de `!important` pour surcharger le CSS du template
-  - Force reflow JavaScript au chargement
-  - Transition opacity pour masquer le calcul initial
-- **Timing formulaire** : Délai augmenté à 1,5s avec transaction SQL pour éviter l'affichage des anciennes valeurs
-- **Affichage boards** : Filtrage par environnement pour éviter de mélanger PROD et TEST
-
-### 🎨 UX/UI
-- Interface **sans scroll** sur écran desktop standard (1920x1080)
-- **Sections visuellement distinctes** avec codes couleur par thématique
-- **Actions rapides compactes** avec icônes (⚙️ Cron, 📋 Journal, 📊 Données)
-- **Badges d'environnement** : Indication claire (TEST) en orange
-- **Icônes cohérentes** dans toute l'interface pour identification rapide
-
----
-
-## [2.0.0] - 2025-10-08
-
-### ✨ Ajouté
-- **Architecture TEST/PROD complète** : Environnements séparés avec tables distinctes
-- **Module de contrôle moderne** : Interface web pour GPIO avec routes `/control` et `/control-test`
-- **API REST complète** pour contrôle outputs :
-  - `GET /api/outputs/state` - État des GPIO
-  - `GET /api/outputs/toggle?id=X&state=Y` - Toggle GPIO
-  - `POST /api/outputs/parameters` - Mise à jour paramètres
-- **Nouveaux composants** :
-  - `TableConfig` : Gestion dynamique des tables selon environnement
-  - `OutputRepository` : Gestion des GPIO en base de données
-  - `BoardRepository` : Gestion des cartes ESP32
-  - `OutputService` : Logique métier pour contrôles
-  - `OutputController` : Contrôleur Slim pour interface de contrôle
-- **Routes TEST** : `/dashboard-test`, `/aquaponie-test`, `/control-test`, `/post-data-test`
-- **Documentation complète** :
-  - `ENVIRONNEMENT_TEST.md` : Guide TEST/PROD
-  - `RECAPITULATIF_MIGRATION.md` : Synthèse migration
-  - `TODO_AMELIORATIONS_CONTROL.md` : Roadmap améliorations
-
-### 🔧 Modifié
-- **Repositories** : Utilisation de `TableConfig` pour sélection dynamique des tables
-- **Services** : Adaptation pour supporter PROD et TEST
-- **Interface de contrôle** : Ordre des switches personnalisé, nettoyage des intitulés
-- **Formulaire paramètres** : Gestion correcte des types (string pour mail, int pour autres)
-- **Toggle GPIO** : Utilisation de l'ID de base au lieu du GPIO (compatibilité legacy)
-
-### 🐛 Corrigé
-- Affichage des switches dans le bon ordre (pompe aqua, pompe réserve, radiateurs, lumière, nourrisseurs, reset)
-- Suppression mention "(stoppée/stoppés si relais activé)" des intitulés
-- Affichage des GPIO 108, 109, 110 (nourrisseurs et reset)
-- Gestion des paramètres email et notifications dans formulaire
-- Logs de debug pour diagnostic des problèmes de toggle
-
-### 🔒 Sécurité
-- Préparation pour authentification HTTP Basic sur `/control`
-- Validation des paramètres dans les API
-
----
-
-## [1.x.x] - Versions précédentes
-
-### Fonctionnalités existantes
-- Dashboard avec graphiques Highcharts
-- Visualisation données aquaponie
-- Export CSV des données
-- API ESP32 pour post de données
-- Timezone unifié Europe/Paris
-- Statistiques marées (tide stats)
-- Gestion GPIO legacy via `ffp3control`
-
----
-
-## Format du versioning
-
-**MAJOR.MINOR.PATCH**
-
-- **MAJOR** : Changements incompatibles avec versions précédentes
-- **MINOR** : Ajout de fonctionnalités rétrocompatibles
-- **PATCH** : Corrections de bugs
-
----
-
-*Ce changelog sera mis à jour à chaque release significative.*
-
+  - `fa-water` → `fa-thermometer`

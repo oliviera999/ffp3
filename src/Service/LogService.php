@@ -94,28 +94,15 @@ class LogService
     }
     
     /**
-     * Envoie un email d'alerte en cas de problème critique
-     * 
-     * @deprecated Devrait être déplacé dans NotificationService
+     * @deprecated Utiliser NotificationService à la place.
      */
     public function sendAlertEmail(string $subject, string $message, array $params = []): bool
     {
-        $to = $_ENV['ALERT_EMAIL'] ?? 'admin@olution.info';
-        $headers = [
-            'From: ffp3@olution.info',
-            'Content-Type: text/plain; charset=utf-8'
-        ];
-        
-        // Paramètres à inclure dans l'email
-        if (!empty($params)) {
-            $message .= "\n\nParamètres:\n";
-            foreach ($params as $key => $value) {
-                $message .= "- $key: $value\n";
-            }
-        }
-        
-        $this->logger->notice("Envoi d'alerte par email: $subject");
-        return mail($to, $subject, $message, implode("\r\n", $headers));
+        $this->logger->warning('sendAlertEmail() est obsolète. Utiliser NotificationService.', [
+            'subject' => $subject,
+        ]);
+
+        return false;
     }
 
     // Méthodes niveau PSR-3 – garde API existante

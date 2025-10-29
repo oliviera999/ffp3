@@ -22,13 +22,16 @@ class BoardRepository
      */
     public function findAll(): array
     {
-        // Conversion de l'heure européenne vers l'heure marocaine (retrancher 1h)
-        $sql = "SELECT board, DATE_FORMAT(DATE_SUB(last_request, INTERVAL 1 HOUR), '%d/%m/%Y %H:%i:%s') as last_request 
-                FROM Boards 
-                ORDER BY board ASC";
-        
+        $sql = "SELECT board, last_request FROM Boards ORDER BY board ASC";
+
         $stmt = $this->pdo->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($rows as &$row) {
+            $row['last_request'] = $this->formatTimestamp($row['last_request']);
+        }
+
+        return $rows;
     }
 
     /**
@@ -40,15 +43,20 @@ class BoardRepository
      */
     public function findActiveForEnvironment(string $outputsTable): array
     {
-        // Conversion de l'heure européenne vers l'heure marocaine (retrancher 1h)
-        $sql = "SELECT DISTINCT b.board, DATE_FORMAT(DATE_SUB(b.last_request, INTERVAL 1 HOUR), '%d/%m/%Y %H:%i:%s') as last_request 
+        $sql = "SELECT DISTINCT b.board, b.last_request
                 FROM Boards b
                 INNER JOIN {$outputsTable} o ON b.board = o.board
                 WHERE o.name IS NOT NULL AND o.name != ''
                 ORDER BY b.board ASC";
-        
+
         $stmt = $this->pdo->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($rows as &$row) {
+            $row['last_request'] = $this->formatTimestamp($row['last_request']);
+        }
+
+        return $rows;
     }
 
     /**
@@ -59,16 +67,20 @@ class BoardRepository
      */
     public function findByName(string $board): ?array
     {
-        // Conversion de l'heure européenne vers l'heure marocaine (retrancher 1h)
-        $sql = "SELECT board, DATE_FORMAT(DATE_SUB(last_request, INTERVAL 1 HOUR), '%d/%m/%Y %H:%i:%s') as last_request 
-                FROM Boards 
-                WHERE board = :board";
-        
+        $sql = "SELECT board, last_request FROM Boards WHERE board = :board";
+
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':board' => $board]);
-        
+
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result !== false ? $result : null;
+        if ($result === false) {
+            return null;
+        }
+
+        $result['last_request'] = $this->formatTimestamp($result['last_request']);
+
+        return $result;
+
     }
 
     /**
@@ -79,7 +91,7 @@ class BoardRepository
      */
     public function updateLastRequest(string $board): bool
     {
-        $sql = "UPDATE Boards SET last_request = NOW() WHERE board = :board";
+        $sql = "UPDATE Boards SET last_request = UTC_TIMESTAMP() WHERE board = :board";
         
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([':board' => $board]);
@@ -122,6 +134,22 @@ class BoardRepository
     public function exists(string $board): bool
     {
         return $this->findByName($board) !== null;
+    }
+
+    private function formatTimestamp(?string $timestamp): ?string
+    {
+        if ($timestamp === null) {
+            return null;
+        }
+
+        try {
+            $utc = new \DateTimeImmutable($timestamp, new \DateTimeZone('UTC'));
+            $tz = new \DateTimeZone($_ENV['APP_TIMEZONE'] ?? 'Europe/Paris');
+
+            return $utc->setTimezone($tz)->format('d/m/Y H:i:s');
+        } catch (\Exception $e) {
+            return $timestamp;
+        }
     }
 }
 
