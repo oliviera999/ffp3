@@ -351,6 +351,17 @@
             color: white;
         }
         
+        #control-sync-badge.warning {
+            background: linear-gradient(135deg, #ffa726, #fb8c00);
+            color: white;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        #control-sync-badge.paused {
+            background: linear-gradient(135deg, #78909c, #546e7a);
+            color: white;
+        }
+        
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.8; transform: scale(1.05); }

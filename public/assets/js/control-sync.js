@@ -46,17 +46,31 @@ class ControlSync {
             return;
         }
         
+        // S'assurer que le badge est trouvé avant de démarrer
+        if (!this.liveBadge) {
+            this.liveBadge = document.getElementById('control-sync-badge');
+            if (!this.liveBadge) {
+                this.log('Warning: Badge not found, retrying after DOM ready...', 'warn');
+                // Attendre que le DOM soit complètement chargé
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', () => this.start());
+                    return;
+                }
+            }
+        }
+        
         this.isRunning = true;
         this.isPaused = false;
         this.log('Starting control sync...');
         
-        // Première mise à jour immédiate
-        this.poll();
+        // Mettre à jour le badge avant de démarrer le polling
+        this.updateBadgeStatus('connecting');
         
         // Surveiller la visibilité de la page
         document.addEventListener('visibilitychange', this.handleVisibilityChange);
         
-        this.updateBadgeStatus('connecting');
+        // Première mise à jour immédiate
+        this.poll();
     }
     
     /**
@@ -102,6 +116,16 @@ class ControlSync {
             return;
         }
         
+        // S'assurer que le badge existe avant de faire le polling
+        if (!this.liveBadge) {
+            this.liveBadge = document.getElementById('control-sync-badge');
+        }
+        
+        // Mettre le badge en état "connecting" si ce n'est pas déjà fait
+        if (this.liveBadge && !this.liveBadge.classList.contains('online')) {
+            this.updateBadgeStatus('connecting');
+        }
+        
         try {
             const response = await fetch(`${this.apiBase}/state`, {
                 method: 'GET',
@@ -119,9 +143,10 @@ class ControlSync {
             // Traiter les changements d'état
             this.processStates(states);
             
-            // Succès - reset retry count
+            // Succès - reset retry count et mettre à jour le badge
             this.retryCount = 0;
             this.updateBadgeStatus('online');
+            this.log('Polling successful - badge updated to SYNC');
             
             // Planifier le prochain poll
             this.schedulePoll();
@@ -315,10 +340,11 @@ class ControlSync {
         }
         
         if (!this.liveBadge) {
+            this.log(`Badge 'control-sync-badge' not found in DOM`, 'warn');
             return;
         }
         
-        // Retirer toutes les classes de statut
+        // Retirer toutes les classes de statut possibles
         this.liveBadge.classList.remove('connecting', 'online', 'offline', 'error', 'warning', 'paused');
         
         // Ajouter la nouvelle classe
@@ -335,6 +361,8 @@ class ControlSync {
         };
         
         this.liveBadge.textContent = texts[status] || status.toUpperCase();
+        
+        this.log(`Badge status updated to: ${status} (${texts[status] || status.toUpperCase()})`);
         
         // Notifier via callback
         if (this.onStatusChange) {

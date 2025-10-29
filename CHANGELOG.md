@@ -7,6 +7,17 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.6] - 2025-01-17
+
+### 🐛 Correction - Badge de synchronisation page contrôle
+- **Correction mise à jour badge** : Le badge `#control-sync-badge` ne se mettait pas correctement à jour de "CONNEXION..." vers "SYNC" 
+- **Amélioration initialisation** : Meilleure détection du badge dans le DOM et gestion des cas où le badge n'est pas encore disponible
+- **Ajout classes CSS** : Ajout des styles manquants pour les états `warning` et `paused` du badge
+- **Amélioration logs** : Ajout de logs de debug pour faciliter le diagnostic des problèmes de synchronisation
+- **Correction timing** : Le badge se met maintenant à jour correctement après chaque poll réussi vers l'état "online" (SYNC)
+
+---
+
 ## [4.9.5] - 2025-10-22
 
 ### 🛠️ Durcissement backend & alertes
@@ -106,6 +117,16 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 - Mise à jour de `docs/README.md` : version courante 4.8.7, date de révision et renvois vers les guides actifs.
 - Harmonisation des renvois vers `ENVIRONNEMENT_TEST.md`, `ESP32_GUIDE.md`, `deploy-and-test.*` et les archives documentaires.
 - Ajout d'un rappel explicite "Modification → VERSION → CHANGELOG → Tests" dans la documentation principale.
+=======
+## [4.8.7] - 2025-01-17
+
+### 🐛 Correction - Badge de synchronisation page contrôle
+- **Correction mise à jour badge** : Le badge `#control-sync-badge` ne se mettait pas correctement à jour de "CONNEXION..." vers "SYNC" 
+- **Amélioration initialisation** : Meilleure détection du badge dans le DOM et gestion des cas où le badge n'est pas encore disponible
+- **Ajout classes CSS** : Ajout des styles manquants pour les états `warning` et `paused` du badge
+- **Amélioration logs** : Ajout de logs de debug pour faciliter le diagnostic des problèmes de synchronisation
+- **Correction timing** : Le badge se met maintenant à jour correctement après chaque poll réussi vers l'état "online" (SYNC)
+>>>>>>> Stashed changes
 
 ---
 
