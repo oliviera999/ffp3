@@ -2189,10 +2189,18 @@
                                 plotOptions: {
                                     areaspline: {
                                         fillOpacity: 0.3,
-                                        marker: { enabled: false, radius: 2 }
+                                        marker: { enabled: false, radius: 2 },
+                                        dataGrouping: { enabled: false }  // Désactiver le regroupement pour espacement proportionnel
                                     },
                                     series: {
-                                        showInNavigator: true
+                                        showInNavigator: true,
+                                        dataGrouping: { enabled: false }  // Désactiver le regroupement pour toutes les séries
+                                    },
+                                    line: {
+                                        dataGrouping: { enabled: false }  // Désactiver le regroupement pour les lignes (tendances)
+                                    },
+                                    scatter: {
+                                        dataGrouping: { enabled: false }  // Désactiver le regroupement pour les scatter (pompes, etc.)
                                     }
                                 },
                                 legend: {
@@ -2632,17 +2640,26 @@
                                 plotOptions: {
                                     areaspline: {
                                         fillOpacity: 0.3,
-                                        marker: { enabled: false, radius: 2 }
+                                        marker: { enabled: false, radius: 2 },
+                                        dataGrouping: { enabled: false }  // Désactiver le regroupement pour espacement proportionnel
                                     },
                                     series: {
-                                        showInNavigator: true
+                                        showInNavigator: true,
+                                        dataGrouping: { enabled: false }  // Désactiver le regroupement pour toutes les séries
                                     },
                                     column: {
                                         stacking: null,
                                         grouping: false,
                                         pointPadding: 0,
                                         borderWidth: 0,
-                                        opacity: 0.6
+                                        opacity: 0.6,
+                                        dataGrouping: { enabled: false }  // Désactiver le regroupement pour les colonnes
+                                    },
+                                    line: {
+                                        dataGrouping: { enabled: false }  // Désactiver le regroupement pour les lignes
+                                    },
+                                    scatter: {
+                                        dataGrouping: { enabled: false }  // Désactiver le regroupement pour les scatter
                                     }
                                 },
                                 series: [

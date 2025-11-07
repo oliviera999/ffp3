@@ -7,6 +7,16 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.10] - 2025-01-17
+
+### 🐛 Correction - Espacement proportionnel des points sur les graphiques
+- **Désactivation dataGrouping** : Ajout de `dataGrouping: { enabled: false }` dans les plotOptions pour tous les types de séries
+- **Problème identifié** : Highcharts Stock regroupait automatiquement les points de données, masquant l'espacement proportionnel au temps
+- **Configuration complète** : Combinaison de `ordinal: false` sur l'axe X et `dataGrouping: { enabled: false }` sur les séries pour un affichage temporel fidèle
+- **Types de séries** : Configuration appliquée à areaspline, line, scatter et column pour les deux graphiques
+
+---
+
 ## [4.9.9] - 2025-01-17
 
 ### ✨ Amélioration - Espacement proportionnel des points sur les graphiques
