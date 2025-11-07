@@ -7,6 +7,17 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.13] - 2025-01-17
+
+### 🔍 Diagnostic renforcé - Debug espacement proportionnel avec retry
+- **Messages debug précoces** : Ajout de messages immédiatement après `createVersionD()` pour vérifier l'exécution
+- **Mécanisme de retry** : Système de tentatives multiples (jusqu'à 10) toutes les 200ms pour s'assurer que les graphiques sont créés
+- **Diagnostic d'exécution** : Permet de détecter si le script s'exécute et pourquoi les messages n'apparaissent pas
+- **Gestion timeout** : Message d'erreur si les graphiques ne sont pas disponibles après toutes les tentatives
+- **Version dans debug** : Affichage de la version (v4.9.13) dans les premiers messages pour confirmer le déploiement
+
+---
+
 ## [4.9.12] - 2025-01-17
 
 ### 🔍 Diagnostic - Amélioration des messages de debug pour espacement proportionnel

@@ -2768,10 +2768,18 @@
                         }
                         
                         // Initialiser les graphiques
+                        console.log('[DEBUG] Début initialisation graphiques - v4.9.12');
                         createVersionD();
+                        console.log('[DEBUG] createVersionD() appelé, attente création graphiques...');
                         
                         // Debug: Vérifier la configuration de l'axe X après création complète
-                        setTimeout(function() {
+                        // Utiliser plusieurs tentatives pour s'assurer que les graphiques sont créés
+                        var debugAttempts = 0;
+                        var maxAttempts = 10;
+                        var checkDebug = function() {
+                            debugAttempts++;
+                            console.log('[DEBUG] Tentative ' + debugAttempts + ' de vérification des graphiques');
+                            
                             if (window.chartEau && window.chartEau.xAxis && window.chartEau.xAxis[0]) {
                                 console.log('[DEBUG] Chart Eau - ordinal:', window.chartEau.xAxis[0].options.ordinal);
                                 console.log('[DEBUG] Chart Eau - xAxis type:', window.chartEau.xAxis[0].options.type);
@@ -2806,9 +2814,19 @@
                                     console.log('[DEBUG] Chart Temp - nombre de points:', window.chartTemp.series[0].data.length);
                                 }
                             } else {
-                                console.warn('[DEBUG] Chart Temp non disponible');
+                                console.warn('[DEBUG] Chart Temp non disponible (tentative ' + debugAttempts + ')');
                             }
-                        }, 500);
+                            
+                            // Si les graphiques ne sont pas encore prêts, réessayer
+                            if (debugAttempts < maxAttempts && (!window.chartEau || !window.chartTemp || !window.chartEau.xAxis || !window.chartTemp.xAxis)) {
+                                setTimeout(checkDebug, 200);
+                            } else if (debugAttempts >= maxAttempts) {
+                                console.error('[DEBUG] Timeout: Les graphiques ne sont pas disponibles après ' + maxAttempts + ' tentatives');
+                            }
+                        };
+                        
+                        // Première tentative après 500ms, puis toutes les 200ms si nécessaire
+                        setTimeout(checkDebug, 500);
 
                         // --- Dernières valeurs ➜ gauges ---
                         var TemperatureAir = {{ last_reading_tempair|default(0) }};
