@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.9] - 2025-01-17
+
+### ✨ Amélioration - Espacement proportionnel des points sur les graphiques
+- **Configuration xAxis** : Ajout de `ordinal: false` sur les axes X des deux graphiques (niveaux d'eau et températures)
+- **Affichage temporel** : Les points s'affichent maintenant proportionnellement au temps réel qui passe entre les mesures
+- **Meilleure lisibilité** : Les intervalles de temps courts sont visuellement proches, les intervalles longs sont espacés, offrant une représentation plus fidèle de la chronologie des données
+
+---
+
 ## [4.9.8] - 2025-01-17
 
 ### 🐛 Correction - Suppression scrollbars indésirables page contrôle

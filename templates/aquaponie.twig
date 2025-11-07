@@ -2122,6 +2122,7 @@
                                 title: { text: null },
                                 xAxis: {
                                     type: 'datetime',
+                                    ordinal: false,  // Espacement proportionnel au temps réel entre les mesures
                                     events: {
                                         afterSetExtremes: function(e) {
                                             // Recalculer les tendances pour la fenêtre visible
@@ -2592,6 +2593,10 @@
                                     inputEnabled: true
                                 },
                                 title: { text: null },
+                                xAxis: {
+                                    type: 'datetime',
+                                    ordinal: false  // Espacement proportionnel au temps réel entre les mesures
+                                },
                                 yAxis: [{ 
                                     labels: { format: '{value}°C' },
                                     title: { text: 'Températures (°C)' },
