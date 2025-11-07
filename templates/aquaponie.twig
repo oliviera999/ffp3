@@ -1786,6 +1786,18 @@
                         Highcharts.setOptions({
                             time: {
                                 timezone: 'Africa/Casablanca'
+                            },
+                            // Configuration globale pour désactiver l'espacement ordinal (uniforme)
+                            // et forcer l'espacement proportionnel au temps réel
+                            xAxis: {
+                                ordinal: false
+                            },
+                            plotOptions: {
+                                series: {
+                                    dataGrouping: {
+                                        enabled: false
+                                    }
+                                }
                             }
                         });
 
@@ -2368,11 +2380,20 @@
                                 ],
                                 navigator: { 
                                     enabled: true,
-                                    height: 40
+                                    height: 40,
+                                    xAxis: {
+                                        ordinal: false  // Forcer l'espacement proportionnel dans le navigator aussi
+                                    }
                                 },
                                 scrollbar: { enabled: true },
                                 credits: { enabled: false }
                             });
+                            
+                            // Debug: Vérifier la configuration de l'axe X
+                            if (window.chartEau && window.chartEau.xAxis && window.chartEau.xAxis[0]) {
+                                console.log('Chart Eau - ordinal:', window.chartEau.xAxis[0].options.ordinal);
+                                console.log('Chart Eau - dataGrouping enabled:', window.chartEau.series[0]?.options?.dataGrouping?.enabled);
+                            }
                             
                             // 2. Stock Chart Paramètres physiques avec aires
                             window.chartTemp = Highcharts.stockChart('chart-stock-area-temp-D', {
@@ -2742,11 +2763,20 @@
                                 ],
                                 navigator: { 
                                     enabled: true,
-                                    height: 40
+                                    height: 40,
+                                    xAxis: {
+                                        ordinal: false  // Forcer l'espacement proportionnel dans le navigator aussi
+                                    }
                                 },
                                 scrollbar: { enabled: true },
                                 credits: { enabled: false }
                             });
+                            
+                            // Debug: Vérifier la configuration de l'axe X
+                            if (window.chartTemp && window.chartTemp.xAxis && window.chartTemp.xAxis[0]) {
+                                console.log('Chart Temp - ordinal:', window.chartTemp.xAxis[0].options.ordinal);
+                                console.log('Chart Temp - dataGrouping enabled:', window.chartTemp.series[0]?.options?.dataGrouping?.enabled);
+                            }
                         }
                         
                         // Initialiser les graphiques

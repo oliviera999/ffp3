@@ -7,6 +7,16 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.11] - 2025-01-17
+
+### 🔧 Renforcement - Configuration espacement proportionnel des graphiques
+- **Configuration globale** : Ajout de `ordinal: false` et `dataGrouping: { enabled: false }` dans `Highcharts.setOptions()` pour s'appliquer à tous les graphiques
+- **Navigator** : Configuration explicite `ordinal: false` sur l'axe X du navigator pour les deux graphiques
+- **Debug** : Ajout de messages console.log pour vérifier que la configuration est bien appliquée (ordinal et dataGrouping)
+- **Approche multi-niveaux** : Configuration à 3 niveaux (global, chart, navigator) pour garantir l'espacement proportionnel au temps réel
+
+---
+
 ## [4.9.10] - 2025-01-17
 
 ### 🐛 Correction - Espacement proportionnel des points sur les graphiques
