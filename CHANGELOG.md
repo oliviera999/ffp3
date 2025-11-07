@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.14] - 2025-01-17
+
+### ✨ Amélioration - Ajout d'options de filtrage 3h et 12h
+- **Nouvelles options de filtrage** : Ajout des boutons "3 heures" et "12 heures" dans la section filtrage des données de la page aquaponie
+- **Ordre logique** : Les options sont maintenant organisées par ordre croissant : 1h, 3h, 6h, 12h, 1 jour, 1 semaine, 1 mois
+- **Fonctionnalité** : Les nouvelles options utilisent la même fonction `setPeriod()` que les options existantes pour une cohérence parfaite
+
+---
+
 ## [4.9.13] - 2025-01-17
 
 ### 🔍 Diagnostic renforcé - Debug espacement proportionnel avec retry
