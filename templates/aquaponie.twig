@@ -2389,12 +2389,6 @@
                                 credits: { enabled: false }
                             });
                             
-                            // Debug: Vérifier la configuration de l'axe X
-                            if (window.chartEau && window.chartEau.xAxis && window.chartEau.xAxis[0]) {
-                                console.log('Chart Eau - ordinal:', window.chartEau.xAxis[0].options.ordinal);
-                                console.log('Chart Eau - dataGrouping enabled:', window.chartEau.series[0]?.options?.dataGrouping?.enabled);
-                            }
-                            
                             // 2. Stock Chart Paramètres physiques avec aires
                             window.chartTemp = Highcharts.stockChart('chart-stock-area-temp-D', {
                                 chart: { 
@@ -2771,16 +2765,50 @@
                                 scrollbar: { enabled: true },
                                 credits: { enabled: false }
                             });
-                            
-                            // Debug: Vérifier la configuration de l'axe X
-                            if (window.chartTemp && window.chartTemp.xAxis && window.chartTemp.xAxis[0]) {
-                                console.log('Chart Temp - ordinal:', window.chartTemp.xAxis[0].options.ordinal);
-                                console.log('Chart Temp - dataGrouping enabled:', window.chartTemp.series[0]?.options?.dataGrouping?.enabled);
-                            }
                         }
                         
                         // Initialiser les graphiques
                         createVersionD();
+                        
+                        // Debug: Vérifier la configuration de l'axe X après création complète
+                        setTimeout(function() {
+                            if (window.chartEau && window.chartEau.xAxis && window.chartEau.xAxis[0]) {
+                                console.log('[DEBUG] Chart Eau - ordinal:', window.chartEau.xAxis[0].options.ordinal);
+                                console.log('[DEBUG] Chart Eau - xAxis type:', window.chartEau.xAxis[0].options.type);
+                                if (window.chartEau.series && window.chartEau.series[0]) {
+                                    console.log('[DEBUG] Chart Eau - dataGrouping enabled:', window.chartEau.series[0].options.dataGrouping?.enabled);
+                                    console.log('[DEBUG] Chart Eau - nombre de points:', window.chartEau.series[0].data.length);
+                                    // Afficher les 5 premiers timestamps pour vérifier les intervalles
+                                    if (window.chartEau.series[0].data.length >= 5) {
+                                        var timestamps = [];
+                                        for (var i = 0; i < 5; i++) {
+                                            timestamps.push(new Date(window.chartEau.series[0].data[i].x).toLocaleString());
+                                        }
+                                        console.log('[DEBUG] Chart Eau - 5 premiers timestamps:', timestamps);
+                                        // Calculer les intervalles
+                                        var intervals = [];
+                                        for (var i = 1; i < 5; i++) {
+                                            var interval = (window.chartEau.series[0].data[i].x - window.chartEau.series[0].data[i-1].x) / 1000 / 60; // en minutes
+                                            intervals.push(interval.toFixed(1) + ' min');
+                                        }
+                                        console.log('[DEBUG] Chart Eau - intervalles entre points:', intervals);
+                                    }
+                                }
+                            } else {
+                                console.warn('[DEBUG] Chart Eau non disponible');
+                            }
+                            
+                            if (window.chartTemp && window.chartTemp.xAxis && window.chartTemp.xAxis[0]) {
+                                console.log('[DEBUG] Chart Temp - ordinal:', window.chartTemp.xAxis[0].options.ordinal);
+                                console.log('[DEBUG] Chart Temp - xAxis type:', window.chartTemp.xAxis[0].options.type);
+                                if (window.chartTemp.series && window.chartTemp.series[0]) {
+                                    console.log('[DEBUG] Chart Temp - dataGrouping enabled:', window.chartTemp.series[0].options.dataGrouping?.enabled);
+                                    console.log('[DEBUG] Chart Temp - nombre de points:', window.chartTemp.series[0].data.length);
+                                }
+                            } else {
+                                console.warn('[DEBUG] Chart Temp non disponible');
+                            }
+                        }, 500);
 
                         // --- Dernières valeurs ➜ gauges ---
                         var TemperatureAir = {{ last_reading_tempair|default(0) }};

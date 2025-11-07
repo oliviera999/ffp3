@@ -7,6 +7,17 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.12] - 2025-01-17
+
+### 🔍 Diagnostic - Amélioration des messages de debug pour espacement proportionnel
+- **Messages debug détaillés** : Ajout de vérifications complètes après création des graphiques (avec setTimeout)
+- **Vérification configuration** : Affichage de `ordinal`, `xAxis type`, `dataGrouping` pour chaque graphique
+- **Analyse des intervalles** : Calcul et affichage des intervalles réels entre les points de données (en minutes)
+- **Diagnostic des données** : Affichage des 5 premiers timestamps pour vérifier la variabilité des intervalles
+- **Aide au débogage** : Permet de vérifier si le problème vient de la configuration ou de données avec intervalles réguliers
+
+---
+
 ## [4.9.11] - 2025-01-17
 
 ### 🔧 Renforcement - Configuration espacement proportionnel des graphiques
