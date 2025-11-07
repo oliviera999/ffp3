@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.15] - 2025-01-17
+
+### 🗑️ Suppression - Désactivation du rangeSelector (zoom) sur les graphiques
+- **Interface simplifiée** : Suppression de la zone de sélection d'intervalles (rangeSelector) au-dessus à gauche des graphiques Highcharts Stock
+- **Configuration complète** : Désactivation du rangeSelector sur tous les graphiques (niveaux d'eau et paramètres physiques) et dans toutes les configurations responsive
+- **Raison** : Simplification de l'interface utilisateur, le filtrage des données se fait désormais uniquement via la section "Filtrage des données"
+
+---
+
 ## [4.9.14] - 2025-01-17
 
 ### ✨ Amélioration - Ajout d'options de filtrage 3h et 12h
