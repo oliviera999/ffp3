@@ -7,6 +7,27 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.23] - 2025-01-17
+
+### 🎨 Harmonisation complète - Animations, transitions et états interactifs
+- **Système de transitions unifié** : Création d'un système complet de variables CSS
+  - Transitions : fast (0.15s), base (0.25s), slow (0.4s), bounce (0.5s)
+  - Easing : standard, decelerate, accelerate, sharp (cubic-bezier)
+  - Animations : fast (0.3s), base (0.5s), slow (1s), pulse (1.5s), pulse-slow (2s)
+- **Harmonisation complète** : Remplacement de toutes les valeurs hardcodées par les variables CSS
+  - 39+ transitions harmonisées
+  - 7 animations standardisées
+  - Toutes les durées utilisent maintenant les variables
+- **États interactifs complets** : Ajout des états manquants pour l'accessibilité
+  - `:focus-visible` ajouté sur tous les éléments interactifs (boutons, inputs, liens, cartes)
+  - `:disabled` stylisé avec opacité et cursor not-allowed
+  - `:active` ajouté sur tous les boutons pour feedback tactile
+  - Outline harmonisé avec variables CSS
+- **Effets hover harmonisés** : Tous les éléments utilisent maintenant `translateY(-2px)` avec ombre cohérente
+- **Cohérence totale** : Tous les éléments interactifs ont maintenant les mêmes transitions, animations et états
+
+---
+
 ## [4.9.22] - 2025-01-17
 
 ### 🧹 Nettoyage et harmonisation - Templates dupliqués et cohérence
