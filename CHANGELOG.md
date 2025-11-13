@@ -7,6 +7,17 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.27] - 2025-01-20
+
+### 🔄 Réorganisation - Intégration des informations de connexion dans le bloc Connexions
+- **Consolidation des informations de connexion** : Les informations de connexion sont maintenant intégrées dans le bloc "Connexions"
+  - Déplacement des cartes de statut (Sync temps réel, Dernière commande, Lectures aujourd'hui, Uptime) dans le bloc `boards-status`
+  - Suppression du bloc `realtime-status-panel` séparé du contenu principal
+  - Le bloc "Connexions" regroupe maintenant toutes les informations de connexion et des boards en un seul endroit
+- **Amélioration de la cohérence** : Toutes les informations liées aux connexions et aux boards sont maintenant centralisées dans une seule section
+
+---
+
 ## [4.9.26] - 2025-01-20
 
 ### 🎨 Layout - Déplacement des actions rapides en bas de page

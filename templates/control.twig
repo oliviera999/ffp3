@@ -93,6 +93,37 @@
 
                 <section class="boards-status">
                     <h3><i class="fas fa-satellite-dish"></i> Connexions</h3>
+                    
+                    <div class="status-grid">
+                        <div class="status-card">
+                            <div class="status-label">Sync temps réel</div>
+                            <div id="system-status-indicator" class="status-indicator status-online is-animated">
+                                <span class="status-pill" data-status-badge><i class="fas fa-circle"></i><strong>TEMPS RÉEL</strong></span>
+                                <span class="status-text" data-status-label><i class="fas fa-check-circle"></i><span>En ligne</span></span>
+                            </div>
+                        </div>
+                        <div class="status-card">
+                            <div class="status-label">Dernière commande</div>
+                            <div class="status-value" id="last-reading-time" data-default="pending">
+                                <span class="reading-ago" data-reading-ago><i class="fas fa-spinner fa-spin"></i></span>
+                                <span class="reading-timestamp" data-reading-timestamp></span>
+                            </div>
+                        </div>
+                        <div class="status-card">
+                            <div class="status-label">Lectures aujourd'hui</div>
+                            <div class="status-value" id="readings-today" data-default="pending">
+                                <span class="reading-count" data-reading-count><i class="fas fa-spinner fa-spin"></i></span>
+                                <span class="reading-hint" data-reading-hint>/ jour</span>
+                            </div>
+                        </div>
+                        <div class="status-card">
+                            <div class="status-label">Uptime (30j)</div>
+                            <div class="status-value" id="system-uptime">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="boards-grid">
                         {% for board in boards %}
                             <article class="board-card" data-board="{{ board.board }}">
@@ -135,38 +166,6 @@
                         </div>
                     </div>
                 </header>
-
-                <section class="realtime-status-panel">
-                    <div class="status-grid">
-                        <div class="status-card">
-                            <div class="status-label">Sync temps réel</div>
-                            <div id="system-status-indicator" class="status-indicator status-online is-animated">
-                                <span class="status-pill" data-status-badge><i class="fas fa-circle"></i><strong>TEMPS RÉEL</strong></span>
-                                <span class="status-text" data-status-label><i class="fas fa-check-circle"></i><span>En ligne</span></span>
-                            </div>
-                        </div>
-                        <div class="status-card">
-                            <div class="status-label">Dernière commande</div>
-                            <div class="status-value" id="last-reading-time" data-default="pending">
-                                <span class="reading-ago" data-reading-ago><i class="fas fa-spinner fa-spin"></i></span>
-                                <span class="reading-timestamp" data-reading-timestamp></span>
-                            </div>
-                        </div>
-                        <div class="status-card">
-                            <div class="status-label">Lectures aujourd'hui</div>
-                            <div class="status-value" id="readings-today" data-default="pending">
-                                <span class="reading-count" data-reading-count><i class="fas fa-spinner fa-spin"></i></span>
-                                <span class="reading-hint" data-reading-hint>/ jour</span>
-                            </div>
-                        </div>
-                        <div class="status-card">
-                            <div class="status-label">Uptime (30j)</div>
-                            <div class="status-value" id="system-uptime">
-                                <i class="fas fa-spinner fa-spin"></i>
-                            </div>
-                        </div>
-                    </div>
-                </section>
 
                 <section class="controls-section">
                     <div class="controls-group">
