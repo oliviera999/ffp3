@@ -87,10 +87,6 @@
                                 <span class="stat-label">Boards</span>
                                 <span class="stat-value">{{ boards|length }}</span>
                             </div>
-                            <div class="context-stat">
-                                <span class="stat-label">Logs actifs</span>
-                                <span class="stat-value" id="logs-counter">0</span>
-                            </div>
                         </div>
                     </div>
                 </section>
@@ -433,39 +429,10 @@
                     </div>
                 </section>
             </section>
-
-            <aside class="logs-sidebar">
-                <section class="realtime-logs-panel panel">
-                    <header>
-                        <h3><i class="fas fa-terminal"></i> Logs temps réel</h3>
-                        <span class="logs-status active" id="logs-status">
-                            <i class="fas fa-circle"></i> Actif
-                        </span>
-                    </header>
-
-                    <div class="logs-controls">
-                        <button id="pause-logs-btn" class="logs-control-btn"><i class="fas fa-pause"></i> Pause</button>
-                        <button id="clear-logs-btn" class="logs-control-btn"><i class="fas fa-trash"></i> Vider</button>
-                        <button id="export-logs-btn" class="logs-control-btn"><i class="fas fa-file-export"></i> Exporter</button>
-                    </div>
-
-                    <div class="logs-filters">
-                        <button class="log-filter-badge active" data-filter="info">Info</button>
-                        <button class="log-filter-badge active" data-filter="success">Succès</button>
-                        <button class="log-filter-badge active" data-filter="warning">Avert.</button>
-                        <button class="log-filter-badge active" data-filter="error">Erreur</button>
-                        <button class="log-filter-badge active" data-filter="gpio">GPIO</button>
-                        <button class="log-filter-badge active" data-filter="sync">Sync</button>
-                    </div>
-
-                    <div id="logs-container" class="logs-container"></div>
-                </section>
-            </aside>
         </div>
 
         <script src="/ffp3/assets/js/control-sync.js"></script>
         <script src="/ffp3/assets/js/control-values-updater.js"></script>
-        <script src="/ffp3/assets/js/realtime-logger.js"></script>
         <script src="/ffp3/assets/js/toast-notifications.js"></script>
         <script src="/ffp3/assets/js/control-actions.js"></script>
         <script src="/ffp3/assets/js/control-auto-save.js"></script>
@@ -482,25 +449,10 @@
                 const valuesUpdater = new ControlValuesUpdater();
                 valuesUpdater.init();
 
-                const realtimeLogger = new RealtimeLogger({
-                    containerId: 'logs-container',
-                    counterId: 'logs-counter',
-                    filtersSelector: '.log-filter-badge'
-                });
-
-                controlSync.onStateChange = changes => {
-                    realtimeLogger.logChanges(changes);
-                };
-
-                controlSync.onStatusChange = status => {
-                    realtimeLogger.logStatus(status);
-                };
-
                 controlSync.start();
 
                 window.controlSync = controlSync;
                 window.controlValuesUpdater = valuesUpdater;
-                window.realtimeLogger = realtimeLogger;
 
                 const realtimeApiBase = '{{ environment == "test" ? "/ffp3/api/realtime-test" : "/ffp3/api/realtime" }}';
                 initRealtimeUpdater({

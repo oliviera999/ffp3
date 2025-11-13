@@ -7,6 +7,23 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.24] - 2025-01-20
+
+### 🧹 Suppression - Système de logs temps réel
+- **Suppression du panneau de logs temps réel** : Retrait complet du système de logs temps réel de la page de contrôle
+  - Suppression du panneau HTML `<aside class="logs-sidebar">` avec ses contrôles et filtres
+  - Suppression du compteur "Logs actifs" dans la sidebar gauche
+  - Suppression de l'inclusion et de l'initialisation de `RealtimeLogger` dans le JavaScript
+  - Suppression de tous les styles CSS associés (`.realtime-logs-panel`, `.logs-container`, `.log-entry`, etc.)
+- **Ajustement du layout** : Adaptation de la grille de layout de 3 colonnes à 2 colonnes
+  - Passage de `grid-template-columns: 320px minmax(0, 1fr) 360px` à `320px minmax(0, 1fr)`
+  - Mise à jour des media queries pour supprimer les références à `.logs-sidebar`
+- **Fonctionnalités conservées** : Toutes les autres fonctionnalités de la page de contrôle restent intactes
+  - Le système de synchronisation temps réel (`ControlSync`) continue de fonctionner normalement
+  - Les autres composants (contrôles, paramètres, statuts) ne sont pas affectés
+
+---
+
 ## [4.9.23] - 2025-01-17
 
 ### 🎨 Harmonisation complète - Animations, transitions et états interactifs
