@@ -7,6 +7,184 @@
             box-sizing: border-box;
         }
         
+        body {
+            font-family: var(--control-font-family);
+            font-size: var(--control-font-size-base);
+            line-height: var(--control-line-height-normal);
+            color: #1b2a4b;
+        }
+        
+        /* Système de typographie - Titres */
+        h1 {
+            font-size: var(--control-font-size-2xl);
+            font-weight: var(--control-font-weight-bold);
+            line-height: var(--control-line-height-tight);
+            color: #1b2a4b;
+            margin: 0 0 0.5em 0;
+        }
+        
+        h2 {
+            font-size: var(--control-font-size-xl);
+            font-weight: var(--control-font-weight-bold);
+            line-height: var(--control-line-height-tight);
+            color: #1b2a4b;
+            margin: 0 0 0.75em 0;
+        }
+        
+        h3 {
+            font-size: var(--control-font-size-lg);
+            font-weight: var(--control-font-weight-semibold);
+            line-height: var(--control-line-height-normal);
+            color: #1b2a4b;
+            margin: 0 0 0.5em 0;
+        }
+        
+        h4 {
+            font-size: var(--control-font-size-md);
+            font-weight: var(--control-font-weight-semibold);
+            line-height: var(--control-line-height-normal);
+            color: #1b2a4b;
+            margin: 0 0 0.5em 0;
+        }
+        
+        p {
+            font-size: var(--control-font-size-base);
+            line-height: var(--control-line-height-relaxed);
+            color: var(--text-muted);
+            margin: 0 0 1em 0;
+        }
+        
+        small {
+            font-size: var(--control-font-size-sm);
+            line-height: var(--control-line-height-normal);
+        }
+        
+        /* Système de badges unifié */
+        .badge,
+        .context-badge,
+        .sync-status-badge,
+        .activity-badge,
+        .log-filter-badge,
+        .logs-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: var(--badge-padding-md);
+            border-radius: var(--badge-border-radius);
+            font-size: var(--badge-font-size);
+            font-weight: var(--badge-font-weight);
+            letter-spacing: var(--badge-letter-spacing);
+            text-transform: uppercase;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        
+        /* Variantes de badges */
+        .badge-sm,
+        .context-badge-sm {
+            padding: var(--badge-padding-sm);
+            font-size: var(--control-font-size-xs);
+        }
+        
+        .badge-lg,
+        .context-badge-lg {
+            padding: var(--badge-padding-lg);
+            font-size: var(--control-font-size-sm);
+        }
+        
+        /* Badge contextuel (environnement, version) */
+        .context-badge {
+            background: var(--control-primary-muted);
+            color: var(--control-primary);
+            border: 1px solid rgba(0, 139, 116, 0.2);
+        }
+        
+        .context-badge-test {
+            background: rgba(255, 174, 0, 0.15);
+            color: #b16b00;
+            border-color: rgba(255, 174, 0, 0.3);
+        }
+        
+        .context-badge-prod {
+            background: var(--control-primary-muted);
+            color: var(--control-primary);
+            border-color: rgba(0, 139, 116, 0.3);
+        }
+        
+        /* Badge de statut de synchronisation */
+        .sync-status-badge {
+            padding: var(--badge-padding-sm);
+        }
+        
+        .sync-status-badge.sync-pending {
+            background: rgba(255, 174, 0, 0.2);
+            color: #a8640f;
+            border: 1px solid rgba(255, 174, 0, 0.3);
+        }
+        
+        .sync-status-badge.sync-synced {
+            background: rgba(0, 139, 116, 0.15);
+            color: #006a57;
+            border: 1px solid rgba(0, 139, 116, 0.3);
+        }
+        
+        .sync-status-badge.sync-conflict {
+            background: rgba(231, 76, 60, 0.18);
+            color: #b52d20;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        
+        .sync-status-badge.sync-esp32 {
+            background: rgba(46, 134, 222, 0.18);
+            color: #2367b2;
+            border: 1px solid rgba(46, 134, 222, 0.3);
+        }
+        
+        /* Badge d'activité */
+        .activity-badge {
+            padding: var(--badge-padding-sm);
+            font-size: var(--control-font-size-xs);
+            color: #ffffff;
+        }
+        
+        .activity-badge.on {
+            background: #2ecc71;
+        }
+        
+        .activity-badge.off {
+            background: #bdc3c7;
+        }
+        
+        /* Badge de filtre de logs */
+        .log-filter-badge {
+            cursor: pointer;
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+        }
+        
+        .log-filter-badge.active {
+            background: linear-gradient(135deg, var(--control-primary), var(--control-primary-light));
+            color: white;
+            border-color: var(--control-primary);
+        }
+        
+        /* Badge de statut des logs */
+        .logs-status {
+            background: rgba(68, 201, 147, 0.15);
+            color: #0f8b66;
+        }
+        
+        .logs-status.active {
+            background: linear-gradient(135deg, #4caf50, #43a047);
+            color: white;
+        }
+        
+        .logs-status.paused {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+        
         /* Banner d'informations système (cohérent avec aquaponie) */
         .system-info-banner {
             background: linear-gradient(135deg, #008B74, #00A896);
@@ -1151,13 +1329,65 @@
          }
 
         :root {
-            --control-bg:#f6f9fc;
-            --panel-bg:#ffffff;
-            --panel-shadow:0 18px 40px rgba(15, 35, 95, 0.08);
-            --border-color:#e3e8ee;
-            --accent:#008B74;
-            --accent-muted:rgba(0, 139, 116, 0.12);
-            --text-muted:#6b7a8a;
+            --control-primary: #008B74;
+            --control-primary-light: #00A896;
+            --control-primary-muted: rgba(0, 139, 116, 0.15);
+            --control-primary-shadow: rgba(0, 139, 116, 0.3);
+            
+            --control-radius-sm: 8px;
+            --control-radius-md: 12px;
+            --control-radius-lg: 16px;
+            --control-radius-xl: 20px;
+            --control-radius-pill: 999px;
+            
+            --control-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --control-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --control-shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.2);
+            --control-shadow-primary: 0 4px 12px rgba(0, 139, 116, 0.3);
+            --control-shadow-primary-lg: 0 6px 20px rgba(0, 139, 116, 0.4);
+            
+            /* Système de typographie unifié */
+            --control-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --control-font-mono: 'Courier New', 'Roboto Mono', monospace;
+            
+            --control-font-size-xs: 0.75em;      /* 12px */
+            --control-font-size-sm: 0.85em;      /* 13.6px */
+            --control-font-size-base: 0.95em;    /* 15.2px */
+            --control-font-size-md: 1.1em;       /* 17.6px */
+            --control-font-size-lg: 1.3em;       /* 20.8px */
+            --control-font-size-xl: 1.5em;       /* 24px */
+            --control-font-size-2xl: 2.2em;      /* 35.2px */
+            
+            --control-font-weight-normal: 400;
+            --control-font-weight-medium: 500;
+            --control-font-weight-semibold: 600;
+            --control-font-weight-bold: 700;
+            
+            --control-line-height-tight: 1.2;
+            --control-line-height-normal: 1.5;
+            --control-line-height-relaxed: 1.6;
+            
+            --control-letter-spacing-tight: 0.02em;
+            --control-letter-spacing-normal: 0.05em;
+            --control-letter-spacing-wide: 0.08em;
+            
+            /* Système de badges unifié */
+            --badge-padding-sm: 4px 8px;
+            --badge-padding-md: 6px 12px;
+            --badge-padding-lg: 8px 16px;
+            --badge-font-size: var(--control-font-size-xs);
+            --badge-font-weight: var(--control-font-weight-semibold);
+            --badge-border-radius: var(--control-radius-pill);
+            --badge-letter-spacing: var(--control-letter-spacing-wide);
+            
+            /* Variables de layout */
+            --control-bg: #f6f9fc;
+            --panel-bg: #ffffff;
+            --panel-shadow: 0 18px 40px rgba(15, 35, 95, 0.08);
+            --border-color: #e3e8ee;
+            --accent: #008B74;
+            --accent-muted: rgba(0, 139, 116, 0.12);
+            --text-muted: #6b7a8a;
         }
 
         .control-wrapper {

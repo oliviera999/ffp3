@@ -7,6 +7,24 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.20] - 2025-01-17
+
+### 🎨 Harmonisation complète - Layout, badges et typographie
+- **Système de typographie unifié** : Création d'un système cohérent avec variables CSS
+  - Tailles : xs (0.75em), sm (0.85em), base (0.95em), md (1.1em), lg (1.3em), xl (1.5em), 2xl (2.2em)
+  - Poids : normal (400), medium (500), semibold (600), bold (700)
+  - Line-height : tight (1.2), normal (1.5), relaxed (1.6)
+  - Letter-spacing : tight (0.02em), normal (0.05em), wide (0.08em)
+  - Polices : système par défaut et monospace pour les logs
+- **Système de badges unifié** : Tous les badges utilisent maintenant les mêmes variables
+  - `.badge`, `.context-badge`, `.sync-status-badge`, `.activity-badge`, `.log-filter-badge`, `.logs-status`
+  - Variantes : `.badge-sm`, `.badge-lg`
+  - Padding, border-radius et typographie harmonisés
+- **Layout harmonisé** : Structure cohérente avec les autres pages (header/nav/main)
+- **Variables CSS consolidées** : Fusion de tous les blocs `:root` en un seul système unifié
+
+---
+
 ## [4.9.19] - 2025-01-17
 
 ### 🎨 Harmonisation - Système de design unifié (couleurs, border-radius, box-shadow)
