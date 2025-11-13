@@ -7,6 +7,29 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.17] - 2025-01-17
+
+### 🧹 Refactoring - Correction de l'indentation et structure HTML
+- **Amélioration de la lisibilité** : Correction de l'indentation excessive dans `control.twig`
+- **Structure HTML** : Harmonisation de l'indentation des balises fermantes et des sections
+- **Maintenabilité** : Code plus lisible et plus facile à maintenir
+- **Sections corrigées** :
+  - Section "Gestion de l'eau" : fermeture correcte de `control-cards-grid` et `controls-group`
+  - Section "Programmation automatique" : indentation uniforme des labels
+  - Section "Configuration" : fermeture correcte de `control-cards-grid` et `controls-grid`
+
+---
+
+## [4.9.16] - 2025-01-17
+
+### 🎨 Refactoring - Extraction du CSS inline vers fichier externe
+- **Amélioration de la maintenabilité** : Extraction de tout le CSS inline de `control.twig` vers un fichier externe `control-styles.css`
+- **Cohérence esthétique** : Centralisation des styles de contrôle dans un fichier dédié pour faciliter la maintenance et l'évolution
+- **Performance** : Meilleure mise en cache du CSS par le navigateur
+- **Structure** : Le fichier CSS est maintenant dans `public/assets/css/control-styles.css`
+
+---
+
 ## [4.9.15] - 2025-01-17
 
 ### 🗑️ Suppression - Désactivation du rangeSelector (zoom) sur les graphiques
