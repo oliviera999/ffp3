@@ -7,6 +7,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.25] - 2025-01-20
+
+### 🎨 Layout - Page de contrôle en une seule colonne
+- **Simplification du layout** : Passage de la page de contrôle de 2 colonnes à 1 colonne
+  - Modification de `.control-layout` : `grid-template-columns: 1fr` (une seule colonne)
+  - Sidebar et contenu principal affichés verticalement, l'un après l'autre
+  - Suppression de la position sticky de la sidebar (plus de scroll nécessaire)
+  - Suppression des media queries qui redéfinissaient le layout en 2 colonnes
+- **Amélioration de l'expérience** : Interface plus simple et linéaire sur toutes les tailles d'écran
+
+---
+
 ## [4.9.24] - 2025-01-20
 
 ### 🧹 Suppression - Système de logs temps réel
