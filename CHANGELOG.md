@@ -7,6 +7,23 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.22] - 2025-01-17
+
+### 🧹 Nettoyage et harmonisation - Templates dupliqués et cohérence
+- **Suppression template dupliqué** : Suppression de `control_harmonized.twig` (fichier vide et non utilisé)
+- **Harmonisation Font Awesome** : Mise à jour de tous les templates vers Font Awesome 6.5.1 avec intégrité
+  - `aquaponie.twig` : 6.4.0 → 6.5.1
+  - `dashboard.twig` : 6.4.0 → 6.5.1
+  - `home.twig` : 6.4.0 → 6.5.1
+  - `tide_stats.twig` : 6.4.0 → 6.5.1
+- **Harmonisation meta tags** : Ajout des meta tags manquants dans tous les templates
+  - `home.twig` : Ajout theme-color, apple-mobile-web-app-capable, apple-mobile-web-app-status-bar-style
+  - `tide_stats.twig` : Ajout theme-color, apple-mobile-web-app-capable, apple-mobile-web-app-status-bar-style
+- **Harmonisation PWA** : Ajout de manifest et apple-touch-icon dans `home.twig`
+- **Cohérence totale** : Tous les templates utilisent maintenant les mêmes versions et meta tags
+
+---
+
 ## [4.9.21] - 2025-01-17
 
 ### 🎨 Harmonisation - Espacements et responsive design
