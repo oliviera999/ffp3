@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.18] - 2025-01-17
+
+### 🧹 Refactoring - Suppression des styles inline restants
+- **Cohérence CSS** : Suppression du dernier style inline (`style="display: none;"`) du template `control.twig`
+- **Centralisation** : Déplacement de la règle `.reading-timestamp { display: none; }` vers le fichier CSS externe
+- **Maintenabilité** : Tous les styles sont maintenant dans `control-styles.css`, aucun style inline dans le HTML
+
+---
+
 ## [4.9.17] - 2025-01-17
 
 ### 🧹 Refactoring - Correction de l'indentation et structure HTML

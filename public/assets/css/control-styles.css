@@ -1458,6 +1458,10 @@
             align-items: center;
             gap: 8px;
         }
+        
+        .reading-timestamp {
+            display: none;
+        }
 
         .controls-section {
             display: flex;
