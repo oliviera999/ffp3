@@ -584,7 +584,7 @@
          
          .realtime-logs-panel h3 {
              margin: 0 0 20px 0;
-             color: #008B74;
+             color: var(--control-primary);
              font-size: 1.3em;
              display: flex;
              align-items: center;
@@ -1100,7 +1100,7 @@
          }
          
          .realtime-logs-panel h3 i {
-             color: #008B74;
+             color: var(--control-primary);
              margin-right: 8px;
          }
          

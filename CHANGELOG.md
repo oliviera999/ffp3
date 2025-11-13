@@ -7,6 +7,19 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.19] - 2025-01-17
+
+### 🎨 Harmonisation - Système de design unifié (couleurs, border-radius, box-shadow)
+- **Variables CSS** : Ajout d'un système de variables CSS pour cohérence totale
+  - Couleurs : `--control-primary`, `--control-primary-light`, `--control-primary-muted`, `--control-primary-shadow`
+  - Border-radius : `--control-radius-sm` (8px), `--control-radius-md` (12px), `--control-radius-lg` (16px), `--control-radius-xl` (20px), `--control-radius-pill` (999px)
+  - Box-shadow : `--control-shadow-sm`, `--control-shadow-md`, `--control-shadow-lg`, `--control-shadow-primary`, `--control-shadow-primary-lg`
+- **Harmonisation complète** : Tous les border-radius, box-shadow et couleurs principales utilisent maintenant les variables CSS
+- **Cohérence visuelle** : Interface uniforme avec un système de design cohérent
+- **Maintenabilité** : Modification globale des styles possible via les variables CSS
+
+---
+
 ## [4.9.18] - 2025-01-17
 
 ### 🧹 Refactoring - Suppression des styles inline restants
