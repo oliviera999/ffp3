@@ -7,6 +7,25 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.21] - 2025-01-17
+
+### 🎨 Harmonisation - Espacements et responsive design
+- **Système d'espacement unifié** : Création d'un système complet de variables CSS pour les espacements
+  - Spacing : xs (4px), sm (8px), md (12px), lg (16px), xl (20px), 2xl (24px), 3xl (32px)
+  - Gap : xs (6px), sm (10px), md (12px), lg (16px), xl (20px), 2xl (24px)
+  - Padding : xs (6px), sm (10px), md (14px), lg (18px), xl (20px), 2xl (25px)
+  - Margin : xs (4px), sm (8px), md (12px), lg (18px), xl (20px), 2xl (25px)
+- **Harmonisation complète** : Remplacement de toutes les valeurs hardcodées par les variables CSS
+- **Responsive design amélioré** : Media queries harmonisées avec breakpoints cohérents
+  - 1440px : Réduction des colonnes et espacements
+  - 1200px : Passage à 2 colonnes, logs en bas
+  - 992px : Passage à 1 colonne, sidebar statique
+  - 768px : Optimisation mobile (grilles en 1 colonne, padding réduit)
+  - 480px : Optimisation petit mobile (padding minimal)
+- **Cohérence visuelle** : Tous les espacements utilisent maintenant le même système
+
+---
+
 ## [4.9.20] - 2025-01-17
 
 ### 🎨 Harmonisation complète - Layout, badges et typographie

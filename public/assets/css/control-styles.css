@@ -189,23 +189,23 @@
         .system-info-banner {
             background: linear-gradient(135deg, #008B74, #00A896);
             color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0, 139, 116, 0.3);
+            padding: var(--control-padding-xl);
+            border-radius: var(--control-radius-md);
+            margin-bottom: var(--control-margin-2xl);
+            box-shadow: var(--control-shadow-primary);
         }
         
         .system-info-banner h3 {
-            margin: 0 0 10px 0;
-            font-size: 1.3em;
+            margin: 0 0 var(--control-margin-sm) 0;
+            font-size: var(--control-font-size-lg);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: var(--control-gap-sm);
         }
         
         .system-info-banner p {
-            margin: 5px 0;
-            font-size: 0.95em;
+            margin: var(--control-margin-xs) 0;
+            font-size: var(--control-font-size-base);
             opacity: 0.95;
         }
         
@@ -213,10 +213,10 @@
         .section-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #008B74;
+            gap: var(--control-gap-md);
+            margin-bottom: var(--control-margin-xl);
+            padding-bottom: var(--control-padding-sm);
+            border-bottom: 2px solid var(--control-primary);
         }
         
         .section-header i {
@@ -234,33 +234,33 @@
         .control-grid-harmonized {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 30px;
+            gap: var(--control-gap-2xl);
+            margin-bottom: var(--control-margin-3xl);
         }
         
         /* Cartes de contrôle harmonisées */
         .control-card {
             background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: var(--control-radius-md);
+            padding: var(--control-padding-2xl);
+            box-shadow: var(--control-shadow-md);
             border: 1px solid #e8e8e8;
             transition: all 0.3s ease;
         }
         
         .control-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: var(--control-shadow-lg);
         }
         
         .control-card h3 {
-            margin: 0 0 20px 0;
-            color: #008B74;
-            font-size: 1.2em;
+            margin: 0 0 var(--control-margin-xl) 0;
+            color: var(--control-primary);
+            font-size: var(--control-font-size-md);
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding-bottom: 10px;
+            gap: var(--control-gap-sm);
+            padding-bottom: var(--control-padding-sm);
             border-bottom: 2px solid #f0f0f0;
         }
         
@@ -268,19 +268,19 @@
         .action-buttons-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: var(--control-gap-lg);
+            margin-bottom: var(--control-margin-xl);
         }
         
         .action-button-card {
             background: white;
-            border-radius: 10px;
-            padding: 15px;
+            border-radius: var(--control-radius-sm);
+            padding: var(--control-padding-lg);
             border: 2px solid #e8e8e8;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 15px;
+            gap: var(--control-gap-lg);
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -294,13 +294,13 @@
         .action-button-card[data-state="1"] {
             border-color: currentColor;
             background: #f0f8f7;
-            box-shadow: 0 2px 8px rgba(0, 139, 116, 0.2);
+            box-shadow: var(--control-shadow-sm);
         }
         
         .action-button-content {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: var(--control-gap-md);
             flex: 1;
         }
         
@@ -1380,6 +1380,36 @@
             --badge-border-radius: var(--control-radius-pill);
             --badge-letter-spacing: var(--control-letter-spacing-wide);
             
+            /* Système d'espacement unifié */
+            --control-spacing-xs: 4px;
+            --control-spacing-sm: 8px;
+            --control-spacing-md: 12px;
+            --control-spacing-lg: 16px;
+            --control-spacing-xl: 20px;
+            --control-spacing-2xl: 24px;
+            --control-spacing-3xl: 32px;
+            
+            --control-gap-xs: 6px;
+            --control-gap-sm: 10px;
+            --control-gap-md: 12px;
+            --control-gap-lg: 16px;
+            --control-gap-xl: 20px;
+            --control-gap-2xl: 24px;
+            
+            --control-padding-xs: 6px;
+            --control-padding-sm: 10px;
+            --control-padding-md: 14px;
+            --control-padding-lg: 18px;
+            --control-padding-xl: 20px;
+            --control-padding-2xl: 25px;
+            
+            --control-margin-xs: 4px;
+            --control-margin-sm: 8px;
+            --control-margin-md: 12px;
+            --control-margin-lg: 18px;
+            --control-margin-xl: 20px;
+            --control-margin-2xl: 25px;
+            
             /* Variables de layout */
             --control-bg: #f6f9fc;
             --panel-bg: #ffffff;
@@ -1391,14 +1421,14 @@
         }
 
         .control-wrapper {
-            padding: 28px 20px 60px;
+            padding: var(--control-spacing-3xl) var(--control-padding-xl) 60px;
             background: linear-gradient(180deg, var(--control-bg) 0%, #eef2f6 100%);
         }
 
         .control-layout {
             display: grid;
             grid-template-columns: 320px minmax(0, 1fr) 360px;
-            gap: 24px;
+            gap: var(--control-gap-2xl);
             align-items: flex-start;
         }
 
@@ -1406,9 +1436,9 @@
         .logs-sidebar {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: var(--control-gap-2xl);
             position: sticky;
-            top: 28px;
+            top: var(--control-spacing-3xl);
         }
 
         .control-sidebar {
@@ -1430,14 +1460,14 @@
         .control-main {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: var(--control-gap-2xl);
         }
 
         .panel {
             background: var(--panel-bg);
-            border-radius: 22px;
+            border-radius: var(--control-radius-xl);
             box-shadow: var(--panel-shadow);
-            padding: 26px;
+            padding: var(--control-padding-2xl);
         }
 
         .control-main-header {
@@ -2075,10 +2105,15 @@
         }
 
         @media (max-width: 768px) {
+            .control-wrapper {
+                padding: var(--control-spacing-lg) var(--control-padding-md) 30px;
+            }
+            
             .control-main-header {
                 flex-direction: column;
-                gap: 16px;
+                gap: var(--control-gap-lg);
             }
+            
             .realtime-status-panel .status-grid,
             .controls-grid,
             .control-cards-grid,
@@ -2086,9 +2121,40 @@
             .boards-grid,
             .quick-actions-grid {
                 grid-template-columns: 1fr;
+                gap: var(--control-gap-md);
             }
+            
             .logs-controls {
                 flex-direction: column;
+                gap: var(--control-gap-sm);
+            }
+            
+            .panel {
+                padding: var(--control-padding-lg);
+            }
+            
+            .control-card,
+            .action-button-card {
+                padding: var(--control-padding-md);
             }
         }
-    </style>
+        
+        @media (max-width: 480px) {
+            .control-wrapper {
+                padding: var(--control-spacing-md) var(--control-padding-sm) 20px;
+            }
+            
+            .panel {
+                padding: var(--control-padding-md);
+                border-radius: var(--control-radius-lg);
+            }
+            
+            .control-card,
+            .action-button-card {
+                padding: var(--control-padding-sm);
+            }
+            
+            .system-info-banner {
+                padding: var(--control-padding-md);
+            }
+        }
