@@ -7,6 +7,16 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.26] - 2025-01-20
+
+### 🎨 Layout - Déplacement des actions rapides en bas de page
+- **Réorganisation de la page de contrôle** : La section "Actions rapides" est maintenant affichée en bas de page
+  - Déplacement de la section depuis la sidebar vers le bas du layout principal
+  - Ajout de la classe `panel` pour conserver le style cohérent avec les autres sections
+  - Amélioration de la hiérarchie visuelle : les actions rapides sont accessibles après consultation du contenu principal
+
+---
+
 ## [4.9.25] - 2025-01-20
 
 ### 🎨 Layout - Page de contrôle en une seule colonne

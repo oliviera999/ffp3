@@ -91,24 +91,6 @@
                     </div>
                 </section>
 
-                <section class="quick-actions">
-                    <h3><i class="fas fa-bolt"></i> Actions rapides</h3>
-                    <div class="quick-actions-grid">
-                        <a href="/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}" class="quick-action-card">
-                            <i class="fas fa-chart-line"></i>
-                            <span>Retour aux données</span>
-                        </a>
-                        <a href="/ffp3/cronpompe.php" class="quick-action-card">
-                            <i class="fas fa-rotate"></i>
-                            <span>Exécuter cron</span>
-                        </a>
-                        <a href="/ffp3/cronlog.txt" class="quick-action-card">
-                            <i class="fas fa-file-lines"></i>
-                            <span>Logs cron</span>
-                        </a>
-                    </div>
-                </section>
-
                 <section class="boards-status">
                     <h3><i class="fas fa-satellite-dish"></i> Connexions</h3>
                     <div class="boards-grid">
@@ -428,6 +410,24 @@
                         </article>
                     </div>
                 </section>
+            </section>
+
+            <section class="quick-actions panel">
+                <h3><i class="fas fa-bolt"></i> Actions rapides</h3>
+                <div class="quick-actions-grid">
+                    <a href="/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}" class="quick-action-card">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Retour aux données</span>
+                    </a>
+                    <a href="/ffp3/cronpompe.php" class="quick-action-card">
+                        <i class="fas fa-rotate"></i>
+                        <span>Exécuter cron</span>
+                    </a>
+                    <a href="/ffp3/cronlog.txt" class="quick-action-card">
+                        <i class="fas fa-file-lines"></i>
+                        <span>Logs cron</span>
+                    </a>
+                </div>
             </section>
         </div>
 
