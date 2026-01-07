@@ -15,6 +15,8 @@ use DateTimeInterface;
  */
 class TideAnalysisService
 {
+    private const VARIATION_THRESHOLD = 2.0; // Variation minimale de 2 cm pour être significative
+
     public function __construct(private SensorReadRepository $repo) {}
 
     /**
@@ -43,25 +45,48 @@ class TideAnalysisService
         $cycleMin = $levels[0];
         $cycleMax = $levels[0];
         $direction = null; // 1 = montée, -1 = descente
+        $hasRisen = false; // A-t-on eu une montée dans le cycle actuel
+        $hasFallen = false; // A-t-on eu une descente dans le cycle actuel
         $amplitudes = [];
 
         for ($i = 1, $len = count($levels); $i < $len; $i++) {
             $delta = $levels[$i] - $levels[$i - 1];
-            $currentDir = $delta > 0 ? 1 : ($delta < 0 ? -1 : $direction);
+            
+            // Ignorer les variations inférieures au seuil (2 cm)
+            if (abs($delta) <= self::VARIATION_THRESHOLD) {
+                continue;
+            }
+            
+            $currentDir = $delta > 0 ? 1 : -1;
 
             if ($direction === null) {
                 $direction = $currentDir;
+                $hasRisen = ($currentDir === 1);
+                $hasFallen = ($currentDir === -1);
             }
 
-            // Changement de direction => cycle complet
-            if ($currentDir !== 0 && $direction !== $currentDir) {
-                // Fin de cycle précédent, on calcule amplitude
+            // Suivre les mouvements dans le cycle actuel
+            if ($currentDir === 1) {
+                $hasRisen = true;
+            } else {
+                $hasFallen = true;
+            }
+
+            // Changement de direction ET cycle complet (montée + descente) => cycle complet détecté
+            if ($direction !== $currentDir && $hasRisen && $hasFallen) {
+                // Fin de cycle complet, on calcule amplitude
                 $amplitudes[] = $cycleMax - $cycleMin;
                 // Reset pour nouveau cycle
                 $cycleMin = $levels[$i - 1];
                 $cycleMax = $levels[$i - 1];
                 $direction = $currentDir;
+                $hasRisen = ($currentDir === 1);
+                $hasFallen = ($currentDir === -1);
+            } elseif ($direction !== $currentDir) {
+                // Changement de direction mais cycle pas encore complet, on continue
+                $direction = $currentDir;
             }
+            
             // Mettre à jour min/max du cycle courant
             $cycleMin = min($cycleMin, $levels[$i]);
             $cycleMax = max($cycleMax, $levels[$i]);

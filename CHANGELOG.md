@@ -7,6 +7,37 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.31] - 2025-01-20
+
+### 🔧 Correction - Comptage des cycles complets de marée
+- **Définition du cycle** : Un cycle complet de marée (montée + descente) est maintenant compté comme 1 cycle au lieu de 2
+  - Modifications dans `TideAnalysisService` et `WaterBalanceService`
+  - Un cycle est détecté uniquement lorsqu'il y a eu à la fois une montée ET une descente significatives (> 2 cm)
+  - La fréquence des marées reflète maintenant le nombre réel de cycles complets par heure
+  - Correction importante : la fréquence était précédemment doublée car chaque changement de direction était compté
+
+---
+
+## [4.9.30] - 2025-01-20
+
+### 🔧 Amélioration - Seuil de variation pour la détection des cycles de marée
+- **Filtrage amélioré** : Seuil de variation minimale de 2 cm pour la détection des cycles de marée
+  - Modifications dans `TideAnalysisService` et `WaterBalanceService`
+  - Les variations inférieures à 2 cm (en valeur absolue) sont maintenant ignorées lors de la détection des changements de direction
+  - Amélioration de la précision de la détection des cycles en filtrant les petites variations dues au bruit des capteurs
+  - Réduction des faux cycles détectés
+
+---
+
+## [4.9.29] - 2025-01-20
+
+### 🎨 Graphique - Suppression des zones d'alerte sur le graphique des niveaux d'eau
+- **Nettoyage du graphique** : Suppression des zones colorées et des labels "Critique", "Optimal" et "Attention" sur le graphique des niveaux d'eau
+  - Suppression des plotBands qui affichaient ces zones avec leurs labels
+  - Amélioration de la lisibilité du graphique en réduisant les éléments visuels superflus
+
+---
+
 ## [4.9.28] - 2025-01-20
 
 ### 🎨 Interface - Suppression des tuiles statistiques redondantes

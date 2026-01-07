@@ -16,6 +16,7 @@ use DateTimeInterface;
 class WaterBalanceService
 {
     private const UNCERTAINTY_THRESHOLD = 1.0; // Variations ≤1 cm considérées comme incertitudes
+    private const TIDE_VARIATION_THRESHOLD = 2.0; // Variations ≤2 cm ignorées pour la détection des cycles de marée
 
     public function __construct(private SensorReadRepository $repo) {}
 
@@ -125,6 +126,8 @@ class WaterBalanceService
         $cycleMin = $levels[0];
         $cycleMax = $levels[0];
         $direction = null; // 1 = montée, -1 = descente
+        $hasRisen = false; // A-t-on eu une montée dans le cycle actuel
+        $hasFallen = false; // A-t-on eu une descente dans le cycle actuel
         $amplitudes = []; // Marnages de chaque cycle
         $cycleDurations = []; // Durées de chaque cycle (en heures)
         $cycleStartTime = $times[0];
@@ -132,8 +135,8 @@ class WaterBalanceService
         for ($i = 1, $len = count($levels); $i < $len; $i++) {
             $delta = $levels[$i] - $levels[$i - 1];
             
-            // Ignorer les variations d'incertitude
-            if (abs($delta) <= self::UNCERTAINTY_THRESHOLD) {
+            // Ignorer les variations inférieures au seuil (2 cm pour les marées)
+            if (abs($delta) <= self::TIDE_VARIATION_THRESHOLD) {
                 continue;
             }
 
@@ -141,15 +144,24 @@ class WaterBalanceService
 
             if ($direction === null) {
                 $direction = $currentDir;
+                $hasRisen = ($currentDir === 1);
+                $hasFallen = ($currentDir === -1);
             }
 
-            // Changement de direction => cycle complet
-            if ($direction !== $currentDir) {
-                // Enregistrer l'amplitude du cycle
+            // Suivre les mouvements dans le cycle actuel
+            if ($currentDir === 1) {
+                $hasRisen = true;
+            } else {
+                $hasFallen = true;
+            }
+
+            // Changement de direction ET cycle complet (montée + descente) => cycle complet détecté
+            if ($direction !== $currentDir && $hasRisen && $hasFallen) {
+                // Enregistrer l'amplitude du cycle complet
                 $amplitude = $cycleMax - $cycleMin;
                 $amplitudes[] = $amplitude;
 
-                // Enregistrer la durée du cycle
+                // Enregistrer la durée du cycle complet
                 $cycleEndTime = $times[$i - 1];
                 $cycleDuration = (strtotime($cycleEndTime) - strtotime($cycleStartTime)) / 3600; // en heures
                 if ($cycleDuration > 0) {
@@ -160,7 +172,12 @@ class WaterBalanceService
                 $cycleMin = $levels[$i - 1];
                 $cycleMax = $levels[$i - 1];
                 $direction = $currentDir;
+                $hasRisen = ($currentDir === 1);
+                $hasFallen = ($currentDir === -1);
                 $cycleStartTime = $times[$i - 1];
+            } elseif ($direction !== $currentDir) {
+                // Changement de direction mais cycle pas encore complet, on continue
+                $direction = $currentDir;
             }
 
             // Mettre à jour min/max du cycle courant
