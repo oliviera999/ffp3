@@ -7,6 +7,16 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.33] - 2025-01-20
+
+### 🎨 Interface - Suppression du texte d'introduction redondant
+- **Nettoyage de l'affichage** : Suppression du titre "Données en temps réel" et du paragraphe d'introduction
+  - Suppression du header avec le texte descriptif sur l'ESP-32 et le projet farmflow
+  - La page commence maintenant directement par la synthèse des mesures
+  - Amélioration de la lisibilité en réduisant le contenu redondant
+
+---
+
 ## [4.9.32] - 2025-01-20
 
 ### 🔧 Amélioration - Script de déploiement avec gestion automatique des modifications locales
