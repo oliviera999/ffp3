@@ -26,8 +26,24 @@ fi
 echo "📍 Dossier: $(pwd)"
 echo ""
 
+# Étape 0: Gérer les modifications locales
+echo "🔍 [0/8] Vérification des modifications locales..."
+if ! git diff-index --quiet HEAD --; then
+    echo "⚠️  Modifications locales détectées"
+    echo "💾 Sauvegarde des modifications dans le stash..."
+    git stash push -m "Auto-stash avant déploiement $(date '+%Y-%m-%d %H:%M:%S')"
+    if [ $? -eq 0 ]; then
+        echo "✅ Modifications sauvegardées (récupérables avec: git stash pop)"
+    else
+        echo "⚠️  Erreur lors du stash (non bloquant)"
+    fi
+else
+    echo "✅ Aucune modification locale"
+fi
+echo ""
+
 # Étape 1: Pull depuis GitHub
-echo "📥 [1/7] Pull depuis GitHub..."
+echo "📥 [1/8] Pull depuis GitHub..."
 git fetch origin
 git pull origin main
 
@@ -43,7 +59,7 @@ echo "✅ Code mis à jour"
 echo ""
 
 # Étape 2: Vider les caches (NOUVEAU)
-echo "🧹 [2/7] Vidage des caches Twig et DI..."
+echo "🧹 [2/8] Vidage des caches Twig et DI..."
 if [ -f "bin/clear-cache.php" ]; then
     php bin/clear-cache.php
     if [ $? -eq 0 ]; then
@@ -60,7 +76,7 @@ fi
 echo ""
 
 # Étape 3: Supprimer vendor/ si nécessaire
-echo "🗑️  [3/7] Vérification vendor/..."
+echo "🗑️  [3/8] Vérification vendor/..."
 if [ -d "vendor" ]; then
     echo "ℹ️  vendor/ existe déjà"
 else
@@ -69,7 +85,7 @@ fi
 echo ""
 
 # Étape 4: Installer/mettre à jour les dépendances
-echo "📦 [4/7] Installation des dépendances Composer..."
+echo "📦 [4/8] Installation des dépendances Composer..."
 echo "Cela peut prendre 1-2 minutes..."
 composer install --no-dev --optimize-autoloader
 
@@ -86,7 +102,7 @@ echo "✅ Dépendances installées"
 echo ""
 
 # Étape 5: Créer les liens symboliques pour les assets
-echo "🔗 [5/7] Création des liens symboliques..."
+echo "🔗 [5/8] Création des liens symboliques..."
 
 # Supprimer d'abord s'ils existent déjà
 rm -f assets manifest.json service-worker.js 2>/dev/null
@@ -108,7 +124,7 @@ fi
 echo ""
 
 # Étape 6: Vérifications
-echo "🔍 [6/7] Vérifications..."
+echo "🔍 [6/8] Vérifications..."
 
 # PHP-DI
 if [ -d "vendor/php-di" ]; then
@@ -146,7 +162,7 @@ fi
 echo ""
 
 # Étape 7: Ajustement des permissions
-echo "🔧 [7/7] Ajustement des permissions..."
+echo "🔧 [7/8] Ajustement des permissions..."
 chmod -R 755 public/ 2>/dev/null || true
 chmod -R 775 var/cache/ 2>/dev/null || true
 chmod +x bin/clear-cache.php 2>/dev/null || true

@@ -7,6 +7,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.32] - 2025-01-20
+
+### 🔧 Amélioration - Script de déploiement avec gestion automatique des modifications locales
+- **Gestion automatique** : Le script `bin/deploy.sh` détecte et sauvegarde automatiquement les modifications locales avant le pull
+  - Ajout d'une étape de vérification des modifications locales (étape 0/8)
+  - Les modifications sont automatiquement sauvegardées dans un stash avec horodatage
+  - Le déploiement peut continuer sans intervention manuelle même en cas de modifications locales
+  - Les modifications peuvent être récupérées plus tard avec `git stash pop` si nécessaire
+  - Amélioration de la robustesse du processus de déploiement
+
+---
+
 ## [4.9.31] - 2025-01-20
 
 ### 🔧 Correction - Comptage des cycles complets de marée
