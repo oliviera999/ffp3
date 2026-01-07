@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.28] - 2025-01-20
+
+### 🎨 Interface - Suppression des tuiles statistiques redondantes
+- **Nettoyage de l'affichage** : Suppression des 3 tuiles "Fenêtre actuelle", "Mesures" et "Période" en haut de page
+  - Ces informations étaient redondantes avec la section "Période analysée" déjà présente plus bas dans la page
+  - Amélioration de la lisibilité en réduisant la surcharge visuelle
+
+---
+
 ## [4.9.27] - 2025-01-20
 
 ### 🔄 Réorganisation - Intégration des informations de connexion dans le bloc Connexions
