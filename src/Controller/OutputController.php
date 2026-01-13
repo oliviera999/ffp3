@@ -47,10 +47,27 @@ class OutputController
             $environment = TableConfig::getEnvironment();
             $firmwareVersion = $this->sensorReadRepo->getFirmwareVersion();
 
+            // Mapping des paramètres vers leurs GPIOs (utilisé dans le template)
+            $parameterGpioMap = [
+                'aqThr' => 102,
+                'taThr' => 103,
+                'tempsRemplissageSec' => 113,
+                'limFlood' => 114,
+                'bouffeMat' => 105,
+                'bouffeMid' => 106,
+                'bouffeSoir' => 107,
+                'tempsGros' => 111,
+                'tempsPetits' => 112,
+                'chauff' => 104,
+                'mail' => 100,
+                'FreqWakeUp' => 116,
+            ];
+
             $data = [
                 'outputs' => $outputs,
                 'boards' => $boards,
                 'params' => $params,
+                'parameter_gpio_map' => $parameterGpioMap,
                 'title' => 'Contrôle du ffp3',
                 'environment' => $environment,
                 'version' => Version::getWithPrefix(),
@@ -63,7 +80,31 @@ class OutputController
             return $response;
 
         } catch (\Throwable $e) {
-            $response->getBody()->write("ERREUR OutputController: " . $e->getMessage());
+            // Log détaillé de l'erreur pour le debugging
+            error_log(sprintf(
+                "OutputController::showInterface ERROR: %s in %s:%d\nStack trace:\n%s",
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine(),
+                $e->getTraceAsString()
+            ));
+            
+            // Message d'erreur selon l'environnement
+            $isDevelopment = ($_ENV['ENV'] ?? 'prod') === 'test' || (bool)($_ENV['DEBUG'] ?? false);
+            
+            if ($isDevelopment) {
+                $errorMessage = sprintf(
+                    "ERREUR OutputController: %s\nFichier: %s\nLigne: %d\n\nStack trace:\n%s",
+                    $e->getMessage(),
+                    $e->getFile(),
+                    $e->getLine(),
+                    $e->getTraceAsString()
+                );
+            } else {
+                $errorMessage = "Une erreur serveur est survenue. Veuillez contacter l'administrateur.";
+            }
+            
+            $response->getBody()->write($errorMessage);
             return $response->withStatus(500);
         }
     }

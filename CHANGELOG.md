@@ -7,6 +7,24 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.34] - 2025-01-27
+
+### 🐛 Correction Critique - Page de contrôle distant
+- **Correction erreur 500** : Ajout de la variable `parameter_gpio_map` manquante dans `OutputController`
+  - La variable était utilisée dans le template `control.twig` mais n'était pas passée par le contrôleur
+  - Correction de l'erreur HTTP 500 qui rendait la page `/control` inaccessible
+  - Mapping complet des paramètres vers leurs GPIOs (aqThr, taThr, bouffeMat, etc.)
+- **Amélioration gestion d'erreurs** : Logging détaillé des exceptions dans `OutputController::showInterface()`
+  - Ajout de logs détaillés avec stack trace pour faciliter le debugging
+  - Messages d'erreur adaptés selon l'environnement (développement vs production)
+  - Amélioration de la traçabilité des erreurs
+- **Documentation** : Création d'un audit complet de la page de contrôle distant
+  - Rapport d'audit détaillé dans `docs/AUDIT_PAGE_CONTROL_DISTANT.md`
+  - Identification des problèmes critiques, de sécurité et de performance
+  - Recommandations prioritaires pour améliorations futures
+
+---
+
 ## [4.9.33] - 2025-01-20
 
 ### 🎨 Interface - Suppression du texte d'introduction redondant
