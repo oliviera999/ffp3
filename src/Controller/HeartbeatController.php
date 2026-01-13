@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Config\Database;
 use App\Config\TableConfig;
+use App\Service\ErrorAlertService;
 use App\Service\LogService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -17,7 +18,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 class HeartbeatController
 {
     public function __construct(
-        private LogService $logger
+        private LogService $logger,
+        private ErrorAlertService $errorAlert
     ) {
     }
 
@@ -39,12 +41,12 @@ class HeartbeatController
 
         $params = $request->getParsedBody();
         
-        // Récupération des paramètres
-        $uptime = $this->sanitize($params['uptime'] ?? '');
-        $free = $this->sanitize($params['free'] ?? '');
-        $min = $this->sanitize($params['min'] ?? '');
-        $reboots = $this->sanitize($params['reboots'] ?? '');
-        $crc = strtoupper($this->sanitize($params['crc'] ?? ''));
+        // Récupération des paramètres (valeurs numériques)
+        $uptime = $this->sanitizeNumeric($params['uptime'] ?? '');
+        $free = $this->sanitizeNumeric($params['free'] ?? '');
+        $min = $this->sanitizeNumeric($params['min'] ?? '');
+        $reboots = $this->sanitizeNumeric($params['reboots'] ?? '');
+        $crc = strtoupper($this->sanitizeString($params['crc'] ?? ''));
 
         // Vérification des champs requis
         if (empty($uptime) || empty($free) || empty($min) || empty($reboots) || empty($crc)) {
@@ -97,16 +99,40 @@ class HeartbeatController
             return $response->withStatus(200)->withHeader('Content-Type', 'text/plain');
 
         } catch (\Throwable $e) {
-            $this->logger->error('Heartbeat: Erreur insertion', ['error' => $e->getMessage()]);
+            $errorMessage = 'Heartbeat: Erreur insertion';
+            $this->logger->error($errorMessage, ['error' => $e->getMessage()]);
+            
+            // Enregistrer l'erreur pour détection répétée
+            $this->errorAlert->recordError($errorMessage, [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+            
             $response->getBody()->write('Erreur serveur');
             return $response->withStatus(500)->withHeader('Content-Type', 'text/plain');
         }
     }
 
     /**
-     * Nettoie et sécurise une valeur POST
+     * Nettoie et sécurise une valeur POST numérique
+     * 
+     * @param string $data Valeur à nettoyer
+     * @return string Valeur nettoyée (chiffres uniquement)
      */
-    private function sanitize(string $data): string
+    private function sanitizeNumeric(string $data): string
+    {
+        $filtered = filter_var(trim($data), FILTER_SANITIZE_NUMBER_INT);
+        return $filtered !== false ? $filtered : '';
+    }
+
+    /**
+     * Nettoie et sécurise une valeur POST string (pour CRC)
+     * 
+     * @param string $data Valeur à nettoyer
+     * @return string Valeur nettoyée
+     */
+    private function sanitizeString(string $data): string
     {
         return htmlspecialchars(trim(stripslashes($data)), ENT_QUOTES, 'UTF-8');
     }

@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Repository\OutputRepository;
 use App\Repository\BoardRepository;
+use App\Service\OutputCacheService;
 
 /**
  * Service de gestion des outputs (GPIO/relais)
@@ -16,7 +17,8 @@ class OutputService
 {
     public function __construct(
         private OutputRepository $outputRepository,
-        private BoardRepository $boardRepository
+        private BoardRepository $boardRepository,
+        private OutputCacheService $outputCache
     ) {}
 
     /**
@@ -88,7 +90,11 @@ class OutputService
             return false;
         }
 
-        return $this->outputRepository->updateState($gpio, $state);
+        $result = $this->outputRepository->updateState($gpio, $state);
+        if ($result) {
+            $this->outputCache->invalidateCache();
+        }
+        return $result;
     }
 
     /**
@@ -219,6 +225,8 @@ class OutputService
         // Log pour debugging
         if ($result) {
             error_log("Output ID {$id} mis à jour par l'interface web vers state={$state}");
+            // Invalider le cache après modification
+            $this->outputCache->invalidateCache();
         }
         
         return $result;
@@ -284,6 +292,9 @@ class OutputService
             }
             
             $pdo->commit();
+            
+            // Invalider le cache après modification
+            $this->outputCache->invalidateCache();
             
             // Petite pause pour garantir la synchronisation
             usleep(100000);

@@ -6,7 +6,9 @@ use App\Config\Database;
 use App\Domain\SensorData;
 use App\Repository\OutputRepository;
 use App\Repository\SensorRepository;
+use App\Service\ErrorAlertService;
 use App\Service\LogService;
+use App\Service\OutputCacheService;
 use App\Security\SignatureValidator;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -15,7 +17,9 @@ use Throwable;
 class PostDataController
 {
     public function __construct(
-        private LogService $logger
+        private LogService $logger,
+        private ErrorAlertService $errorAlert,
+        private OutputCacheService $outputCache
     ) {
     }
 
@@ -52,7 +56,9 @@ class PostDataController
 
             $sigSecret = $_ENV['API_SIG_SECRET'] ?? null;
             if ($sigSecret === null) {
-                $this->logger->error('Variable API_SIG_SECRET manquante dans .env');
+                $errorMessage = 'Variable API_SIG_SECRET manquante dans .env';
+                $this->logger->error($errorMessage);
+                $this->errorAlert->recordError($errorMessage);
                 $response->getBody()->write('Configuration serveur manquante');
                 return $response->withStatus(500)->withHeader('Content-Type', 'text/plain; charset=utf-8');
             }
@@ -77,7 +83,9 @@ class PostDataController
         $apiKeyExpected = $_ENV['API_KEY'] ?? null;
 
         if ($apiKeyExpected === null) {
-            $this->logger->error('Variable API_KEY manquante dans .env');
+            $errorMessage = 'Variable API_KEY manquante dans .env';
+            $this->logger->error($errorMessage);
+            $this->errorAlert->recordError($errorMessage);
             $response->getBody()->write('Configuration serveur manquante');
             return $response->withStatus(500)->withHeader('Content-Type', 'text/plain; charset=utf-8');
         }
@@ -138,6 +146,9 @@ class PostDataController
             // Synchroniser les états dans ffp3Outputs/ffp3Outputs2
             $outputRepo = new OutputRepository($pdo);
             $outputRepo->syncStatesFromSensorData($data);
+            
+            // Invalider le cache après synchronisation ESP32
+            $this->outputCache->invalidateCache();
 
             // Mettre à jour le timestamp de la dernière requête de la board
             $boardRepo = new \App\Repository\BoardRepository($pdo);
@@ -149,7 +160,15 @@ class PostDataController
             return $response->withStatus(200)->withHeader('Content-Type', 'text/plain; charset=utf-8');
             
         } catch (Throwable $e) {
-            $this->logger->error('Erreur insertion données', ['error' => $e->getMessage()]);
+            $errorMessage = 'Erreur insertion données';
+            $this->logger->error($errorMessage, ['error' => $e->getMessage()]);
+            
+            // Enregistrer l'erreur pour détection répétée
+            $this->errorAlert->recordError($errorMessage, [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
             
             $response->getBody()->write('Erreur serveur');
             return $response->withStatus(500)->withHeader('Content-Type', 'text/plain; charset=utf-8');

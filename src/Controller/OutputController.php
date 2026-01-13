@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Config\Database;
 use App\Config\TableConfig;
 use App\Config\Version;
+use App\Service\OutputCacheService;
 use App\Service\OutputService;
 use App\Service\TemplateRenderer;
 use App\Repository\SensorReadRepository;
@@ -22,7 +24,8 @@ class OutputController
     public function __construct(
         private OutputService $outputService,
         private TemplateRenderer $renderer,
-        private SensorReadRepository $sensorReadRepo
+        private SensorReadRepository $sensorReadRepo,
+        private OutputCacheService $outputCache
     ) {
     }
 
@@ -261,12 +264,10 @@ class OutputController
     /**
      * API: Récupère l'état actuel de tous les outputs (pour ESP32)
      * Version 11.68: Format simplifié - GPIO numériques uniquement
+     * Version 11.127: Cache ajouté pour réduire charge serveur
      */
     public function getOutputsState(Request $request, Response $response): Response
     {
-        // v11.72: Retour direct par liste de GPIOs critiques (sans dépendre des noms)
-        // Objectif: garantir que les clés distantes existent toujours
-
         // Liste des GPIOs critiques attendus par l'ESP32 (voir include/gpio_mapping.h)
         $gpioList = [
             2, 15, 16, 18, // actionneurs physiques: chauffage, lumière, pompe aqua, pompe tank
@@ -275,61 +276,9 @@ class OutputController
             111, 112, 113, 114, 115, 116 // durées / limites / wake
         ];
 
-        $table = TableConfig::getOutputsTable();
-        $pdo = \App\Config\Database::getConnection();
-
-        // Construire requête IN sécurisée
-        $placeholders = [];
-        $params = [];
-        foreach ($gpioList as $idx => $gpio) {
-            $ph = ":g{$idx}";
-            $placeholders[] = $ph;
-            $params[$ph] = $gpio;
-        }
-
-        $sql = "SELECT gpio, state FROM {$table} WHERE gpio IN (" . implode(',', $placeholders) . ")";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
-        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        // Indexer par gpio pour accès rapide
-        $byGpio = [];
-        foreach ($rows as $row) {
-            $byGpio[(int)$row['gpio']] = $row['state'];
-        }
-
-        // Normalisation: booléens en 0/1, conservation des strings pour email, strings numériques pour configs
-        $result = [];
-
-        // Définir ensemble des GPIOs booléens à normaliser (cohérent avec OutputRepository)
-        $boolGpios = [];
-        for ($i = 0; $i < 100; $i++) { $boolGpios[$i] = true; }
-        foreach ([101,108,109,110,115] as $b) { $boolGpios[$b] = true; }
-
-        foreach ($gpioList as $gpio) {
-            if (!array_key_exists($gpio, $byGpio)) {
-                // Si absent en BDD, ne pas inventer une valeur; passer sous silence
-                // (l'ESP32 conservera l'état précédent ou les valeurs par défaut)
-                continue;
-            }
-
-            $state = $byGpio[$gpio];
-
-            if (isset($boolGpios[$gpio])) {
-                // Normaliser vers 0/1
-                if (is_string($state)) {
-                    $s = strtolower(trim($state));
-                    $state = in_array($s, ['checked','true','on','1','yes'], true) ? 1 : (in_array($s, ['unchecked','false','off','0','no'], true) ? 0 : (is_numeric($s) ? (int)$s : 0));
-                } else {
-                    $state = (int)$state;
-                }
-            } else {
-                // Laisser tel quel (string numérique ou texte)
-                // Email (100) reste string, paramètres (102-107,111-116) souvent strings numériques
-            }
-
-            $result[(string)$gpio] = $state;
-        }
+        // Utiliser le cache pour éviter requêtes SQL répétées
+        $pdo = Database::getConnection();
+        $result = $this->outputCache->getOutputsState($pdo, $gpioList);
 
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');
@@ -340,7 +289,13 @@ class OutputController
      */
     public function getBoardStatus(Request $request, Response $response): Response
     {
-        $routeParams = $request->getAttribute('route')->getArguments();
+        $route = $request->getAttribute('route');
+        if ($route === null) {
+            $response->getBody()->write(json_encode(['error' => 'Route not found']));
+            return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
+        }
+        
+        $routeParams = $route->getArguments();
         $boardNumber = $routeParams['board'] ?? null;
         
         if (!$boardNumber) {

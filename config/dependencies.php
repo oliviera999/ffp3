@@ -8,8 +8,10 @@ use App\Repository\OutputRepository;
 use App\Repository\SensorReadRepository;
 use App\Repository\SensorRepository;
 use App\Service\ChartDataService;
+use App\Service\ErrorAlertService;
 use App\Service\LogService;
 use App\Service\NotificationService;
+use App\Service\OutputCacheService;
 use App\Service\OutputService;
 use App\Service\PumpService;
 use App\Service\RealtimeDataService;
@@ -83,7 +85,8 @@ return [
     OutputService::class => function (ContainerInterface $c) {
         return new OutputService(
             $c->get(OutputRepository::class),
-            $c->get(BoardRepository::class)
+            $c->get(BoardRepository::class),
+            $c->get(OutputCacheService::class)
         );
     },
 
@@ -96,6 +99,17 @@ return [
 
     NotificationService::class => function (ContainerInterface $c) {
         return new NotificationService($c->get(LogService::class));
+    },
+
+    ErrorAlertService::class => function (ContainerInterface $c) {
+        return new ErrorAlertService(
+            $c->get(LogService::class),
+            $c->get(NotificationService::class)
+        );
+    },
+
+    OutputCacheService::class => function (ContainerInterface $c) {
+        return new OutputCacheService();
     },
 
     SystemHealthService::class => function (ContainerInterface $c) {
@@ -128,19 +142,23 @@ return [
         return new \App\Controller\OutputController(
             $c->get(\App\Service\OutputService::class),
             $c->get(\App\Service\TemplateRenderer::class),
-            $c->get(\App\Repository\SensorReadRepository::class)
+            $c->get(\App\Repository\SensorReadRepository::class),
+            $c->get(\App\Service\OutputCacheService::class)
         );
     },
 
     \App\Controller\PostDataController::class => function (ContainerInterface $c) {
         return new \App\Controller\PostDataController(
-            $c->get(\App\Service\LogService::class)
+            $c->get(\App\Service\LogService::class),
+            $c->get(\App\Service\ErrorAlertService::class),
+            $c->get(\App\Service\OutputCacheService::class)
         );
     },
 
     \App\Controller\HeartbeatController::class => function (ContainerInterface $c) {
         return new \App\Controller\HeartbeatController(
-            $c->get(\App\Service\LogService::class)
+            $c->get(\App\Service\LogService::class),
+            $c->get(\App\Service\ErrorAlertService::class)
         );
     },
 
@@ -185,6 +203,13 @@ return [
     \App\Controller\HomeController::class => function (ContainerInterface $c) {
         return new \App\Controller\HomeController(
             $c->get(\App\Service\TemplateRenderer::class)
+        );
+    },
+
+    \App\Middleware\ErrorHandlerMiddleware::class => function (ContainerInterface $c) {
+        return new \App\Middleware\ErrorHandlerMiddleware(
+            $c->get(\App\Service\LogService::class),
+            $c->get(\App\Service\ErrorAlertService::class)
         );
     },
 ];

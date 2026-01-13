@@ -24,7 +24,8 @@ class BoardRepository
     {
         $sql = "SELECT board, last_request FROM Boards ORDER BY board ASC";
 
-        $stmt = $this->pdo->query($sql);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($rows as &$row) {
@@ -43,13 +44,20 @@ class BoardRepository
      */
     public function findActiveForEnvironment(string $outputsTable): array
     {
+        // Valider le nom de table pour sécurité
+        $allowedTables = ['ffp3Outputs', 'ffp3Outputs2'];
+        if (!in_array($outputsTable, $allowedTables, true)) {
+            throw new \InvalidArgumentException("Table name not allowed: {$outputsTable}");
+        }
+        
         $sql = "SELECT DISTINCT b.board, b.last_request
                 FROM Boards b
-                INNER JOIN {$outputsTable} o ON b.board = o.board
+                INNER JOIN `{$outputsTable}` o ON b.board = o.board
                 WHERE o.name IS NOT NULL AND o.name != ''
                 ORDER BY b.board ASC";
 
-        $stmt = $this->pdo->query($sql);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($rows as &$row) {

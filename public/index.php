@@ -40,7 +40,7 @@ if ($basePath !== '/' && $basePath !== '') {
 // ====================================================================
 // Middleware de gestion d'erreurs personnalisé
 // ====================================================================
-$app->add(new \App\Middleware\ErrorHandlerMiddleware());
+$app->add($container->get(\App\Middleware\ErrorHandlerMiddleware::class));
 
 // ====================================================================
 // Routes PRODUCTION (par défaut) - avec middleware pour forcer 'prod'

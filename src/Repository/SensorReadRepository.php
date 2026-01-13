@@ -18,6 +18,22 @@ class SensorReadRepository
     public function __construct(private PDO $pdo) {}
 
     /**
+     * Valide qu'un nom de table est dans la whitelist autorisée
+     * 
+     * @param string $tableName Nom de la table
+     * @return string Nom de la table validé
+     * @throws \InvalidArgumentException Si le nom de table n'est pas autorisé
+     */
+    private function validateTableName(string $tableName): string
+    {
+        $allowedTables = ['ffp3Data', 'ffp3Data2'];
+        if (!in_array($tableName, $allowedTables, true)) {
+            throw new \InvalidArgumentException("Table name not allowed: {$tableName}");
+        }
+        return $tableName;
+    }
+
+    /**
      * Récupère tous les enregistrements de mesures entre deux dates (incluses).
      *
      * @param DateTimeInterface|string $start Date/heure de début (objet ou string SQL)
@@ -64,9 +80,10 @@ class SensorReadRepository
      */
     public function getLastReadingDate(): ?string
     {
-        $table = TableConfig::getDataTable();
-        $sql   = "SELECT MAX(reading_time) AS last_date FROM {$table}";
-        $stmt  = $this->pdo->query($sql);
+        $table = $this->validateTableName(TableConfig::getDataTable());
+        $sql   = "SELECT MAX(reading_time) AS last_date FROM `{$table}`";
+        $stmt  = $this->pdo->prepare($sql);
+        $stmt->execute();
         $value = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $value["last_date"] ?? null;
@@ -178,10 +195,11 @@ class SensorReadRepository
      */
     public function getFirmwareVersion(): string
     {
-        $table = TableConfig::getDataTable();
-        $sql = "SELECT version FROM {$table} ORDER BY reading_time DESC LIMIT 1";
+        $table = $this->validateTableName(TableConfig::getDataTable());
+        $sql = "SELECT version FROM `{$table}` ORDER BY reading_time DESC LIMIT 1";
         
-        $stmt = $this->pdo->query($sql);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
         return $result['version'] ?? 'N/A';

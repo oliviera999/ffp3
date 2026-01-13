@@ -18,17 +18,33 @@ class OutputRepository
     public function __construct(private PDO $pdo) {}
 
     /**
+     * Valide qu'un nom de table est dans la whitelist autorisée
+     * 
+     * @param string $tableName Nom de la table
+     * @return string Nom de la table validé
+     * @throws \InvalidArgumentException Si le nom de table n'est pas autorisé
+     */
+    private function validateTableName(string $tableName): string
+    {
+        $allowedTables = ['ffp3Outputs', 'ffp3Outputs2'];
+        if (!in_array($tableName, $allowedTables, true)) {
+            throw new \InvalidArgumentException("Table name not allowed: {$tableName}");
+        }
+        return $tableName;
+    }
+
+    /**
      * Récupère tous les outputs avec leurs états actuels
      * 
      * @return array<int, array<string, mixed>>
      */
     public function findAll(): array
     {
-        $table = TableConfig::getOutputsTable();
+        $table = $this->validateTableName(TableConfig::getOutputsTable());
         // Filtrer : name NOT NULL et name != '' pour éviter les doublons vides
         // Ordre personnalisé : pompe aquarium, pompe réserve, radiateurs, lumière, nourrissage, reset
         $sql = "SELECT id, board, gpio, name, state 
-                FROM {$table} 
+                FROM `{$table}` 
                 WHERE name IS NOT NULL AND name != ''
                 ORDER BY 
                     CASE 
@@ -45,7 +61,8 @@ class OutputRepository
                     END,
                     gpio ASC";
         
-        $stmt = $this->pdo->query($sql);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         // Normaliser les valeurs booléennes pour les GPIOs spéciaux
@@ -79,8 +96,8 @@ class OutputRepository
      */
     public function findByGpio(int $gpio): ?array
     {
-        $table = TableConfig::getOutputsTable();
-        $sql = "SELECT id, board, gpio, name, state FROM {$table} WHERE gpio = :gpio";
+        $table = $this->validateTableName(TableConfig::getOutputsTable());
+        $sql = "SELECT id, board, gpio, name, state FROM `{$table}` WHERE gpio = :gpio";
         
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':gpio' => $gpio]);
@@ -119,8 +136,8 @@ class OutputRepository
      */
     public function updateState(int $gpio, int $state): bool
     {
-        $table = TableConfig::getOutputsTable();
-        $sql = "UPDATE {$table} SET state = :state WHERE gpio = :gpio";
+        $table = $this->validateTableName(TableConfig::getOutputsTable());
+        $sql = "UPDATE `{$table}` SET state = :state WHERE gpio = :gpio";
         
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
@@ -137,9 +154,9 @@ class OutputRepository
      */
     public function findByBoard(string $board): array
     {
-        $table = TableConfig::getOutputsTable();
+        $table = $this->validateTableName(TableConfig::getOutputsTable());
         $sql = "SELECT id, board, gpio, name, state 
-                FROM {$table} 
+                FROM `{$table}` 
                 WHERE board = :board AND name IS NOT NULL AND name != ''
                 ORDER BY gpio ASC";
         
@@ -178,18 +195,19 @@ class OutputRepository
      */
     public function findLastModifiedGpio(string $board): ?array
     {
-        $table = TableConfig::getOutputsTable();
+        $table = $this->validateTableName(TableConfig::getOutputsTable());
         
         // Vérifier si la colonne requestTime existe
-        $checkColumnSql = "SHOW COLUMNS FROM {$table} LIKE 'requestTime'";
-        $checkStmt = $this->pdo->query($checkColumnSql);
+        $checkColumnSql = "SHOW COLUMNS FROM `{$table}` LIKE 'requestTime'";
+        $checkStmt = $this->pdo->prepare($checkColumnSql);
+        $checkStmt->execute();
         $hasRequestTime = $checkStmt->fetch() !== false;
         
         if ($hasRequestTime) {
             // Conversion de l'heure européenne vers l'heure marocaine (retrancher 1h)
             $sql = "SELECT id, board, gpio, name, state, 
                            DATE_FORMAT(DATE_SUB(requestTime, INTERVAL 1 HOUR), '%d/%m/%Y %H:%i:%s') as last_modified_time
-                    FROM {$table} 
+                    FROM `{$table}` 
                     WHERE board = :board AND name IS NOT NULL AND name != '' AND requestTime IS NOT NULL
                     ORDER BY requestTime DESC 
                     LIMIT 1";
@@ -197,7 +215,7 @@ class OutputRepository
             // Fallback: utiliser la première GPIO trouvée avec l'heure actuelle
             $sql = "SELECT id, board, gpio, name, state, 
                            DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR), '%d/%m/%Y %H:%i:%s') as last_modified_time
-                    FROM {$table} 
+                    FROM `{$table}` 
                     WHERE board = :board AND name IS NOT NULL AND name != ''
                     ORDER BY gpio ASC 
                     LIMIT 1";
@@ -237,8 +255,8 @@ class OutputRepository
      * Met à jour ffp3Outputs ou ffp3Outputs2 selon l'environnement
      * 
      * LOGIQUE DE PRIORITÉ : Les modifications faites via l'interface web ont 
-     * priorité pendant 5 minutes. L'ESP32 ne peut écraser un état web que 
-     * si la dernière modification web date de plus de 5 minutes.
+     * priorité pendant 10 secondes. L'ESP32 ne peut écraser un état web que 
+     * si la dernière modification web date de plus de 10 secondes.
      * 
      * CORRECTION v11.38 : Ne met à jour QUE les GPIO qui ont des noms définis
      * pour éviter la création de lignes NULL inutiles.
@@ -247,7 +265,7 @@ class OutputRepository
      */
     public function syncStatesFromSensorData(SensorData $data): void
     {
-        $table = TableConfig::getOutputsTable();
+        $table = $this->validateTableName(TableConfig::getOutputsTable());
         
         // Mapping des champs SensorData vers les GPIO
         $gpioUpdates = [
@@ -288,7 +306,7 @@ class OutputRepository
                     
                     // CORRECTION v11.70 : Protection contre écrasement des changements web récents
                     // Ne pas écraser si modification web dans les 10 dernières secondes
-                    $sql = "UPDATE {$table} 
+                    $sql = "UPDATE `{$table}` 
                             SET state = :state, 
                                 requestTime = NOW(), 
                                 lastModifiedBy = 'esp32'
@@ -310,7 +328,7 @@ class OutputRepository
                     // Log si un GPIO n'existe pas
                     if ($stmt->rowCount() === 0) {
                         // Vérifier si le GPIO existe avec un nom
-                        $checkSql = "SELECT COUNT(*) FROM {$table} WHERE gpio = :gpio AND name IS NOT NULL AND name != ''";
+                        $checkSql = "SELECT COUNT(*) FROM `{$table}` WHERE gpio = :gpio AND name IS NOT NULL AND name != ''";
                         $checkStmt = $this->pdo->prepare($checkSql);
                         $checkStmt->execute([':gpio' => $gpio]);
                         $exists = $checkStmt->fetchColumn();
