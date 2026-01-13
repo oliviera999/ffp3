@@ -32,7 +32,7 @@ ESP32 ←--→ Serveur Distant (iot.olution.info)
 - **Endpoint:** `/ffp3/public/post-data` (PROD) ou `/ffp3/public/post-data-test` (TEST)
 - **Méthode:** HTTP POST
 - **Content-Type:** `application/x-www-form-urlencoded`
-- **Timeout:** Configurable via `ServerConfig::REQUEST_TIMEOUT_MS`
+- **Timeout:** Configurable via `NetworkConfig::REQUEST_TIMEOUT_MS`
 
 ### Données Envoyées
 
