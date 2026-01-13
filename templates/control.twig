@@ -180,7 +180,7 @@
                                 {% endif %}
                             {% endfor %}
                             {% for output in pumpOutputs %}
-                                {% set is_inverted = output.gpio == 18 %}
+                                {% set is_inverted = false %}
                                 {% set is_checked = is_inverted ? (output.state == 0) : (output.state == 1) %}
                                 <article class="action-card" data-state="{{ is_checked ? '1' : '0' }}" data-gpio="{{ output.gpio }}" data-inverted="{{ is_inverted ? '1' : '0' }}">
                                     <header>

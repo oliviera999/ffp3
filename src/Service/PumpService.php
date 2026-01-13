@@ -106,17 +106,16 @@ class PumpService
     }
 
     /**
-     * Arrête la pompe réserve (GPIO à 1, logique inversée pour compatibilité legacy)
+     * Arrête la pompe réserve (GPIO à 0)
      */
     public function stopPompeTank(): void
     {
-        // La logique legacy inverse les états pour la pompe Tank (1 = off) → on conserve la compatibilité
-        $this->setState($this->gpioPompeTank, 1);
+        $this->setState($this->gpioPompeTank, 0);
     }
 
     public function runPompeTank(): void
     {
-        $this->setState($this->gpioPompeTank, 0);
+        $this->setState($this->gpioPompeTank, 1);
     }
 
     public function getAquaPumpState(): ?int

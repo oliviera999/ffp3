@@ -84,7 +84,12 @@ class ControlActions {
 
             if (data?.state !== undefined) {
                 const finalState = data.state;
-                const shouldBeChecked = finalState === 1;
+                const isInverted = element.dataset.inverted === '1';
+                const shouldBeChecked = isInverted ? finalState === 0 : finalState === 1;
+                
+                // Petite attente pour uniformiser le comportement visuel avec les autres switches
+                await new Promise(resolve => setTimeout(resolve, 150));
+                
                 if (element.checked !== shouldBeChecked) {
                     element.checked = shouldBeChecked;
                 }
