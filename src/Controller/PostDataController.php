@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Config\Database;
 use App\Domain\SensorData;
+use App\Repository\BoardRepository;
 use App\Repository\OutputRepository;
 use App\Repository\SensorRepository;
 use App\Service\ErrorAlertService;
@@ -151,7 +152,7 @@ class PostDataController
             $this->outputCache->invalidateCache();
 
             // Mettre à jour le timestamp de la dernière requête de la board
-            $boardRepo = new \App\Repository\BoardRepository($pdo);
+            $boardRepo = new BoardRepository($pdo);
             $boardRepo->updateLastRequest('1'); // Board 1 par défaut
 
             $this->logger->info('Données capteurs insérées et outputs synchronisés', ['sensor' => $data->sensor, 'version' => $data->version]);

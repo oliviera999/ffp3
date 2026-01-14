@@ -21,9 +21,10 @@ class OutputCacheService
     
     /**
      * Cache en mémoire (static pour persister entre requêtes)
+     * Séparé par environnement pour éviter les conflits PROD/TEST
      */
-    private static ?array $cache = null;
-    private static ?int $cacheTimestamp = null;
+    private static array $cache = [];
+    private static array $cacheTimestamp = [];
     
     /**
      * Récupère les états outputs depuis le cache ou la base de données
@@ -35,13 +36,14 @@ class OutputCacheService
     public function getOutputsState(\PDO $pdo, array $gpioList): array
     {
         $now = time();
+        $env = TableConfig::getEnvironment();
         
-        // Vérifier si cache valide
-        if (self::$cache !== null && 
-            self::$cacheTimestamp !== null && 
-            ($now - self::$cacheTimestamp) < self::CACHE_TTL_SECONDS) {
+        // Vérifier si cache valide pour cet environnement
+        if (isset(self::$cache[$env]) && 
+            isset(self::$cacheTimestamp[$env]) && 
+            ($now - self::$cacheTimestamp[$env]) < self::CACHE_TTL_SECONDS) {
             // Cache valide, retourner directement
-            return self::$cache;
+            return self::$cache[$env];
         }
         
         // Cache expiré ou inexistant, requête BDD
@@ -107,20 +109,22 @@ class OutputCacheService
             $result[(string)$gpio] = $state;
         }
         
-        // Mettre à jour le cache
-        self::$cache = $result;
-        self::$cacheTimestamp = $now;
+        // Mettre à jour le cache pour cet environnement
+        self::$cache[$env] = $result;
+        self::$cacheTimestamp[$env] = $now;
         
         return $result;
     }
     
     /**
      * Invalide le cache (appelé après modification d'un output)
+     * Invalide le cache pour l'environnement actuel
      */
     public function invalidateCache(): void
     {
-        self::$cache = null;
-        self::$cacheTimestamp = null;
+        $env = TableConfig::getEnvironment();
+        unset(self::$cache[$env]);
+        unset(self::$cacheTimestamp[$env]);
     }
     
     /**
@@ -131,15 +135,17 @@ class OutputCacheService
     public function getCacheStats(): array
     {
         $now = time();
-        $isValid = (self::$cache !== null && 
-                   self::$cacheTimestamp !== null && 
-                   ($now - self::$cacheTimestamp) < self::CACHE_TTL_SECONDS);
+        $env = TableConfig::getEnvironment();
+        $isValid = (isset(self::$cache[$env]) && 
+                   isset(self::$cacheTimestamp[$env]) && 
+                   ($now - self::$cacheTimestamp[$env]) < self::CACHE_TTL_SECONDS);
         
         return [
             'valid' => $isValid,
-            'age_seconds' => self::$cacheTimestamp !== null ? ($now - self::$cacheTimestamp) : null,
+            'environment' => $env,
+            'age_seconds' => isset(self::$cacheTimestamp[$env]) ? ($now - self::$cacheTimestamp[$env]) : null,
             'ttl_seconds' => self::CACHE_TTL_SECONDS,
-            'cached_items' => self::$cache !== null ? count(self::$cache) : 0,
+            'cached_items' => isset(self::$cache[$env]) ? count(self::$cache[$env]) : 0,
         ];
     }
 }
