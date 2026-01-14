@@ -37,6 +37,12 @@ class OutputCacheService
     {
         $now = time();
         $env = TableConfig::getEnvironment();
+
+        if ($gpioList === []) {
+            self::$cache[$env] = [];
+            self::$cacheTimestamp[$env] = $now;
+            return [];
+        }
         
         // Vérifier si cache valide pour cet environnement
         if (isset(self::$cache[$env]) && 

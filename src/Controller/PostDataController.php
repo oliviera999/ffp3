@@ -38,6 +38,9 @@ class PostDataController
         }
 
         $params = $request->getParsedBody();
+        if (!is_array($params)) {
+            $params = [];
+        }
 
         // ---------------------------------------------------------------------
         // Validation de la signature HMAC : facultative.

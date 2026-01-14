@@ -54,28 +54,35 @@ class ErrorAlertService
      */
     public function recordError(string $message, array $context = []): void
     {
-        $pdo = Database::getConnection();
-        
-        // Normaliser le message pour regrouper les erreurs similaires
-        $normalizedMessage = $this->normalizeErrorMessage($message, $context);
-        
-        // Enregistrer l'erreur
-        $stmt = $pdo->prepare("
-            INSERT INTO `" . self::ERROR_LOG_TABLE . "` (message, normalized_message, context, created_at)
-            VALUES (:message, :normalized, :context, NOW())
-        ");
-        
-        $stmt->execute([
-            ':message' => $message,
-            ':normalized' => $normalizedMessage,
-            ':context' => json_encode($context),
-        ]);
-        
-        // Vérifier si une alerte doit être envoyée
-        $this->checkAndAlert($normalizedMessage);
-        
-        // Nettoyer les anciennes entrées (plus de 24h)
-        $this->cleanupOldEntries();
+        try {
+            $pdo = Database::getConnection();
+            
+            // Normaliser le message pour regrouper les erreurs similaires
+            $normalizedMessage = $this->normalizeErrorMessage($message, $context);
+            
+            // Enregistrer l'erreur
+            $stmt = $pdo->prepare("
+                INSERT INTO `" . self::ERROR_LOG_TABLE . "` (message, normalized_message, context, created_at)
+                VALUES (:message, :normalized, :context, NOW())
+            ");
+            
+            $stmt->execute([
+                ':message' => $message,
+                ':normalized' => $normalizedMessage,
+                ':context' => json_encode($context),
+            ]);
+            
+            // Vérifier si une alerte doit être envoyée
+            $this->checkAndAlert($normalizedMessage);
+            
+            // Nettoyer les anciennes entrées (plus de 24h)
+            $this->cleanupOldEntries();
+        } catch (\Throwable $e) {
+            $this->logger->error("ErrorAlertService indisponible", [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ]);
+        }
     }
     
     /**

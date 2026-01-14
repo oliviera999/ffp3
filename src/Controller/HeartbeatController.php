@@ -40,6 +40,9 @@ class HeartbeatController
         }
 
         $params = $request->getParsedBody();
+        if (!is_array($params)) {
+            $params = [];
+        }
         
         // Récupération des paramètres (valeurs numériques)
         $uptime = $this->sanitizeNumeric($params['uptime'] ?? '');
@@ -49,7 +52,7 @@ class HeartbeatController
         $crc = strtoupper($this->sanitizeString($params['crc'] ?? ''));
 
         // Vérification des champs requis
-        if (empty($uptime) || empty($free) || empty($min) || empty($reboots) || empty($crc)) {
+        if ($uptime === '' || $free === '' || $min === '' || $reboots === '' || $crc === '') {
             $this->logger->warning('Heartbeat: Champs manquants', ['ip' => $_SERVER['REMOTE_ADDR'] ?? 'n/a']);
             $response->getBody()->write('Champs manquants');
             return $response->withStatus(400)->withHeader('Content-Type', 'text/plain');

@@ -26,5 +26,8 @@
         }
     },
     "minimum-stability": "stable",
-    "license": "MIT"
+    "license": "MIT",
+    "scripts": {
+        "test": "php tools/run-phpunit.php"
+    }
 } 

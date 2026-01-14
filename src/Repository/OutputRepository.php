@@ -204,9 +204,8 @@ class OutputRepository
         $hasRequestTime = $checkStmt->fetch() !== false;
         
         if ($hasRequestTime) {
-            // Conversion de l'heure européenne vers l'heure marocaine (retrancher 1h)
             $sql = "SELECT id, board, gpio, name, state, 
-                           DATE_FORMAT(DATE_SUB(requestTime, INTERVAL 1 HOUR), '%d/%m/%Y %H:%i:%s') as last_modified_time
+                           DATE_FORMAT(requestTime, '%d/%m/%Y %H:%i:%s') as last_modified_time
                     FROM `{$table}` 
                     WHERE board = :board AND name IS NOT NULL AND name != '' AND requestTime IS NOT NULL
                     ORDER BY requestTime DESC 
@@ -214,7 +213,7 @@ class OutputRepository
         } else {
             // Fallback: utiliser la première GPIO trouvée avec l'heure actuelle
             $sql = "SELECT id, board, gpio, name, state, 
-                           DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR), '%d/%m/%Y %H:%i:%s') as last_modified_time
+                           DATE_FORMAT(NOW(), '%d/%m/%Y %H:%i:%s') as last_modified_time
                     FROM `{$table}` 
                     WHERE board = :board AND name IS NOT NULL AND name != ''
                     ORDER BY gpio ASC 

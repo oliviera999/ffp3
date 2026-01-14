@@ -274,7 +274,11 @@ class OutputService
                     if ($paramName === 'mail') {
                         $value = (string)$value;
                     } elseif ($paramName === 'mailNotif') {
-                        $value = ($value === 'checked') ? 1 : 0;
+                        $value = (is_string($value) && in_array(strtolower($value), ['1', 'true', 'on', 'yes', 'checked'], true))
+                            || $value === 1
+                            || $value === true
+                            ? 1
+                            : 0;
                     } else {
                         $value = is_numeric($value) ? (int)$value : 0;
                     }
