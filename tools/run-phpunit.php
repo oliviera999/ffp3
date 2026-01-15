@@ -6,6 +6,11 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use PHPUnit\TextUI\Application;
 
+$schemaIni = __DIR__ . '/../vendor/phpunit/phpunit/schema/desktop.ini';
+if (is_file($schemaIni)) {
+    unlink($schemaIni);
+}
+
 $args = $_SERVER['argv'] ?? [];
 $filtered = [];
 

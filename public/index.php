@@ -4,6 +4,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use App\Config\Env;
 use App\Controller\AquaponieController;
+use App\Controller\CacheController;
 use App\Controller\DashboardController;
 use App\Controller\ExportController;
 use App\Controller\HeartbeatController;
@@ -93,6 +94,12 @@ $app->group('', function ($group) {
     $group->get('/api/health', [RealtimeApiController::class, 'getSystemHealth']);
 
     // ====================================================================
+    // Administration - Gestion du cache PROD
+    // ====================================================================
+    $group->get('/admin/clear-cache', [CacheController::class, 'clearCache']);
+    $group->get('/admin/clear-cache-page', [CacheController::class, 'clearCachePage']);
+
+    // ====================================================================
     // Heartbeat ESP32 PROD
     // ====================================================================
     $group->post('/heartbeat', [HeartbeatController::class, 'handle']);
@@ -149,6 +156,12 @@ $app->group('', function ($group) {
     // Alias de compatibilité pour l'ancienne URL TEST
     $group->get('/api/health-test', [RealtimeApiController::class, 'getSystemHealth']);
     $group->get('/api/realtime/system/health-test', [RealtimeApiController::class, 'getSystemHealth']);
+    
+    // ====================================================================
+    // Administration - Gestion du cache TEST
+    // ====================================================================
+    $group->get('/admin/clear-cache-test', [CacheController::class, 'clearCache']);
+    $group->get('/admin/clear-cache-page-test', [CacheController::class, 'clearCachePage']);
     
     // Heartbeat ESP32 TEST
     $group->post('/heartbeat-test', [HeartbeatController::class, 'handle']);

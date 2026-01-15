@@ -7,6 +7,34 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.36] - 2026-01-14
+
+### ✨ Administration - Vidage du cache
+- **Interface d'administration** : Ajout d'une fonctionnalité pour vider le cache serveur depuis l'interface web
+  - Nouveau contrôleur `CacheController` pour gérer le vidage des caches Twig et DI Container
+  - Route API JSON : `/admin/clear-cache` (retourne un JSON avec les résultats du vidage)
+  - Page web interactive : `/admin/clear-cache-page` (interface HTML avec bouton et feedback visuel)
+  - Support des environnements PROD et TEST (routes séparées)
+  - Protection optionnelle par token via variable d'environnement `ADMIN_CACHE_TOKEN` (par défaut: `clear-cache-2025`)
+- **Intégration dans l'interface** : Ajout d'un lien discret dans le footer de la page d'accueil vers la page d'administration
+  - Lien "Administration" avec icône dans le footer de `home.twig`
+  - Accès facile sans nécessiter de connexion SSH ou ligne de commande
+- **Fonctionnalités** :
+  - Vidage automatique des caches Twig (`var/cache/twig/`) et DI Container (`var/cache/di/`)
+  - Rapport détaillé du nombre de fichiers supprimés par type de cache
+  - Gestion d'erreurs avec messages clairs
+  - Interface utilisateur moderne avec feedback visuel (spinner, messages de succès/erreur)
+  - Compatible avec l'architecture Slim 4 existante
+
+### 🧪 Tests - Stabilisation environnement
+- **Tests SQLite** : Skip automatique si le driver PDO SQLite est indisponible
+- **LogServiceTest** : Alignement des assertions sur le format Monolog (DEBUG/INFO + timestamp)
+
+### 🧪 Tests - Runner
+- **PHPUnit** : Suppression automatique du `desktop.ini` dans le schéma vendor via le runner
+
+---
+
 ## [4.9.34] - 2025-01-27
 
 ### 🐛 Correction Critique - Page de contrôle distant
