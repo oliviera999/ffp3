@@ -415,6 +415,46 @@
                 padding-left: 10px;
                 border-left: 4px solid #008B74;
             }
+            
+            /* Conteneurs de graphiques Highcharts - Fix mobile */
+            #chart-stock-area-eau-D,
+            #chart-stock-area-temp-D {
+                min-height: 350px;
+                width: 100%;
+                position: relative;
+            }
+            
+            @media (max-width: 480px) {
+                #chart-stock-area-eau-D,
+                #chart-stock-area-temp-D {
+                    min-height: 400px;
+                }
+            }
+            
+            @media (min-width: 481px) and (max-width: 768px) {
+                #chart-stock-area-eau-D,
+                #chart-stock-area-temp-D {
+                    min-height: 450px;
+                }
+            }
+            
+            @media (min-width: 769px) and (max-width: 1024px) {
+                #chart-stock-area-eau-D {
+                    min-height: 500px;
+                }
+                #chart-stock-area-temp-D {
+                    min-height: 600px;
+                }
+            }
+            
+            @media (min-width: 1025px) {
+                #chart-stock-area-eau-D {
+                    min-height: 600px;
+                }
+                #chart-stock-area-temp-D {
+                    min-height: 700px;
+                }
+            }
 
             .context-badges {
                 display: flex;
@@ -1924,14 +1964,30 @@
                         // Fonction de redimensionnement responsive
                         // ==============================================
                         
+                        // Fonction pour obtenir la hauteur appropriée selon la taille d'écran
+                        function getChartHeight(chartType) {
+                            var width = window.innerWidth || document.documentElement.clientWidth || 1024;
+                            if (chartType === 'eau') {
+                                if (width < 480) return 400;
+                                if (width < 768) return 450;
+                                if (width < 1024) return 500;
+                                return 600;
+                            } else { // temp
+                                if (width < 480) return 450;
+                                if (width < 768) return 550;
+                                if (width < 1024) return 600;
+                                return 700;
+                            }
+                        }
+                        
                         function handleChartResize() {
                             // Redimensionner les graphiques existants
                             if (window.chartEau) {
-                                var newHeight = window.innerWidth < 768 ? 400 : (window.innerWidth < 1024 ? 500 : 600);
+                                var newHeight = getChartHeight('eau');
                                 window.chartEau.setSize(null, newHeight);
                             }
                             if (window.chartTemp) {
-                                var newHeight = window.innerWidth < 768 ? 500 : (window.innerWidth < 1024 ? 600 : 700);
+                                var newHeight = getChartHeight('temp');
                                 window.chartTemp.setSize(null, newHeight);
                             }
                         }
@@ -1952,10 +2008,29 @@
                         // ==============================================
                         
                         function createVersionD() {
+                            // Vérifier que les conteneurs existent et sont visibles
+                            var containerEau = document.getElementById('chart-stock-area-eau-D');
+                            var containerTemp = document.getElementById('chart-stock-area-temp-D');
+                            
+                            if (!containerEau || !containerTemp) {
+                                console.error('[Highcharts] Conteneurs de graphiques non trouvés');
+                                return;
+                            }
+                            
+                            // S'assurer que les conteneurs ont une taille
+                            var containerEauRect = containerEau.getBoundingClientRect();
+                            var containerTempRect = containerTemp.getBoundingClientRect();
+                            
+                            if (containerEauRect.width === 0 || containerEauRect.height === 0) {
+                                console.warn('[Highcharts] Conteneur eau sans dimensions, attente...');
+                                setTimeout(createVersionD, 100);
+                                return;
+                            }
+                            
                             // 1. Stock Chart Niveaux d'eau avec aires
                             window.chartEau = Highcharts.stockChart('chart-stock-area-eau-D', {
                                 chart: { 
-                                    height: window.innerWidth < 768 ? 400 : (window.innerWidth < 1024 ? 500 : 600),
+                                    height: getChartHeight('eau'),
                                     spacingTop: 20,
                                     spacingRight: 20,
                                     spacingBottom: 20,
@@ -2325,7 +2400,7 @@
                             // 2. Stock Chart Paramètres physiques avec aires
                             window.chartTemp = Highcharts.stockChart('chart-stock-area-temp-D', {
                                 chart: { 
-                                    height: window.innerWidth < 768 ? 500 : (window.innerWidth < 1024 ? 600 : 700),
+                                    height: getChartHeight('temp'),
                                     spacingTop: 20,
                                     spacingRight: 20,
                                     spacingBottom: 20,
@@ -2658,10 +2733,39 @@
                             });
                         }
                         
-                        // Initialiser les graphiques
-                        console.log('[DEBUG] Début initialisation graphiques - v4.9.12');
-                        createVersionD();
-                        console.log('[DEBUG] createVersionD() appelé, attente création graphiques...');
+                        // Initialiser les graphiques après que le DOM soit complètement chargé
+                        function initCharts() {
+                            // Vérifier que Highcharts est chargé
+                            if (typeof Highcharts === 'undefined' || typeof Highcharts.stockChart === 'undefined') {
+                                console.warn('[Highcharts] Bibliothèque non chargée, nouvelle tentative...');
+                                setTimeout(initCharts, 100);
+                                return;
+                            }
+                            
+                            // Vérifier que les conteneurs existent
+                            var containerEau = document.getElementById('chart-stock-area-eau-D');
+                            var containerTemp = document.getElementById('chart-stock-area-temp-D');
+                            
+                            if (!containerEau || !containerTemp) {
+                                console.warn('[Highcharts] Conteneurs non trouvés, nouvelle tentative...');
+                                setTimeout(initCharts, 100);
+                                return;
+                            }
+                            
+                            console.log('[DEBUG] Début initialisation graphiques - v4.9.37');
+                            createVersionD();
+                            console.log('[DEBUG] createVersionD() appelé, attente création graphiques...');
+                        }
+                        
+                        // Attendre que le DOM soit prêt
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', function() {
+                                setTimeout(initCharts, 100);
+                            });
+                        } else {
+                            // DOM déjà chargé
+                            setTimeout(initCharts, 100);
+                        }
                         
                         // Debug: Vérifier la configuration de l'axe X après création complète
                         // Utiliser plusieurs tentatives pour s'assurer que les graphiques sont créés

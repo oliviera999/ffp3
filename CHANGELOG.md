@@ -7,6 +7,30 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.37] - 2026-01-14
+
+### 🐛 Correction - Affichage graphiques Highcharts sur mobile
+- **Problème résolu** : Les graphiques Highcharts ne s'affichaient plus sur smartphone
+- **Corrections apportées** :
+  - Ajout de hauteurs minimales CSS pour les conteneurs de graphiques selon la taille d'écran
+    - Mobile (< 480px) : 400px pour eau, 450px pour temp
+    - Tablette (481-768px) : 450px pour eau, 550px pour temp
+    - Desktop (769-1024px) : 500px pour eau, 600px pour temp
+    - Large (> 1025px) : 600px pour eau, 700px pour temp
+  - Amélioration de l'initialisation des graphiques :
+    - Vérification que Highcharts est chargé avant création
+    - Vérification que les conteneurs existent et ont des dimensions
+    - Attente du chargement complet du DOM avant initialisation
+    - Retry automatique si les conteneurs ne sont pas prêts
+  - Amélioration du calcul de hauteur :
+    - Fonction `getChartHeight()` centralisée pour un calcul cohérent
+    - Utilisation de `getBoundingClientRect()` pour vérifier les dimensions des conteneurs
+    - Meilleure gestion du redimensionnement responsive
+- **Fichiers modifiés** :
+  - `templates/aquaponie.twig` : Styles CSS et logique d'initialisation améliorés
+
+---
+
 ## [4.9.36] - 2026-01-14
 
 ### ✨ Administration - Vidage du cache
