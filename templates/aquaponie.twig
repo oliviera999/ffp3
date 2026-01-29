@@ -2017,18 +2017,44 @@
                                 return;
                             }
                             
+                            // Détection mobile pour désactiver boost (problèmes WebGL sur Android)
+                            var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                            var isAndroid = /Android/i.test(navigator.userAgent);
+                            
+                            // Sur mobile, forcer une hauteur minimale sur les conteneurs
+                            if (isMobile) {
+                                containerEau.style.minHeight = '350px';
+                                containerTemp.style.minHeight = '400px';
+                                // Forcer un reflow pour que les dimensions soient calculées
+                                containerEau.offsetHeight;
+                                containerTemp.offsetHeight;
+                            }
+                            
                             // S'assurer que les conteneurs ont une taille
                             var containerEauRect = containerEau.getBoundingClientRect();
                             var containerTempRect = containerTemp.getBoundingClientRect();
                             
-                            if (containerEauRect.width === 0 || containerEauRect.height === 0) {
-                                console.warn('[Highcharts] Conteneur eau sans dimensions, attente...');
-                                setTimeout(createVersionD, 100);
+                            // Sur mobile, être plus tolérant avec les dimensions
+                            var minWidth = isMobile ? 100 : 0;
+                            if (containerEauRect.width <= minWidth) {
+                                console.warn('[Highcharts] Conteneur eau sans dimensions suffisantes (' + containerEauRect.width + 'px), attente...');
+                                setTimeout(createVersionD, 150);
                                 return;
                             }
                             
+                            console.log('[Highcharts] Création graphiques - Mobile:', isMobile, 'Android:', isAndroid, 'Width:', containerEauRect.width);
+                            
+                            // Options boost - désactivé sur mobile Android pour compatibilité WebGL
+                            var boostOptions = {
+                                boost: {
+                                    enabled: !isAndroid, // Désactiver boost sur Android
+                                    useGPUTranslations: !isMobile,
+                                    seriesThreshold: isMobile ? 999 : 1
+                                }
+                            };
+                            
                             // 1. Stock Chart Niveaux d'eau avec aires
-                            window.chartEau = Highcharts.stockChart('chart-stock-area-eau-D', {
+                            window.chartEau = Highcharts.stockChart('chart-stock-area-eau-D', Highcharts.merge(boostOptions, {
                                 chart: { 
                                     height: getChartHeight('eau'),
                                     spacingTop: 20,
@@ -2395,10 +2421,10 @@
                                 },
                                 scrollbar: { enabled: true },
                                 credits: { enabled: false }
-                            });
+                            }));
                             
                             // 2. Stock Chart Paramètres physiques avec aires
-                            window.chartTemp = Highcharts.stockChart('chart-stock-area-temp-D', {
+                            window.chartTemp = Highcharts.stockChart('chart-stock-area-temp-D', Highcharts.merge(boostOptions, {
                                 chart: { 
                                     height: getChartHeight('temp'),
                                     spacingTop: 20,
@@ -2730,15 +2756,28 @@
                                 },
                                 scrollbar: { enabled: true },
                                 credits: { enabled: false }
-                            });
+                            }));
+                            
+                            console.log('[Highcharts] Graphiques créés avec succès - Boost:', !isAndroid);
                         }
                         
                         // Initialiser les graphiques après que le DOM soit complètement chargé
+                        var initChartsAttempts = 0;
+                        var maxInitAttempts = 20;
+                        
                         function initCharts() {
+                            initChartsAttempts++;
+                            var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                            var retryDelay = isMobile ? 200 : 100; // Plus de temps sur mobile
+                            
                             // Vérifier que Highcharts est chargé
                             if (typeof Highcharts === 'undefined' || typeof Highcharts.stockChart === 'undefined') {
-                                console.warn('[Highcharts] Bibliothèque non chargée, nouvelle tentative...');
-                                setTimeout(initCharts, 100);
+                                if (initChartsAttempts < maxInitAttempts) {
+                                    console.warn('[Highcharts] Bibliothèque non chargée, tentative ' + initChartsAttempts + '/' + maxInitAttempts);
+                                    setTimeout(initCharts, retryDelay);
+                                } else {
+                                    console.error('[Highcharts] Échec du chargement après ' + maxInitAttempts + ' tentatives');
+                                }
                                 return;
                             }
                             
@@ -2747,24 +2786,32 @@
                             var containerTemp = document.getElementById('chart-stock-area-temp-D');
                             
                             if (!containerEau || !containerTemp) {
-                                console.warn('[Highcharts] Conteneurs non trouvés, nouvelle tentative...');
-                                setTimeout(initCharts, 100);
+                                if (initChartsAttempts < maxInitAttempts) {
+                                    console.warn('[Highcharts] Conteneurs non trouvés, tentative ' + initChartsAttempts + '/' + maxInitAttempts);
+                                    setTimeout(initCharts, retryDelay);
+                                } else {
+                                    console.error('[Highcharts] Conteneurs introuvables après ' + maxInitAttempts + ' tentatives');
+                                }
                                 return;
                             }
                             
-                            console.log('[DEBUG] Début initialisation graphiques - v4.9.37');
+                            console.log('[DEBUG] Début initialisation graphiques - v4.10.0 (Mobile fix)');
+                            console.log('[DEBUG] Mobile:', isMobile, 'Tentative:', initChartsAttempts);
                             createVersionD();
                             console.log('[DEBUG] createVersionD() appelé, attente création graphiques...');
                         }
                         
-                        // Attendre que le DOM soit prêt
+                        // Attendre que le DOM soit prêt - délai plus long sur mobile
+                        var isMobileInit = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                        var initialDelay = isMobileInit ? 300 : 100;
+                        
                         if (document.readyState === 'loading') {
                             document.addEventListener('DOMContentLoaded', function() {
-                                setTimeout(initCharts, 100);
+                                setTimeout(initCharts, initialDelay);
                             });
                         } else {
                             // DOM déjà chargé
-                            setTimeout(initCharts, 100);
+                            setTimeout(initCharts, initialDelay);
                         }
                         
                         // Debug: Vérifier la configuration de l'axe X après création complète
