@@ -56,4 +56,4 @@ class LogServiceTest extends TestCase
             trim($contents)
         );
     }
-} 
+}

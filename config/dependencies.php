@@ -151,7 +151,10 @@ return [
         return new \App\Controller\PostDataController(
             $c->get(\App\Service\LogService::class),
             $c->get(\App\Service\ErrorAlertService::class),
-            $c->get(\App\Service\OutputCacheService::class)
+            $c->get(\App\Service\OutputCacheService::class),
+            $c->get(\App\Repository\SensorRepository::class),
+            $c->get(\App\Repository\OutputRepository::class),
+            $c->get(\App\Repository\BoardRepository::class)
         );
     },
 

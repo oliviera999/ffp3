@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Config\TableConfig;
+use App\Util\StateNormalizer;
 
 /**
  * Service de cache pour les états outputs
@@ -81,11 +82,8 @@ class OutputCacheService
             $byGpio[(int)$row['gpio']] = $row['state'];
         }
         
-        // Normalisation: booléens en 0/1, conservation des strings pour email, strings numériques pour configs
+        // Normalisation via StateNormalizer
         $result = [];
-        
-        // Définir ensemble des GPIOs booléens à normaliser (cohérent avec OutputRepository)
-        // GPIOs booléens: 0-99, 101, 108, 109, 110, 115
         foreach ($gpioList as $gpio) {
             if (!array_key_exists($gpio, $byGpio)) {
                 // Si absent en BDD, ne pas inventer une valeur; passer sous silence
@@ -94,23 +92,8 @@ class OutputCacheService
             
             $state = $byGpio[$gpio];
             
-            // Normaliser les GPIOs booléens (cohérent avec OutputRepository)
-            if ($gpio < 100 || in_array($gpio, [101, 108, 109, 110, 115], true)) {
-                // GPIOs booléens : convertir en entier
-                if (is_string($state)) {
-                    // Gérer les cas comme 'checked', 'true', 'on', etc. (même logique que OutputRepository)
-                    $normalizedState = match (strtolower(trim($state))) {
-                        'checked', 'true', 'on', '1', 'yes' => 1,
-                        'unchecked', 'false', 'off', '0', 'no' => 0,
-                        default => is_numeric($state) ? (int)$state : 0
-                    };
-                    $state = $normalizedState;
-                } else {
-                    $state = (int)$state;
-                }
-            }
-            // Sinon, laisser tel quel (string numérique ou texte)
-            // Email (100) reste string, paramètres (102-107,111-116) souvent strings numériques
+            // Normaliser via StateNormalizer
+            $state = StateNormalizer::normalize($gpio, $state);
             
             $result[(string)$gpio] = $state;
         }

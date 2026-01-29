@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Config\TableConfig;
 use App\Domain\SensorData;
+use App\Util\StateNormalizer;
 use PDO;
 
 /**
@@ -65,27 +66,8 @@ class OutputRepository
         $stmt->execute();
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        // Normaliser les valeurs booléennes pour les GPIOs spéciaux
-        foreach ($results as &$result) {
-            $gpio = (int)$result['gpio'];
-            if ($gpio < 100 || in_array($gpio, [101, 108, 109, 110, 115])) {
-                // GPIOs booléens : convertir en entier
-                $state = $result['state'];
-                if (is_string($state)) {
-                    // Gérer les cas comme 'checked', 'true', 'on', etc.
-                    $normalizedState = match (strtolower($state)) {
-                        'checked', 'true', 'on', '1', 'yes' => 1,
-                        'unchecked', 'false', 'off', '0', 'no' => 0,
-                        default => is_numeric($state) ? (int)$state : 0
-                    };
-                    $result['state'] = $normalizedState;
-                } else {
-                    $result['state'] = (int)$state;
-                }
-            }
-        }
-        
-        return $results;
+        // Normaliser les valeurs booléennes via StateNormalizer
+        return StateNormalizer::normalizeResults($results);
     }
 
     /**
@@ -107,22 +89,8 @@ class OutputRepository
             return null;
         }
         
-        // Normaliser les valeurs booléennes pour les GPIOs spéciaux
-        if ($gpio < 100 || in_array($gpio, [101, 108, 109, 110, 115])) {
-            // GPIOs booléens : convertir en entier
-            $state = $result['state'];
-            if (is_string($state)) {
-                // Gérer les cas comme 'checked', 'true', 'on', etc.
-                $normalizedState = match (strtolower($state)) {
-                    'checked', 'true', 'on', '1', 'yes' => 1,
-                    'unchecked', 'false', 'off', '0', 'no' => 0,
-                    default => is_numeric($state) ? (int)$state : 0
-                };
-                $result['state'] = $normalizedState;
-            } else {
-                $result['state'] = (int)$state;
-            }
-        }
+        // Normaliser la valeur via StateNormalizer
+        $result['state'] = StateNormalizer::normalize($gpio, $result['state']);
         
         return $result;
     }
@@ -164,27 +132,8 @@ class OutputRepository
         $stmt->execute([':board' => $board]);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        // Normaliser les valeurs booléennes pour les GPIOs spéciaux
-        foreach ($results as &$result) {
-            $gpio = (int)$result['gpio'];
-            if ($gpio < 100 || in_array($gpio, [101, 108, 109, 110, 115])) {
-                // GPIOs booléens : convertir en entier
-                $state = $result['state'];
-                if (is_string($state)) {
-                    // Gérer les cas comme 'checked', 'true', 'on', etc.
-                    $normalizedState = match (strtolower($state)) {
-                        'checked', 'true', 'on', '1', 'yes' => 1,
-                        'unchecked', 'false', 'off', '0', 'no' => 0,
-                        default => is_numeric($state) ? (int)$state : 0
-                    };
-                    $result['state'] = $normalizedState;
-                } else {
-                    $result['state'] = (int)$state;
-                }
-            }
-        }
-        
-        return $results;
+        // Normaliser les valeurs booléennes via StateNormalizer
+        return StateNormalizer::normalizeResults($results);
     }
 
     /**
@@ -228,23 +177,9 @@ class OutputRepository
             return null;
         }
         
-        // Normaliser les valeurs booléennes pour les GPIOs spéciaux
+        // Normaliser la valeur via StateNormalizer
         $gpio = (int)$result['gpio'];
-        if ($gpio < 100 || in_array($gpio, [101, 108, 109, 110, 115])) {
-            // GPIOs booléens : convertir en entier
-            $state = $result['state'];
-            if (is_string($state)) {
-                // Gérer les cas comme 'checked', 'true', 'on', etc.
-                $normalizedState = match (strtolower($state)) {
-                    'checked', 'true', 'on', '1', 'yes' => 1,
-                    'unchecked', 'false', 'off', '0', 'no' => 0,
-                    default => is_numeric($state) ? (int)$state : 0
-                };
-                $result['state'] = $normalizedState;
-            } else {
-                $result['state'] = (int)$state;
-            }
-        }
+        $result['state'] = StateNormalizer::normalize($gpio, $result['state']);
         
         return $result;
     }

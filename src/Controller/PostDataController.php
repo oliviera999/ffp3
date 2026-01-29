@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Config\Database;
 use App\Domain\SensorData;
 use App\Repository\BoardRepository;
 use App\Repository\OutputRepository;
@@ -20,7 +19,10 @@ class PostDataController
     public function __construct(
         private LogService $logger,
         private ErrorAlertService $errorAlert,
-        private OutputCacheService $outputCache
+        private OutputCacheService $outputCache,
+        private SensorRepository $sensorRepo,
+        private OutputRepository $outputRepo,
+        private BoardRepository $boardRepo
     ) {
     }
 
@@ -143,20 +145,17 @@ class PostDataController
         );
 
         try {
-            $pdo  = Database::getConnection();
-            $repo = new SensorRepository($pdo);
-            $repo->insert($data);
+            // Insertion des données capteurs via le repository injecté
+            $this->sensorRepo->insert($data);
 
             // Synchroniser les états dans ffp3Outputs/ffp3Outputs2
-            $outputRepo = new OutputRepository($pdo);
-            $outputRepo->syncStatesFromSensorData($data);
+            $this->outputRepo->syncStatesFromSensorData($data);
             
             // Invalider le cache après synchronisation ESP32
             $this->outputCache->invalidateCache();
 
             // Mettre à jour le timestamp de la dernière requête de la board
-            $boardRepo = new BoardRepository($pdo);
-            $boardRepo->updateLastRequest('1'); // Board 1 par défaut
+            $this->boardRepo->updateLastRequest('1'); // Board 1 par défaut
 
             $this->logger->info('Données capteurs insérées et outputs synchronisés', ['sensor' => $data->sensor, 'version' => $data->version]);
             
@@ -178,4 +177,4 @@ class PostDataController
             return $response->withStatus(500)->withHeader('Content-Type', 'text/plain; charset=utf-8');
         }
     }
-} 
+}

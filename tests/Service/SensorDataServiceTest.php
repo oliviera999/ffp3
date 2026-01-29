@@ -61,4 +61,4 @@ class SensorDataServiceTest extends TestCase
         $this->assertSame(1, $stats['TempEau_low']);
         $this->assertSame(1, $stats['TempEau_high']);
     }
-} 
+}
