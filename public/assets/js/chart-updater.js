@@ -21,16 +21,26 @@ class ChartUpdater {
         
         // Mapping des capteurs vers les séries des graphiques
         this.sensorToSeriesMap = {
-            // Graphique Eau (index 0)
-            'EauAquarium': { chartIndex: 0, seriesIndex: 0 },
-            'EauReserve': { chartIndex: 0, seriesIndex: 1 },
-            'EauPotager': { chartIndex: 0, seriesIndex: 2 },
+            // Graphique Eau (index 0) - Séries areaspline (courbes)
+            'EauAquarium': { chartIndex: 0, seriesIndex: 2 },  // Orange
+            'EauReserve': { chartIndex: 0, seriesIndex: 0 },   // Vert foncé
+            'EauPotager': { chartIndex: 0, seriesIndex: 1 },   // Vert clair
             
-            // Graphique Paramètres physiques (index 1)
+            // Graphique Eau (index 0) - Séries scatter (points) - seulement si valeur > 0
+            'etatPompeAqua': { chartIndex: 0, seriesIndex: 3, scatterOnlyIfTrue: true },
+            'etatPompeTank': { chartIndex: 0, seriesIndex: 4, scatterOnlyIfTrue: true },
+            'etatHeat': { chartIndex: 0, seriesIndex: 5, scatterOnlyIfTrue: true },
+            
+            // Graphique Paramètres physiques (index 1) - Séries areaspline (courbes)
             'TempEau': { chartIndex: 1, seriesIndex: 0 },
             'TempAir': { chartIndex: 1, seriesIndex: 1 },
             'Humidite': { chartIndex: 1, seriesIndex: 2 },
-            'Luminosite': { chartIndex: 1, seriesIndex: 3 }
+            'Luminosite': { chartIndex: 1, seriesIndex: 3 },
+            
+            // Graphique Paramètres physiques (index 1) - Séries column (barres)
+            'etatUV': { chartIndex: 1, seriesIndex: 4 },
+            'bouffeGros': { chartIndex: 1, seriesIndex: 5 },
+            'bouffePetits': { chartIndex: 1, seriesIndex: 6 }
         };
         
         // État
@@ -93,11 +103,19 @@ class ChartUpdater {
         
         // Ajouter chaque capteur à la file d'attente
         for (const [sensorName, value] of Object.entries(sensors)) {
-            if (value !== null && value !== undefined && this.sensorToSeriesMap[sensorName]) {
+            const mapping = this.sensorToSeriesMap[sensorName];
+            if (value !== null && value !== undefined && mapping) {
+                const numericValue = parseFloat(value);
+                
+                // Pour les séries scatter, n'ajouter que si la valeur > 0
+                if (mapping.scatterOnlyIfTrue && numericValue <= 0) {
+                    continue;
+                }
+                
                 this.updateQueue.push({
                     sensor: sensorName,
                     timestamp: timestampMs,
-                    value: parseFloat(value)
+                    value: numericValue
                 });
             }
         }

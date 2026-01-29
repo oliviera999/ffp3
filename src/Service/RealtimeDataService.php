@@ -56,6 +56,13 @@ class RealtimeDataService
                 'TempAir' => $lastReadings['TempAir'] ?? null,
                 'Humidite' => $lastReadings['Humidite'] ?? null,
                 'Luminosite' => $lastReadings['Luminosite'] ?? null,
+                // États des actionneurs (scatter/column dans les graphiques)
+                'etatPompeAqua' => $lastReadings['etatPompeAqua'] ?? null,
+                'etatPompeTank' => $lastReadings['etatPompeTank'] ?? null,
+                'etatHeat' => $lastReadings['etatHeat'] ?? null,
+                'etatUV' => $lastReadings['etatUV'] ?? null,
+                'bouffePetits' => $lastReadings['bouffePetits'] ?? null,
+                'bouffeGros' => $lastReadings['bouffeGros'] ?? null,
             ],
         ];
     }
@@ -86,6 +93,13 @@ class RealtimeDataService
                     'TempAir' => $reading['TempAir'] ?? null,
                     'Humidite' => $reading['Humidite'] ?? null,
                     'Luminosite' => $reading['Luminosite'] ?? null,
+                    // États des actionneurs (scatter/column dans les graphiques)
+                    'etatPompeAqua' => $reading['etatPompeAqua'] ?? null,
+                    'etatPompeTank' => $reading['etatPompeTank'] ?? null,
+                    'etatHeat' => $reading['etatHeat'] ?? null,
+                    'etatUV' => $reading['etatUV'] ?? null,
+                    'bouffePetits' => $reading['bouffePetits'] ?? null,
+                    'bouffeGros' => $reading['bouffeGros'] ?? null,
                 ],
             ];
         }
