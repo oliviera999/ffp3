@@ -196,8 +196,8 @@
                                     </header>
                                     <footer>
                                         <span data-state-label>{{ is_checked ? 'Activé' : 'Désactivé' }}</span>
-                                        <label class="modern-switch">
-                                            <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" data-inverted="{{ is_inverted ? '1' : '0' }}" {{ is_checked ? 'checked' : '' }}>
+                                        <label class="modern-switch" title="{{ output.gpio == 16 ? 'Contrôle pompe aquarium' : 'Contrôle pompe réserve' }}">
+                                            <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" data-inverted="{{ is_inverted ? '1' : '0' }}" {{ is_checked ? 'checked' : '' }} role="switch" aria-checked="{{ is_checked ? 'true' : 'false' }}" aria-label="{{ output.gpio == 16 ? 'Pompe aquarium' : 'Pompe réserve' }}">
                                             <span class="modern-switch-slider"><span class="modern-switch-button"></span></span>
                                         </label>
                                     </footer>
@@ -253,8 +253,8 @@
                                         </header>
                                         <footer>
                                             <span data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
-                                            <label class="modern-switch">
-                                                <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" {{ output.state == 1 ? 'checked' : '' }}>
+                                            <label class="modern-switch" title="{{ output.gpio == 108 ? 'Nourrissage petits poissons' : 'Nourrissage gros poissons' }}">
+                                                <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" {{ output.state == 1 ? 'checked' : '' }} role="switch" aria-checked="{{ output.state == 1 ? 'true' : 'false' }}" aria-label="{{ output.gpio == 108 ? 'Petits poissons' : 'Gros poissons' }}">
                                                 <span class="modern-switch-slider"><span class="modern-switch-button"></span></span>
                                             </label>
                                         </footer>
@@ -315,8 +315,8 @@
                                         </header>
                                         <footer>
                                             <span data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
-                                            <label class="modern-switch">
-                                                <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" {{ output.state == 1 ? 'checked' : '' }}>
+                                            <label class="modern-switch" title="{{ output.gpio == 2 ? 'Contrôle radiateur' : 'Contrôle lumière' }}">
+                                                <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" {{ output.state == 1 ? 'checked' : '' }} role="switch" aria-checked="{{ output.state == 1 ? 'true' : 'false' }}" aria-label="{{ output.gpio == 2 ? 'Radiateur' : 'Lumière' }}">
                                                 <span class="modern-switch-slider"><span class="modern-switch-button"></span></span>
                                             </label>
                                         </footer>
@@ -357,8 +357,8 @@
                                         </header>
                                         <footer>
                                             <span data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
-                                            <label class="modern-switch">
-                                                <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" {{ output.state == 1 ? 'checked' : '' }}>
+                                            <label class="modern-switch" title="Activer/désactiver les notifications email">
+                                                <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" {{ output.state == 1 ? 'checked' : '' }} role="switch" aria-checked="{{ output.state == 1 ? 'true' : 'false' }}" aria-label="Notifications email">
                                                 <span class="modern-switch-slider"><span class="modern-switch-button"></span></span>
                                             </label>
                                         </footer>
@@ -382,8 +382,8 @@
                                         <p class="action-description">{{ output.gpio == 110 ? 'Redémarre le microcontrôleur. À utiliser en dernier recours.' : 'Force le réveil de l\'ESP32 pour envoyer toutes les mesures.' }}</p>
                                         <footer>
                                             <span data-state-label>{{ output.state == 1 ? 'Activé' : 'Désactivé' }}</span>
-                                            <label class="modern-switch">
-                                                <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" {{ output.state == 1 ? 'checked' : '' }}>
+                                            <label class="modern-switch" title="{{ output.gpio == 110 ? 'Redémarrer le microcontrôleur' : 'Forcer le réveil de l\'ESP32' }}">
+                                                <input type="checkbox" onchange="updateOutput(this)" data-id="{{ output.id }}" data-gpio="{{ output.gpio }}" {{ output.state == 1 ? 'checked' : '' }} role="switch" aria-checked="{{ output.state == 1 ? 'true' : 'false' }}" aria-label="{{ output.gpio == 110 ? 'Reset ESP' : 'Forçage réveil' }}">
                                                 <span class="modern-switch-slider"><span class="modern-switch-button"></span></span>
                                             </label>
                                         </footer>

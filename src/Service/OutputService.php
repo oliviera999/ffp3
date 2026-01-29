@@ -300,9 +300,6 @@ class OutputService
             // Invalider le cache après modification
             $this->outputCache->invalidateCache();
             
-            // Petite pause pour garantir la synchronisation
-            usleep(100000);
-            
             return $updated;
         } catch (\Exception $e) {
             $pdo->rollBack();

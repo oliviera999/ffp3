@@ -236,7 +236,7 @@ class ControlSync {
                 
                 if (currentChecked !== shouldBeChecked) {
                     // Animation flash pour indiquer le changement
-                    const container = switchElement.closest('.action-button-card');
+                    const container = switchElement.closest('.action-card');
                     if (container) {
                         container.classList.add('state-changed');
                         setTimeout(() => container.classList.remove('state-changed'), 1000);
@@ -272,7 +272,7 @@ class ControlSync {
                     if (window.updateSyncBadge) {
                         window.updateSyncBadge(change.gpio, 'synced', 'SYNC');
                     }
-                    const container = switchElement.closest('.action-button-card');
+                    const container = switchElement.closest('.action-card');
                     if (container) {
                         container.setAttribute('data-state', shouldBeChecked ? '1' : '0');
                         const statusLabel = container.querySelector('[data-state-label]');

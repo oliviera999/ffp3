@@ -1,6 +1,118 @@
         /* ========================================
            STYLES HARMONISÉS AVEC L'INTERFACE AQUAPONIE
            ======================================== */
+
+        :root {
+            --control-primary: #008B74;
+            --control-primary-light: #00A896;
+            --control-primary-muted: rgba(0, 139, 116, 0.15);
+            --control-primary-shadow: rgba(0, 139, 116, 0.3);
+            
+            --control-radius-sm: 8px;
+            --control-radius-md: 12px;
+            --control-radius-lg: 16px;
+            --control-radius-xl: 20px;
+            --control-radius-pill: 999px;
+            
+            --control-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --control-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --control-shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.2);
+            --control-shadow-primary: 0 4px 12px rgba(0, 139, 116, 0.3);
+            --control-shadow-primary-lg: 0 6px 20px rgba(0, 139, 116, 0.4);
+            
+            /* Système de typographie unifié */
+            --control-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --control-font-mono: 'Courier New', 'Roboto Mono', monospace;
+            
+            --control-font-size-xs: 0.75em;      /* 12px */
+            --control-font-size-sm: 0.85em;      /* 13.6px */
+            --control-font-size-base: 0.95em;    /* 15.2px */
+            --control-font-size-md: 1.1em;       /* 17.6px */
+            --control-font-size-lg: 1.3em;       /* 20.8px */
+            --control-font-size-xl: 1.5em;       /* 24px */
+            --control-font-size-2xl: 2.2em;      /* 35.2px */
+            
+            --control-font-weight-normal: 400;
+            --control-font-weight-medium: 500;
+            --control-font-weight-semibold: 600;
+            --control-font-weight-bold: 700;
+            
+            --control-line-height-tight: 1.2;
+            --control-line-height-normal: 1.5;
+            --control-line-height-relaxed: 1.6;
+            
+            --control-letter-spacing-tight: 0.02em;
+            --control-letter-spacing-normal: 0.05em;
+            --control-letter-spacing-wide: 0.08em;
+            
+            /* Système de badges unifié */
+            --badge-padding-sm: 4px 8px;
+            --badge-padding-md: 6px 12px;
+            --badge-padding-lg: 8px 16px;
+            --badge-font-size: var(--control-font-size-xs);
+            --badge-font-weight: var(--control-font-weight-semibold);
+            --badge-border-radius: var(--control-radius-pill);
+            --badge-letter-spacing: var(--control-letter-spacing-wide);
+            
+            /* Système d'espacement unifié */
+            --control-spacing-xs: 4px;
+            --control-spacing-sm: 8px;
+            --control-spacing-md: 12px;
+            --control-spacing-lg: 16px;
+            --control-spacing-xl: 20px;
+            --control-spacing-2xl: 24px;
+            --control-spacing-3xl: 32px;
+            
+            --control-gap-xs: 6px;
+            --control-gap-sm: 10px;
+            --control-gap-md: 12px;
+            --control-gap-lg: 16px;
+            --control-gap-xl: 20px;
+            --control-gap-2xl: 24px;
+            
+            --control-padding-xs: 6px;
+            --control-padding-sm: 10px;
+            --control-padding-md: 14px;
+            --control-padding-lg: 18px;
+            --control-padding-xl: 20px;
+            --control-padding-2xl: 25px;
+            
+            --control-margin-xs: 4px;
+            --control-margin-sm: 8px;
+            --control-margin-md: 12px;
+            --control-margin-lg: 18px;
+            --control-margin-xl: 20px;
+            --control-margin-2xl: 25px;
+            --control-margin-3xl: 32px;
+            
+            /* Système de transitions unifié */
+            --control-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --control-transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --control-transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --control-transition-bounce: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            
+            /* Système d'animations unifié */
+            --control-animation-fast: 0.3s;
+            --control-animation-base: 0.5s;
+            --control-animation-slow: 1s;
+            --control-animation-pulse: 1.5s;
+            --control-animation-pulse-slow: 2s;
+            
+            /* Easing functions */
+            --control-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+            --control-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+            --control-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+            --control-easing-sharp: cubic-bezier(0.4, 0, 0.6, 1);
+            
+            /* Variables de layout */
+            --control-bg: #f6f9fc;
+            --panel-bg: #ffffff;
+            --panel-shadow: 0 18px 40px rgba(15, 35, 95, 0.08);
+            --border-color: #e3e8ee;
+            --accent: #008B74;
+            --accent-muted: rgba(0, 139, 116, 0.12);
+            --text-muted: #6b7a8a;
+        }
         
         /* Reset et base */
         * {
@@ -787,47 +899,7 @@
            INDICATEURS DE SYNCHRONISATION
            ======================================== */
         
-        /* Badge de statut de synchronisation */
-        .sync-status-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.75em;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-left: 8px;
-            transition: all var(--control-transition-base);
-        }
-        
-        .sync-status-badge.sync-pending {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-        
-        .sync-status-badge.sync-synced {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .sync-status-badge.sync-conflict {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .sync-status-badge.sync-esp32 {
-            background: #cce5ff;
-            color: #004085;
-            border: 1px solid #99d6ff;
-        }
-        
         /* Animation de pulsation pour les changements en attente */
-        .sync-status-badge.sync-pending {
-            animation: pulse-warning 2s infinite;
-        }
-        
         @keyframes pulse-warning {
             0% { opacity: 1; }
             50% { opacity: 0.7; }
@@ -866,117 +938,6 @@
         
         .control-card.has-sync-status.sync-synced {
             border-left-color: #28a745;
-        }
-
-        :root {
-            --control-primary: #008B74;
-            --control-primary-light: #00A896;
-            --control-primary-muted: rgba(0, 139, 116, 0.15);
-            --control-primary-shadow: rgba(0, 139, 116, 0.3);
-            
-            --control-radius-sm: 8px;
-            --control-radius-md: 12px;
-            --control-radius-lg: 16px;
-            --control-radius-xl: 20px;
-            --control-radius-pill: 999px;
-            
-            --control-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-            --control-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
-            --control-shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.2);
-            --control-shadow-primary: 0 4px 12px rgba(0, 139, 116, 0.3);
-            --control-shadow-primary-lg: 0 6px 20px rgba(0, 139, 116, 0.4);
-            
-            /* Système de typographie unifié */
-            --control-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            --control-font-mono: 'Courier New', 'Roboto Mono', monospace;
-            
-            --control-font-size-xs: 0.75em;      /* 12px */
-            --control-font-size-sm: 0.85em;      /* 13.6px */
-            --control-font-size-base: 0.95em;    /* 15.2px */
-            --control-font-size-md: 1.1em;       /* 17.6px */
-            --control-font-size-lg: 1.3em;       /* 20.8px */
-            --control-font-size-xl: 1.5em;       /* 24px */
-            --control-font-size-2xl: 2.2em;      /* 35.2px */
-            
-            --control-font-weight-normal: 400;
-            --control-font-weight-medium: 500;
-            --control-font-weight-semibold: 600;
-            --control-font-weight-bold: 700;
-            
-            --control-line-height-tight: 1.2;
-            --control-line-height-normal: 1.5;
-            --control-line-height-relaxed: 1.6;
-            
-            --control-letter-spacing-tight: 0.02em;
-            --control-letter-spacing-normal: 0.05em;
-            --control-letter-spacing-wide: 0.08em;
-            
-            /* Système de badges unifié */
-            --badge-padding-sm: 4px 8px;
-            --badge-padding-md: 6px 12px;
-            --badge-padding-lg: 8px 16px;
-            --badge-font-size: var(--control-font-size-xs);
-            --badge-font-weight: var(--control-font-weight-semibold);
-            --badge-border-radius: var(--control-radius-pill);
-            --badge-letter-spacing: var(--control-letter-spacing-wide);
-            
-            /* Système d'espacement unifié */
-            --control-spacing-xs: 4px;
-            --control-spacing-sm: 8px;
-            --control-spacing-md: 12px;
-            --control-spacing-lg: 16px;
-            --control-spacing-xl: 20px;
-            --control-spacing-2xl: 24px;
-            --control-spacing-3xl: 32px;
-            
-            --control-gap-xs: 6px;
-            --control-gap-sm: 10px;
-            --control-gap-md: 12px;
-            --control-gap-lg: 16px;
-            --control-gap-xl: 20px;
-            --control-gap-2xl: 24px;
-            
-            --control-padding-xs: 6px;
-            --control-padding-sm: 10px;
-            --control-padding-md: 14px;
-            --control-padding-lg: 18px;
-            --control-padding-xl: 20px;
-            --control-padding-2xl: 25px;
-            
-            --control-margin-xs: 4px;
-            --control-margin-sm: 8px;
-            --control-margin-md: 12px;
-            --control-margin-lg: 18px;
-            --control-margin-xl: 20px;
-            --control-margin-2xl: 25px;
-            
-            /* Système de transitions unifié */
-            --control-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-            --control-transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            --control-transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            --control-transition-bounce: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            
-            /* Système d'animations unifié */
-            --control-animation-fast: 0.3s;
-            --control-animation-base: 0.5s;
-            --control-animation-slow: 1s;
-            --control-animation-pulse: 1.5s;
-            --control-animation-pulse-slow: 2s;
-            
-            /* Easing functions */
-            --control-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
-            --control-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
-            --control-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
-            --control-easing-sharp: cubic-bezier(0.4, 0, 0.6, 1);
-            
-            /* Variables de layout */
-            --control-bg: #f6f9fc;
-            --panel-bg: #ffffff;
-            --panel-shadow: 0 18px 40px rgba(15, 35, 95, 0.08);
-            --border-color: #e3e8ee;
-            --accent: #008B74;
-            --accent-muted: rgba(0, 139, 116, 0.12);
-            --text-muted: #6b7a8a;
         }
 
         .control-wrapper {
@@ -1487,24 +1448,6 @@
         .modern-switch input:checked + .modern-switch-slider .modern-switch-button {
             transform: translateX(26px);
         }
-
-        .sync-status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: 0.75em;
-            letter-spacing: 0.06em;
-            background: rgba(15, 35, 95, 0.08);
-            color: #1b2a4b;
-            font-weight: 700;
-        }
-
-        .sync-status-badge.sync-pending { background: rgba(255, 174, 0, 0.2); color: #a8640f; }
-        .sync-status-badge.sync-synced { background: rgba(0, 139, 116, 0.15); color: #006a57; }
-        .sync-status-badge.sync-conflict { background: rgba(231, 76, 60, 0.18); color: #b52d20; }
-        .sync-status-badge.sync-esp32 { background: rgba(46, 134, 222, 0.18); color: #2367b2; }
 
         .control-sidebar { order: 1; }
         .control-main { order: 2; }
