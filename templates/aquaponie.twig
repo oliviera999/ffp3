@@ -1295,6 +1295,7 @@
                             </div>
 
                             <form method="POST" action="" id="customFilterForm">
+                                {{ csrf_field|raw }}
                                 <div class="datetime-grid">
                                     <div class="datetime-field">
                                         <label for="start_datetime">

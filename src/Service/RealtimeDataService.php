@@ -14,6 +14,32 @@ use PDO;
  */
 class RealtimeDataService
 {
+    /**
+     * Seuil pour considérer le système en ligne (en secondes)
+     * 10 minutes = 600 secondes
+     */
+    private const ONLINE_THRESHOLD_SECONDS = 600;
+
+    /**
+     * Intervalle attendu entre les lectures ESP32 (en minutes)
+     */
+    private const EXPECTED_READING_INTERVAL_MINUTES = 3;
+
+    /**
+     * Latence moyenne estimée pour les lectures (en secondes)
+     */
+    private const ESTIMATED_LATENCY_SECONDS = 3.5;
+
+    /**
+     * Période par défaut pour le calcul d'uptime (en jours)
+     */
+    private const DEFAULT_UPTIME_DAYS = 30;
+
+    /**
+     * GPIO considérés comme booléens (< 100 + quelques exceptions)
+     */
+    private const BOOLEAN_GPIO_EXCEPTIONS = [101, 108, 109, 110, 115];
+
     public function __construct(
         private SensorReadRepository $sensorReadRepo,
         private OutputRepository $outputRepo,
@@ -138,19 +164,17 @@ class RealtimeDataService
         $now = time();
         $secondsSinceLastReading = $now - $lastReadingTimestamp;
         
-        // Système considéré online si dernière donnée < 10 minutes
-        $isOnline = $secondsSinceLastReading < 600;
+        // Système considéré online si dernière donnée < seuil
+        $isOnline = $secondsSinceLastReading < self::ONLINE_THRESHOLD_SECONDS;
 
-        // Calculer uptime sur les 30 derniers jours
-        $uptimePercentage = $this->calculateUptime(30);
+        // Calculer uptime sur la période par défaut
+        $uptimePercentage = $this->calculateUptime(self::DEFAULT_UPTIME_DAYS);
 
         // Compter les lectures aujourd'hui
         $readingsToday = $this->countReadingsToday();
 
-        // Latence moyenne (on suppose une lecture ESP32 toutes les 3 min = 180s)
-        // La latence est le délai entre le moment où l'ESP32 lit et le moment où on reçoit
-        // Pour simplifier, on estime à 2-5 secondes en moyenne
-        $averageLatency = $isOnline ? 3.5 : null;
+        // Latence moyenne estimée
+        $averageLatency = $isOnline ? self::ESTIMATED_LATENCY_SECONDS : null;
 
         return [
             'online' => $isOnline,
@@ -171,11 +195,12 @@ class RealtimeDataService
     {
         $outputs = $this->outputRepo->findAll();
 
+        // Construire la liste des GPIO booléens (< 100 + exceptions)
         $booleanGpios = [];
         for ($i = 0; $i < 100; $i++) {
             $booleanGpios[$i] = true;
         }
-        foreach ([101, 108, 109, 110, 115] as $specialGpio) {
+        foreach (self::BOOLEAN_GPIO_EXCEPTIONS as $specialGpio) {
             $booleanGpios[$specialGpio] = true;
         }
 
@@ -223,8 +248,8 @@ class RealtimeDataService
         $startDate = date('Y-m-d H:i:s', strtotime("-{$days} days"));
         $endDate = date('Y-m-d H:i:s');
 
-        // Compter le nombre d'intervalles de 3 minutes attendus
-        $expectedReadings = ($days * 24 * 60) / 3; // 3 min par lecture
+        // Compter le nombre d'intervalles attendus
+        $expectedReadings = ($days * 24 * 60) / self::EXPECTED_READING_INTERVAL_MINUTES;
 
         // Compter les lectures réelles
         $actualReadings = $this->sensorReadRepo->countReadingsBetween($startDate, $endDate);

@@ -17,6 +17,20 @@ use PDO;
 class SensorDataService
 {
     /**
+     * Liste des colonnes autorisées pour les opérations de nettoyage.
+     * Protection contre l'injection SQL via les noms de colonnes.
+     */
+    private const ALLOWED_COLUMNS = [
+        'TempEau',
+        'TempAir',
+        'Humidite',
+        'EauAquarium',
+        'EauReserve',
+        'EauPotager',
+        'Luminosite',
+    ];
+
+    /**
      * Règles de nettoyage chargées depuis les variables d'environnement avec des valeurs par défaut.
      * Exemple : [ 'TempEau' => [ 'min' => 3.0, 'max' => 50.0 ], ... ]
      * @var array<string, array<string, float>>
@@ -54,15 +68,35 @@ class SensorDataService
     }
 
     /**
+     * Valide qu'un nom de colonne est autorisé.
+     * 
+     * @param string $column Nom de la colonne à valider
+     * @throws \InvalidArgumentException Si la colonne n'est pas autorisée
+     */
+    private function validateColumn(string $column): void
+    {
+        if (!in_array($column, self::ALLOWED_COLUMNS, true)) {
+            throw new \InvalidArgumentException(
+                sprintf('Colonne non autorisée: %s. Colonnes valides: %s', 
+                    $column, 
+                    implode(', ', self::ALLOWED_COLUMNS)
+                )
+            );
+        }
+    }
+
+    /**
      * Compte le nombre de valeurs trop basses pour une colonne donnée.
      * @param string $column Nom de la colonne à vérifier
      * @param float $threshold Seuil minimum
      * @return int Nombre de valeurs trouvées
+     * @throws \InvalidArgumentException Si la colonne n'est pas autorisée
      */
     public function countAbnormalLowValues(string $column, float $threshold): int
     {
+        $this->validateColumn($column);
         $table = \App\Config\TableConfig::getDataTable();
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM {$table} WHERE $column < :threshold");
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM {$table} WHERE {$column} < :threshold");
         $stmt->execute([':threshold' => $threshold]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return (int) $result['COUNT(*)'];
@@ -73,11 +107,13 @@ class SensorDataService
      * @param string $column Nom de la colonne à vérifier
      * @param float $threshold Seuil maximum
      * @return int Nombre de valeurs trouvées
+     * @throws \InvalidArgumentException Si la colonne n'est pas autorisée
      */
     public function countAbnormalHighValues(string $column, float $threshold): int
     {
+        $this->validateColumn($column);
         $table = \App\Config\TableConfig::getDataTable();
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM {$table} WHERE $column > :threshold");
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM {$table} WHERE {$column} > :threshold");
         $stmt->execute([':threshold' => $threshold]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return (int) $result['COUNT(*)'];
@@ -87,11 +123,13 @@ class SensorDataService
      * Remplace par NULL toutes les valeurs trop basses pour une colonne donnée.
      * @param string $column Nom de la colonne à nettoyer
      * @param float $threshold Seuil minimum
+     * @throws \InvalidArgumentException Si la colonne n'est pas autorisée
      */
     public function cleanAbnormalLowValues(string $column, float $threshold): void
     {
+        $this->validateColumn($column);
         $table = \App\Config\TableConfig::getDataTable();
-        $stmt = $this->pdo->prepare("UPDATE {$table} SET $column = NULL WHERE $column < :threshold");
+        $stmt = $this->pdo->prepare("UPDATE {$table} SET {$column} = NULL WHERE {$column} < :threshold");
         $stmt->execute([':threshold' => $threshold]);
     }
 
@@ -99,11 +137,13 @@ class SensorDataService
      * Remplace par NULL toutes les valeurs trop hautes pour une colonne donnée.
      * @param string $column Nom de la colonne à nettoyer
      * @param float $threshold Seuil maximum
+     * @throws \InvalidArgumentException Si la colonne n'est pas autorisée
      */
     public function cleanAbnormalHighValues(string $column, float $threshold): void
     {
+        $this->validateColumn($column);
         $table = \App\Config\TableConfig::getDataTable();
-        $stmt = $this->pdo->prepare("UPDATE {$table} SET $column = NULL WHERE $column > :threshold");
+        $stmt = $this->pdo->prepare("UPDATE {$table} SET {$column} = NULL WHERE {$column} > :threshold");
         $stmt->execute([':threshold' => $threshold]);
     }
 

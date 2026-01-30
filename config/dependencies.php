@@ -22,6 +22,8 @@ use App\Service\SystemHealthService;
 use App\Service\TemplateRenderer;
 use App\Service\TideAnalysisService;
 use App\Service\WaterBalanceService;
+use App\Service\OutputSyncService;
+use App\Security\CsrfService;
 use Psr\Container\ContainerInterface;
 
 return [
@@ -90,6 +92,13 @@ return [
         );
     },
 
+    OutputSyncService::class => function (ContainerInterface $c) {
+        return new OutputSyncService(
+            $c->get(OutputRepository::class),
+            $c->get(LogService::class)
+        );
+    },
+
     SensorDataService::class => function (ContainerInterface $c) {
         return new SensorDataService(
             $c->get(PDO::class),
@@ -120,10 +129,15 @@ return [
         );
     },
 
+    CsrfService::class => function (ContainerInterface $c) {
+        return new CsrfService();
+    },
+
     TemplateRenderer::class => function (ContainerInterface $c) {
         return new TemplateRenderer(
             __DIR__ . '/../templates',
-            ($_ENV['ENV'] ?? 'prod') === 'prod'
+            ($_ENV['ENV'] ?? 'prod') === 'prod',
+            $c->get(CsrfService::class)
         );
     },
 
@@ -172,7 +186,8 @@ return [
             $c->get(\App\Service\ChartDataService::class),
             $c->get(\App\Service\WaterBalanceService::class),
             $c->get(\App\Service\TemplateRenderer::class),
-            $c->get(\App\Service\LogService::class)
+            $c->get(\App\Service\LogService::class),
+            $c->get(\App\Security\CsrfService::class)
         );
     },
 
@@ -193,7 +208,8 @@ return [
     \App\Controller\TideStatsController::class => function (ContainerInterface $c) {
         return new \App\Controller\TideStatsController(
             $c->get(\App\Service\TideAnalysisService::class),
-            $c->get(\App\Service\TemplateRenderer::class)
+            $c->get(\App\Service\TemplateRenderer::class),
+            $c->get(\App\Security\CsrfService::class)
         );
     },
 

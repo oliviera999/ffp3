@@ -185,92 +185,58 @@ class OutputRepository
     }
 
     /**
-     * Synchronise les états des GPIO depuis les données capteurs
-     * Met à jour ffp3Outputs ou ffp3Outputs2 selon l'environnement
+     * Met à jour plusieurs GPIO avec logique de priorité.
      * 
-     * LOGIQUE DE PRIORITÉ : Les modifications faites via l'interface web ont 
-     * priorité pendant 10 secondes. L'ESP32 ne peut écraser un état web que 
-     * si la dernière modification web date de plus de 10 secondes.
+     * Les modifications web ont priorité pendant la durée spécifiée.
      * 
-     * CORRECTION v11.38 : Ne met à jour QUE les GPIO qui ont des noms définis
-     * pour éviter la création de lignes NULL inutiles.
-     * 
-     * @param SensorData $data Données capteurs contenant les états à synchroniser
+     * @param array<int, mixed> $gpioValues [gpio => value]
+     * @param string $modifiedBy Source de la modification ('esp32', 'web', etc.)
+     * @param int $prioritySeconds Durée de priorité pour les changements web
+     * @return array Statistiques ['updated' => int, 'skipped' => int]
      */
-    public function syncStatesFromSensorData(SensorData $data): void
+    public function batchUpdateWithPriority(array $gpioValues, string $modifiedBy, int $prioritySeconds): array
     {
         $table = $this->validateTableName(TableConfig::getOutputsTable());
+        $updated = 0;
+        $skipped = 0;
         
-        // Mapping des champs SensorData vers les GPIO
-        $gpioUpdates = [
-            // Actionneurs physiques
-            2 => $data->etatHeat,           // Chauffage
-            15 => $data->etatUV,            // Lumière
-            16 => $data->etatPompeAqua,     // Pompe aquarium
-            18 => $data->etatPompeTank,     // Pompe réservoir (logique inversée)
-            
-            // Configuration
-            100 => $data->mail,             // Email (string)
-            101 => $data->mailNotif,        // Notifications (string)
-            102 => $data->aqThreshold,       // Seuil aquarium
-            103 => $data->tankThreshold,     // Seuil réservoir
-            104 => $data->chauffageThreshold, // Seuil chauffage
-            105 => $data->bouffeMatin,      // Heure nourrissage matin
-            106 => $data->bouffeMidi,       // Heure nourrissage midi
-            107 => $data->bouffeSoir,       // Heure nourrissage soir
-            
-            // Paramètres timing
-            111 => $data->tempsGros,        // Temps nourrissage gros
-            112 => $data->tempsPetits,      // Temps nourrissage petits
-            113 => $data->tempsRemplissageSec, // Temps remplissage
-            114 => $data->limFlood,         // Limite débordement
-            115 => $data->wakeUp,           // WakeUp forcé
-            116 => $data->freqWakeUp,       // Fréquence réveil
-        ];
-        
-        // Transaction pour garantir la cohérence
         $this->pdo->beginTransaction();
         
         try {
-            foreach ($gpioUpdates as $gpio => $value) {
-                if ($value !== null) {
-                    // Conversion en string pour compatibilité avec le type varchar(64)
-                    $stateValue = (string)$value;
-                    
-                    
-                    // CORRECTION v11.70 : Protection contre écrasement des changements web récents
-                    // Ne pas écraser si modification web dans les 10 dernières secondes
-                    $sql = "UPDATE `{$table}` 
-                            SET state = :state, 
-                                requestTime = NOW(), 
-                                lastModifiedBy = 'esp32'
-                            WHERE gpio = :gpio 
-                              AND name IS NOT NULL 
-                              AND name != ''
-                              AND (
-                                  lastModifiedBy != 'web' 
-                                  OR requestTime IS NULL 
-                                  OR requestTime < DATE_SUB(NOW(), INTERVAL 10 SECOND)
-                              )";
-                    
-                    $stmt = $this->pdo->prepare($sql);
-                    $stmt->execute([
-                        ':gpio' => $gpio,
-                        ':state' => $stateValue
-                    ]);
-                    
-                    // Log si un GPIO n'existe pas
-                    if ($stmt->rowCount() === 0) {
-                        // Vérifier si le GPIO existe avec un nom
-                        $checkSql = "SELECT COUNT(*) FROM `{$table}` WHERE gpio = :gpio AND name IS NOT NULL AND name != ''";
-                        $checkStmt = $this->pdo->prepare($checkSql);
-                        $checkStmt->execute([':gpio' => $gpio]);
-                        $exists = $checkStmt->fetchColumn();
-                        
-                        if ($exists === 0) {
-                            error_log("GPIO {$gpio} ignoré : pas de nom défini dans la table");
-                        }
-                    }
+            foreach ($gpioValues as $gpio => $value) {
+                if ($value === null) {
+                    $skipped++;
+                    continue;
+                }
+                
+                $stateValue = (string)$value;
+                
+                // Protection contre écrasement des changements web récents
+                $sql = "UPDATE `{$table}` 
+                        SET state = :state, 
+                            requestTime = NOW(), 
+                            lastModifiedBy = :modifiedBy
+                        WHERE gpio = :gpio 
+                          AND name IS NOT NULL 
+                          AND name != ''
+                          AND (
+                              lastModifiedBy != 'web' 
+                              OR requestTime IS NULL 
+                              OR requestTime < DATE_SUB(NOW(), INTERVAL :priority SECOND)
+                          )";
+                
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute([
+                    ':gpio' => $gpio,
+                    ':state' => $stateValue,
+                    ':modifiedBy' => $modifiedBy,
+                    ':priority' => $prioritySeconds
+                ]);
+                
+                if ($stmt->rowCount() > 0) {
+                    $updated++;
+                } else {
+                    $skipped++;
                 }
             }
             
@@ -280,5 +246,48 @@ class OutputRepository
             $this->pdo->rollBack();
             throw $e;
         }
+        
+        return ['updated' => $updated, 'skipped' => $skipped];
+    }
+
+    /**
+     * Synchronise les états des GPIO depuis les données capteurs
+     * Met à jour ffp3Outputs ou ffp3Outputs2 selon l'environnement
+     * 
+     * @deprecated Utilisez OutputSyncService::syncFromSensorData() à la place
+     * 
+     * @param SensorData $data Données capteurs contenant les états à synchroniser
+     */
+    public function syncStatesFromSensorData(SensorData $data): void
+    {
+        // Mapping des champs SensorData vers les GPIO
+        $gpioUpdates = [
+            // Actionneurs physiques
+            2 => $data->etatHeat,
+            15 => $data->etatUV,
+            16 => $data->etatPompeAqua,
+            18 => $data->etatPompeTank,
+            
+            // Configuration
+            100 => $data->mail,
+            101 => $data->mailNotif,
+            102 => $data->aqThreshold,
+            103 => $data->tankThreshold,
+            104 => $data->chauffageThreshold,
+            105 => $data->bouffeMatin,
+            106 => $data->bouffeMidi,
+            107 => $data->bouffeSoir,
+            
+            // Paramètres timing
+            111 => $data->tempsGros,
+            112 => $data->tempsPetits,
+            113 => $data->tempsRemplissageSec,
+            114 => $data->limFlood,
+            115 => $data->wakeUp,
+            116 => $data->freqWakeUp,
+        ];
+        
+        // Déléguer à la nouvelle méthode
+        $this->batchUpdateWithPriority($gpioUpdates, 'esp32', 10);
     }
 }

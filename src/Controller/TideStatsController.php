@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Config\TableConfig;
 use App\Config\Version;
+use App\Security\CsrfService;
 use App\Service\TemplateRenderer;
 use App\Service\TideAnalysisService;
 
@@ -13,7 +14,8 @@ class TideStatsController
 {
     public function __construct(
         private TideAnalysisService $tideService,
-        private TemplateRenderer $renderer
+        private TemplateRenderer $renderer,
+        private CsrfService $csrfService
     ) {
     }
 
@@ -24,8 +26,22 @@ class TideStatsController
         $startDefault = date('Y-m-d H:i:s', strtotime('-1 day', strtotime($endDefault)));
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $startDate = $_POST['start_date'] . ' ' . ($_POST['start_time'] ?? '00:00:00');
-            $endDate   = $_POST['end_date']   . ' ' . ($_POST['end_time']   ?? '23:59:59');
+            // Validation CSRF
+            $submittedToken = $_POST['_csrf_token'] ?? null;
+            if (!$this->csrfService->validateToken($submittedToken)) {
+                http_response_code(403);
+                echo 'Token CSRF invalide. Veuillez recharger la page et réessayer.';
+                return;
+            }
+            
+            // Validation des dates
+            $startDateInput = filter_input(INPUT_POST, 'start_date', FILTER_SANITIZE_SPECIAL_CHARS);
+            $startTimeInput = filter_input(INPUT_POST, 'start_time', FILTER_SANITIZE_SPECIAL_CHARS) ?? '00:00:00';
+            $endDateInput = filter_input(INPUT_POST, 'end_date', FILTER_SANITIZE_SPECIAL_CHARS);
+            $endTimeInput = filter_input(INPUT_POST, 'end_time', FILTER_SANITIZE_SPECIAL_CHARS) ?? '23:59:59';
+            
+            $startDate = $startDateInput . ' ' . $startTimeInput;
+            $endDate   = $endDateInput   . ' ' . $endTimeInput;
         } else {
             $startDate = $startDefault;
             $endDate   = $endDefault;

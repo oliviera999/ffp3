@@ -8,6 +8,7 @@ use App\Service\LogService;
 use App\Config\TableConfig;
 use App\Config\Version;
 use App\Repository\SensorReadRepository;
+use App\Security\CsrfService;
 use App\Service\ChartDataService;
 use App\Service\StatisticsAggregatorService;
 use App\Service\TemplateRenderer;
@@ -21,6 +22,7 @@ class AquaponieController
     private WaterBalanceService $waterBalanceService;
     private TemplateRenderer $renderer;
     private LogService $logger;
+    private CsrfService $csrfService;
 
     public function __construct(
         SensorReadRepository $sensorReadRepo,
@@ -28,7 +30,8 @@ class AquaponieController
         ChartDataService $chartDataService,
         WaterBalanceService $waterBalanceService,
         TemplateRenderer $renderer,
-        LogService $logger
+        LogService $logger,
+        CsrfService $csrfService
     ) {
         $this->sensorReadRepo = $sensorReadRepo;
         $this->statsAggregator = $statsAggregator;
@@ -36,6 +39,7 @@ class AquaponieController
         $this->waterBalanceService = $waterBalanceService;
         $this->renderer = $renderer;
         $this->logger = $logger;
+        $this->csrfService = $csrfService;
     }
 
     /**
@@ -112,6 +116,14 @@ class AquaponieController
             'last_reading_eaupota' => $lastReadingExtracted['eaupota'],
         ], $statsFlattened, $waterBalance));
         
+        } catch (\RuntimeException $e) {
+            // Erreur CSRF ou validation
+            if (strpos($e->getMessage(), 'CSRF') !== false) {
+                http_response_code(403);
+                echo 'Token CSRF invalide. Veuillez recharger la page et réessayer.';
+                return;
+            }
+            throw $e;
         } catch (\Throwable $e) {
             $this->logger->error('AquaponieController::show failure', [
                 'message' => $e->getMessage(),
@@ -126,6 +138,8 @@ class AquaponieController
 
     /**
      * Extrait la plage de dates depuis les paramètres POST
+     * 
+     * @throws \RuntimeException Si le token CSRF est invalide
      */
     private function extractDateRange(string $defaultStart, string $defaultEnd): array
     {
@@ -133,9 +147,15 @@ class AquaponieController
             return [$defaultStart, $defaultEnd];
         }
 
+        // Validation CSRF
+        $submittedToken = $_POST['_csrf_token'] ?? null;
+        if (!$this->csrfService->validateToken($submittedToken)) {
+            throw new \RuntimeException('Token CSRF invalide');
+        }
+
         // Nouveau format : datetime-local
-        $startDatetimePost = filter_input(INPUT_POST, 'start_datetime');
-        $endDatetimePost = filter_input(INPUT_POST, 'end_datetime');
+        $startDatetimePost = filter_input(INPUT_POST, 'start_datetime', FILTER_SANITIZE_SPECIAL_CHARS);
+        $endDatetimePost = filter_input(INPUT_POST, 'end_datetime', FILTER_SANITIZE_SPECIAL_CHARS);
         
         if ($startDatetimePost && $endDatetimePost) {
             return [
@@ -145,10 +165,10 @@ class AquaponieController
         }
 
         // Ancien format : date + time séparés
-        $startDatePost = filter_input(INPUT_POST, 'start_date');
-        $endDatePost = filter_input(INPUT_POST, 'end_date');
-        $startTimePost = filter_input(INPUT_POST, 'start_time');
-        $endTimePost = filter_input(INPUT_POST, 'end_time');
+        $startDatePost = filter_input(INPUT_POST, 'start_date', FILTER_SANITIZE_SPECIAL_CHARS);
+        $endDatePost = filter_input(INPUT_POST, 'end_date', FILTER_SANITIZE_SPECIAL_CHARS);
+        $startTimePost = filter_input(INPUT_POST, 'start_time', FILTER_SANITIZE_SPECIAL_CHARS);
+        $endTimePost = filter_input(INPUT_POST, 'end_time', FILTER_SANITIZE_SPECIAL_CHARS);
         
         if ($startDatePost && $endDatePost) {
             return [
