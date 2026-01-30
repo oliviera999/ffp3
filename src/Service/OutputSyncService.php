@@ -44,6 +44,10 @@ class OutputSyncService
         106 => 'bouffeMidi',       // Heure nourrissage midi
         107 => 'bouffeSoir',       // Heure nourrissage soir
         
+        // Commandes nourrissage (flags remis à 0 par ESP32 après exécution)
+        108 => 'bouffePetits',     // Flag nourrissage petits poissons
+        109 => 'bouffeGros',       // Flag nourrissage gros poissons
+        
         // Paramètres timing
         111 => 'tempsGros',        // Temps nourrissage gros
         112 => 'tempsPetits',      // Temps nourrissage petits

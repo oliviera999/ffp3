@@ -278,6 +278,10 @@ class OutputRepository
             106 => $data->bouffeMidi,
             107 => $data->bouffeSoir,
             
+            // Commandes nourrissage (flags remis à 0 par ESP32 après exécution)
+            108 => $data->bouffePetits,
+            109 => $data->bouffeGros,
+            
             // Paramètres timing
             111 => $data->tempsGros,
             112 => $data->tempsPetits,
