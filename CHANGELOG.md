@@ -7,6 +7,22 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.38] - 2026-01-26
+
+### 🐛 Correction - Graphiques affichés en colonnes au lieu de courbes sur laptop
+- **Problème résolu** : Les graphiques Highcharts s'affichaient en colonnes au lieu de courbes (areaspline) sur laptop
+- **Cause identifiée** : Le module Highcharts Boost (accélération WebGL) causait des problèmes de compatibilité sur certains GPU/navigateurs
+- **Corrections apportées** :
+  - Désactivation du module Boost qui interférait avec le rendu des types de séries
+  - Suppression de `Highcharts.merge(boostOptions, {...})` qui écrasait les configurations
+  - Les graphiques utilisent maintenant le rendu SVG standard (plus compatible)
+- **Note technique** : Le module Boost peut être réactivé pour de très grandes quantités de données,
+  mais nécessite des tests approfondis sur différents appareils avant déploiement
+- **Fichiers modifiés** :
+  - `templates/aquaponie.twig` : Suppression de la configuration Boost
+
+---
+
 ## [4.9.37] - 2026-01-14
 
 ### 🐛 Correction - Affichage graphiques Highcharts sur mobile

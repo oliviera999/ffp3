@@ -2045,17 +2045,14 @@
                             
                             console.log('[Highcharts] Création graphiques - Mobile:', isMobile, 'Android:', isAndroid, 'Width:', containerEauRect.width);
                             
-                            // Options boost - désactivé sur mobile Android pour compatibilité WebGL
-                            var boostOptions = {
-                                boost: {
-                                    enabled: !isAndroid, // Désactiver boost sur Android
-                                    useGPUTranslations: !isMobile,
-                                    seriesThreshold: isMobile ? 999 : 1
-                                }
-                            };
+                            // BOOST DÉSACTIVÉ - cause des problèmes de rendu (graphiques en colonnes au lieu de courbes)
+                            // Le module boost utilise WebGL qui peut avoir des incompatibilités sur certains GPU/navigateurs
+                            // Si besoin de réactiver pour de très grandes quantités de données:
+                            // - Tester sur différents appareils avant de déployer
+                            // - Vérifier que les types de séries (areaspline, line) sont préservés
                             
                             // 1. Stock Chart Niveaux d'eau avec aires
-                            window.chartEau = Highcharts.stockChart('chart-stock-area-eau-D', Highcharts.merge(boostOptions, {
+                            window.chartEau = Highcharts.stockChart('chart-stock-area-eau-D', {
                                 chart: { 
                                     height: getChartHeight('eau'),
                                     spacingTop: 20,
@@ -2422,10 +2419,10 @@
                                 },
                                 scrollbar: { enabled: true },
                                 credits: { enabled: false }
-                            }));
+                            });
                             
                             // 2. Stock Chart Paramètres physiques avec aires
-                            window.chartTemp = Highcharts.stockChart('chart-stock-area-temp-D', Highcharts.merge(boostOptions, {
+                            window.chartTemp = Highcharts.stockChart('chart-stock-area-temp-D', {
                                 chart: { 
                                     height: getChartHeight('temp'),
                                     spacingTop: 20,
@@ -2757,9 +2754,9 @@
                                 },
                                 scrollbar: { enabled: true },
                                 credits: { enabled: false }
-                            }));
+                            });
                             
-                            console.log('[Highcharts] Graphiques créés avec succès - Boost:', !isAndroid);
+                            console.log('[Highcharts] Graphiques créés avec succès');
                         }
                         
                         // Initialiser les graphiques après que le DOM soit complètement chargé
