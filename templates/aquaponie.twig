@@ -25,7 +25,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
         <script src="https://code.highcharts.com/stock/highstock.js"></script>
-        <script src="https://code.highcharts.com/modules/boost.js"></script>
+        {# boost.js supprimé : WebGL cause des problèmes sur mobile (graphiques invisibles) et laptop (colonnes au lieu de courbes) #}
         <script src="https://code.highcharts.com/modules/exporting.js"></script>
         <script src="https://code.highcharts.com/modules/export-data.js"></script>
         <script src="https://code.highcharts.com/modules/accessibility.js"></script>
@@ -2008,7 +2008,10 @@
                         // Graphiques Stock Navigator + Aires colorées
                         // ==============================================
                         
+                        var createVersionDAttempts = 0;
+                        var maxCreateVersionDAttempts = 25; // ~4s sur mobile
                         function createVersionD() {
+                            createVersionDAttempts++;
                             // Vérifier que les conteneurs existent et sont visibles
                             var containerEau = document.getElementById('chart-stock-area-eau-D');
                             var containerTemp = document.getElementById('chart-stock-area-temp-D');
@@ -2018,32 +2021,42 @@
                                 return;
                             }
                             
-                            // Détection mobile pour désactiver boost (problèmes WebGL sur Android)
+                            // Détection mobile
                             var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
                             var isAndroid = /Android/i.test(navigator.userAgent);
                             
-                            // Sur mobile, forcer une hauteur minimale sur les conteneurs
+                            // Sur mobile, forcer dimensions explicites sur les conteneurs
                             if (isMobile) {
+                                var fallbackWidth = Math.max(280, (window.innerWidth || document.documentElement.clientWidth || 360) - 40);
                                 containerEau.style.minHeight = '350px';
                                 containerTemp.style.minHeight = '400px';
-                                // Forcer un reflow pour que les dimensions soient calculées
-                                containerEau.offsetHeight;
-                                containerTemp.offsetHeight;
+                                if (containerEau.offsetWidth < 100) {
+                                    containerEau.style.width = fallbackWidth + 'px';
+                                    containerTemp.style.width = fallbackWidth + 'px';
+                                    containerEau.offsetHeight; // force reflow
+                                }
                             }
                             
                             // S'assurer que les conteneurs ont une taille
                             var containerEauRect = containerEau.getBoundingClientRect();
-                            var containerTempRect = containerTemp.getBoundingClientRect();
+                            var containerWidth = containerEauRect.width || containerEau.offsetWidth || 0;
                             
-                            // Sur mobile, être plus tolérant avec les dimensions
                             var minWidth = isMobile ? 100 : 0;
-                            if (containerEauRect.width <= minWidth) {
-                                console.warn('[Highcharts] Conteneur eau sans dimensions suffisantes (' + containerEauRect.width + 'px), attente...');
-                                setTimeout(createVersionD, 150);
+                            if (containerWidth <= minWidth && createVersionDAttempts < maxCreateVersionDAttempts) {
+                                var retryDelay = isMobile ? 200 : 150;
+                                console.warn('[Highcharts] Conteneur sans dimensions (' + containerWidth + 'px), tentative ' + createVersionDAttempts + '/' + maxCreateVersionDAttempts);
+                                setTimeout(createVersionD, retryDelay);
                                 return;
                             }
+                            if (containerWidth <= minWidth) {
+                                console.warn('[Highcharts] Procédure malgré dimensions insuffisantes (fallback mobile)');
+                                if (isMobile && containerEau.scrollIntoView) {
+                                    containerEau.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+                                    containerEau.offsetHeight; // force reflow après scroll
+                                }
+                            }
                             
-                            console.log('[Highcharts] Création graphiques - Mobile:', isMobile, 'Android:', isAndroid, 'Width:', containerEauRect.width);
+                            console.log('[Highcharts] Création graphiques - Mobile:', isMobile, 'Width:', containerWidth);
                             
                             // BOOST DÉSACTIVÉ - cause des problèmes de rendu (graphiques en colonnes au lieu de courbes)
                             // Le module boost utilise WebGL qui peut avoir des incompatibilités sur certains GPU/navigateurs
@@ -2799,18 +2812,20 @@
                             console.log('[DEBUG] createVersionD() appelé, attente création graphiques...');
                         }
                         
-                        // Attendre que le DOM soit prêt - délai plus long sur mobile
+                        // Attendre que le DOM soit prêt - délai plus long sur mobile (layout pas toujours calculé)
                         var isMobileInit = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                        var initialDelay = isMobileInit ? 300 : 100;
+                        var initialDelay = isMobileInit ? 600 : 100;
                         
-                        if (document.readyState === 'loading') {
-                            document.addEventListener('DOMContentLoaded', function() {
+                        function scheduleInitCharts() {
+                            if (document.readyState === 'loading') {
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    setTimeout(initCharts, initialDelay);
+                                });
+                            } else {
                                 setTimeout(initCharts, initialDelay);
-                            });
-                        } else {
-                            // DOM déjà chargé
-                            setTimeout(initCharts, initialDelay);
+                            }
                         }
+                        scheduleInitCharts();
                         
                         // Debug: Vérifier la configuration de l'axe X après création complète
                         // Utiliser plusieurs tentatives pour s'assurer que les graphiques sont créés

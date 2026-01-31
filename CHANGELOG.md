@@ -7,6 +7,25 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.39] - 2026-01-31
+
+### 🐛 Correction - Graphiques disparus sur smartphone (à nouveau)
+- **Problème résolu** : Les graphiques Highcharts ne s'affichaient plus sur smartphone (tablette et laptop OK)
+- **Causes identifiées** :
+  - Module Boost (WebGL) encore chargé : incompatibilités sur certains mobiles
+  - Dimensions des conteneurs à 0 au moment de la création sur mobile (layout différé)
+  - Délai d'initialisation trop court sur mobile
+- **Corrections apportées** :
+  - Suppression définitive du script `boost.js` (déjà désactivé en config, source de conflits)
+  - Initialisation mobile renforcée : largeur de fallback explicite si conteneur sans dimensions
+  - Retry étendu (25 tentatives, ~4s) avec délai 200ms sur mobile
+  - Délai initial porté à 600ms sur mobile (au lieu de 300ms)
+  - scrollIntoView en fallback si dimensions toujours à 0 après retries
+- **Fichiers modifiés** :
+  - `templates/aquaponie.twig`
+
+---
+
 ## [4.9.38] - 2026-01-26
 
 ### 🐛 Correction - Graphiques affichés en colonnes au lieu de courbes sur laptop
