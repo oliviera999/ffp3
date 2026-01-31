@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Config\TableConfig;
 use App\Util\StateNormalizer;
+use App\Service\OutputSyncService;
 
 /**
  * Service de cache pour les états outputs
@@ -96,6 +97,16 @@ class OutputCacheService
             $state = StateNormalizer::normalize($gpio, $state);
             
             $result[(string)$gpio] = $state;
+        }
+        
+        // v11.172: Ajouter noms symboliques (double format rétrocompatible)
+        // Permet au firmware d'utiliser les clés numériques OU symboliques
+        $gpioToSymbol = OutputSyncService::getGpioMapping();
+        foreach ($result as $gpioStr => $state) {
+            $gpio = (int)$gpioStr;
+            if (isset($gpioToSymbol[$gpio])) {
+                $result[$gpioToSymbol[$gpio]] = $state;
+            }
         }
         
         // Mettre à jour le cache pour cet environnement

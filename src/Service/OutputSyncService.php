@@ -53,8 +53,8 @@ class OutputSyncService
         112 => 'tempsPetits',      // Temps nourrissage petits
         113 => 'tempsRemplissageSec', // Temps remplissage
         114 => 'limFlood',         // Limite débordement
-        115 => 'wakeUp',           // WakeUp forcé
-        116 => 'freqWakeUp',       // Fréquence réveil
+        115 => 'WakeUp',           // WakeUp forcé (v11.172: harmonisé avec firmware)
+        116 => 'FreqWakeUp',       // Fréquence réveil (v11.172: harmonisé avec firmware)
     ];
 
     public function __construct(
