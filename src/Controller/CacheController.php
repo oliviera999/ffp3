@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Util\ResponseHelper;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -23,13 +24,11 @@ class CacheController
         
         // Le token est obligatoire et doit être défini dans .env
         if (empty($adminToken) || !hash_equals($adminToken, $providedToken)) {
-            $response->getBody()->write(json_encode([
-                'success' => false,
-                'error' => 'Token invalide ou manquant. Utilisez ?token=XXXXX'
-            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-            return $response
-                ->withStatus(403)
-                ->withHeader('Content-Type', 'application/json');
+            return ResponseHelper::error(
+                $response, 
+                'Token invalide ou manquant. Utilisez ?token=XXXXX', 
+                403
+            );
         }
 
         $projectRoot = dirname(__DIR__, 2);
@@ -91,11 +90,7 @@ class CacheController
             'errors' => $errors
         ];
 
-        $response->getBody()->write(json_encode($jsonResponse, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        
-        return $response
-            ->withStatus($success ? 200 : 500)
-            ->withHeader('Content-Type', 'application/json');
+        return ResponseHelper::json($response, $jsonResponse, $success ? 200 : 500);
     }
 
     /**

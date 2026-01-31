@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Service\RealtimeDataService;
+use App\Util\ResponseHelper;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -28,9 +29,9 @@ class RealtimeApiController
         try {
             $data = $this->realtimeService->getLatestReadings();
 
-            return $this->jsonResponse($response, $data);
+            return ResponseHelper::json($response, $data);
         } catch (\Throwable $e) {
-            return $this->jsonResponse($response, ['error' => $e->getMessage()], 500);
+            return ResponseHelper::error($response, $e->getMessage(), 500);
         }
     }
 
@@ -43,14 +44,12 @@ class RealtimeApiController
         $timestamp = (int)($args['timestamp'] ?? 0);
         
         if ($timestamp <= 0) {
-            return $this->jsonResponse($response, [
-                'error' => 'Invalid timestamp',
-            ], 400);
+            return ResponseHelper::error($response, 'Invalid timestamp', 400);
         }
 
         $data = $this->realtimeService->getReadingsSince($timestamp);
         
-        return $this->jsonResponse($response, [
+        return ResponseHelper::json($response, [
             'count' => count($data),
             'readings' => $data,
         ]);
@@ -65,12 +64,12 @@ class RealtimeApiController
         try {
             $data = $this->realtimeService->getOutputsState();
 
-            return $this->jsonResponse($response, [
+            return ResponseHelper::json($response, [
                 'timestamp' => time(),
                 'outputs' => $data,
             ]);
         } catch (\Throwable $e) {
-            return $this->jsonResponse($response, ['error' => $e->getMessage()], 500);
+            return ResponseHelper::error($response, $e->getMessage(), 500);
         }
     }
 
@@ -82,7 +81,7 @@ class RealtimeApiController
     {
         $health = $this->realtimeService->getSystemHealth();
         
-        return $this->jsonResponse($response, $health);
+        return ResponseHelper::json($response, $health);
     }
 
     /**
@@ -93,22 +92,10 @@ class RealtimeApiController
     {
         $alerts = $this->realtimeService->getActiveAlerts();
         
-        return $this->jsonResponse($response, [
+        return ResponseHelper::json($response, [
             'timestamp' => time(),
             'count' => count($alerts),
             'alerts' => $alerts,
         ]);
     }
-
-    /**
-     * Helper pour créer une réponse JSON
-     */
-    private function jsonResponse(Response $response, array $data, int $status = 200): Response
-    {
-        $response->getBody()->write(json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus($status);
-    }
 }
-

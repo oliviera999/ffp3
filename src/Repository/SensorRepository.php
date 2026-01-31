@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Config\TableConfig;
@@ -10,13 +12,8 @@ use PDO;
  * Repository responsable de l'insertion des mesures capteurs dans la base de données.
  * Permet d'abstraire la logique SQL et d'assurer la cohérence des écritures.
  */
-class SensorRepository
+class SensorRepository extends AbstractRepository
 {
-    /**
-     * @param PDO $pdo Connexion PDO à la base de données (injectée)
-     */
-    public function __construct(private PDO $pdo) {}
-
     /**
      * Insère une nouvelle mesure complète dans la table ffp3Data.
      *
@@ -42,9 +39,7 @@ class SensorRepository
             :aqThreshold, :tankThreshold, :chauffageThreshold, :mail, :mailNotif, :resetMode, :bouffeSoir
         )";
 
-        // Préparation de la requête pour éviter toute injection SQL
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
+        $this->execute($sql, [
             ':sensor' => $data->sensor,
             ':version' => $data->version,
             ':tempAir' => $data->tempAir,

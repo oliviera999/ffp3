@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Util\TableValidator;
 use PDO;
 
 /**
@@ -11,30 +12,8 @@ use PDO;
  * 
  * Note: La table Boards est partagée entre PROD et TEST (pas de Boards2)
  */
-class BoardRepository
+class BoardRepository extends AbstractRepository
 {
-    public function __construct(private PDO $pdo) {}
-
-    /**
-     * Récupère toutes les boards
-     * 
-     * @return array<int, array<string, mixed>>
-     */
-    public function findAll(): array
-    {
-        $sql = "SELECT board, last_request FROM Boards ORDER BY board ASC";
-
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute();
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        foreach ($rows as &$row) {
-            $row['last_request'] = $this->formatTimestamp($row['last_request']);
-        }
-
-        return $rows;
-    }
-
     /**
      * Récupère uniquement les boards actives pour un environnement donné
      * Une board est considérée active si elle a des outputs dans la table correspondante
@@ -45,10 +24,7 @@ class BoardRepository
     public function findActiveForEnvironment(string $outputsTable): array
     {
         // Valider le nom de table pour sécurité
-        $allowedTables = ['ffp3Outputs', 'ffp3Outputs2'];
-        if (!in_array($outputsTable, $allowedTables, true)) {
-            throw new \InvalidArgumentException("Table name not allowed: {$outputsTable}");
-        }
+        TableValidator::validateOutputsTable($outputsTable);
         
         $sql = "SELECT DISTINCT b.board, b.last_request
                 FROM Boards b
@@ -56,9 +32,7 @@ class BoardRepository
                 WHERE o.name IS NOT NULL AND o.name != ''
                 ORDER BY b.board ASC";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute();
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $rows = $this->fetchAll($sql);
 
         foreach ($rows as &$row) {
             $row['last_request'] = $this->formatTimestamp($row['last_request']);
@@ -77,18 +51,14 @@ class BoardRepository
     {
         $sql = "SELECT board, last_request FROM Boards WHERE board = :board";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':board' => $board]);
-
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($result === false) {
+        $result = $this->fetchOne($sql, [':board' => $board]);
+        if ($result === null) {
             return null;
         }
 
         $result['last_request'] = $this->formatTimestamp($result['last_request']);
 
         return $result;
-
     }
 
     /**
@@ -101,8 +71,7 @@ class BoardRepository
     {
         $sql = "UPDATE Boards SET last_request = UTC_TIMESTAMP() WHERE board = :board";
         
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([':board' => $board]);
+        return $this->execute($sql, [':board' => $board]);
     }
 
     /**
@@ -115,22 +84,7 @@ class BoardRepository
     {
         $sql = "INSERT INTO Boards (board) VALUES (:board)";
         
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([':board' => $board]);
-    }
-
-    /**
-     * Supprime une board
-     * 
-     * @param string $board Nom de la board
-     * @return bool Succès de l'opération
-     */
-    public function delete(string $board): bool
-    {
-        $sql = "DELETE FROM Boards WHERE board = :board";
-        
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([':board' => $board]);
+        return $this->execute($sql, [':board' => $board]);
     }
 
     /**
@@ -144,6 +98,12 @@ class BoardRepository
         return $this->findByName($board) !== null;
     }
 
+    /**
+     * Formate un timestamp UTC en date locale lisible
+     *
+     * @param string|null $timestamp Timestamp UTC
+     * @return string|null Timestamp formaté ou null
+     */
     private function formatTimestamp(?string $timestamp): ?string
     {
         if ($timestamp === null) {
@@ -160,4 +120,3 @@ class BoardRepository
         }
     }
 }
-

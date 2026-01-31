@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Repository\SensorReadRepository;
+use App\Util\MathUtils;
 use DateTimeInterface;
 
 /**
@@ -15,9 +16,10 @@ use DateTimeInterface;
  */
 class TideAnalysisService
 {
-    private const VARIATION_THRESHOLD = 2.0; // Variation minimale de 2 cm pour être significative
-
-    public function __construct(private SensorReadRepository $repo) {}
+    public function __construct(
+        private SensorReadRepository $repo,
+        private TideCycleDetector $cycleDetector
+    ) {}
 
     /**
      * Retourne un tableau associatif avec les statistiques « marnage_moyen » et « frequence_marees ».
@@ -39,61 +41,15 @@ class TideAnalysisService
         // fetchBetween renvoie DESC → inverser pour ASC
         $rows = array_reverse($rows);
 
-        $levels = array_column($rows, 'EauAquarium'); // ou EauReserve
+        $levels = array_column($rows, 'EauAquarium');
         $times  = array_column($rows, 'reading_time');
 
-        $cycleMin = $levels[0];
-        $cycleMax = $levels[0];
-        $direction = null; // 1 = montée, -1 = descente
-        $hasRisen = false; // A-t-on eu une montée dans le cycle actuel
-        $hasFallen = false; // A-t-on eu une descente dans le cycle actuel
-        $amplitudes = [];
+        // Utiliser le détecteur de cycles
+        $cycleData = $this->cycleDetector->detectCycles($levels, $times);
+        $cycles = $cycleData['cycles'];
+        $amplitudes = $cycleData['amplitudes'];
 
-        for ($i = 1, $len = count($levels); $i < $len; $i++) {
-            $delta = $levels[$i] - $levels[$i - 1];
-            
-            // Ignorer les variations inférieures au seuil (2 cm)
-            if (abs($delta) <= self::VARIATION_THRESHOLD) {
-                continue;
-            }
-            
-            $currentDir = $delta > 0 ? 1 : -1;
-
-            if ($direction === null) {
-                $direction = $currentDir;
-                $hasRisen = ($currentDir === 1);
-                $hasFallen = ($currentDir === -1);
-            }
-
-            // Suivre les mouvements dans le cycle actuel
-            if ($currentDir === 1) {
-                $hasRisen = true;
-            } else {
-                $hasFallen = true;
-            }
-
-            // Changement de direction ET cycle complet (montée + descente) => cycle complet détecté
-            if ($direction !== $currentDir && $hasRisen && $hasFallen) {
-                // Fin de cycle complet, on calcule amplitude
-                $amplitudes[] = $cycleMax - $cycleMin;
-                // Reset pour nouveau cycle
-                $cycleMin = $levels[$i - 1];
-                $cycleMax = $levels[$i - 1];
-                $direction = $currentDir;
-                $hasRisen = ($currentDir === 1);
-                $hasFallen = ($currentDir === -1);
-            } elseif ($direction !== $currentDir) {
-                // Changement de direction mais cycle pas encore complet, on continue
-                $direction = $currentDir;
-            }
-            
-            // Mettre à jour min/max du cycle courant
-            $cycleMin = min($cycleMin, $levels[$i]);
-            $cycleMax = max($cycleMax, $levels[$i]);
-        }
-
-        // Nombre de cycles complets détectés
-        $cycles = count($amplitudes);
+        // Marnage moyen
         $averageRange = $cycles > 0 ? array_sum($amplitudes) / $cycles : null;
 
         // Fréquence : cycles / durée (heures)
@@ -105,49 +61,28 @@ class TideAnalysisService
         // Variations sur EauReserve
         // ------------------------------------------------------------
         $reserveLevels = array_column($rows, 'EauReserve');
-        $reservePos = 0.0; // montées cumulées
-        $reserveNeg = 0.0; // descentes cumulées (valeur absolue)
-        for ($i = 1, $len = count($reserveLevels); $i < $len; $i++) {
-            $d = $reserveLevels[$i] - $reserveLevels[$i - 1];
-            if ($d > 0) {
-                $reservePos += $d;
-            } elseif ($d < 0) {
-                $reserveNeg += abs($d);
-            }
-        }
-        $reserveGlobal = $reserveLevels[$len - 1] - $reserveLevels[0];
+        $reserveVariations = $this->cycleDetector->computeVariations($reserveLevels, 0.0);
 
         // ------------------------------------------------------------
         // Statistiques sur diffMaree
         // ------------------------------------------------------------
         $diffMareeLevels = array_column($rows, 'diffMaree');
-        $diffMareeValid = array_filter($diffMareeLevels, function($value) {
-            return $value !== null && $value !== '';
-        });
+        $diffMareeValid = MathUtils::filterValid($diffMareeLevels);
         
         $diffMareeStats = [
-            'moyenne' => count($diffMareeValid) > 0 ? array_sum($diffMareeValid) / count($diffMareeValid) : null,
-            'min' => count($diffMareeValid) > 0 ? min($diffMareeValid) : null,
-            'max' => count($diffMareeValid) > 0 ? max($diffMareeValid) : null,
-            'ecart_type' => null
+            'moyenne' => MathUtils::mean($diffMareeValid),
+            'min' => MathUtils::min($diffMareeValid),
+            'max' => MathUtils::max($diffMareeValid),
+            'ecart_type' => MathUtils::standardDeviation($diffMareeValid),
         ];
-        
-        // Calcul de l'écart-type
-        if (count($diffMareeValid) > 1) {
-            $mean = $diffMareeStats['moyenne'];
-            $variance = array_sum(array_map(function($x) use ($mean) {
-                return pow($x - $mean, 2);
-            }, $diffMareeValid)) / count($diffMareeValid);
-            $diffMareeStats['ecart_type'] = sqrt($variance);
-        }
 
         return [
             'marnage_moyen'    => $averageRange,
             'frequence_marees' => $frequency,
             'cycles'           => $cycles,
-            'reserve_pos'      => $reservePos,
-            'reserve_neg'      => $reserveNeg,
-            'reserve_var'      => $reserveGlobal,
+            'reserve_pos'      => $reserveVariations['positive'],
+            'reserve_neg'      => $reserveVariations['negative'],
+            'reserve_var'      => $reserveVariations['global'],
             'diff_maree'       => $diffMareeStats,
         ];
     }
@@ -208,4 +143,4 @@ class TideAnalysisService
             'diff_maree_max'    => $diffMareeMaxArr,
         ];
     }
-} 
+}

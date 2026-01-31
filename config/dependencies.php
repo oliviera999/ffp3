@@ -20,6 +20,7 @@ use App\Service\SensorStatisticsService;
 use App\Service\StatisticsAggregatorService;
 use App\Service\SystemHealthService;
 use App\Service\TemplateRenderer;
+use App\Service\TideCycleDetector;
 use App\Service\TideAnalysisService;
 use App\Service\WaterBalanceService;
 use App\Service\OutputSyncService;
@@ -72,12 +73,22 @@ return [
         return new ChartDataService();
     },
 
+    TideCycleDetector::class => function (ContainerInterface $c) {
+        return new TideCycleDetector();
+    },
+
     TideAnalysisService::class => function (ContainerInterface $c) {
-        return new TideAnalysisService($c->get(SensorReadRepository::class));
+        return new TideAnalysisService(
+            $c->get(SensorReadRepository::class),
+            $c->get(TideCycleDetector::class)
+        );
     },
 
     WaterBalanceService::class => function (ContainerInterface $c) {
-        return new WaterBalanceService($c->get(SensorReadRepository::class));
+        return new WaterBalanceService(
+            $c->get(SensorReadRepository::class),
+            $c->get(TideCycleDetector::class)
+        );
     },
 
     PumpService::class => function (ContainerInterface $c) {
@@ -221,6 +232,16 @@ return [
 
     \App\Controller\HomeController::class => function (ContainerInterface $c) {
         return new \App\Controller\HomeController(
+            $c->get(\App\Service\TemplateRenderer::class)
+        );
+    },
+
+    \App\Controller\CacheController::class => function (ContainerInterface $c) {
+        return new \App\Controller\CacheController();
+    },
+
+    \App\Controller\SupervisionController::class => function (ContainerInterface $c) {
+        return new \App\Controller\SupervisionController(
             $c->get(\App\Service\TemplateRenderer::class)
         );
     },

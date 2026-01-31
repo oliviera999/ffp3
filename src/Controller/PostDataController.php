@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Domain\SensorData;
@@ -10,6 +12,7 @@ use App\Service\ErrorAlertService;
 use App\Service\LogService;
 use App\Service\OutputCacheService;
 use App\Security\SignatureValidator;
+use App\Util\ResponseHelper;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Throwable;
@@ -35,8 +38,7 @@ class PostDataController
         // Vérifier méthode POST
         if ($request->getMethod() !== 'POST') {
             $this->logger->warning('PostData: Méthode non autorisée', ['method' => $request->getMethod()]);
-            $response->getBody()->write('Méthode non autorisée');
-            return $response->withStatus(405)->withHeader('Content-Type', 'text/plain; charset=utf-8');
+            return ResponseHelper::text($response, 'Méthode non autorisée', 405);
         }
 
         $params = $request->getParsedBody();
@@ -56,8 +58,7 @@ class PostDataController
             // Au moins un des deux champs est présent : on exige les deux + validation
             if ($timestamp === null || $signature === null) {
                 $this->logger->warning('Signature partielle reçue mais incomplète', ['ip' => $_SERVER['REMOTE_ADDR'] ?? 'n/a']);
-                $response->getBody()->write('Signature incomplète');
-                return $response->withStatus(401)->withHeader('Content-Type', 'text/plain; charset=utf-8');
+                return ResponseHelper::text($response, 'Signature incomplète', 401);
             }
 
             $sigSecret = $_ENV['API_SIG_SECRET'] ?? null;
@@ -65,16 +66,14 @@ class PostDataController
                 $errorMessage = 'Variable API_SIG_SECRET manquante dans .env';
                 $this->logger->error($errorMessage);
                 $this->errorAlert->recordError($errorMessage);
-                $response->getBody()->write('Configuration serveur manquante');
-                return $response->withStatus(500)->withHeader('Content-Type', 'text/plain; charset=utf-8');
+                return ResponseHelper::text($response, 'Configuration serveur manquante', 500);
             }
 
             $sigWindow = (int) ($_ENV['SIG_VALID_WINDOW'] ?? 300);
 
             if (!SignatureValidator::isValid((string) $timestamp, (string) $signature, $sigSecret, $sigWindow)) {
                 $this->logger->warning('Signature HMAC invalide', ['ip' => $_SERVER['REMOTE_ADDR'] ?? 'n/a']);
-                $response->getBody()->write('Signature incorrecte');
-                return $response->withStatus(401)->withHeader('Content-Type', 'text/plain; charset=utf-8');
+                return ResponseHelper::text($response, 'Signature incorrecte', 401);
             }
             // Signature OK
         } else {
@@ -92,14 +91,12 @@ class PostDataController
             $errorMessage = 'Variable API_KEY manquante dans .env';
             $this->logger->error($errorMessage);
             $this->errorAlert->recordError($errorMessage);
-            $response->getBody()->write('Configuration serveur manquante');
-            return $response->withStatus(500)->withHeader('Content-Type', 'text/plain; charset=utf-8');
+            return ResponseHelper::text($response, 'Configuration serveur manquante', 500);
         }
 
         if ($apiKeyProvided !== $apiKeyExpected) {
             $this->logger->warning("Clé API invalide depuis {ip}", ['ip' => $_SERVER['REMOTE_ADDR'] ?? 'n/a']);
-            $response->getBody()->write('Clé API incorrecte');
-            return $response->withStatus(401)->withHeader('Content-Type', 'text/plain; charset=utf-8');
+            return ResponseHelper::text($response, 'Clé API incorrecte', 401);
         }
 
         // Fonctions utilitaires de lecture POST --------------------------------
@@ -161,8 +158,7 @@ class PostDataController
 
             $this->logger->info('Données capteurs insérées et outputs synchronisés', ['sensor' => $data->sensor, 'version' => $data->version]);
             
-            $response->getBody()->write('Données enregistrées avec succès');
-            return $response->withStatus(200)->withHeader('Content-Type', 'text/plain; charset=utf-8');
+            return ResponseHelper::text($response, 'Données enregistrées avec succès', 200);
             
         } catch (Throwable $e) {
             $errorMessage = 'Erreur insertion données';
@@ -175,8 +171,7 @@ class PostDataController
                 'line' => $e->getLine(),
             ]);
             
-            $response->getBody()->write('Erreur serveur');
-            return $response->withStatus(500)->withHeader('Content-Type', 'text/plain; charset=utf-8');
+            return ResponseHelper::text($response, 'Erreur serveur', 500);
         }
     }
 }

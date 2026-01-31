@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Config\TableConfig;
+use App\Util\TableValidator;
 use DateTimeInterface;
 use PDO;
 
@@ -10,29 +13,8 @@ use PDO;
  * Repository dédié à la lecture des données capteurs depuis la base de données.
  * Permet de centraliser les requêtes de récupération, d'export et d'analyse des mesures.
  */
-class SensorReadRepository
+class SensorReadRepository extends AbstractRepository
 {
-    /**
-     * @param PDO $pdo Connexion PDO à la base de données (injectée)
-     */
-    public function __construct(private PDO $pdo) {}
-
-    /**
-     * Valide qu'un nom de table est dans la whitelist autorisée
-     * 
-     * @param string $tableName Nom de la table
-     * @return string Nom de la table validé
-     * @throws \InvalidArgumentException Si le nom de table n'est pas autorisé
-     */
-    private function validateTableName(string $tableName): string
-    {
-        $allowedTables = ['ffp3Data', 'ffp3Data2'];
-        if (!in_array($tableName, $allowedTables, true)) {
-            throw new \InvalidArgumentException("Table name not allowed: {$tableName}");
-        }
-        return $tableName;
-    }
-
     /**
      * Récupère tous les enregistrements de mesures entre deux dates (incluses).
      *
@@ -63,14 +45,7 @@ class SensorReadRepository
             ORDER BY reading_time DESC
         SQL;
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':start' => $start,
-            ':end'   => $end,
-        ]);
-
-        // Retourne toutes les lignes sous forme de tableau associatif
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $this->fetchAll($sql, [':start' => $start, ':end' => $end]);
     }
 
     /**
@@ -80,13 +55,11 @@ class SensorReadRepository
      */
     public function getLastReadingDate(): ?string
     {
-        $table = $this->validateTableName(TableConfig::getDataTable());
-        $sql   = "SELECT MAX(reading_time) AS last_date FROM `{$table}`";
-        $stmt  = $this->pdo->prepare($sql);
-        $stmt->execute();
-        $value = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $value["last_date"] ?? null;
+        $table = TableValidator::validateDataTable(TableConfig::getDataTable());
+        $sql = "SELECT MAX(reading_time) AS last_date FROM `{$table}`";
+        
+        $result = $this->fetchOne($sql);
+        return $result['last_date'] ?? null;
     }
 
     /**
@@ -160,10 +133,7 @@ class SensorReadRepository
             ORDER BY reading_time ASC
         SQL;
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':since_date' => $sinceDate]);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $this->fetchAll($sql, [':since_date' => $sinceDate]);
     }
 
     /**
@@ -178,13 +148,7 @@ class SensorReadRepository
         $table = TableConfig::getDataTable();
         $sql = "SELECT COUNT(*) as count FROM {$table} WHERE reading_time BETWEEN :start AND :end";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            ':start' => $start,
-            ':end' => $end,
-        ]);
-
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $this->fetchOne($sql, [':start' => $start, ':end' => $end]);
         return (int)($result['count'] ?? 0);
     }
 
@@ -195,13 +159,10 @@ class SensorReadRepository
      */
     public function getFirmwareVersion(): string
     {
-        $table = $this->validateTableName(TableConfig::getDataTable());
+        $table = TableValidator::validateDataTable(TableConfig::getDataTable());
         $sql = "SELECT version FROM `{$table}` ORDER BY reading_time DESC LIMIT 1";
         
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+        $result = $this->fetchOne($sql);
         return $result['version'] ?? 'N/A';
     }
 }

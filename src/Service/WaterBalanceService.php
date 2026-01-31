@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Repository\SensorReadRepository;
+use App\Util\MathUtils;
 use DateTimeInterface;
 
 /**
@@ -18,7 +19,10 @@ class WaterBalanceService
     private const UNCERTAINTY_THRESHOLD = 1.0; // Variations ≤1 cm considérées comme incertitudes
     private const TIDE_VARIATION_THRESHOLD = 2.0; // Variations ≤2 cm ignorées pour la détection des cycles de marée
 
-    public function __construct(private SensorReadRepository $repo) {}
+    public function __construct(
+        private SensorReadRepository $repo,
+        private TideCycleDetector $cycleDetector
+    ) {}
 
     /**
      * Calcule le bilan hydrique complet sur une période donnée.
@@ -76,32 +80,12 @@ class WaterBalanceService
     private function computeReserveStats(array $rows): array
     {
         $reserveLevels = array_column($rows, 'EauReserve');
-        $consumption = 0.0; // Consommation (eau qui sort = niveau qui baisse)
-        $refill = 0.0;      // Ravitaillement (eau qui entre = niveau qui monte)
-
-        for ($i = 1, $len = count($reserveLevels); $i < $len; $i++) {
-            $delta = $reserveLevels[$i] - $reserveLevels[$i - 1];
-            
-            // Ignorer les variations d'incertitude (≤ 1 cm)
-            if (abs($delta) <= self::UNCERTAINTY_THRESHOLD) {
-                continue;
-            }
-
-            if ($delta > 0) {
-                // Niveau monte = ravitaillement
-                $refill += $delta;
-            } elseif ($delta < 0) {
-                // Niveau baisse = consommation
-                $consumption += abs($delta);
-            }
-        }
-
-        $balance = $refill - $consumption;
+        $variations = $this->cycleDetector->computeVariations($reserveLevels, self::UNCERTAINTY_THRESHOLD);
 
         return [
-            'consumption' => $consumption,
-            'refill' => $refill,
-            'balance' => $balance,
+            'consumption' => $variations['negative'],
+            'refill' => $variations['positive'],
+            'balance' => $variations['positive'] - $variations['negative'],
         ];
     }
 
@@ -123,94 +107,25 @@ class WaterBalanceService
             ];
         }
 
-        $cycleMin = $levels[0];
-        $cycleMax = $levels[0];
-        $direction = null; // 1 = montée, -1 = descente
-        $hasRisen = false; // A-t-on eu une montée dans le cycle actuel
-        $hasFallen = false; // A-t-on eu une descente dans le cycle actuel
-        $amplitudes = []; // Marnages de chaque cycle
-        $cycleDurations = []; // Durées de chaque cycle (en heures)
-        $cycleStartTime = $times[0];
-
-        for ($i = 1, $len = count($levels); $i < $len; $i++) {
-            $delta = $levels[$i] - $levels[$i - 1];
-            
-            // Ignorer les variations inférieures au seuil (2 cm pour les marées)
-            if (abs($delta) <= self::TIDE_VARIATION_THRESHOLD) {
-                continue;
-            }
-
-            $currentDir = $delta > 0 ? 1 : -1;
-
-            if ($direction === null) {
-                $direction = $currentDir;
-                $hasRisen = ($currentDir === 1);
-                $hasFallen = ($currentDir === -1);
-            }
-
-            // Suivre les mouvements dans le cycle actuel
-            if ($currentDir === 1) {
-                $hasRisen = true;
-            } else {
-                $hasFallen = true;
-            }
-
-            // Changement de direction ET cycle complet (montée + descente) => cycle complet détecté
-            if ($direction !== $currentDir && $hasRisen && $hasFallen) {
-                // Enregistrer l'amplitude du cycle complet
-                $amplitude = $cycleMax - $cycleMin;
-                $amplitudes[] = $amplitude;
-
-                // Enregistrer la durée du cycle complet
-                $cycleEndTime = $times[$i - 1];
-                $cycleDuration = (strtotime($cycleEndTime) - strtotime($cycleStartTime)) / 3600; // en heures
-                if ($cycleDuration > 0) {
-                    $cycleDurations[] = $cycleDuration;
-                }
-
-                // Reset pour nouveau cycle
-                $cycleMin = $levels[$i - 1];
-                $cycleMax = $levels[$i - 1];
-                $direction = $currentDir;
-                $hasRisen = ($currentDir === 1);
-                $hasFallen = ($currentDir === -1);
-                $cycleStartTime = $times[$i - 1];
-            } elseif ($direction !== $currentDir) {
-                // Changement de direction mais cycle pas encore complet, on continue
-                $direction = $currentDir;
-            }
-
-            // Mettre à jour min/max du cycle courant
-            $cycleMin = min($cycleMin, $levels[$i]);
-            $cycleMax = max($cycleMax, $levels[$i]);
-        }
-
-        $cycles = count($amplitudes);
+        // Utiliser le détecteur de cycles
+        $cycleData = $this->cycleDetector->detectCycles($levels, $times, self::TIDE_VARIATION_THRESHOLD);
+        $cycles = $cycleData['cycles'];
+        $amplitudes = $cycleData['amplitudes'];
+        $cycleDurations = $cycleData['cycleDurations'];
 
         // Marnage moyen et écart-type
-        $marnage = $cycles > 0 ? array_sum($amplitudes) / $cycles : null;
-        $marnageStddev = $cycles > 1 ? $this->calculateStdDev($amplitudes) : null;
+        $marnageStats = $this->cycleDetector->computeMarnageStats($amplitudes);
 
         // Fréquence des marées (nombre par heure)
         $durationSeconds = strtotime(end($times)) - strtotime($times[0]);
         $totalHours = $durationSeconds / 3600;
-        $frequency = ($totalHours > 0 && $cycles > 0) ? $cycles / $totalHours : null;
-
-        // Écart-type de la fréquence (basé sur les durées de cycles)
-        $frequencyStddev = null;
-        if (count($cycleDurations) > 1) {
-            // Calculer la fréquence pour chaque cycle (1/durée)
-            $cycleFrequencies = array_map(function($duration) {
-                return $duration > 0 ? 1 / $duration : 0;
-            }, $cycleDurations);
-            $frequencyStddev = $this->calculateStdDev($cycleFrequencies);
-        }
+        $frequencyStats = $this->cycleDetector->computeFrequencyStats($cycleDurations, $cycles, $totalHours);
 
         return [
-            'frequency' => $frequency,
-            'frequency_stddev' => $frequencyStddev,
-            'marnage' => $marnage,
-            'marnage_stddev' => $marnageStddev,
+            'frequency' => $frequencyStats['frequency'],
+            'frequency_stddev' => $frequencyStats['frequencyStddev'],
+            'marnage' => $marnageStats['marnage'],
+            'marnage_stddev' => $marnageStats['marnageStddev'],
             'cycles' => $cycles,
         ];
     }
@@ -248,24 +163,6 @@ class WaterBalanceService
     }
 
     /**
-     * Calcule l'écart-type d'un tableau de valeurs
-     */
-    private function calculateStdDev(array $values): ?float
-    {
-        $count = count($values);
-        if ($count < 2) {
-            return null;
-        }
-
-        $mean = array_sum($values) / $count;
-        $variance = array_sum(array_map(function($x) use ($mean) {
-            return pow($x - $mean, 2);
-        }, $values)) / $count;
-
-        return sqrt($variance);
-    }
-
-    /**
      * Retourne un bilan vide (aucune donnée disponible)
      */
     private function getEmptyBalance(): array
@@ -283,4 +180,3 @@ class WaterBalanceService
         ];
     }
 }
-

@@ -11,6 +11,8 @@ use App\Service\OutputCacheService;
 use App\Service\OutputService;
 use App\Service\TemplateRenderer;
 use App\Repository\SensorReadRepository;
+use App\Util\RequestHelper;
+use App\Util\ResponseHelper;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -107,8 +109,7 @@ class OutputController
                 $errorMessage = "Une erreur serveur est survenue. Veuillez contacter l'administrateur.";
             }
             
-            $response->getBody()->write($errorMessage);
-            return $response->withStatus(500);
+            return ResponseHelper::text($response, $errorMessage, 500);
         }
     }
 
@@ -129,71 +130,23 @@ class OutputController
 
     private function handleToggle(Request $request, Response $response): Response
     {
-        $params = [];
+        $params = RequestHelper::extractParams($request);
 
-        if ($request->getMethod() === 'POST') {
-            $contentType = strtolower($request->getHeaderLine('Content-Type'));
-
-            if (str_contains($contentType, 'application/json')) {
-                $rawBody = (string)$request->getBody();
-                $decoded = json_decode($rawBody, true);
-                if (is_array($decoded)) {
-                    $params = $decoded;
-                }
-            }
-
-            if ($params === []) {
-                $parsedBody = $request->getParsedBody();
-                if (is_array($parsedBody)) {
-                    $params = $parsedBody;
-                }
-            }
-        }
-
-        if ($params === []) {
-            $params = $request->getQueryParams();
-        }
-
-        $id = isset($params['id']) ? (int)$params['id'] : 0;
-        $state = isset($params['state']) ? (int)$params['state'] : 0;
+        $id = RequestHelper::getInt($params, 'id', 0);
+        $state = RequestHelper::getInt($params, 'state', -1);
 
         if ($id === 0 || ($state !== 0 && $state !== 1)) {
-            $payload = json_encode([
-                'status' => 'error',
-                'message' => 'Invalid parameters',
-            ]);
-
-            $response->getBody()->write($payload);
-            return $response
-                ->withStatus(400)
-                ->withHeader('Content-Type', 'application/json');
+            return ResponseHelper::error($response, 'Invalid parameters', 400);
         }
 
         $isTest = \App\Config\TableConfig::getEnvironment() === 'test';
         $success = $this->outputService->updateStateById($id, $state, 'web', $isTest);
 
         if ($success) {
-            $payload = json_encode([
-                'status' => 'ok',
-                'id' => $id,
-                'state' => $state,
-            ]);
-
-            $response->getBody()->write($payload);
-            return $response
-                ->withStatus(200)
-                ->withHeader('Content-Type', 'application/json');
+            return ResponseHelper::success($response, ['id' => $id, 'state' => $state]);
         }
 
-        $payload = json_encode([
-            'status' => 'error',
-            'message' => 'Failed to update output',
-        ]);
-
-        $response->getBody()->write($payload);
-        return $response
-            ->withStatus(500)
-            ->withHeader('Content-Type', 'application/json');
+        return ResponseHelper::error($response, 'Failed to update output', 500);
     }
 
     /**
@@ -201,63 +154,23 @@ class OutputController
      */
     public function updateParameters(Request $request, Response $response): Response
     {
-        $payload = [];
-
-        if ($request->getMethod() === 'POST') {
-            $contentType = strtolower($request->getHeaderLine('Content-Type'));
-
-            if (str_contains($contentType, 'application/json')) {
-                $rawBody = (string)$request->getBody();
-                $decoded = json_decode($rawBody, true);
-                if (is_array($decoded)) {
-                    if (isset($decoded['param'])) {
-                        $payload[$decoded['param']] = $decoded['value'] ?? null;
-                    } else {
-                        $payload = $decoded;
-                    }
-                }
-            }
-
-            if ($payload === []) {
-                $parsed = $request->getParsedBody();
-                if (is_array($parsed)) {
-                    $payload = $parsed;
-                }
-            }
-        }
-
-        if ($payload === []) {
-            $payload = $request->getQueryParams();
+        $payload = RequestHelper::extractParams($request);
+        
+        // Gestion du format {param: ..., value: ...}
+        if (isset($payload['param'])) {
+            $payload = [$payload['param'] => $payload['value'] ?? null];
         }
 
         if (!is_array($payload) || $payload === []) {
-            $response->getBody()->write(json_encode([
-                'status' => 'error',
-                'message' => 'No parameters provided',
-            ]));
-            return $response
-                ->withStatus(400)
-                ->withHeader('Content-Type', 'application/json');
+            return ResponseHelper::error($response, 'No parameters provided', 400);
         }
 
         try {
             $updated = $this->outputService->updateMultipleParameters($payload);
 
-            $response->getBody()->write(json_encode([
-                'status' => 'ok',
-                'updated' => $updated,
-            ]));
-            return $response
-                ->withStatus(200)
-                ->withHeader('Content-Type', 'application/json');
+            return ResponseHelper::success($response, ['updated' => $updated]);
         } catch (\Throwable $e) {
-            $response->getBody()->write(json_encode([
-                'status' => 'error',
-                'message' => 'Failed to persist parameters',
-            ]));
-            return $response
-                ->withStatus(500)
-                ->withHeader('Content-Type', 'application/json');
+            return ResponseHelper::error($response, 'Failed to persist parameters', 500);
         }
     }
 
@@ -280,8 +193,7 @@ class OutputController
         $pdo = Database::getConnection();
         $result = $this->outputCache->getOutputsState($pdo, $gpioList);
 
-        $response->getBody()->write(json_encode($result));
-        return $response->withHeader('Content-Type', 'application/json');
+        return ResponseHelper::json($response, $result);
     }
 
     /**
@@ -291,32 +203,27 @@ class OutputController
     {
         $route = $request->getAttribute('route');
         if ($route === null) {
-            $response->getBody()->write(json_encode(['error' => 'Route not found']));
-            return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
+            return ResponseHelper::error($response, 'Route not found', 500);
         }
         
         $routeParams = $route->getArguments();
         $boardNumber = $routeParams['board'] ?? null;
         
         if (!$boardNumber) {
-            $response->getBody()->write(json_encode(['error' => 'Board number required']));
-            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+            return ResponseHelper::error($response, 'Board number required', 400);
         }
         
         try {
             $status = $this->outputService->getBoardStatus($boardNumber);
 
             if ($status === null) {
-                $response->getBody()->write(json_encode(['error' => 'Board not found']));
-                return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+                return ResponseHelper::error($response, 'Board not found', 404);
             }
 
-            $response->getBody()->write(json_encode($status));
-            return $response->withHeader('Content-Type', 'application/json');
+            return ResponseHelper::json($response, $status);
 
         } catch (\Throwable $e) {
-            $response->getBody()->write(json_encode(['error' => 'Internal server error']));
-            return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
+            return ResponseHelper::error($response, 'Internal server error', 500);
         }
     }
 }
