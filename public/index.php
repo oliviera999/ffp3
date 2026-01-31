@@ -12,6 +12,7 @@ use App\Controller\HomeController;
 use App\Controller\OutputController;
 use App\Controller\PostDataController;
 use App\Controller\RealtimeApiController;
+use App\Controller\SupervisionController;
 use App\Controller\TideStatsController;
 use App\Middleware\EnvironmentMiddleware;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -52,6 +53,9 @@ $app->group('', function ($group) {
     $group->get('/index.html', function (Request $request, Response $response) {
         return $response->withHeader('Location', '/ffp3/')->withStatus(301);
     });
+
+    // Page de supervision (liens vers toutes les pages)
+    $group->get('/supervision', [SupervisionController::class, 'show']);
 
     // Dashboard
     $group->get('/dashboard', [DashboardController::class, 'show']);

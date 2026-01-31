@@ -141,7 +141,9 @@ class PostDataController
             tempsRemplissageSec: $toInt('tempsRemplissageSec'),
             limFlood: $toInt('limFlood'),
             wakeUp: $toInt('WakeUp'),
-            freqWakeUp: $toInt('FreqWakeUp')
+            freqWakeUp: $toInt('FreqWakeUp'),
+            // v11.168: Flag configSynced pour éviter écrasement config par valeurs par défaut
+            configSynced: $toInt('configSynced')
         );
 
         try {

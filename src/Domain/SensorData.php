@@ -44,6 +44,9 @@ class SensorData
      * @param ?int    $limFlood         Limite protection inondation (GPIO 114)
      * @param ?int    $wakeUp           Réveil forcé ESP32 (GPIO 115)
      * @param ?int    $freqWakeUp       Fréquence réveil ESP32 secondes (GPIO 116)
+     * @param ?int    $configSynced     v11.168: Flag indiquant si l'ESP a synchronisé sa config (1=oui, 0=non)
+     *                                  Si 0, le serveur doit IGNORER les variables de config (GPIO 100-116)
+     *                                  pour éviter l'écrasement par des valeurs par défaut
      */
     public function __construct(
         public ?string $sensor,
@@ -76,7 +79,8 @@ class SensorData
         public ?int    $tempsRemplissageSec = null,
         public ?int    $limFlood = null,
         public ?int    $wakeUp = null,
-        public ?int    $freqWakeUp = null
+        public ?int    $freqWakeUp = null,
+        public ?int    $configSynced = null
     ) {
     }
 }

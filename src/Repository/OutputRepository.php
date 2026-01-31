@@ -254,42 +254,57 @@ class OutputRepository
      * Synchronise les états des GPIO depuis les données capteurs
      * Met à jour ffp3Outputs ou ffp3Outputs2 selon l'environnement
      * 
+     * v11.168: Si configSynced=0 (ou null), ignore les GPIO de configuration (100-116)
+     *          pour éviter l'écrasement par des valeurs par défaut de l'ESP32
+     * 
      * @deprecated Utilisez OutputSyncService::syncFromSensorData() à la place
      * 
      * @param SensorData $data Données capteurs contenant les états à synchroniser
      */
     public function syncStatesFromSensorData(SensorData $data): void
     {
-        // Mapping des champs SensorData vers les GPIO
+        // v11.168: Vérifier si la config ESP est synchronisée
+        // configSynced=1 signifie que l'ESP a fait au moins un poll serveur réussi
+        // et donc ses valeurs de config sont fiables
+        $configIsSynced = ($data->configSynced === 1);
+        
+        // Actionneurs physiques - toujours synchronisés (états réels des relais)
         $gpioUpdates = [
-            // Actionneurs physiques
             2 => $data->etatHeat,
             15 => $data->etatUV,
             16 => $data->etatPompeAqua,
             18 => $data->etatPompeTank,
-            
-            // Configuration
-            100 => $data->mail,
-            101 => $data->mailNotif,
-            102 => $data->aqThreshold,
-            103 => $data->tankThreshold,
-            104 => $data->chauffageThreshold,
-            105 => $data->bouffeMatin,
-            106 => $data->bouffeMidi,
-            107 => $data->bouffeSoir,
-            
-            // Commandes nourrissage (flags remis à 0 par ESP32 après exécution)
-            108 => $data->bouffePetits,
-            109 => $data->bouffeGros,
-            
-            // Paramètres timing
-            111 => $data->tempsGros,
-            112 => $data->tempsPetits,
-            113 => $data->tempsRemplissageSec,
-            114 => $data->limFlood,
-            115 => $data->wakeUp,
-            116 => $data->freqWakeUp,
         ];
+        
+        // v11.168: Variables de configuration - UNIQUEMENT si configSynced=1
+        // Sinon, on risque d'écraser les vraies valeurs avec les défauts du firmware
+        if ($configIsSynced) {
+            $gpioUpdates += [
+                // Configuration
+                100 => $data->mail,
+                101 => $data->mailNotif,
+                102 => $data->aqThreshold,
+                103 => $data->tankThreshold,
+                104 => $data->chauffageThreshold,
+                105 => $data->bouffeMatin,
+                106 => $data->bouffeMidi,
+                107 => $data->bouffeSoir,
+                
+                // Commandes nourrissage (flags remis à 0 par ESP32 après exécution)
+                108 => $data->bouffePetits,
+                109 => $data->bouffeGros,
+                
+                // Paramètres timing
+                111 => $data->tempsGros,
+                112 => $data->tempsPetits,
+                113 => $data->tempsRemplissageSec,
+                114 => $data->limFlood,
+                115 => $data->wakeUp,
+                116 => $data->freqWakeUp,
+            ];
+        }
+        // Note: Si configSynced=0, on ne log pas ici pour éviter spam
+        // Le log est fait côté ESP32
         
         // Déléguer à la nouvelle méthode
         $this->batchUpdateWithPriority($gpioUpdates, 'esp32', 10);
