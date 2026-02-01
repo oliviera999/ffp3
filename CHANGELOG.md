@@ -7,6 +7,23 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.43] - 2026-02-01
+
+### 🐛 Correction - API outputs/state : Content-Length pour lecture fiable côté ESP32
+- **Problème** : Avec `Transfer-Encoding: chunked`, l'ESP32 recevait souvent un body incomplet (timeout / déconnexion) → "Fetch distant fallback: KO, keys=0".
+- **Correction** : En-tête `Content-Length` explicite sur la réponse JSON pour que l'ESP32 sache combien d'octets lire et évite les timeouts en fin de lecture.
+- **Fichiers modifiés** : `src/Controller/OutputController.php`
+
+---
+
+## [4.9.42] - 2026-02-01
+
+### 🐛 Correction - API outputs/state : JSON compact + cohérence types
+- **JSON compact** : `GET /api/outputs/state` et `/api/outputs-test/state` retournent désormais du JSON compact (sans `JSON_PRETTY_PRINT`) pour rester sous 1024 bytes côté ESP32-WROOM (buffer limité).
+- **Fichiers modifiés** : `src/Controller/OutputController.php`
+
+---
+
 ## [4.9.41] - 2026-02-01
 
 ### 🐛 Correction - API outputs/state retournait un JSON vide (table vide)
