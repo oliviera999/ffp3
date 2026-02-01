@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.41] - 2026-02-01
+
+### 🐛 Correction - API outputs/state retournait un JSON vide (table vide)
+- **Problème résolu** : Lorsque la table `ffp3Outputs` / `ffp3Outputs2` était vide ou sans lignes pour les GPIO demandés, l'endpoint `GET /api/outputs/state` (et `/api/outputs-test/state`) retournait un objet JSON vide, ce qui faisait afficher des valeurs par défaut sur l'ESP32 et l'interface embarquée.
+- **Correction** : `OutputCacheService::getOutputsState()` retourne désormais des **valeurs par défaut** pour tous les GPIO attendus par l'ESP32 lorsqu'une ligne est absente en BDD. Les valeurs sont alignées avec le firmware (gpio_mapping.h / GPIODefaults) et les migrations SQL (INIT_GPIO_BASE_ROWS.sql).
+- **Fichiers modifiés** : `src/Service/OutputCacheService.php`
+
+---
+
 ## [4.9.39] - 2026-01-31
 
 ### 🐛 Correction - Graphiques disparus sur smartphone (à nouveau)

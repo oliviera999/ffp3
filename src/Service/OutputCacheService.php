@@ -13,6 +13,10 @@ use App\Service\OutputSyncService;
  * pour getOutputsState() qui est appelé toutes les 4-12 secondes par ESP32
  * 
  * Cache en mémoire avec TTL configurable
+ * 
+ * v4.9.41: Lorsque la table outputs est vide ou sans lignes pour les GPIO demandés,
+ * retourne des valeurs par défaut pour tous les GPIO attendus (alignées firmware/sql)
+ * pour éviter que l'ESP32 reçoive un JSON vide et affiche des défauts.
  */
 class OutputCacheService
 {
@@ -20,6 +24,18 @@ class OutputCacheService
      * Durée de vie du cache (en secondes)
      */
     private const CACHE_TTL_SECONDS = 5; // 5 secondes (moitié de l'intervalle polling)
+
+    /**
+     * Valeurs par défaut pour chaque GPIO attendu par l'ESP32
+     * Alignées avec include/gpio_mapping.h (GPIODefaults) et migrations/INIT_GPIO_BASE_ROWS.sql
+     */
+    private const DEFAULT_STATE = [
+        2 => 0,   15 => 0,   16 => 0,   18 => 1,   // actionneurs physiques (pompe réserve 1 par défaut)
+        100 => 0, 101 => 1,  102 => 18, 103 => 80, 104 => 18, // config: email, notif, seuils
+        105 => 8, 106 => 12, 107 => 19,             // heures nourrissage
+        108 => 0, 109 => 0, 110 => 0,              // commandes nourrissage + reset
+        111 => 3, 112 => 2, 113 => 120, 114 => 8, 115 => 0, 116 => 600, // durées / limites / wake
+    ];
     
     /**
      * Cache en mémoire (static pour persister entre requêtes)
@@ -83,19 +99,13 @@ class OutputCacheService
             $byGpio[(int)$row['gpio']] = $row['state'];
         }
         
-        // Normalisation via StateNormalizer
+        // Normalisation via StateNormalizer ; si absent en BDD, utiliser valeur par défaut
         $result = [];
         foreach ($gpioList as $gpio) {
-            if (!array_key_exists($gpio, $byGpio)) {
-                // Si absent en BDD, ne pas inventer une valeur; passer sous silence
-                continue;
-            }
-            
-            $state = $byGpio[$gpio];
-            
-            // Normaliser via StateNormalizer
+            $state = array_key_exists($gpio, $byGpio)
+                ? $byGpio[$gpio]
+                : (self::DEFAULT_STATE[$gpio] ?? 0);
             $state = StateNormalizer::normalize($gpio, $state);
-            
             $result[(string)$gpio] = $state;
         }
         
