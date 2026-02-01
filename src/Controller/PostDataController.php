@@ -100,16 +100,45 @@ class PostDataController
         }
 
         // Fonctions utilitaires de lecture POST --------------------------------
-        // Valeur brute (chaîne) ou null si absente / vide
-        $sanitize = static fn(string $key) => isset($params[$key]) && $params[$key] !== '' ? trim($params[$key]) : null;
-        // Conversions typées sûres (retournent null si champ manquant)
-        $toFloat = static fn(string $key) => isset($params[$key]) && $params[$key] !== '' ? (float) $params[$key] : null;
-        $toInt   = static fn(string $key) => isset($params[$key]) && $params[$key] !== '' ? (int) $params[$key] : null;
+        // Valeur brute (chaîne) ou null si absente / vide / non-scalaire
+        $sanitize = static function (string $key) use ($params): ?string {
+            if (!isset($params[$key]) || !is_scalar($params[$key])) {
+                return null;
+            }
+            $v = trim((string) $params[$key]);
+            return $v !== '' ? $v : null;
+        };
+        // Conversions typées sûres (retournent null si champ manquant ou invalide)
+        $toFloat = static function (string $key) use ($params): ?float {
+            if (!isset($params[$key]) || !is_scalar($params[$key]) || $params[$key] === '') {
+                return null;
+            }
+            $f = (float) $params[$key];
+            return is_finite($f) ? $f : null;
+        };
+        $toInt = static fn(string $key) => isset($params[$key]) && is_scalar($params[$key]) && $params[$key] !== ''
+            ? (int) $params[$key] : null;
+
+        // Validation des champs requis (BDD : sensor et version NOT NULL)
+        $sensor = $sanitize('sensor');
+        $version = $sanitize('version');
+        if ($sensor === null || $version === null) {
+            $missing = array_filter([
+                $sensor === null ? 'sensor' : null,
+                $version === null ? 'version' : null,
+            ]);
+            $msg = 'Champs requis manquants: ' . implode(', ', $missing);
+            $this->logger->warning('PostData: ' . $msg, ['ip' => $_SERVER['REMOTE_ADDR'] ?? 'n/a']);
+            return ResponseHelper::text($response, $msg, 400);
+        }
+        // Limiter à 30 caractères (taille colonne BDD)
+        $sensor = substr($sensor, 0, 30);
+        $version = substr($version, 0, 30);
 
         // Construction de l'objet transférant les données capteurs -------------
         $data = new SensorData(
-            sensor: $sanitize('sensor'),
-            version: $sanitize('version'),
+            sensor: $sensor,
+            version: $version,
             tempAir: $toFloat('TempAir'),
             humidite: $toFloat('Humidite'),
             tempEau: $toFloat('TempEau'),

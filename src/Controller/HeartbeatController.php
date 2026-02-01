@@ -43,13 +43,17 @@ class HeartbeatController
         if (!is_array($params)) {
             $params = [];
         }
-        
+
+        // Valeur scalar ou chaîne vide (évite erreur si POST malformé avec tableaux)
+        $get = static fn(string $k): string => isset($params[$k]) && is_scalar($params[$k])
+            ? (string) $params[$k] : '';
+
         // Récupération des paramètres (valeurs numériques)
-        $uptime = $this->sanitizeNumeric($params['uptime'] ?? '');
-        $free = $this->sanitizeNumeric($params['free'] ?? '');
-        $min = $this->sanitizeNumeric($params['min'] ?? '');
-        $reboots = $this->sanitizeNumeric($params['reboots'] ?? '');
-        $crc = strtoupper($this->sanitizeString($params['crc'] ?? ''));
+        $uptime = $this->sanitizeNumeric($get('uptime'));
+        $free = $this->sanitizeNumeric($get('free'));
+        $min = $this->sanitizeNumeric($get('min'));
+        $reboots = $this->sanitizeNumeric($get('reboots'));
+        $crc = strtoupper($this->sanitizeString($get('crc')));
 
         // Vérification des champs requis
         if ($uptime === '' || $free === '' || $min === '' || $reboots === '' || $crc === '') {
