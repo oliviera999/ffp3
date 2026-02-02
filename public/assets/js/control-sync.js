@@ -113,6 +113,9 @@ class ControlSync {
      * Effectue une requête de polling
      */
     async poll() {
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/96b2f2fa-0819-4062-a300-231b86395e08',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'control-sync.js:poll:entry',message:'ControlSync poll called',data:{isRunning:this.isRunning,isPaused:this.isPaused},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
+        // #endregion
         if (!this.isRunning || this.isPaused) {
             return;
         }
@@ -154,10 +157,16 @@ class ControlSync {
             this.updateBadgeStatus('online');
             this.log('Polling successful - badge updated to SYNC');
             
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/96b2f2fa-0819-4062-a300-231b86395e08',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'control-sync.js:poll:success',message:'ControlSync poll success before schedulePoll',data:{statesKeys:Object.keys(states).length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
+            // #endregion
             // Planifier le prochain poll
             this.schedulePoll();
             
         } catch (error) {
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/96b2f2fa-0819-4062-a300-231b86395e08',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'control-sync.js:poll:catch',message:'ControlSync poll error',data:{message:error?.message},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
+            // #endregion
             this.handleError(error);
         }
     }
@@ -209,16 +218,24 @@ class ControlSync {
             this.lastStates[gpioNum] = newState;
         }
         
-        // Si changements détectés, mettre à jour l'interface
+        // Toujours synchroniser les switches avec l'état reçu (pas seulement en cas de "changement")
+        const allSwitchUpdates = [];
+        for (const [gpioStr, newState] of Object.entries(this.lastStates)) {
+            const g = parseInt(gpioStr, 10);
+            if (isNaN(g)) continue;
+            if (document.querySelector(`input[data-gpio="${g}"]`)) {
+                allSwitchUpdates.push({ gpio: g, oldState: this.lastStates[g], newState: this.lastStates[g] });
+            }
+        }
+        if (allSwitchUpdates.length > 0) {
+            this.updateSwitches(allSwitchUpdates);
+        }
+        
+        // Si changements détectés, notifier et toast
         if (changes.length > 0) {
-            this.updateSwitches(changes);
-            
-            // Notifier via callback
             if (this.onStateChange) {
                 this.onStateChange(changes);
             }
-            
-            // Toast notification globale
             if (window.toastManager) {
                 const gpioList = changes.map(c => `GPIO ${c.gpio}`).join(', ');
                 window.toastManager.showInfo(`Changement détecté: ${gpioList}`, 5000);
@@ -303,6 +320,9 @@ class ControlSync {
         
         if (this.isRunning && !this.isPaused) {
             this.pollTimer = setTimeout(this.poll, this.pollInterval);
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/96b2f2fa-0819-4062-a300-231b86395e08',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'control-sync.js:schedulePoll',message:'Next ControlSync poll scheduled',data:{pollInterval:this.pollInterval},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
+            // #endregion
         }
     }
     

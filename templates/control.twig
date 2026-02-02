@@ -453,6 +453,7 @@
                     }
                 });
 
+                controlSync.initializeFromDOM();
                 controlSync.start();
 
                 window.controlSync = controlSync;
@@ -464,6 +465,9 @@
                     pollInterval: 15000,
                     enabled: true
                 });
+                // #region agent log
+                fetch('http://127.0.0.1:7244/ingest/96b2f2fa-0819-4062-a300-231b86395e08',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'control.twig:init',message:'Control page init done',data:{controlSyncStarted:!!window.controlSync,realtimeInitCalled:true},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
+                // #endregion
             });
         </script>
 </body>
