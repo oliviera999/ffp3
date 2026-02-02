@@ -14,6 +14,7 @@ class ControlSync {
         this.apiBase = options.apiBase || '/ffp3/api/outputs';
         this.pollInterval = (options.pollInterval || 10) * 1000; // 10 secondes par défaut
         this.maxRetries = options.maxRetries || 5;
+        this.useFresh = options.useFresh === true; // ?fresh=1 pour ignorer le cache (valeurs BDD à jour)
         
         // État interne
         this.isRunning = false;
@@ -131,7 +132,8 @@ class ControlSync {
         }
         
         try {
-            const response = await fetch(`${this.apiBase}/state`, {
+            const stateUrl = `${this.apiBase}/state${this.useFresh ? '?fresh=1' : ''}`;
+            const response = await fetch(stateUrl, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json'

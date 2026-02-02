@@ -189,9 +189,12 @@ class OutputController
             111, 112, 113, 114, 115, 116 // durées / limites / wake
         ];
 
-        // Utiliser le cache pour éviter requêtes SQL répétées
+        // Page de contrôle : ?fresh=1 pour ignorer le cache et afficher les vraies valeurs BDD
+        $queryParams = $request->getQueryParams();
+        $skipCache = isset($queryParams['fresh']) && (string) $queryParams['fresh'] === '1';
+
         $pdo = Database::getConnection();
-        $result = $this->outputCache->getOutputsState($pdo, $gpioList);
+        $result = $this->outputCache->getOutputsState($pdo, $gpioList, $skipCache);
 
         // v4.9.42: JSON compact (sans PRETTY_PRINT) pour rester sous 1024 bytes côté ESP32-WROOM
         // v4.9.43: Content-Length explicite pour éviter chunked + timeout lecture côté ESP32

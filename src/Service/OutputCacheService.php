@@ -46,12 +46,13 @@ class OutputCacheService
     
     /**
      * Récupère les états outputs depuis le cache ou la base de données
-     * 
+     *
      * @param \PDO $pdo Connexion PDO
      * @param array $gpioList Liste des GPIOs à récupérer
+     * @param bool $skipCache Si true, ignore le cache et lit toujours en BDD (pour la page de contrôle)
      * @return array Tableau associatif [gpio => state]
      */
-    public function getOutputsState(\PDO $pdo, array $gpioList): array
+    public function getOutputsState(\PDO $pdo, array $gpioList, bool $skipCache = false): array
     {
         $now = time();
         $env = TableConfig::getEnvironment();
@@ -62,15 +63,15 @@ class OutputCacheService
             return [];
         }
         
-        // Vérifier si cache valide pour cet environnement
-        if (isset(self::$cache[$env]) && 
-            isset(self::$cacheTimestamp[$env]) && 
+        // Cache valide : retourner le cache sauf si skipCache (page de contrôle = données toujours à jour)
+        if (!$skipCache &&
+            isset(self::$cache[$env]) &&
+            isset(self::$cacheTimestamp[$env]) &&
             ($now - self::$cacheTimestamp[$env]) < self::CACHE_TTL_SECONDS) {
-            // Cache valide, retourner directement
             return self::$cache[$env];
         }
         
-        // Cache expiré ou inexistant, requête BDD
+        // Requête BDD (cache expiré, inexistant, ou bypass demandé)
         $table = TableConfig::getOutputsTable();
         
         // Construire requête IN sécurisée
@@ -119,9 +120,11 @@ class OutputCacheService
             }
         }
         
-        // Mettre à jour le cache pour cet environnement
-        self::$cache[$env] = $result;
-        self::$cacheTimestamp[$env] = $now;
+        // Mettre à jour le cache uniquement si on n'a pas bypassé (évite de remplir le cache avec une lecture "control")
+        if (!$skipCache) {
+            self::$cache[$env] = $result;
+            self::$cacheTimestamp[$env] = $now;
+        }
         
         return $result;
     }

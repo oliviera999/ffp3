@@ -446,6 +446,7 @@
                     apiBase: '/ffp3/api/outputs',
                     pollInterval: {{ environment == 'test' ? 6 : 10 }},
                     maxRetries: 5,
+                    useFresh: true,
                     onStatesReceived: function(states) {
                         if (typeof window.controlValuesUpdater?.updateParameters === 'function') {
                             window.controlValuesUpdater.updateParameters(states);
