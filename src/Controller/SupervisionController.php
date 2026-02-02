@@ -20,9 +20,11 @@ class SupervisionController
      */
     public function show(Request $request, Response $response): Response
     {
+        $adminCacheToken = $_ENV['ADMIN_CACHE_TOKEN'] ?? '';
         $html = $this->renderer->render('supervision.twig', [
             'page_title' => 'Supervision - n3 iot datas',
-            'active_page' => 'supervision'
+            'active_page' => 'supervision',
+            'admin_cache_token' => $adminCacheToken
         ]);
 
         $response->getBody()->write($html);

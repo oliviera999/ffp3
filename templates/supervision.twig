@@ -266,7 +266,7 @@
         <div class="section">
             <h2><i class="fas fa-cog"></i> Administration</h2>
             <div class="links-grid">
-                <a href="https://iot.olution.info/ffp3/admin/clear-cache-page" class="link-card">
+                <a href="https://iot.olution.info/ffp3/admin/clear-cache-page{% if admin_cache_token %}?token={{ admin_cache_token|e('url') }}{% endif %}" class="link-card">
                     <i class="fas fa-broom"></i>
                     <div class="link-info">
                         <div class="link-title">Vider le cache</div>
@@ -274,7 +274,7 @@
                         <div class="link-url">/admin/clear-cache-page</div>
                     </div>
                 </a>
-                <a href="https://iot.olution.info/ffp3/admin/clear-cache" class="link-card">
+                <a href="https://iot.olution.info/ffp3/admin/clear-cache{% if admin_cache_token %}?token={{ admin_cache_token|e('url') }}{% endif %}" class="link-card">
                     <i class="fas fa-code"></i>
                     <div class="link-info">
                         <div class="link-title">Clear cache (JSON)</div>
@@ -286,7 +286,7 @@
         </div>
 
         <footer>
-            <p>FFP3 Supervision | <a href="https://iot.olution.info/ffp3/" style="color: #008B74;">Retour à l'accueil</a></p>
+            <p>FFP3 Supervision | <a href="../" style="color: #008B74;">Retour à l'accueil</a></p>
         </footer>
     </div>
 </body>
