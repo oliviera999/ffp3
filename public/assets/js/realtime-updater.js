@@ -7,7 +7,8 @@ class RealtimeUpdater {
         this.pollInterval = options.pollInterval || 15000; // 15 secondes par défaut
         this.apiBasePath = options.apiBasePath || '/ffp3/api/realtime';
         this.enabled = options.enabled !== false;
-        this.lastTimestamp = Math.floor(Date.now() / 1000);
+        // Premier poll : 0 pour appeler sensors/latest et afficher la dernière lecture (cartes + graphique)
+        this.lastTimestamp = 0;
         this.pollTimer = null;
         this.retryCount = 0;
         this.maxRetries = 5;
