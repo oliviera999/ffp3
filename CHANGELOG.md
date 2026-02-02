@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.45] - 2026-02-02
+
+### 🐛 Correction - Page de contrôle : prise en compte des changements issus du serveur distant
+- **Problème** : Les changements effectués côté serveur (ESP32, autre client) n’étaient plus reflétés sur la page de contrôle : les switches n’étaient mis à jour que lorsqu’un « changement » était détecté par rapport au cache local.
+- **Correction** : À chaque poll, synchronisation systématique des switches avec la réponse serveur (liste construite à partir de `lastStates` après mise à jour depuis l’API). Les paramètres continuaient d’être mis à jour via `onStatesReceived(states)`.
+- **Fichiers modifiés** : `public/assets/js/control-sync.js`
+
+---
+
 ## [4.9.44] - 2026-02-02
 
 ### 🐛 Correction - Page de contrôle (env test) : API outputs-test et cohérence env

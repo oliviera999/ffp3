@@ -220,12 +220,19 @@ class ControlSync {
             this.lastStates[gpioNum] = newState;
         }
         
-        // Mettre à jour l'interface uniquement quand il y a des changements détectés
+        // Toujours synchroniser les switches avec la réponse serveur (changements distants pris en compte)
+        const switchSyncList = [];
+        for (const [gpioStr, newState] of Object.entries(this.lastStates)) {
+            const g = parseInt(gpioStr, 10);
+            if (isNaN(g) || !document.querySelector(`input[data-gpio="${g}"]`)) continue;
+            switchSyncList.push({ gpio: g, oldState: this.lastStates[g], newState: this.lastStates[g] });
+        }
+        if (switchSyncList.length > 0) {
+            this.updateSwitches(switchSyncList);
+        }
+        
         if (changes.length > 0) {
-            this.updateSwitches(changes);
-            if (this.onStateChange) {
-                this.onStateChange(changes);
-            }
+            if (this.onStateChange) this.onStateChange(changes);
             if (window.toastManager) {
                 const gpioList = changes.map(c => `GPIO ${c.gpio}`).join(', ');
                 window.toastManager.showInfo(`Changement détecté: ${gpioList}`, 5000);
