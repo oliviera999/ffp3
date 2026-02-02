@@ -218,21 +218,9 @@ class ControlSync {
             this.lastStates[gpioNum] = newState;
         }
         
-        // Toujours synchroniser les switches avec l'état reçu (pas seulement en cas de "changement")
-        const allSwitchUpdates = [];
-        for (const [gpioStr, newState] of Object.entries(this.lastStates)) {
-            const g = parseInt(gpioStr, 10);
-            if (isNaN(g)) continue;
-            if (document.querySelector(`input[data-gpio="${g}"]`)) {
-                allSwitchUpdates.push({ gpio: g, oldState: this.lastStates[g], newState: this.lastStates[g] });
-            }
-        }
-        if (allSwitchUpdates.length > 0) {
-            this.updateSwitches(allSwitchUpdates);
-        }
-        
-        // Si changements détectés, notifier et toast
+        // Mettre à jour l'interface uniquement quand il y a des changements détectés
         if (changes.length > 0) {
+            this.updateSwitches(changes);
             if (this.onStateChange) {
                 this.onStateChange(changes);
             }
@@ -255,7 +243,8 @@ class ControlSync {
                 // Mettre à jour l'état du switch sans déclencher l'événement onchange
                 const currentChecked = switchElement.checked;
                 const isInverted = switchElement.dataset.inverted === '1';
-                const shouldBeChecked = isInverted ? change.newState === 0 : change.newState === 1;
+                const stateNum = Number(change.newState);
+                const shouldBeChecked = isInverted ? stateNum === 0 : stateNum === 1;
                 
                 if (currentChecked !== shouldBeChecked) {
                     // Animation flash pour indiquer le changement
