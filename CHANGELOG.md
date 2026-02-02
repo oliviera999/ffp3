@@ -7,6 +7,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.44] - 2026-02-02
+
+### 🐛 Correction - Page de contrôle (env test) : API outputs-test et cohérence env
+- **Problème** : Sur `/control-test` (env test), la page appelait `/api/outputs/state` (prod) au lieu de `/api/outputs-test/state` → lecture table prod (ffp3Outputs) au lieu de la table test (ffp3Outputs2), donc valeurs par défaut affichées.
+- **Corrections** :
+  - **control.twig** : `apiBase` dépend de l’environnement : test → `/ffp3/api/outputs-test`, prod → `/ffp3/api/outputs` (poll state + fresh=1 sur la bonne table).
+  - **control-actions.js** : En env test, toggle appelle `/ffp3/api/outputs-test/toggle` (route test) au lieu de `/ffp3/api/outputs/toggle-test` (route prod).
+- **Vérifié** : `control-auto-save.js` utilisait déjà `outputs-test` en test ; realtime (control.twig) utilisait déjà `realtime-test` en test.
+- **Fichiers modifiés** : `templates/control.twig`, `public/assets/js/control-actions.js`
+
+---
+
 ## [4.9.43] - 2026-02-01
 
 ### 🐛 Correction - API outputs/state : Content-Length pour lecture fiable côté ESP32

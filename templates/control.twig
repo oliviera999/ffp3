@@ -442,8 +442,9 @@
                 const valuesUpdater = new ControlValuesUpdater();
                 valuesUpdater.init();
 
+                const controlApiBase = '{{ environment == "test" ? "/ffp3/api/outputs-test" : "/ffp3/api/outputs" }}';
                 const controlSync = new ControlSync({
-                    apiBase: '/ffp3/api/outputs',
+                    apiBase: controlApiBase,
                     pollInterval: {{ environment == 'test' ? 6 : 10 }},
                     maxRetries: 5,
                     useFresh: true,
