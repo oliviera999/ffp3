@@ -439,14 +439,19 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', () => {
+                const valuesUpdater = new ControlValuesUpdater();
+                valuesUpdater.init();
+
                 const controlSync = new ControlSync({
                     apiBase: '/ffp3/api/outputs',
                     pollInterval: {{ environment == 'test' ? 6 : 10 }},
-                    maxRetries: 5
+                    maxRetries: 5,
+                    onStatesReceived: function(states) {
+                        if (typeof window.controlValuesUpdater?.updateParameters === 'function') {
+                            window.controlValuesUpdater.updateParameters(states);
+                        }
+                    }
                 });
-
-                const valuesUpdater = new ControlValuesUpdater();
-                valuesUpdater.init();
 
                 controlSync.start();
 

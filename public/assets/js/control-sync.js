@@ -25,6 +25,7 @@ class ControlSync {
         // Callbacks
         this.onStateChange = options.onStateChange || null;
         this.onStatusChange = options.onStatusChange || null;
+        this.onStatesReceived = options.onStatesReceived || null;
         
         // Éléments DOM
         this.switches = new Map();
@@ -142,6 +143,11 @@ class ControlSync {
             
             // Traiter les changements d'état
             this.processStates(states);
+            
+            // Notifier les écouteurs (ex. mise à jour des champs paramètres)
+            if (this.onStatesReceived) {
+                this.onStatesReceived(states);
+            }
             
             // Succès - reset retry count et mettre à jour le badge
             this.retryCount = 0;
