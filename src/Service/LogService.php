@@ -92,18 +92,6 @@ class LogService
         // Utiliser Monolog pour la cohérence
         $this->logger->debug($event);
     }
-    
-    /**
-     * @deprecated Utiliser NotificationService à la place.
-     */
-    public function sendAlertEmail(string $subject, string $message, array $params = []): bool
-    {
-        $this->logger->warning('sendAlertEmail() est obsolète. Utiliser NotificationService.', [
-            'subject' => $subject,
-        ]);
-
-        return false;
-    }
 
     // Méthodes niveau PSR-3 – garde API existante
     public function info(string $message, array $context = []): void     { $this->log(Logger::INFO, $message, $context); }

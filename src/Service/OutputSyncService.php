@@ -83,37 +83,6 @@ class OutputSyncService
     }
 
     /**
-     * Synchronise les états des GPIO depuis les données capteurs.
-     * 
-     * Délègue la mise à jour atomique au repository après préparation des données.
-     * 
-     * @param SensorData $data Données capteurs contenant les états à synchroniser
-     * @return array Statistiques de synchronisation
-     */
-    public function syncFromSensorData(SensorData $data): array
-    {
-        $gpioValues = $this->extractGpioValues($data);
-        
-        if (empty($gpioValues)) {
-            return ['updated' => 0, 'skipped' => 0];
-        }
-
-        $result = $this->outputRepository->batchUpdateWithPriority(
-            $gpioValues, 
-            'esp32', 
-            self::WEB_PRIORITY_SECONDS
-        );
-
-        $this->logger->info(sprintf(
-            'OutputSyncService: %d GPIO mis à jour, %d ignorés',
-            $result['updated'],
-            $result['skipped']
-        ));
-
-        return $result;
-    }
-
-    /**
      * Retourne le mapping GPIO pour référence
      * 
      * @return array<int, string>
@@ -121,13 +90,5 @@ class OutputSyncService
     public static function getGpioMapping(): array
     {
         return self::GPIO_MAPPING;
-    }
-
-    /**
-     * Retourne la durée de priorité web
-     */
-    public static function getWebPrioritySeconds(): int
-    {
-        return self::WEB_PRIORITY_SECONDS;
     }
 }

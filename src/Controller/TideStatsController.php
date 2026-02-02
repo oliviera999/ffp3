@@ -9,6 +9,8 @@ use App\Config\Version;
 use App\Security\CsrfService;
 use App\Service\TemplateRenderer;
 use App\Service\TideAnalysisService;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class TideStatsController
 {
@@ -19,26 +21,27 @@ class TideStatsController
     ) {
     }
 
-    public function show(): void
+    public function show(Request $request, Response $response): Response
     {
         // Période : même logique que page aquaponie (24h par défaut)
         $endDefault = date('Y-m-d H:i:s');
         $startDefault = date('Y-m-d H:i:s', strtotime('-1 day', strtotime($endDefault)));
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($request->getMethod() === 'POST') {
+            $body = $request->getParsedBody() ?? [];
+            
             // Validation CSRF
-            $submittedToken = $_POST['_csrf_token'] ?? null;
+            $submittedToken = $body['_csrf_token'] ?? null;
             if (!$this->csrfService->validateToken($submittedToken)) {
-                http_response_code(403);
-                echo 'Token CSRF invalide. Veuillez recharger la page et réessayer.';
-                return;
+                $response->getBody()->write('Token CSRF invalide. Veuillez recharger la page et réessayer.');
+                return $response->withStatus(403)->withHeader('Content-Type', 'text/plain; charset=utf-8');
             }
             
             // Validation des dates
-            $startDateInput = filter_input(INPUT_POST, 'start_date', FILTER_SANITIZE_SPECIAL_CHARS);
-            $startTimeInput = filter_input(INPUT_POST, 'start_time', FILTER_SANITIZE_SPECIAL_CHARS) ?? '00:00:00';
-            $endDateInput = filter_input(INPUT_POST, 'end_date', FILTER_SANITIZE_SPECIAL_CHARS);
-            $endTimeInput = filter_input(INPUT_POST, 'end_time', FILTER_SANITIZE_SPECIAL_CHARS) ?? '23:59:59';
+            $startDateInput = $body['start_date'] ?? '';
+            $startTimeInput = $body['start_time'] ?? '00:00:00';
+            $endDateInput = $body['end_date'] ?? '';
+            $endTimeInput = $body['end_time'] ?? '23:59:59';
             
             $startDate = $startDateInput . ' ' . $startTimeInput;
             $endDate   = $endDateInput   . ' ' . $endTimeInput;
@@ -58,7 +61,7 @@ class TideStatsController
         // Environnement actuel
         $environment = TableConfig::getEnvironment();
 
-        echo $this->renderer->render('tide_stats.twig', [
+        $html = $this->renderer->render('tide_stats.twig', [
             'start_date' => $startDate,
             'end_date'   => $endDate,
             'marnage_moyen'    => $stats['marnage_moyen'],
@@ -76,5 +79,8 @@ class TideStatsController
             'version' => Version::getWithPrefix(),
             'environment' => $environment,
         ]);
+        
+        $response->getBody()->write($html);
+        return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 } 

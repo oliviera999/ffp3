@@ -355,32 +355,4 @@ class ErrorAlertService
             ]);
         }
     }
-    
-    /**
-     * Obtient les statistiques d'erreurs récentes
-     * 
-     * @param int $hours Nombre d'heures à analyser
-     * @return array Statistiques par type d'erreur
-     */
-    public function getErrorStats(int $hours = 24): array
-    {
-        $pdo = Database::getConnection();
-        
-        $stmt = $pdo->prepare("
-            SELECT 
-                normalized_message,
-                COUNT(*) as count,
-                MAX(created_at) as last_occurrence,
-                MAX(alerted_at) as last_alert
-            FROM `" . self::ERROR_LOG_TABLE . "`
-            WHERE created_at >= DATE_SUB(NOW(), INTERVAL :hours HOUR)
-            GROUP BY normalized_message
-            ORDER BY count DESC
-            LIMIT 20
-        ");
-        
-        $stmt->execute([':hours' => $hours]);
-        
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
 }

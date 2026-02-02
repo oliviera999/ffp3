@@ -7,9 +7,9 @@
 Write-Host "`n=== TEST ENDPOINTS SERVEUR DISTANT ===" -ForegroundColor Cyan
 Write-Host "Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')`n" -ForegroundColor Gray
 
-# Configuration
-$url_prod = "http://iot.olution.info/ffp3/public/post-data"
-$url_test = "http://iot.olution.info/ffp3/public/post-data-test"
+# Configuration - URLs conformes au routage serveur (sans /public/)
+$url_prod = "http://iot.olution.info/ffp3/post-data"
+$url_test = "http://iot.olution.info/ffp3/post-data-test"
 $api_key = "fdGTMoptd5CD2ert3"
 
 # Payload de test

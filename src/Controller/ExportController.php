@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Config\Database;
 use App\Repository\SensorReadRepository;
 use DateTimeImmutable;
 use Psr\Http\Message\ResponseInterface as Response;

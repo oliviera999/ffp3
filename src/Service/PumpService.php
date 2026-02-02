@@ -133,13 +133,4 @@ class PumpService
         return $this->getState($this->gpioResetMode);
     }
 
-    public function rebootEsp(): void
-    {
-        $this->setState($this->gpioResetMode, 1);
-    }
-
-    // Expose les valeurs GPIO pour d'éventuels usages externes
-    public function getAquaGpio(): int { return $this->gpioPompeAqua; }
-    public function getTankGpio(): int { return $this->gpioPompeTank; }
-    public function getResetModeGpio(): int { return $this->gpioResetMode; }
 }

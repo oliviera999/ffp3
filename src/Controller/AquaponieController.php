@@ -13,6 +13,8 @@ use App\Service\ChartDataService;
 use App\Service\StatisticsAggregatorService;
 use App\Service\TemplateRenderer;
 use App\Service\WaterBalanceService;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class AquaponieController
 {
@@ -45,7 +47,7 @@ class AquaponieController
     /**
      * Affiche la page publique des données d'aquaponie
      */
-    public function show(): void
+    public function show(Request $request, Response $response): Response
     {
         try {
             $lastDate = $this->sensorReadRepo->getLastReadingDate();
@@ -53,7 +55,7 @@ class AquaponieController
             $defaultStartDate = date('Y-m-d H:i:s', strtotime($defaultEndDate . ' -6 hours'));
 
         // Récupération des paramètres de période (nouveau format datetime-local ou ancien format séparé)
-        [$startDate, $endDate] = $this->extractDateRange($defaultStartDate, $defaultEndDate);
+        [$startDate, $endDate] = $this->extractDateRange($request, $defaultStartDate, $defaultEndDate);
 
         // Récupération des enregistrements
         $readings = $this->sensorReadRepo->fetchBetween($startDate, $endDate);
@@ -74,18 +76,17 @@ class AquaponieController
         // Calcul de la durée
         $duration = $this->calculateDuration($startDate, $endDate);
 
-        // Métriques supplémentaires legacy
         // Export CSV si demandé
-        if (isset($_POST['export_csv'])) {
-            $this->exportCsv($startDate, $endDate);
-            return;
+        $body = $request->getParsedBody() ?? [];
+        if (isset($body['export_csv'])) {
+            return $this->exportCsv($startDate, $endDate, $response);
         }
 
         // Injection dans le template
-        if (isset($_GET['legacy'])) {
+        $queryParams = $request->getQueryParams();
+        if (isset($queryParams['legacy'])) {
             // Mode legacy non supporté, rediriger vers Twig
-            header('Location: /aquaponie');
-            exit;
+            return $response->withStatus(302)->withHeader('Location', '/aquaponie');
         }
 
         // Récupérer la version du firmware ESP32
@@ -97,7 +98,7 @@ class AquaponieController
         // Environnement actuel
         $environment = TableConfig::getEnvironment();
 
-        echo $this->renderer->render('aquaponie.twig', array_merge([
+        $html = $this->renderer->render('aquaponie.twig', array_merge([
             'start_date' => $startDate,
             'end_date'   => $endDate,
             'reading_time' => $reading_time,
@@ -116,12 +117,14 @@ class AquaponieController
             'last_reading_eaupota' => $lastReadingExtracted['eaupota'],
         ], $statsFlattened, $waterBalance));
         
+        $response->getBody()->write($html);
+        return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
+        
         } catch (\RuntimeException $e) {
             // Erreur CSRF ou validation
             if (strpos($e->getMessage(), 'CSRF') !== false) {
-                http_response_code(403);
-                echo 'Token CSRF invalide. Veuillez recharger la page et réessayer.';
-                return;
+                $response->getBody()->write('Token CSRF invalide. Veuillez recharger la page et réessayer.');
+                return $response->withStatus(403)->withHeader('Content-Type', 'text/plain; charset=utf-8');
             }
             throw $e;
         } catch (\Throwable $e) {
@@ -131,8 +134,8 @@ class AquaponieController
                 'line' => $e->getLine(),
             ]);
 
-            echo "ERREUR AquaponieController: " . $e->getMessage();
-            exit(1);
+            $response->getBody()->write("ERREUR AquaponieController: " . $e->getMessage());
+            return $response->withStatus(500)->withHeader('Content-Type', 'text/plain; charset=utf-8');
         }
     }
 
@@ -141,21 +144,23 @@ class AquaponieController
      * 
      * @throws \RuntimeException Si le token CSRF est invalide
      */
-    private function extractDateRange(string $defaultStart, string $defaultEnd): array
+    private function extractDateRange(Request $request, string $defaultStart, string $defaultEnd): array
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if ($request->getMethod() !== 'POST') {
             return [$defaultStart, $defaultEnd];
         }
 
+        $body = $request->getParsedBody() ?? [];
+
         // Validation CSRF
-        $submittedToken = $_POST['_csrf_token'] ?? null;
+        $submittedToken = $body['_csrf_token'] ?? null;
         if (!$this->csrfService->validateToken($submittedToken)) {
             throw new \RuntimeException('Token CSRF invalide');
         }
 
         // Nouveau format : datetime-local
-        $startDatetimePost = filter_input(INPUT_POST, 'start_datetime', FILTER_SANITIZE_SPECIAL_CHARS);
-        $endDatetimePost = filter_input(INPUT_POST, 'end_datetime', FILTER_SANITIZE_SPECIAL_CHARS);
+        $startDatetimePost = $body['start_datetime'] ?? null;
+        $endDatetimePost = $body['end_datetime'] ?? null;
         
         if ($startDatetimePost && $endDatetimePost) {
             return [
@@ -165,10 +170,10 @@ class AquaponieController
         }
 
         // Ancien format : date + time séparés
-        $startDatePost = filter_input(INPUT_POST, 'start_date', FILTER_SANITIZE_SPECIAL_CHARS);
-        $endDatePost = filter_input(INPUT_POST, 'end_date', FILTER_SANITIZE_SPECIAL_CHARS);
-        $startTimePost = filter_input(INPUT_POST, 'start_time', FILTER_SANITIZE_SPECIAL_CHARS);
-        $endTimePost = filter_input(INPUT_POST, 'end_time', FILTER_SANITIZE_SPECIAL_CHARS);
+        $startDatePost = $body['start_date'] ?? null;
+        $endDatePost = $body['end_date'] ?? null;
+        $startTimePost = $body['start_time'] ?? null;
+        $endTimePost = $body['end_time'] ?? null;
         
         if ($startDatePost && $endDatePost) {
             return [
@@ -197,15 +202,18 @@ class AquaponieController
     /**
      * Gère l'export CSV
      */
-    private function exportCsv(string $start, string $end): void
+    private function exportCsv(string $start, string $end, Response $response): Response
     {
         $tmpFile = sys_get_temp_dir() . '/sensor_export_' . time() . '.csv';
         $this->sensorReadRepo->exportCsv($start, $end, $tmpFile);
         
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="sensor_data_' . date('YmdHis') . '.csv"');
-        readfile($tmpFile);
+        $csvContent = file_get_contents($tmpFile);
         unlink($tmpFile);
-        exit;
+        
+        $response->getBody()->write($csvContent);
+        return $response
+            ->withHeader('Content-Type', 'text/csv; charset=utf-8')
+            ->withHeader('Content-Disposition', 'attachment; filename="sensor_data_' . date('YmdHis') . '.csv"')
+            ->withHeader('Content-Length', (string) strlen($csvContent));
     }
 }

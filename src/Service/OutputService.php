@@ -66,64 +66,6 @@ class OutputService
     }
 
     /**
-     * Récupère un output spécifique
-     * 
-     * @param int $gpio Numéro GPIO
-     * @return array<string, mixed>|null
-     */
-    public function getOutput(int $gpio): ?array
-    {
-        return $this->outputRepository->findByGpio($gpio);
-    }
-
-    /**
-     * Change l'état d'un output
-     * 
-     * @param int $gpio Numéro GPIO
-     * @param int $state Nouvel état (0 ou 1)
-     * @return bool Succès de l'opération
-     */
-    public function toggleOutput(int $gpio, int $state): bool
-    {
-        // Validation de l'état
-        if ($state !== 0 && $state !== 1) {
-            return false;
-        }
-
-        $result = $this->outputRepository->updateState($gpio, $state);
-        if ($result) {
-            $this->outputCache->invalidateCache();
-        }
-        return $result;
-    }
-
-    /**
-     * Met à jour la dernière requête d'une board
-     * 
-     * @param string $board Nom de la board
-     * @return bool Succès de l'opération
-     */
-    public function updateBoardLastRequest(string $board): bool
-    {
-        // Créer la board si elle n'existe pas
-        if (!$this->boardRepository->exists($board)) {
-            $this->boardRepository->create($board);
-        }
-
-        return $this->boardRepository->updateLastRequest($board);
-    }
-
-    /**
-     * Récupère toutes les boards
-     * 
-     * @return array<int, array<string, mixed>>
-     */
-    public function getAllBoards(): array
-    {
-        return $this->boardRepository->findAll();
-    }
-
-    /**
      * Récupère uniquement les boards actives pour l'environnement actuel
      * 
      * @return array<int, array<string, mixed>>
@@ -135,17 +77,6 @@ class OutputService
     }
 
     /**
-     * Récupère tous les GPIO d'une board spécifique avec leurs noms et états
-     * 
-     * @param string $board Numéro de la board
-     * @return array<int, array<string, mixed>>
-     */
-    public function getBoardGpios(string $board): array
-    {
-        return $this->outputRepository->findByBoard($board);
-    }
-
-    /**
      * Récupère la dernière GPIO modifiée d'une board spécifique
      * 
      * @param string $board Numéro de la board
@@ -154,17 +85,6 @@ class OutputService
     public function getLastModifiedGpio(string $board): ?array
     {
         return $this->outputRepository->findLastModifiedGpio($board);
-    }
-
-    /**
-     * Récupère une board spécifique
-     * 
-     * @param string $board Nom de la board
-     * @return array<string, mixed>|null
-     */
-    public function getBoard(string $board): ?array
-    {
-        return $this->boardRepository->findByName($board);
     }
 
     /**

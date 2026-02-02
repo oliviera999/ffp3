@@ -2,12 +2,13 @@
 
 namespace App\Controller;
 
-use App\Config\Database;
 use App\Config\TableConfig;
 use App\Config\Version;
 use App\Repository\SensorReadRepository;
 use App\Service\SensorStatisticsService;
 use App\Service\TemplateRenderer;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class DashboardController
 {
@@ -21,7 +22,7 @@ class DashboardController
     /**
      * Affiche le tableau de bord avec les données des capteurs
      */
-    public function show(): void
+    public function show(Request $request, Response $response): Response
     {
         // Récupérer la dernière date de lecture
         $lastDate = $this->sensorReadRepo->getLastReadingDate();
@@ -29,9 +30,15 @@ class DashboardController
         $defaultStartDate = date('Y-m-d H:i:s', strtotime($defaultEndDate . ' -1 day'));
         
         // Traitement du formulaire de filtrage
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $startDate = $_POST['start_date'] . ' ' . ($_POST['start_time'] ?? '00:00:00');
-            $endDate = $_POST['end_date'] . ' ' . ($_POST['end_time'] ?? '23:59:59');
+        if ($request->getMethod() === 'POST') {
+            $body = $request->getParsedBody() ?? [];
+            $startDate = ($body['start_date'] ?? '') . ' ' . ($body['start_time'] ?? '00:00:00');
+            $endDate = ($body['end_date'] ?? '') . ' ' . ($body['end_time'] ?? '23:59:59');
+            
+            // Gestion de l'export CSV
+            if (isset($body['export_csv'])) {
+                return $this->exportCsv($startDate, $endDate, $response);
+            }
         } else {
             $startDate = $defaultStartDate;
             $endDate = $defaultEndDate;
@@ -57,11 +64,6 @@ class DashboardController
         
         // Calculer la durée de la période
         $duration = $this->calculateDuration($startDate, $endDate);
-        
-        // Gestion de l'export CSV
-        if (isset($_POST['export_csv'])) {
-            $this->exportCsv($startDate, $endDate);
-        }
 
         // Récupérer la version du firmware ESP32
         $firmwareVersion = $this->sensorReadRepo->getFirmwareVersion();
@@ -70,7 +72,7 @@ class DashboardController
         $environment = TableConfig::getEnvironment();
 
         // Sélection du template : legacy ou Twig
-        echo $this->renderer->render('dashboard.twig', [
+        $html = $this->renderer->render('dashboard.twig', [
             'startDate'     => $startDate,
             'endDate'       => $endDate,
             'duration'      => $duration,
@@ -81,6 +83,9 @@ class DashboardController
             'firmware_version' => $firmwareVersion,
             'environment'   => $environment,
         ]);
+        
+        $response->getBody()->write($html);
+        return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
     
     /**
@@ -115,19 +120,20 @@ class DashboardController
     /**
      * Exporte les données en CSV
      */
-    private function exportCsv(string $start, string $end): void
+    private function exportCsv(string $start, string $end, Response $response): Response
     {
         $filename = 'sensor_data_' . date('YmdHis') . '.csv';
         $filePath = sys_get_temp_dir() . '/' . $filename;
         
         $this->sensorReadRepo->exportCsv($start, $end, $filePath);
         
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Content-Length: ' . filesize($filePath));
-        
-        readfile($filePath);
+        $csvContent = file_get_contents($filePath);
         unlink($filePath);
-        exit;
+        
+        $response->getBody()->write($csvContent);
+        return $response
+            ->withHeader('Content-Type', 'text/csv; charset=utf-8')
+            ->withHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->withHeader('Content-Length', (string) strlen($csvContent));
     }
 } 
