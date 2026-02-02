@@ -69,6 +69,40 @@ http://iot.olution.info/ffp3/api/outputs-test/state
 
 ---
 
+## ⏱ Timeouts côté serveur (POST < 5 s)
+
+Pour que les POST restent sous le timeout client ESP32 (5 s), le serveur doit répondre à temps.
+
+- **PHP** : `PostDataController::handle()` appelle `set_time_limit(10)` au début de la requête (marge par rapport aux 5 s client).
+- **À vérifier sur l'hébergement** :
+  - `max_execution_time` (php.ini) ≥ 10 s pour les requêtes POST `/ffp3/post-data` et `/ffp3/post-data-test`.
+  - Nginx : `proxy_read_timeout` (et éventuellement `fastcgi_read_timeout`) ≥ 10 s.
+  - Apache : `Timeout` et `ProxyTimeout` ≥ 10 s si reverse proxy vers PHP.
+- **Réduction de latence** : la route POST fait 1 INSERT (données capteurs) + 1 UPDATE groupé (états GPIO via `CASE gpio WHEN … THEN … END`) + 1 UPDATE (dernière requête board) + invalidation cache en mémoire, pour limiter le nombre d'allers-retours BDD.
+
+---
+
+## 🔧 Diagnostic : « Les commandes distantes n’ont pas d’effet sur l’ESP32 »
+
+**Contrat côté serveur** : les commandes envoyées depuis la page de contrôle (toggle, paramètres) sont enregistrées dans la table **correspondant à l’environnement de la page** :
+
+- **Page `/control` (PROD)** → toggle/paramètres → table **ffp3Outputs** (PROD).
+- **Page `/control-test` (TEST)** → toggle/paramètres → table **ffp3Outputs2** (TEST).
+
+**Pour que l’ESP32 applique ces commandes**, il doit **lire la même table** en faisant un GET sur le **même environnement** :
+
+- Si vous pilotez depuis **control-test** : l’ESP32 doit faire `GET /ffp3/api/outputs-test/state` (table ffp3Outputs2).
+- Si vous pilotez depuis **control** (prod) : l’ESP32 doit faire `GET /ffp3/api/outputs/state` (table ffp3Outputs).
+
+**À vérifier en priorité (côté ESP32)** :
+
+1. **URL de poll** : l’ESP32 utilise-t-il `/api/outputs-test/state` quand vous êtes en env test, et `/api/outputs/state` en prod ?
+2. **Application des valeurs** : le firmware applique-t-il bien les champs reçus (GPIO, state) aux relais/paramètres après chaque GET réussi ?
+
+Si l’URL de poll et la page de contrôle sont sur le même environnement (test↔test ou prod↔prod), le serveur renvoie bien les dernières valeurs écrites par la page. Si l’effet n’apparaît pas sur l’ESP32, la cause est alors côté firmware (poll, parsing ou application des états).
+
+---
+
 ## 🚨 **PROBLÈME ACTUEL IDENTIFIÉ**
 
 ### Décalage Fichiers

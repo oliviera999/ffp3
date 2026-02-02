@@ -266,7 +266,42 @@ class OutputRepository extends AbstractRepository
         // Note: Si configSynced=0, on ne log pas ici pour éviter spam
         // Le log est fait côté ESP32
         
-        // Déléguer à la nouvelle méthode
-        $this->batchUpdateWithPriority($gpioUpdates, 'esp32', 10);
+        // Un seul UPDATE avec CASE pour réduire la latence POST (< 5 s côté client)
+        $this->batchUpdateStatesSingleQuery($gpioUpdates, 'esp32', 10);
+    }
+
+    /**
+     * Met à jour plusieurs GPIO en une seule requête (CASE WHEN gpio THEN state).
+     * Réduit la latence POST pour rester sous le timeout client (5 s).
+     *
+     * @param array<int, mixed> $gpioUpdates [gpio => value]
+     * @param string $modifiedBy Source de la modification ('esp32', 'web', etc.)
+     * @param int $prioritySeconds Durée de priorité pour les changements web
+     */
+    public function batchUpdateStatesSingleQuery(array $gpioUpdates, string $modifiedBy, int $prioritySeconds): void
+    {
+        $filtered = array_filter($gpioUpdates, fn($v) => $v !== null);
+        if ($filtered === []) {
+            return;
+        }
+
+        $table = TableValidator::validateOutputsTable(TableConfig::getOutputsTable());
+        $gpioList = array_keys($filtered);
+
+        $caseParts = [];
+        $params = [':modifiedBy' => $modifiedBy, ':priority' => $prioritySeconds];
+        foreach ($filtered as $gpio => $value) {
+            $ph = ':s' . $gpio;
+            $caseParts[] = "WHEN {$gpio} THEN {$ph}";
+            $params[$ph] = (string) $value;
+        }
+        $caseSql = 'CASE gpio ' . implode(' ', $caseParts) . ' END';
+        $inList = implode(',', array_map('intval', $gpioList));
+
+        $sql = "UPDATE `{$table}` SET state = {$caseSql}, requestTime = NOW(), lastModifiedBy = :modifiedBy
+                WHERE gpio IN ({$inList}) AND name IS NOT NULL AND name != ''
+                AND (lastModifiedBy != 'web' OR requestTime IS NULL OR requestTime < DATE_SUB(NOW(), INTERVAL :priority SECOND))";
+
+        $this->execute($sql, $params);
     }
 }

@@ -35,6 +35,9 @@ class PostDataController
      */
     public function handle(Request $request, Response $response): Response
     {
+        // Client ESP32 timeout = 5 s ; laisser marge côté serveur pour répondre avant coupure
+        set_time_limit(10);
+
         // Vérifier méthode POST
         if ($request->getMethod() !== 'POST') {
             $this->logger->warning('PostData: Méthode non autorisée', ['method' => $request->getMethod()]);
