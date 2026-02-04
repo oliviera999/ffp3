@@ -268,8 +268,10 @@
         /* Témoin "dernier état Data" (point à côté du label Activé/Désactivé) */
         .data-indicator {
             display: inline-block;
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
+            min-width: 10px;
+            min-height: 10px;
             border-radius: 50%;
             margin-left: var(--control-spacing-sm);
             vertical-align: middle;
@@ -277,15 +279,15 @@
         }
         .data-indicator-on {
             background: #27ae60;
-            box-shadow: 0 0 0 1px rgba(39, 174, 96, 0.3);
+            box-shadow: 0 0 0 1px rgba(39, 174, 96, 0.4);
         }
         .data-indicator-off {
             background: #95a5a6;
-            box-shadow: 0 0 0 1px rgba(149, 165, 166, 0.3);
+            box-shadow: 0 0 0 1px rgba(149, 165, 166, 0.4);
         }
         .data-indicator-unknown {
-            background: transparent;
-            border: 1px dashed #bdc3c7;
+            background: #d5dbdb;
+            border: 1px solid #bdc3c7;
             box-sizing: border-box;
         }
         

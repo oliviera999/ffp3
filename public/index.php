@@ -251,6 +251,7 @@ $app->get('/assets/js/{filename}', function (Request $request, Response $respons
 $app->get('/assets/css/{filename}', function (Request $request, Response $response, $args) {
     $filename = $args['filename'];
     $allowedFiles = [
+        'control-styles.css',
         'mobile-optimized.css',
         'realtime-styles.css'
     ];
