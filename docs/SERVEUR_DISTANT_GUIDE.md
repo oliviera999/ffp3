@@ -29,7 +29,7 @@ ESP32 ←--→ Serveur Distant (iot.olution.info)
 ### Fréquence et Timing
 
 - **Intervalle normal:** 2 minutes (120 secondes)
-- **Endpoint:** `/ffp3/public/post-data` (PROD) ou `/ffp3/public/post-data-test` (TEST)
+- **Endpoint:** `/ffp3/post-data` (PROD) ou `/ffp3/post-data-test` (TEST)
 - **Méthode:** HTTP POST
 - **Content-Type:** `application/x-www-form-urlencoded`
 - **Timeout:** Configurable via `NetworkConfig::REQUEST_TIMEOUT_MS`
@@ -119,34 +119,31 @@ if (success && _dataQueue.size() > 0) {
 
 #### 1. Nourrissage Manuel Distant
 
-**Clés JSON:**
-- `bouffePetits`: "1", "true", "on", "checked" → Nourrissage petits poissons
-- `bouffeGros`: "1", "true", "on", "checked" → Nourrissage gros poissons
+**Clés JSON (GET state):**
+- `108` ou `bouffePetits`: 1 → Nourrissage petits poissons (trigger sur front montant)
+- `109` ou `bouffeGros`: 1 → Nourrissage gros poissons (trigger sur front montant)
 
-**Exécution (v11.31):**
+Le serveur renvoie les deux formats (clé numérique et symbolique) pour rétrocompatibilité (voir `OutputCacheService`).
 
-```cpp
-// automatism_network.cpp - handleRemoteFeedingCommands()
-if (isTrue(doc["bouffePetits"])) {
-    Serial.println("[Network] 🐟 Commande nourrissage PETITS reçue");
-    
-    // 1. Exécution immédiate
-    autoCtrl.manualFeedSmall();
-    
-    // 2. ACK immédiat au serveur
-    sendCommandAck("bouffePetits", "executed");
-    
-    // 3. Log avec statistiques
-    logRemoteCommandExecution("bouffePetits", true);
-    
-    // 4. Envoi état complet + reset flag
-    autoCtrl.sendFullUpdate(readings, "bouffePetits=0");
-}
-```
+**Exécution (flux actuel – gpio_parser + automatism_sync):**
 
-**Protection watchdog (v11.31):**
-- Reset avant exécution (peut durer 10-20 secondes)
-- Reset après exécution
+1. **Poll GET** : l’ESP32 reçoit le JSON (ex. `"108": 1`). `GPIOParser` détecte un **front montant** (0→1) sur GPIO 108 ou 109 pour éviter les re-déclenchements tant que le serveur garde le flag à 1.
+2. **Seed initial** : au premier poll après boot, `AutomatismSync::seedInitialStateIfFirstPoll` initialise l’état edge depuis le doc (`GPIOParser::seedFeedStateFromDoc`) pour éviter un faux front si le serveur envoie déjà 108/109 à 1.
+3. **Déclenchement** : sur front montant, `GPIOParser` appelle `manualFeedSmall()` / `manualFeedBig()` puis `notifyRemoteFeedExecuted(isSmall)`.
+4. **Effets de bord** (`AutomatismSync::onRemoteFeedExecuted`) :
+   - ACK optionnel : `sendCommandAck("bouffePetits"|"bouffeGros", "executed")`
+   - Reset des flags côté serveur : `sendFullUpdate(readings, "bouffePetits=0&108=0")` ou `"bouffeGros=0&109=0"` (avec cooldown `REMOTE_FEED_RESET_COOLDOWN_MS`)
+   - Email si activé (nourrissage manuel petits/gros)
+
+**Reset des flags (POST) :**
+- Après exécution nourrissage distant : l’ESP32 envoie un POST complet avec `bouffePetits=0&108=0` (ou `bouffeGros=0&109=0`) en `extraPairs`.
+- En fin de cycle nourrissage (tous types) : `finalizeFeedingIfNeeded` envoie `bouffePetits=0&108=0&bouffeGros=0&109=0`.
+- Le serveur (`PostDataController`) lit `bouffePetits` et `bouffeGros` ; `OutputRepository::syncStatesFromSensorData` met à jour les GPIO 108/109 (si `configSynced=1`).
+
+**Fichiers concernés (firmware) :**
+- `src/gpio_parser.cpp` : edge detection 108/109, seed, appel `manualFeedSmall/Big` + `notifyRemoteFeedExecuted`
+- `src/automatism/automatism_sync.cpp` : `onRemoteFeedExecuted`, `sendFullUpdate` avec reset, email
+- `include/gpio_mapping.h` : `FEED_SMALL` (108, serverPostName `bouffePetits`), `FEED_BIG` (109, serverPostName `bouffeGros`)
 
 #### 2. Contrôle Pompe Réservoir
 
@@ -219,6 +216,30 @@ if (AutomatismPersistence::hasRecentLocalAction(5000)) {
 
 ---
 
+## ⚡ API Temps Réel (UI Web)
+
+Cette API alimente le polling côté pages web (dashboard, supervision) via `realtime-updater.js`.
+
+### Endpoints PROD
+- `GET /ffp3/api/realtime/sensors/latest`
+- `GET /ffp3/api/realtime/sensors/since/{timestamp}`
+- `GET /ffp3/api/realtime/outputs/state`
+- `GET /ffp3/api/realtime/system/health`
+- `GET /ffp3/api/realtime/alerts/active`
+
+### Endpoints TEST
+- `GET /ffp3/api/realtime-test/sensors/latest`
+- `GET /ffp3/api/realtime-test/sensors/since/{timestamp}`
+- `GET /ffp3/api/realtime-test/outputs/state`
+- `GET /ffp3/api/realtime-test/system/health`
+- `GET /ffp3/api/realtime-test/alerts/active`
+
+### Alias de compatibilité
+- `GET /ffp3/api/health` (PROD)
+- `GET /ffp3/api/health-test` (TEST)
+
+---
+
 ## ✅ Système d'ACK Immédiat (v11.31)
 
 ### Principe
@@ -228,22 +249,17 @@ Après exécution d'une commande distante, l'ESP32 envoie un **acquittement imm�
 ### Implémentation
 
 ```cpp
-bool AutomatismNetwork::sendCommandAck(const char* command, const char* status) {
+// automatism_sync.cpp
+bool AutomatismSync::sendCommandAck(const char* command, const char* status) {
     char ackPayload[256];
     snprintf(ackPayload, sizeof(ackPayload),
              "api_key=%s&sensor=%s&ack_command=%s&ack_status=%s&ack_timestamp=%lu",
-             Config::API_KEY, Config::SENSOR, command, status, millis());
-    
-    // Envoi non-bloquant
-    bool ok = _web.postRaw(String(ackPayload), false);
-    
-    if (ok) {
-        Serial.printf("[Network] ✓ ACK sent: %s=%s\n", command, status);
-    }
-    
-    return ok;
+             ApiConfig::API_KEY, ProjectConfig::BOARD_TYPE, command, status, millis());
+    return AppTasks::netPostRaw(ackPayload, NetworkConfig::HTTP_POST_TIMEOUT_MS);
 }
 ```
+
+**Note :** Le payload ACK ne contient pas le champ `version` requis par l’endpoint POST data ; le serveur peut donc rejeter cette requête. L’acquittement fonctionnel du nourrissage repose sur le reset des flags (POST complet avec `bouffePetits=0&108=0`).
 
 ### Champs ACK
 
@@ -422,9 +438,9 @@ namespace ServerConfig {
     constexpr const char* BASE_URL = "http://iot.olution.info";
     
     // Endpoints
-    constexpr const char* POST_DATA_ENDPOINT = "/ffp3/public/post-data";
-    constexpr const char* OUTPUT_ENDPOINT = "/ffp3/public/output";
-    constexpr const char* HEARTBEAT_ENDPOINT = "/ffp3/public/heartbeat";
+    constexpr const char* POST_DATA_ENDPOINT = "/ffp3/post-data";
+    constexpr const char* OUTPUT_ENDPOINT = "/ffp3/api/outputs/state";
+    constexpr const char* HEARTBEAT_ENDPOINT = "/ffp3/heartbeat";
     
     // Timeouts
     constexpr uint32_t REQUEST_TIMEOUT_MS = 10000;  // 10 secondes

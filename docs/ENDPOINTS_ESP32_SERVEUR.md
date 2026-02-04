@@ -2,7 +2,7 @@
 
 **Version ESP32**: 11.35  
 **Version Serveur**: 11.36  
-**Date**: 14 Octobre 2025  
+**Date**: 3 Février 2026  
 
 ---
 
@@ -29,14 +29,9 @@ POST_DATA_ENDPOINT = "/ffp3/post-data-test"
 http://iot.olution.info/ffp3/post-data-test
 ```
 
-**Fichier serveur** (ANCIEN Legacy):
+**Route serveur (Slim)**:
 ```
-/path/to/ffp3/post-data-test.php  ← Fichier que tu m'as montré
-```
-
-**Fichier serveur** (NOUVEAU Moderne - **PAS UTILISÉ actuellement**):
-```
-/path/to/ffp3/public/post-data.php  ← Nos modifications v11.36
+/ffp3/post-data-test → PostDataController::handle()
 ```
 
 #### 2️⃣ GET Outputs State (Récupération états distants)
@@ -69,11 +64,11 @@ http://iot.olution.info/ffp3/api/outputs-test/state
 
 ---
 
-## ⏱ Timeouts côté serveur (POST < 5 s)
+## ⏱ Timeouts côté serveur (POST ≤ 8 s)
 
-Pour que les POST restent sous le timeout client ESP32 (5 s), le serveur doit répondre à temps.
+Le client ESP32 utilise un **timeout POST de 8 s** (dérogation à la règle projet 5 s, documentée dans `include/config.h` — `HTTP_POST_TIMEOUT_MS`). Le serveur doit répondre dans ce délai.
 
-- **PHP** : `PostDataController::handle()` appelle `set_time_limit(10)` au début de la requête (marge par rapport aux 5 s client).
+- **PHP** : `PostDataController::handle()` appelle `set_time_limit(10)` au début de la requête (marge par rapport aux 8 s client).
 - **À vérifier sur l'hébergement** :
   - `max_execution_time` (php.ini) ≥ 10 s pour les requêtes POST `/ffp3/post-data` et `/ffp3/post-data-test`.
   - Nginx : `proxy_read_timeout` (et éventuellement `fastcgi_read_timeout`) ≥ 10 s.
@@ -103,103 +98,16 @@ Si l’URL de poll et la page de contrôle sont sur le même environnement (test
 
 ---
 
-## 🚨 **PROBLÈME ACTUEL IDENTIFIÉ**
-
-### Décalage Fichiers
-
-**ESP32 appelle** :
-```
-POST → http://iot.olution.info/ffp3/post-data-test
-```
-
-**Fichier serveur actif** (probablement):
-```
-/path/to/ffp3/post-data-test.php  ← Ancien fichier legacy
-```
-
-**Nos modifications sont dans**:
-```
-/path/to/ffp3/public/post-data.php  ← Nouveau fichier moderne
-```
-
-**Résultat** : 🔴 **Nos modifications ne sont PAS utilisées !**
-
----
-
-## ✅ Solutions
-
-### Solution 1: **Modifier l'Ancien Fichier Legacy** ⭐ RECOMMANDÉ
-
-**Fichier à modifier**: `/path/to/ffp3/post-data-test.php` (l'ancien que tu m'as montré)
-
-Ajouter juste après la ligne 74 (après les derniers UPDATE) :
-
-```php
-// RIEN À CHANGER ! L'ancien fichier fait DÉJÀ tout correctement :
-
-UPDATE ffp3Outputs2 SET state = '" . $etatHeat . "' WHERE gpio= '2';          ✓
-UPDATE ffp3Outputs2 SET state = '" . $etatUV . "' WHERE gpio= '15';           ✓
-UPDATE ffp3Outputs2 SET state = '" . $etatPompeAqua . "' WHERE gpio= '16';    ✓
-UPDATE ffp3Outputs2 SET state = '" . $etatPompeTank . "' WHERE gpio= '18';    ✓
-UPDATE ffp3Outputs2 SET state = '" . $bouffePetits . "' WHERE gpio= '108';    ✓
-UPDATE ffp3Outputs2 SET state = '" . $bouffeGros . "' WHERE gpio= '109';      ✓
-UPDATE ffp3Outputs2 SET state = '" . $resetMode . "' WHERE gpio= '110';       ✓
-UPDATE ffp3Outputs2 SET state = '" . $mail . "' WHERE gpio= '100';            ✓
-UPDATE ffp3Outputs2 SET state = '" . $mailNotif . "' WHERE gpio= '101';       ✓
-UPDATE ffp3Outputs2 SET state = '" . $aqThreshold . "' WHERE gpio= '102';     ✓
-UPDATE ffp3Outputs2 SET state = '" . $tankThreshold . "' WHERE gpio= '103';   ✓
-UPDATE ffp3Outputs2 SET state = '" . $chauffageThreshold . "' WHERE gpio= '104'; ✓
-UPDATE ffp3Outputs2 SET state = '" . $bouffeMat . "' WHERE gpio= '105';       ✓
-UPDATE ffp3Outputs2 SET state = '" . $bouffeMidi . "' WHERE gpio= '106';      ✓
-UPDATE ffp3Outputs2 SET state = '" . $bouffeSoir . "' WHERE gpio= '107';      ✓
-UPDATE ffp3Outputs2 SET state = '" . $tempsGros . "' WHERE gpio= '111';       ✓
-UPDATE ffp3Outputs2 SET state = '" . $tempsPetits . "' WHERE gpio= '112';     ✓
-UPDATE ffp3Outputs2 SET state = '" . $tempsRemplissageSec . "' WHERE gpio= '113'; ✓
-UPDATE ffp3Outputs2 SET state = '" . $limFlood . "' WHERE gpio= '114';        ✓
-UPDATE ffp3Outputs2 SET state = '" . $WakeUp . "' WHERE gpio= '115';          ✓
-UPDATE ffp3Outputs2 SET state = '" . $FreqWakeUp . "' WHERE gpio= '116';      ✓
-
-// ✅ DÉJÀ COMPLET ! 17 GPIO mis à jour
-```
-
-**Verdict** : ✅ **L'ancien fichier legacy fait DÉJÀ tout ce qu'il faut !**
-
-### Solution 2: Vérifier que le Fichier Legacy est Bien sur le Serveur
-
-Le fichier `post-data-test.php` doit être accessible à :
-```
-http://iot.olution.info/ffp3/post-data-test
-```
-
----
-
 ## 🔍 Diagnostic Erreur HTTP 500
 
-Si l'ancien fichier legacy est bien en place et fait les UPDATE, l'erreur 500 vient probablement de :
+Si `/ffp3/post-data-test` ou `/ffp3/post-data` renvoie 500 :
 
-### Possibilité 1: **Mauvais Chemin Fichier**
-```bash
-# Vérifier sur serveur:
-ls -la /path/to/ffp3/post-data-test.php
-
-# Si absent, créer/copier le fichier
+### Possibilité 1: **Erreur PHP côté Slim**
+```
+Consulter les logs PHP/serveur web (ex: /var/log/apache2/error.log)
 ```
 
-### Possibilité 2: **Erreur SQL dans Multi-Query**
-```php
-// Le fichier legacy utilise multi_query():
-if ($conn->multi_query($sql) === TRUE) {
-    echo "New record created successfully";
-}
-
-// ⚠️ multi_query() peut échouer si:
-// - Une des UPDATE échoue
-// - GPIO n'existe pas dans ffp3Outputs2
-// - Problème de permissions BDD
-```
-
-### Possibilité 3: **GPIO Manquants dans Table Outputs**
-
+### Possibilité 2: **Erreur SQL (INSERT/UPDATE)**
 Vérifier que **tous les GPIO existent** dans `ffp3Outputs2` :
 
 ```sql
@@ -221,7 +129,7 @@ ORDER BY gpio;
 **Environnement TEST** (wroom-test actuel):
 ```
 URL: http://iot.olution.info/ffp3/post-data-test
-Fichier: /path/to/ffp3/post-data-test.php (legacy)
+Route: /ffp3/post-data-test (Slim → PostDataController::handle)
 Méthode: POST
 Content-Type: application/x-www-form-urlencoded
 
@@ -260,8 +168,9 @@ api_key=fdGTMoptd5CD2ert3
 &bouffeGros=0
 
 Actions serveur:
-1. INSERT INTO ffp3Data2 (25 colonnes)
+1. INSERT INTO ffp3Data2 (sans tempsGros/tempsPetits/tempsRemplissageSec/limFlood/WakeUp/FreqWakeUp)
 2. UPDATE ffp3Outputs2 (17 GPIO) ← CRITIQUE pour chauffage
+Note: les durées/limites/wake-up sont stockées uniquement dans ffp3Outputs2.
 ```
 
 ### Serveur → ESP32 (GET)
@@ -331,10 +240,10 @@ Source: SELECT gpio, state FROM ffp3Outputs2
 ### **Donc pourquoi HTTP 500 ?**
 
 Possibilités :
-1. ❌ Fichier `post-data-test.php` absent ou inaccessible
+1. ❌ Erreur PHP dans `PostDataController::handle`
 2. ❌ Erreur SQL (GPIO manquant dans ffp3Outputs2)
 3. ❌ Problème permissions MySQL
-4. ❌ Erreur PHP (syntax, variables undefined)
+4. ❌ Erreur PHP (variables undefined, payload inattendu)
 
 ---
 

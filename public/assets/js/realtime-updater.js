@@ -86,9 +86,6 @@ class RealtimeUpdater {
      * Effectue une requête de polling
      */
     async poll() {
-        // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/96b2f2fa-0819-4062-a300-231b86395e08',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime-updater.js:poll:entry',message:'RealtimeUpdater poll called',data:{isPaused:this.isPaused,lastTimestamp:this.lastTimestamp},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
-        // #endregion
         if (this.isPaused) return;
 
         try {
@@ -122,9 +119,6 @@ class RealtimeUpdater {
             
             const healthData = await healthResponse.json();
 
-            // #region agent log
-            fetch('http://127.0.0.1:7244/ingest/96b2f2fa-0819-4062-a300-231b86395e08',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime-updater.js:poll:healthOk',message:'RealtimeUpdater health received before updateSystemStatus',data:{online:healthData?.online,last_reading_ago_seconds:healthData?.last_reading_ago_seconds,hasReadings:!!(newReadings&&newReadings.length)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
-            // #endregion
             // Succès : reset retry counter
             this.retryCount = 0;
             
@@ -170,9 +164,6 @@ class RealtimeUpdater {
             this.updateSystemStatus(healthData);
 
         } catch (error) {
-            // #region agent log
-            fetch('http://127.0.0.1:7244/ingest/96b2f2fa-0819-4062-a300-231b86395e08',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime-updater.js:poll:catch',message:'RealtimeUpdater poll error',data:{message:error?.message},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
-            // #endregion
             console.error('[RealtimeUpdater] Error during poll:', error);
             this.retryCount++;
             
@@ -217,9 +208,6 @@ class RealtimeUpdater {
      * Met à jour les informations système dans l'UI
      */
     updateSystemStatus(health) {
-        // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/96b2f2fa-0819-4062-a300-231b86395e08',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime-updater.js:updateSystemStatus',message:'RealtimeUpdater updateSystemStatus called',data:{online:health?.online,last_reading_ago_seconds:health?.last_reading_ago_seconds,hasLastReading:!!health?.last_reading},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H4'})}).catch(()=>{});
-        // #endregion
         // Dernière réception
         const lastReadingEl = document.getElementById('last-reading-time');
         if (lastReadingEl) {

@@ -266,8 +266,17 @@ class OutputRepository extends AbstractRepository
         // Note: Si configSynced=0, on ne log pas ici pour éviter spam
         // Le log est fait côté ESP32
         
-        // Un seul UPDATE avec CASE pour réduire la latence POST (< 5 s côté client)
-        $this->batchUpdateStatesSingleQuery($gpioUpdates, 'esp32', 10);
+        // Priorité plus longue pour 108/109 (nourrissage) : l'ESP32 poll toutes les 12 s,
+        // on protège 20 s pour qu'au moins un GET voie la commande avant qu'un POST n'écrase.
+        $feedGpios = [108 => $gpioUpdates[108] ?? null, 109 => $gpioUpdates[109] ?? null];
+        $feedGpios = array_filter($feedGpios, fn($v) => $v !== null);
+        $rest = array_diff_key($gpioUpdates, [108 => 1, 109 => 1]);
+        if ($feedGpios !== []) {
+            $this->batchUpdateStatesSingleQuery($feedGpios, 'esp32', 20);
+        }
+        if ($rest !== []) {
+            $this->batchUpdateStatesSingleQuery($rest, 'esp32', 10);
+        }
     }
 
     /**

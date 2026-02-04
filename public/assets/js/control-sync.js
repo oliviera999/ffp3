@@ -114,9 +114,6 @@ class ControlSync {
      * Effectue une requête de polling
      */
     async poll() {
-        // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/96b2f2fa-0819-4062-a300-231b86395e08',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'control-sync.js:poll:entry',message:'ControlSync poll called',data:{isRunning:this.isRunning,isPaused:this.isPaused},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-        // #endregion
         if (!this.isRunning || this.isPaused) {
             return;
         }
@@ -159,16 +156,10 @@ class ControlSync {
             this.updateBadgeStatus('online');
             this.log('Polling successful - badge updated to SYNC');
             
-            // #region agent log
-            fetch('http://127.0.0.1:7244/ingest/96b2f2fa-0819-4062-a300-231b86395e08',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'control-sync.js:poll:success',message:'ControlSync poll success before schedulePoll',data:{statesKeys:Object.keys(states).length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-            // #endregion
             // Planifier le prochain poll
             this.schedulePoll();
             
         } catch (error) {
-            // #region agent log
-            fetch('http://127.0.0.1:7244/ingest/96b2f2fa-0819-4062-a300-231b86395e08',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'control-sync.js:poll:catch',message:'ControlSync poll error',data:{message:error?.message},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
-            // #endregion
             this.handleError(error);
         }
     }
@@ -318,9 +309,6 @@ class ControlSync {
         
         if (this.isRunning && !this.isPaused) {
             this.pollTimer = setTimeout(this.poll, this.pollInterval);
-            // #region agent log
-            fetch('http://127.0.0.1:7244/ingest/96b2f2fa-0819-4062-a300-231b86395e08',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'control-sync.js:schedulePoll',message:'Next ControlSync poll scheduled',data:{pollInterval:this.pollInterval},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-            // #endregion
         }
     }
     
