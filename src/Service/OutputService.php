@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Repository\OutputRepository;
 use App\Repository\BoardRepository;
+use App\Repository\SensorReadRepository;
 use App\Service\OutputCacheService;
 
 /**
@@ -15,11 +16,55 @@ use App\Service\OutputCacheService;
  */
 class OutputService
 {
+    /** GPIOs affichés comme indicateurs booléens (0/1) sur la page de contrôle */
+    private const BOOLEAN_GPIOS_FOR_INDICATOR = [2, 15, 16, 18, 101, 108, 109, 110, 115];
+
     public function __construct(
         private OutputRepository $outputRepository,
         private BoardRepository $boardRepository,
-        private OutputCacheService $outputCache
+        private OutputCacheService $outputCache,
+        private SensorReadRepository $sensorReadRepository
     ) {}
+
+    /**
+     * Derniers états enregistrés dans la table data (dernière ligne POSTée par l'ESP32).
+     * Utilisé pour les témoins "dernier état Data" sur la page de contrôle.
+     *
+     * @return array{states: array<int, int|null>, readingTime: string|null}
+     */
+    public function getLastDataStates(): array
+    {
+        $row = $this->sensorReadRepository->getLastReadings(1);
+        $readingTime = isset($row['reading_time']) ? (string) $row['reading_time'] : null;
+        $states = [];
+
+        if ($row === []) {
+            return ['states' => [], 'readingTime' => null];
+        }
+
+        $mapping = OutputSyncService::getGpioMapping();
+        foreach ($mapping as $gpio => $property) {
+            if (!in_array($gpio, self::BOOLEAN_GPIOS_FOR_INDICATOR, true)) {
+                continue;
+            }
+            if (!array_key_exists($property, $row)) {
+                $states[$gpio] = null;
+                continue;
+            }
+            $value = $row[$property];
+            if ($value === null || $value === '') {
+                $states[$gpio] = null;
+                continue;
+            }
+            if ($property === 'mail' || $property === 'mailNotif') {
+                $states[$gpio] = trim((string) $value) !== '' ? 1 : 0;
+            } else {
+                $states[$gpio] = (int) $value;
+            }
+        }
+
+        return ['states' => $states, 'readingTime' => $readingTime];
+    }
 
     /**
      * Récupère tous les outputs avec leurs états

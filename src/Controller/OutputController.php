@@ -68,6 +68,8 @@ class OutputController
                 'FreqWakeUp' => 116,
             ];
 
+            $lastData = $this->outputService->getLastDataStates();
+
             $data = [
                 'outputs' => $outputs,
                 'boards' => $boards,
@@ -77,8 +79,10 @@ class OutputController
                 'environment' => $environment,
                 'version' => Version::getWithPrefix(),
                 'firmware_version' => $firmwareVersion,
+                'lastDataStates' => $lastData['states'],
+                'lastDataReadingTime' => $lastData['readingTime'],
             ];
-            
+
             $html = $this->renderer->render('control.twig', $data);
             $response->getBody()->write($html);
 
@@ -200,6 +204,14 @@ class OutputController
 
         $pdo = Database::getConnection();
         $result = $this->outputCache->getOutputsState($pdo, $gpioList, $skipCache);
+
+        // Témoins "dernier état Data" pour la page de contrôle (ESP32 ignore ces clés)
+        $lastData = $this->outputService->getLastDataStates();
+        $result['dataStates'] = [];
+        foreach ($lastData['states'] as $gpio => $state) {
+            $result['dataStates'][(string) $gpio] = $state;
+        }
+        $result['dataStatesReadingTime'] = $lastData['readingTime'];
 
         // v4.9.42: JSON compact (sans PRETTY_PRINT) pour rester sous 1024 bytes côté ESP32-WROOM
         // v4.9.43: Content-Length explicite pour éviter chunked + timeout lecture côté ESP32

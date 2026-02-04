@@ -99,7 +99,8 @@ return [
         return new OutputService(
             $c->get(OutputRepository::class),
             $c->get(BoardRepository::class),
-            $c->get(OutputCacheService::class)
+            $c->get(OutputCacheService::class),
+            $c->get(SensorReadRepository::class)
         );
     },
 

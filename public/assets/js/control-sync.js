@@ -221,7 +221,11 @@ class ControlSync {
         if (switchSyncList.length > 0) {
             this.updateSwitches(switchSyncList);
         }
-        
+
+        if (states.dataStates && typeof states.dataStates === 'object') {
+            this.updateDataIndicators(states.dataStates, states.dataStatesReadingTime);
+        }
+
         if (changes.length > 0) {
             if (this.onStateChange) this.onStateChange(changes);
             if (window.toastManager) {
@@ -299,6 +303,32 @@ class ControlSync {
         });
     }
     
+    /**
+     * Met à jour les témoins "dernier état Data" (point à côté du label Activé/Désactivé)
+     * @param {Object} dataStates - { [gpio]: 0|1|null }
+     * @param {string|null} readingTime - Date/heure de la dernière ligne data (optionnel)
+     */
+    updateDataIndicators(dataStates, readingTime) {
+        const cards = document.querySelectorAll('.action-card[data-gpio]');
+        const titleSuffix = readingTime ? ` – ${readingTime}` : '';
+        cards.forEach(card => {
+            const gpio = parseInt(card.getAttribute('data-gpio'), 10);
+            if (isNaN(gpio)) return;
+            const indicator = card.querySelector('[data-data-indicator]');
+            if (!indicator) return;
+            const value = dataStates[gpio] ?? dataStates[String(gpio)] ?? null;
+            indicator.classList.remove('data-indicator-on', 'data-indicator-off', 'data-indicator-unknown');
+            if (value === 1) {
+                indicator.classList.add('data-indicator-on');
+            } else if (value === 0) {
+                indicator.classList.add('data-indicator-off');
+            } else {
+                indicator.classList.add('data-indicator-unknown');
+            }
+            indicator.setAttribute('title', 'Dernier état enregistré (table data)' + titleSuffix);
+        });
+    }
+
     /**
      * Planifie le prochain poll
      */
