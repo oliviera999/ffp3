@@ -95,7 +95,7 @@ class OutputController
             ));
             
             // Message d'erreur selon l'environnement
-            $isDevelopment = ($_ENV['ENV'] ?? 'prod') === 'test' || (bool)($_ENV['DEBUG'] ?? false);
+            $isDevelopment = in_array($_ENV['ENV'] ?? 'prod', ['test', 'test3'], true) || (bool)($_ENV['DEBUG'] ?? false);
             
             if ($isDevelopment) {
                 $errorMessage = sprintf(
@@ -128,6 +128,12 @@ class OutputController
         return $this->handleToggle($request, $response);
     }
 
+    public function toggleOutputTest3(Request $request, Response $response): Response
+    {
+        \App\Config\TableConfig::setEnvironment('test3');
+        return $this->handleToggle($request, $response);
+    }
+
     private function handleToggle(Request $request, Response $response): Response
     {
         $params = RequestHelper::extractParams($request);
@@ -139,8 +145,7 @@ class OutputController
             return ResponseHelper::error($response, 'Invalid parameters', 400);
         }
 
-        $isTest = \App\Config\TableConfig::getEnvironment() === 'test';
-        $success = $this->outputService->updateStateById($id, $state, 'web', $isTest);
+        $success = $this->outputService->updateStateById($id, $state, 'web');
 
         if ($success) {
             return ResponseHelper::success($response, ['id' => $id, 'state' => $state]);

@@ -124,7 +124,7 @@ class OutputService
             return false;
         }
 
-        $table = \App\Config\TableConfig::getOutputsTableFor($isTest ? 'test' : 'prod');
+        $table = \App\Config\TableConfig::getOutputsTable();
         $pdo = \App\Config\Database::getConnection();
         
         // Marquer la modification avec la source spécifiée

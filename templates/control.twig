@@ -42,8 +42,8 @@
         <nav id="nav">
             <ul class="links">
                 <li><a href="https://iot.olution.info/ffp3/">Accueil</a></li>
-                <li><a href="https://iot.olution.info/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}">L'aquaponie (FFP3)</a></li>
-                <li class="active"><a href="https://iot.olution.info/ffp3/control{{ environment == 'test' ? '-test' : '' }}">Contrôle</a></li>
+                <li><a href="https://iot.olution.info/ffp3/aquaponie{{ environment == 'test' ? '-test' : (environment == 'test3' ? '3-test' : '') }}">L'aquaponie (FFP3)</a></li>
+                <li class="active"><a href="https://iot.olution.info/ffp3/control{{ environment == 'test' ? '-test' : (environment == 'test3' ? '3-test' : '') }}">Contrôle</a></li>
                 <li><a href="https://iot.olution.info/msp1/msp1datas/msp1-data.php">Le potager</a></li>
                 <li><a href="https://iot.olution.info/n3pp/n3ppdatas/n3pp-data.php">L'élevage d'insectes</a></li>
             </ul>
@@ -58,9 +58,9 @@
             <aside class="control-sidebar panel">
                 <section class="control-context">
                     <div class="context-badges">
-                        <span class="context-badge {{ environment == 'test' ? 'context-badge-test' : 'context-badge-prod' }}">
+                        <span class="context-badge {{ environment == 'test' or environment == 'test3' ? 'context-badge-test' : 'context-badge-prod' }}">
                             <i class="fas fa-globe"></i>
-                            {{ environment == 'test' ? 'TEST' : 'PROD' }}
+                            {{ environment == 'test' ? 'TEST' : (environment == 'test3' ? 'TEST3' : 'PROD') }}
                         </span>
                         <span class="context-badge">
                             <i class="fas fa-code-branch"></i>
@@ -411,7 +411,7 @@
             <section class="quick-actions panel">
                 <h3><i class="fas fa-bolt"></i> Actions rapides</h3>
                 <div class="quick-actions-grid">
-                    <a href="/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}" class="quick-action-card">
+                    <a href="/ffp3/aquaponie{{ environment == 'test' ? '-test' : (environment == 'test3' ? '3-test' : '') }}" class="quick-action-card">
                         <i class="fas fa-chart-line"></i>
                         <span>Retour aux données</span>
                     </a>
@@ -439,10 +439,10 @@
                 const valuesUpdater = new ControlValuesUpdater();
                 valuesUpdater.init();
 
-                const controlApiBase = '{{ environment == "test" ? "/ffp3/api/outputs-test" : "/ffp3/api/outputs" }}';
+                const controlApiBase = '{{ environment == "test" ? "/ffp3/api/outputs-test" : (environment == "test3" ? "/ffp3/api/outputs3-test" : "/ffp3/api/outputs") }}';
                 const controlSync = new ControlSync({
                     apiBase: controlApiBase,
-                    pollInterval: {{ environment == 'test' ? 6 : 10 }},
+                    pollInterval: {{ environment == 'test' or environment == 'test3' ? 6 : 10 }},
                     maxRetries: 5,
                     useFresh: true,
                     onStatesReceived: function(states) {
@@ -458,7 +458,7 @@
                 window.controlSync = controlSync;
                 window.controlValuesUpdater = valuesUpdater;
 
-                const realtimeApiBase = '{{ environment == "test" ? "/ffp3/api/realtime-test" : "/ffp3/api/realtime" }}';
+                const realtimeApiBase = '{{ environment == "test" ? "/ffp3/api/realtime-test" : (environment == "test3" ? "/ffp3/api/realtime3-test" : "/ffp3/api/realtime") }}';
                 initRealtimeUpdater({
                     apiBasePath: realtimeApiBase,
                     pollInterval: 15000,

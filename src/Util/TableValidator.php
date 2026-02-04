@@ -12,10 +12,10 @@ namespace App\Util;
 class TableValidator
 {
     /** Tables de données capteurs autorisées */
-    public const DATA_TABLES = ['ffp3Data', 'ffp3Data2'];
+    public const DATA_TABLES = ['ffp3Data', 'ffp3Data2', 'ffp3Data3'];
 
     /** Tables d'outputs (GPIO) autorisées */
-    public const OUTPUT_TABLES = ['ffp3Outputs', 'ffp3Outputs2'];
+    public const OUTPUT_TABLES = ['ffp3Outputs', 'ffp3Outputs2', 'ffp3Outputs3'];
 
     /** Tables de boards autorisées */
     public const BOARD_TABLES = ['ffp3Boards', 'ffp3Boards2'];

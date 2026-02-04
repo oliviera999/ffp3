@@ -179,6 +179,47 @@ $app->group('', function ($group) {
 })->add(new EnvironmentMiddleware('test'));
 
 // ====================================================================
+// Groupe de routes TEST3 (avec middleware EnvironmentMiddleware)
+// ====================================================================
+$app->group('', function ($group) {
+    // Dashboard TEST3
+    $group->get('/dashboard3-test', [DashboardController::class, 'show']);
+
+    // Page aquaponie TEST3
+    $group->map(['GET', 'POST'], '/aquaponie3-test', [AquaponieController::class, 'show']);
+
+    // Post data TEST3
+    $group->post('/post-data3-test', [PostDataController::class, 'handle']);
+
+    // Statistiques marées TEST3
+    $group->map(['GET', 'POST'], '/tide-stats3-test', [TideStatsController::class, 'show']);
+
+    // Export CSV TEST3
+    $group->get('/export-data3-test', [ExportController::class, 'downloadCsv']);
+
+    // Interface de contrôle TEST3
+    $group->get('/control3-test', [OutputController::class, 'showInterface']);
+    $group->get('/api/outputs3-test/toggle', [OutputController::class, 'toggleOutputTest3']);
+    $group->get('/api/outputs3-test/state', [OutputController::class, 'getOutputsState']);
+    $group->post('/api/outputs3-test/parameters', [OutputController::class, 'updateParameters']);
+    $group->get('/api/outputs3-test/board/{board}/status', [OutputController::class, 'getBoardStatus']);
+
+    // API Temps Réel TEST3
+    $group->get('/api/realtime3-test/sensors/latest', [RealtimeApiController::class, 'getLatestSensors']);
+    $group->get('/api/realtime3-test/sensors/since/{timestamp}', [RealtimeApiController::class, 'getSensorsSince']);
+    $group->get('/api/realtime3-test/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
+    $group->get('/api/realtime3-test/system/health', [RealtimeApiController::class, 'getSystemHealth']);
+    $group->get('/api/realtime3-test/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
+
+    // Administration - Gestion du cache TEST3
+    $group->get('/admin/clear-cache3-test', [CacheController::class, 'clearCache']);
+    $group->get('/admin/clear-cache-page3-test', [CacheController::class, 'clearCachePage']);
+
+    // Heartbeat ESP32 TEST3
+    $group->post('/heartbeat3-test', [HeartbeatController::class, 'handle']);
+})->add(new EnvironmentMiddleware('test3'));
+
+// ====================================================================
 // Fichiers statiques GLOBAUX (disponibles pour PROD et TEST)
 // ====================================================================
 // Ces routes sont partagées entre les deux environnements pour éviter les conflits

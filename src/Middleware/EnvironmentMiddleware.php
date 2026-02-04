@@ -20,12 +20,12 @@ class EnvironmentMiddleware implements MiddlewareInterface
     private string $environment;
 
     /**
-     * @param string $environment 'prod' ou 'test'
+     * @param string $environment 'prod', 'test' ou 'test3'
      */
     public function __construct(string $environment)
     {
-        if (!in_array($environment, ['prod', 'test'], true)) {
-            throw new \InvalidArgumentException("Environment must be 'prod' or 'test', got: {$environment}");
+        if (!in_array($environment, ['prod', 'test', 'test3'], true)) {
+            throw new \InvalidArgumentException("Environment must be 'prod', 'test' or 'test3', got: {$environment}");
         }
         
         $this->environment = $environment;

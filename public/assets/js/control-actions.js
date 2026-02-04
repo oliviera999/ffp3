@@ -54,8 +54,10 @@ class ControlActions {
     }
 
     async sendToggleRequest(payload, element) {
-        const isTestEnv = document.body?.dataset?.environment === 'test';
-        const endpoint = isTestEnv ? '/ffp3/api/outputs-test/toggle' : `${this.apiBase}/toggle`;
+        const env = document.body?.dataset?.environment || 'prod';
+        const endpoint = env === 'test' ? '/ffp3/api/outputs-test/toggle'
+            : env === 'test3' ? '/ffp3/api/outputs3-test/toggle'
+            : `${this.apiBase}/toggle`;
         element.disabled = true;
         element.closest('.action-card')?.classList.add('is-updating');
 

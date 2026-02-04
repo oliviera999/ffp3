@@ -279,7 +279,7 @@
         <nav id="nav">
             <ul class="links">
                 <li><a href="https://iot.olution.info/ffp3/">Accueil</a></li>
-                <li class="active"><a href="https://iot.olution.info/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}">L'aquaponie (FFP3)</a></li>
+                <li class="active"><a href="https://iot.olution.info/ffp3/aquaponie{{ environment == 'test' ? '-test' : (environment == 'test3' ? '3-test' : '') }}">L'aquaponie (FFP3)</a></li>
                 <li><a href="https://iot.olution.info/msp1/msp1datas/msp1-data.php">Le potager</a></li>
                 <li><a href="https://iot.olution.info/n3pp/n3ppdatas/n3pp-data.php">L'élevage d'insectes</a></li>
             </ul>
@@ -314,13 +314,13 @@
                 </div>
 
                 <div class="context-badges">
-                    <span class="context-badge {{ environment == 'test' ? 'context-badge-test' : 'context-badge-prod' }}">
+                    <span class="context-badge {{ environment == 'test' or environment == 'test3' ? 'context-badge-test' : 'context-badge-prod' }}">
                         <i class="fas fa-globe"></i>
-                        <span>{{ environment == 'test' ? 'Environnement : TEST' : 'Environnement : PROD' }}</span>
+                        <span>{{ environment == 'test' ? 'Environnement : TEST' : (environment == 'test3' ? 'Environnement : TEST3' : 'Environnement : PROD') }}</span>
                     </span>
                     <span class="context-badge">
                         <i class="fas fa-database"></i>
-                        <span>Source : Table {{ environment == 'test' ? 'ffp3Data2' : 'ffp3Data' }}</span>
+                        <span>Source : Table {{ environment == 'test' ? 'ffp3Data2' : (environment == 'test3' ? 'ffp3Data3' : 'ffp3Data') }}</span>
                     </span>
                     <span class="context-badge">
                         <i class="fas fa-microchip"></i>
@@ -333,17 +333,17 @@
                 </div>
 
                 <div class="quick-links-grid">
-                    <a class="quick-link-card" href="https://iot.olution.info/ffp3/aquaponie{{ environment == 'test' ? '-test' : '' }}">
+                    <a class="quick-link-card" href="https://iot.olution.info/ffp3/aquaponie{{ environment == 'test' ? '-test' : (environment == 'test3' ? '3-test' : '') }}">
                         <i class="fas fa-water"></i>
                         <span class="quick-link-title">Vue Aquaponie</span>
                         <span class="quick-link-description">Graphiques en direct, filtres de période et indicateurs hydriques.</span>
                     </a>
-                    <a class="quick-link-card" href="https://iot.olution.info/ffp3/control{{ environment == 'test' ? '-test' : '' }}">
+                    <a class="quick-link-card" href="https://iot.olution.info/ffp3/control{{ environment == 'test' ? '-test' : (environment == 'test3' ? '3-test' : '') }}">
                         <i class="fas fa-sliders-h"></i>
                         <span class="quick-link-title">Contrôle des actionneurs</span>
                         <span class="quick-link-description">Pilotez les pompes et vérifiez la synchronisation ESP32.</span>
                     </a>
-                    <a class="quick-link-card" href="https://iot.olution.info/ffp3/post-data{{ environment == 'test' ? '-test' : '' }}">
+                    <a class="quick-link-card" href="https://iot.olution.info/ffp3/post-data{{ environment == 'test' ? '-test' : (environment == 'test3' ? '3-test' : '') }}">
                         <i class="fas fa-satellite-dish"></i>
                         <span class="quick-link-title">Diagnostics API</span>
                         <span class="quick-link-description">Surveillez les signatures HMAC, la latence et la santé des endpoints.</span>
@@ -550,7 +550,7 @@
             window.statsUpdater = statsUpdater;
             
             // Utiliser le bon path API selon l'environnement
-            const apiBasePath = '{{ environment == "test" ? "/ffp3/api/realtime-test" : "/ffp3/api/realtime" }}';
+            const apiBasePath = '{{ environment == "test" ? "/ffp3/api/realtime-test" : (environment == "test3" ? "/ffp3/api/realtime3-test" : "/ffp3/api/realtime") }}';
             
             // Démarrer le polling automatique (15 secondes) - la variable est globale via realtime-updater.js
             initRealtimeUpdater({
