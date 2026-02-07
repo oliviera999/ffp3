@@ -220,6 +220,47 @@ $app->group('', function ($group) {
 })->add(new EnvironmentMiddleware('test3'));
 
 // ====================================================================
+// Groupe de routes S3 prod (aquaponie3, control3 - tables 4, board 5)
+// ====================================================================
+$app->group('', function ($group) {
+    // Dashboard S3
+    $group->get('/dashboard3', [DashboardController::class, 'show']);
+
+    // Page aquaponie S3
+    $group->map(['GET', 'POST'], '/aquaponie3', [AquaponieController::class, 'show']);
+
+    // Post data S3
+    $group->post('/post-data3', [PostDataController::class, 'handle']);
+
+    // Statistiques marées S3
+    $group->map(['GET', 'POST'], '/tide-stats3', [TideStatsController::class, 'show']);
+
+    // Export CSV S3
+    $group->get('/export-data3', [ExportController::class, 'downloadCsv']);
+
+    // Interface de contrôle S3
+    $group->get('/control3', [OutputController::class, 'showInterface']);
+    $group->get('/api/outputs3/toggle', [OutputController::class, 'toggleOutputS3']);
+    $group->get('/api/outputs3/state', [OutputController::class, 'getOutputsState']);
+    $group->post('/api/outputs3/parameters', [OutputController::class, 'updateParameters']);
+    $group->get('/api/outputs3/board/{board}/status', [OutputController::class, 'getBoardStatus']);
+
+    // API Temps Réel S3
+    $group->get('/api/realtime3/sensors/latest', [RealtimeApiController::class, 'getLatestSensors']);
+    $group->get('/api/realtime3/sensors/since/{timestamp}', [RealtimeApiController::class, 'getSensorsSince']);
+    $group->get('/api/realtime3/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
+    $group->get('/api/realtime3/system/health', [RealtimeApiController::class, 'getSystemHealth']);
+    $group->get('/api/realtime3/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
+
+    // Administration - Gestion du cache S3
+    $group->get('/admin/clear-cache3', [CacheController::class, 'clearCache']);
+    $group->get('/admin/clear-cache-page3', [CacheController::class, 'clearCachePage']);
+
+    // Heartbeat ESP32 S3
+    $group->post('/heartbeat3', [HeartbeatController::class, 'handle']);
+})->add(new EnvironmentMiddleware('s3'));
+
+// ====================================================================
 // Fichiers statiques GLOBAUX (disponibles pour PROD et TEST)
 // ====================================================================
 // Ces routes sont partagées entre les deux environnements pour éviter les conflits

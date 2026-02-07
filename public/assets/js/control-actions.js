@@ -57,6 +57,7 @@ class ControlActions {
         const env = document.body?.dataset?.environment || 'prod';
         const endpoint = env === 'test' ? '/ffp3/api/outputs-test/toggle'
             : env === 'test3' ? '/ffp3/api/outputs3-test/toggle'
+            : env === 's3' ? '/ffp3/api/outputs3/toggle'
             : `${this.apiBase}/toggle`;
         element.disabled = true;
         element.closest('.action-card')?.classList.add('is-updating');

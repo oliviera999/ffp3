@@ -2,6 +2,7 @@
     const env = document.body?.dataset?.environment || 'prod';
     const API_BASE = env === 'test' ? '/ffp3/api/outputs-test'
         : env === 'test3' ? '/ffp3/api/outputs3-test'
+        : env === 's3' ? '/ffp3/api/outputs3'
         : '/ffp3/api/outputs';
     const PARAM_ENDPOINT = `${API_BASE}/parameters`;
 

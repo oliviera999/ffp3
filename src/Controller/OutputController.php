@@ -138,6 +138,12 @@ class OutputController
         return $this->handleToggle($request, $response);
     }
 
+    public function toggleOutputS3(Request $request, Response $response): Response
+    {
+        \App\Config\TableConfig::setEnvironment('s3');
+        return $this->handleToggle($request, $response);
+    }
+
     private function handleToggle(Request $request, Response $response): Response
     {
         $params = RequestHelper::extractParams($request);
