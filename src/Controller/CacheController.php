@@ -13,24 +13,11 @@ class CacheController
     /**
      * Vide les caches Twig et DI Container
      * 
-     * Route: GET /admin/clear-cache?token=XXXXX
-     * Token obligatoire (ADMIN_CACHE_TOKEN dans .env)
+     * Route: GET /admin/clear-cache
+     * Protection par middleware d'authentification ($applyAuth)
      */
     public function clearCache(Request $request, Response $response): Response
     {
-        // Protection par token (obligatoire)
-        $providedToken = $request->getQueryParams()['token'] ?? '';
-        $adminToken = $_ENV['ADMIN_CACHE_TOKEN'] ?? '';
-        
-        // Le token est obligatoire et doit être défini dans .env
-        if (empty($adminToken) || !hash_equals($adminToken, $providedToken)) {
-            return ResponseHelper::error(
-                $response, 
-                'Token invalide ou manquant. Utilisez ?token=XXXXX', 
-                403
-            );
-        }
-
         $projectRoot = dirname(__DIR__, 2);
         $cacheDirs = [
             $projectRoot . '/var/cache/twig',
@@ -102,19 +89,10 @@ class CacheController
      * Affiche une page HTML simple pour vider le cache
      * 
      * Route: GET /admin/clear-cache-page
+     * Protection par middleware d'authentification ($applyAuth)
      */
     public function clearCachePage(Request $request, Response $response): Response
     {
-        // Protection par token (obligatoire)
-        $providedToken = $request->getQueryParams()['token'] ?? '';
-        $adminToken = $_ENV['ADMIN_CACHE_TOKEN'] ?? '';
-        
-        // Vérification du token avec hash_equals pour éviter les timing attacks
-        if (empty($adminToken) || !hash_equals($adminToken, $providedToken)) {
-            $response->getBody()->write('<h1>403 - Accès refusé</h1><p>Token invalide ou manquant.</p>');
-            return $response->withStatus(403)->withHeader('Content-Type', 'text/html; charset=utf-8');
-        }
-        
         $html = <<<'HTML'
 <!DOCTYPE html>
 <html lang="fr">

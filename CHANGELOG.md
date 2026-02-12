@@ -7,6 +7,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.52] - 2026-02-12
+
+### 🐛 Correction - Authentification des pages d'administration
+- **Problème** : Les pages `/admin/*` retournaient un 403 avec "Token invalide ou manquant" au lieu de rediriger vers `/login`
+- **Cause** : Le `CacheController` avait sa propre vérification de token `ADMIN_CACHE_TOKEN` qui contournait le système d'authentification normal
+- **Correction** : Suppression de la vérification de token dans `CacheController::clearCache()` et `CacheController::clearCachePage()`
+- **Résultat** : Les pages `/admin/*` utilisent maintenant le middleware d'authentification `$applyAuth` et redirigent correctement vers `/login` si non authentifié
+- **Fichiers modifiés** : `src/Controller/CacheController.php`
+- **Note** : La route `/control` est correctement définie et accessible après authentification via `/ffp3/control` (avec le basePath)
+
+---
+
 ## [4.9.51] - 2026-02-12
 
 ### 🔓 Accessibilité - Pages aquaponie et accueil rendues publiques
