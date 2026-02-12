@@ -7,6 +7,17 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.53] - 2026-02-12
+
+### 🔗 Amélioration - Lien Administration vers page Supervision
+- **Modification** : Le lien "Administration" dans le footer de la page d'accueil pointe maintenant vers `/supervision` au lieu de `/admin/clear-cache-page`
+- **Raison** : La page `/supervision` est la page centrale qui liste toutes les pages du projet, y compris une section Administration complète
+- **Vérification** : La route `/supervision` est bien protégée par authentification (middleware `$applyAuth`)
+- **Fichiers modifiés** : `templates/home.twig`
+- **Note** : L'icône a été changée de `fa-broom` à `fa-cog` pour être cohérente avec la page de supervision
+
+---
+
 ## [4.9.52] - 2026-02-12
 
 ### 🐛 Correction - Authentification des pages d'administration
