@@ -7,6 +7,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.48] - 2026-02-12
+
+### 🐛 Correction - Création d'un index.php racine pour éviter l'arborescence Apache
+- **Problème** : Le lien "n3 iot datas" vers `https://iot.olution.info/ffp3/` affichait toujours l'arborescence Apache malgré les corrections précédentes
+- **Solution** :
+  - Création d'un fichier `index.php` à la racine qui inclut directement `public/index.php`
+  - Ajout de `DirectoryIndex index.php` dans `.htaccess` pour forcer Apache à utiliser index.php comme fichier par défaut
+  - Ajout de `Options -Indexes` pour désactiver l'affichage de l'arborescence
+- **Fichiers modifiés** : `index.php` (nouveau), `.htaccess`
+
+---
+
 ## [4.9.47] - 2026-02-12
 
 ### 🐛 Correction - Configuration Apache pour éviter l'affichage de l'arborescence
