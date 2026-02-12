@@ -461,8 +461,12 @@
                 flex-wrap: wrap;
                 gap: 12px;
                 justify-content: center;
-                margin: 25px auto 0;
+                margin: 0 auto;
                 max-width: 760px;
+            }
+
+            #footer .context-badges {
+                margin: 0 auto 15px;
             }
 
             .context-badge {
@@ -482,6 +486,14 @@
                 transition: transform 0.3s ease;
             }
 
+            /* Styles spécifiques pour les badges dans le footer (fond clair) */
+            #footer .context-badge {
+                background: rgba(0, 0, 0, 0.05);
+                color: #666;
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                backdrop-filter: none;
+            }
+
             .context-badge i {
                 font-size: 0.95em;
             }
@@ -498,6 +510,19 @@
             .context-badge-prod {
                 background: rgba(46, 213, 115, 0.25);
                 border-color: rgba(46, 213, 115, 0.45);
+            }
+
+            /* Styles spécifiques pour les badges test/prod dans le footer */
+            #footer .context-badge-test {
+                background: rgba(255, 159, 67, 0.15);
+                border-color: rgba(255, 159, 67, 0.3);
+                color: #cc6600;
+            }
+
+            #footer .context-badge-prod {
+                background: rgba(46, 213, 115, 0.15);
+                border-color: rgba(46, 213, 115, 0.3);
+                color: #2d8659;
             }
         </style>
     </head>
@@ -536,27 +561,6 @@
                         <p class="header-subtitle">
                             Supervision en direct des capteurs, pompes et indicateurs de la ferme aquaponique.
                         </p>
-
-                        <div class="context-badges">
-                            <span class="context-badge {{ environment == 'test' or environment == 'test3' ? 'context-badge-test' : 'context-badge-prod' }}">
-                                <i class="fas fa-globe"></i>
-                                {{ environment == 'test' ? 'Environnement test' : (environment == 'test3' ? 'Environnement test3' : (environment == 's3' ? 'Environnement S3' : 'Environnement production')) }}
-                            </span>
-                            <span class="context-badge">
-                                <i class="fas fa-database"></i>
-                                Table {{ environment == 'test' ? 'ffp3Data2' : (environment == 'test3' ? 'ffp3Data3' : (environment == 's3' ? 'ffp3Data4' : 'ffp3Data')) }}
-                            </span>
-                            <span class="context-badge">
-                                <i class="fas fa-code-branch"></i>
-                                {{ version }}
-                            </span>
-                            {% if firmware_version %}
-                            <span class="context-badge">
-                                <i class="fas fa-microchip"></i>
-                                Firmware ESP32 v{{ firmware_version }}
-                            </span>
-                            {% endif %}
-                        </div>
                     </div>
                 </div>
 
@@ -2968,9 +2972,30 @@
                 </article>
             </div>
             
-            <!-- Footer avec version -->
+            <!-- Footer avec badges (déplacés depuis le header) -->
             <footer id="footer" style="text-align: center; padding: 20px 0; color: #999; font-size: 0.9em;">
-                <p>{{ version }} | Firmware ESP32: v{{ firmware_version }} | Système d'aquaponie FFP3 | © 2025 olution</p>
+                <div class="context-badges">
+                    <span class="context-badge {{ environment == 'test' or environment == 'test3' ? 'context-badge-test' : 'context-badge-prod' }}">
+                        <i class="fas fa-globe"></i>
+                        {{ environment == 'test' ? 'Environnement test' : (environment == 'test3' ? 'Environnement test3' : (environment == 's3' ? 'Environnement S3' : 'Environnement production')) }}
+                    </span>
+                    <span class="context-badge">
+                        <i class="fas fa-database"></i>
+                        Table {{ environment == 'test' ? 'ffp3Data2' : (environment == 'test3' ? 'ffp3Data3' : (environment == 's3' ? 'ffp3Data4' : 'ffp3Data')) }}
+                    </span>
+                    <span class="context-badge">
+                        <i class="fas fa-code-branch"></i>
+                        {{ version }}
+                    </span>
+                    {% if firmware_version %}
+                    <span class="context-badge">
+                        <i class="fas fa-microchip"></i>
+                        Firmware ESP32 v{{ firmware_version }}
+                    </span>
+                    {% endif %}
+                </div>
+                <p style="margin-top: 15px;">Système d'aquaponie FFP3 | © 2025 olution</p>
+                <!-- DEBUG: Badges déplacés dans le footer le 2026-02-12 -->
             </footer>
         </div>
 

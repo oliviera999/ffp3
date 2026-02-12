@@ -49,10 +49,35 @@ foreach ($cacheDirs as $cacheDir) {
     }
 }
 
+// Vider l'opcache PHP si disponible
+echo "\n🔄 Tentative de vidage de l'OpCache PHP...\n";
+$opcacheCleared = false;
+$opcacheMessage = '';
+
+if (function_exists('opcache_reset')) {
+    if (opcache_get_status() && opcache_get_configuration()) {
+        if (opcache_reset()) {
+            $opcacheCleared = true;
+            $opcacheMessage = "✅ OpCache vidé avec succès\n";
+        } else {
+            $opcacheMessage = "⚠️  Échec du vidage de l'OpCache\n";
+        }
+    } else {
+        $opcacheMessage = "ℹ️  OpCache non activé\n";
+    }
+} else {
+    $opcacheMessage = "ℹ️  OpCache non disponible (fonction opcache_reset() absente)\n";
+}
+
+echo "   {$opcacheMessage}";
+
 echo "\n";
 
 if (empty($errors)) {
     echo "✅ Cache vidé avec succès ! ({$totalDeleted} fichier(s) au total)\n";
+    if ($opcacheCleared) {
+        echo "✅ OpCache également vidé\n";
+    }
     echo "ℹ️  Les caches seront régénérés automatiquement à la prochaine requête.\n\n";
     exit(0);
 } else {

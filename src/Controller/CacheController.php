@@ -77,6 +77,9 @@ class CacheController
             }
         }
 
+        // Vider l'opcache PHP si disponible
+        $opcacheStatus = $this->clearOpCache();
+        
         $success = empty($errors);
         
         // Réponse JSON
@@ -84,8 +87,10 @@ class CacheController
             'success' => $success,
             'total_deleted' => $totalDeleted,
             'results' => $results,
+            'opcache' => $opcacheStatus,
             'message' => $success 
-                ? "Cache vidé avec succès ! ({$totalDeleted} fichier(s) au total)"
+                ? "Cache vidé avec succès ! ({$totalDeleted} fichier(s) au total)" . 
+                  ($opcacheStatus['success'] ? " + Opcache vidé" : "")
                 : "Le cache a été partiellement vidé avec " . count($errors) . " erreur(s)",
             'errors' => $errors
         ];
@@ -243,13 +248,22 @@ class CacheController
                 
                 if (data.success) {
                     result.className = 'result success';
+                    let details = Object.entries(data.results).map(([dir, info]) => 
+                        `${dir}: ${info.message}`
+                    ).join('<br>');
+                    
+                    if (data.opcache) {
+                        details += '<br><br><strong>OpCache PHP:</strong><br>';
+                        details += data.opcache.available 
+                            ? (data.opcache.success ? '✅ ' : '⚠️ ') + data.opcache.message
+                            : 'ℹ️ ' + data.opcache.message;
+                    }
+                    
                     result.innerHTML = `
                         <h3>✅ ${data.message}</h3>
                         <div class="details">
                             <strong>Détails:</strong><br>
-                            ${Object.entries(data.results).map(([dir, info]) => 
-                                `${dir}: ${info.message}`
-                            ).join('<br>')}
+                            ${details}
                         </div>
                     `;
                 } else {
@@ -277,6 +291,44 @@ HTML;
 
         $response->getBody()->write($html);
         return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
+    }
+
+    /**
+     * Vide l'opcache PHP si disponible
+     * 
+     * @return array Statut du vidage de l'opcache
+     */
+    private function clearOpCache(): array
+    {
+        $result = [
+            'available' => false,
+            'success' => false,
+            'message' => ''
+        ];
+        
+        // Vérifier si opcache est disponible
+        if (!function_exists('opcache_reset')) {
+            $result['message'] = 'OpCache non disponible (fonction opcache_reset() absente)';
+            return $result;
+        }
+        
+        // Vérifier si opcache est activé
+        if (!opcache_get_status() || !opcache_get_configuration()) {
+            $result['message'] = 'OpCache non activé';
+            return $result;
+        }
+        
+        $result['available'] = true;
+        
+        // Vider l'opcache
+        if (opcache_reset()) {
+            $result['success'] = true;
+            $result['message'] = 'OpCache vidé avec succès';
+        } else {
+            $result['message'] = 'Échec du vidage de l\'OpCache';
+        }
+        
+        return $result;
     }
 
     /**
