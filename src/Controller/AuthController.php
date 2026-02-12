@@ -29,14 +29,35 @@ class AuthController
     }
 
     /**
+     * Récupère le basePath depuis la requête.
+     */
+    private function getBasePath(Request $request): string
+    {
+        $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+        
+        if (strpos($scriptName, '/public/index.php') !== false) {
+            // Accès via public/index.php : remonter de 2 niveaux depuis /public/
+            $basePath = dirname(dirname($scriptName));
+        } else {
+            // Accès via index.php racine : utiliser le répertoire de SCRIPT_NAME
+            $basePath = dirname($scriptName);
+        }
+        
+        return rtrim($basePath, '/');
+    }
+
+    /**
      * Affiche le formulaire de login.
      */
     public function showLogin(Request $request, Response $response): Response
     {
+        // Récupérer le basePath
+        $basePath = $this->getBasePath($request);
+        
         // Si déjà authentifié, rediriger vers la page demandée ou l'accueil
         if ($this->authService->isAuthenticated()) {
             $queryParams = $request->getQueryParams();
-            $redirectUrl = $queryParams['redirect'] ?? '/';
+            $redirectUrl = $queryParams['redirect'] ?? ($basePath !== '' ? $basePath : '') . '/';
             return $response
                 ->withStatus(302)
                 ->withHeader('Location', $redirectUrl);
@@ -44,12 +65,13 @@ class AuthController
 
         $queryParams = $request->getQueryParams();
         $error = $queryParams['error'] ?? null;
-        $redirect = $queryParams['redirect'] ?? '/';
+        $redirect = $queryParams['redirect'] ?? ($basePath !== '' ? $basePath : '') . '/';
 
         $html = $this->renderer->render('login.twig', [
             'page_title' => 'Connexion - Administration',
             'error' => $error,
             'redirect' => $redirect,
+            'base_path' => $basePath !== '' ? $basePath : '',
             'csrf_token' => $this->csrfService->getToken()
         ]);
 
@@ -62,27 +84,30 @@ class AuthController
      */
     public function handleLogin(Request $request, Response $response): Response
     {
+        // Récupérer le basePath
+        $basePath = $this->getBasePath($request);
+        
         // Vérifier le rate limiting
         if ($this->isRateLimited()) {
-            return $this->redirectToLogin($response, 'Trop de tentatives de connexion. Veuillez réessayer dans quelques minutes.');
+            return $this->redirectToLogin($response, $basePath, 'Trop de tentatives de connexion. Veuillez réessayer dans quelques minutes.');
         }
 
         $body = $request->getParsedBody();
         $username = $body['username'] ?? '';
         $password = $body['password'] ?? '';
-        $redirect = $body['redirect'] ?? '/';
+        $redirect = $body['redirect'] ?? ($basePath !== '' ? $basePath : '') . '/';
         $csrfToken = $body['_csrf_token'] ?? '';
 
         // Vérifier le token CSRF
         if (!$this->csrfService->validateToken($csrfToken)) {
             $this->recordLoginAttempt(false);
-            return $this->redirectToLogin($response, 'Erreur de sécurité. Veuillez réessayer.', $redirect);
+            return $this->redirectToLogin($response, $basePath, 'Erreur de sécurité. Veuillez réessayer.', $redirect);
         }
 
         // Vérifier les identifiants
         if (empty($username) || empty($password)) {
             $this->recordLoginAttempt(false);
-            return $this->redirectToLogin($response, 'Veuillez saisir un nom d\'utilisateur et un mot de passe.', $redirect);
+            return $this->redirectToLogin($response, $basePath, 'Veuillez saisir un nom d\'utilisateur et un mot de passe.', $redirect);
         }
 
         // Authentifier l'utilisateur
@@ -98,7 +123,7 @@ class AuthController
 
         // Échec de l'authentification
         $this->recordLoginAttempt(false);
-        return $this->redirectToLogin($response, 'Nom d\'utilisateur ou mot de passe incorrect.', $redirect);
+        return $this->redirectToLogin($response, $basePath, 'Nom d\'utilisateur ou mot de passe incorrect.', $redirect);
     }
 
     /**
@@ -108,17 +133,22 @@ class AuthController
     {
         $this->authService->logout();
         
+        // Récupérer le basePath
+        $basePath = $this->getBasePath($request);
+        $loginUrl = ($basePath !== '' ? $basePath : '') . '/login?message=' . urlencode('Vous avez été déconnecté.');
+        
         return $response
             ->withStatus(302)
-            ->withHeader('Location', '/login?message=Vous avez été déconnecté.');
+            ->withHeader('Location', $loginUrl);
     }
 
     /**
      * Redirige vers la page de login avec un message d'erreur.
      */
-    private function redirectToLogin(Response $response, string $error, string $redirect = '/'): Response
+    private function redirectToLogin(Response $response, string $basePath, string $error, string $redirect = '/'): Response
     {
-        $redirectUrl = '/login?error=' . urlencode($error) . '&redirect=' . urlencode($redirect);
+        $loginPath = rtrim($basePath, '/') . '/login';
+        $redirectUrl = $loginPath . '?error=' . urlencode($error) . '&redirect=' . urlencode($redirect);
         return $response
             ->withStatus(302)
             ->withHeader('Location', $redirectUrl);
