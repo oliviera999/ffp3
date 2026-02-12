@@ -467,6 +467,9 @@
 
             #footer .context-badges {
                 margin: 0 auto 15px;
+                flex-wrap: nowrap;
+                max-width: 100%;
+                padding: 0 15px;
             }
 
             .context-badge {
@@ -492,6 +495,31 @@
                 color: #666;
                 border: 1px solid rgba(0, 0, 0, 0.1);
                 backdrop-filter: none;
+                flex: 1;
+                min-width: 0;
+                justify-content: center;
+                padding: 8px 12px;
+            }
+
+            /* Adaptation responsive pour les badges du footer */
+            @media (max-width: 768px) {
+                #footer .context-badge {
+                    font-size: 0.75em;
+                    padding: 6px 8px;
+                    gap: 6px;
+                }
+                #footer .context-badge i {
+                    font-size: 0.9em;
+                }
+            }
+
+            @media (max-width: 480px) {
+                #footer .context-badge {
+                    font-size: 0.7em;
+                    padding: 5px 6px;
+                    gap: 4px;
+                    letter-spacing: 0.03em;
+                }
             }
 
             .context-badge i {
