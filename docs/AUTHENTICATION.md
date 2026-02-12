@@ -7,12 +7,13 @@ Ce document explique comment configurer et utiliser le système d'authentificati
 Le système d'authentification protège les pages suivantes :
 - Pages de contrôle : `/control`, `/control-test`, `/control3`, `/control3-test`
 - Pages d'administration : `/admin/*`
-- Dashboards : `/dashboard*`, `/aquaponie*`, `/supervision`, `/tide-stats*`
+- Dashboards : `/dashboard*`, `/supervision`, `/tide-stats*`
 - APIs sensibles : `/api/outputs/*`
 - Export de données : `/export-data*`
 
 **Pages publiques** (non protégées) :
 - `/` (page d'accueil)
+- Toutes les pages aquaponie : `/aquaponie`, `/aquaponie-test`, `/aquaponie3`, `/aquaponie3-test`
 - `/login`, `/logout` (routes d'authentification)
 - `/post-data*`, `/heartbeat*` (endpoints ESP32 - utilisent déjà HMAC/API_KEY)
 

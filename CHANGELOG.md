@@ -7,6 +7,22 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.51] - 2026-02-12
+
+### 🔓 Accessibilité - Pages aquaponie et accueil rendues publiques
+- **Modification** : Les pages aquaponie et la page d'accueil sont maintenant accessibles sans authentification
+- **Pages rendues publiques** :
+  - `/` (page d'accueil)
+  - `/aquaponie` (PROD)
+  - `/aquaponie-test` (TEST)
+  - `/aquaponie3-test` (TEST3)
+  - `/aquaponie3` (S3 PROD)
+- **Pages toujours protégées** : `/control*`, `/dashboard*`, `/supervision`, `/tide-stats*`, `/admin/*`, `/export-data*`, `/api/outputs/*`
+- **Fichiers modifiés** : `public/index.php`, `docs/AUTHENTICATION.md`
+- **Note** : Les pages aquaponie conservent le middleware `EnvironmentMiddleware` pour déterminer l'environnement approprié
+
+---
+
 ## [4.9.50] - 2026-02-12
 
 ### 🔒 Sécurité - Système d'authentification pour les pages d'administration

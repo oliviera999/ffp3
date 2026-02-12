@@ -106,26 +106,48 @@ $applyAuth = function ($request, $handler) use ($container, $authMethod) {
 };
 
 // ====================================================================
+// Routes PUBLIQUES (pas d'authentification requise)
+// ====================================================================
+
+// Page d'accueil - PUBLIQUE
+$app->get('/', [HomeController::class, 'show']);
+$app->get('/index.html', function (Request $request, Response $response) {
+    return $response->withHeader('Location', '/ffp3/')->withStatus(301);
+});
+
+// Pages aquaponie - PUBLIQUES (avec middleware d'environnement mais sans authentification)
+// PRODUCTION
+$app->group('', function ($group) {
+    $group->map(['GET', 'POST'], '/aquaponie', [AquaponieController::class, 'show']);
+    $group->get('/ffp3-data', function (Request $request, Response $response) {
+        return $response->withHeader('Location', '/ffp3/aquaponie')->withStatus(301);
+    }); // Redirection legacy vers aquaponie
+})->add(new EnvironmentMiddleware('prod'));
+
+// TEST
+$app->group('', function ($group) {
+    $group->map(['GET', 'POST'], '/aquaponie-test', [AquaponieController::class, 'show']);
+})->add(new EnvironmentMiddleware('test'));
+
+// TEST3
+$app->group('', function ($group) {
+    $group->map(['GET', 'POST'], '/aquaponie3-test', [AquaponieController::class, 'show']);
+})->add(new EnvironmentMiddleware('test3'));
+
+// S3 PROD
+$app->group('', function ($group) {
+    $group->map(['GET', 'POST'], '/aquaponie3', [AquaponieController::class, 'show']);
+})->add(new EnvironmentMiddleware('s3'));
+
+// ====================================================================
 // Routes PRODUCTION (par défaut) - avec middleware pour forcer 'prod'
 // ====================================================================
 $app->group('', function ($group) {
-    // Page d'accueil
-    $group->get('/', [HomeController::class, 'show']);
-    $group->get('/index.html', function (Request $request, Response $response) {
-        return $response->withHeader('Location', '/ffp3/')->withStatus(301);
-    });
-
     // Page de supervision (liens vers toutes les pages) - PROTÉGÉE
     $group->get('/supervision', [SupervisionController::class, 'show']);
 
     // Dashboard - PROTÉGÉ
     $group->get('/dashboard', [DashboardController::class, 'show']);
-
-    // Page aquaponie - PROTÉGÉE
-    $group->map(['GET', 'POST'], '/aquaponie', [AquaponieController::class, 'show']);
-    $group->get('/ffp3-data', function (Request $request, Response $response) {
-        return $response->withHeader('Location', '/ffp3/aquaponie')->withStatus(301);
-    }); // Redirection legacy vers aquaponie
 
     // Post data depuis ESP32
     $group->post('/post-data', [PostDataController::class, 'handle']);
@@ -193,9 +215,6 @@ $app->group('', function ($group) {
     // Dashboard TEST - PROTÉGÉ
     $group->get('/dashboard-test', [DashboardController::class, 'show']);
     
-    // Page aquaponie TEST - PROTÉGÉE
-    $group->map(['GET', 'POST'], '/aquaponie-test', [AquaponieController::class, 'show']);
-    
     // Post data TEST (pas protégé - utilisé par ESP32)
     $group->post('/post-data-test', [PostDataController::class, 'handle']);
     
@@ -248,9 +267,6 @@ $app->group('', function ($group) {
     // Dashboard TEST3 - PROTÉGÉ
     $group->get('/dashboard3-test', [DashboardController::class, 'show']);
 
-    // Page aquaponie TEST3 - PROTÉGÉE
-    $group->map(['GET', 'POST'], '/aquaponie3-test', [AquaponieController::class, 'show']);
-
     // Post data TEST3 (pas protégé - utilisé par ESP32)
     $group->post('/post-data3-test', [PostDataController::class, 'handle']);
 
@@ -289,9 +305,6 @@ $app->group('', function ($group) {
 $app->group('', function ($group) {
     // Dashboard S3 - PROTÉGÉ
     $group->get('/dashboard3', [DashboardController::class, 'show']);
-
-    // Page aquaponie S3 - PROTÉGÉE
-    $group->map(['GET', 'POST'], '/aquaponie3', [AquaponieController::class, 'show']);
 
     // Post data S3 (pas protégé - utilisé par ESP32)
     $group->post('/post-data3', [PostDataController::class, 'handle']);
