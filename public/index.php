@@ -106,6 +106,94 @@ $applyAuth = function ($request, $handler) use ($container, $authMethod) {
 };
 
 // ====================================================================
+// Middleware global pour protéger les routes protégées avant le routage
+// ====================================================================
+// Ce middleware intercepte les requêtes vers les chemins protégés même si la route n'est pas trouvée
+$app->add(function (Request $request, $handler) use ($container, $authMethod) {
+    if ($authMethod === 'none' || empty($authMethod)) {
+        return $handler->handle($request);
+    }
+    
+    $uri = $request->getUri();
+    $path = $uri->getPath();
+    
+    // Liste des chemins protégés (doivent commencer par ces chemins)
+    $protectedPaths = [
+        '/control',
+        '/control-test',
+        '/control3',
+        '/control3-test',
+        '/dashboard',
+        '/dashboard-test',
+        '/dashboard3',
+        '/dashboard3-test',
+        '/supervision',
+        '/tide-stats',
+        '/tide-stats-test',
+        '/tide-stats3',
+        '/tide-stats3-test',
+        '/export-data',
+        '/export-data-test',
+        '/export-data3',
+        '/export-data3-test',
+        '/admin',
+        '/api/outputs',
+        '/api/outputs-test',
+        '/api/outputs3',
+        '/api/outputs3-test',
+        '/api/realtime',
+        '/api/realtime-test',
+        '/api/realtime3',
+        '/api/realtime3-test'
+    ];
+    
+    // Vérifier si le chemin demandé est protégé
+    $isProtected = false;
+    foreach ($protectedPaths as $protectedPath) {
+        if (strpos($path, $protectedPath) === 0) {
+            $isProtected = true;
+            break;
+        }
+    }
+    
+    // Si le chemin est protégé, vérifier l'authentification
+    if ($isProtected) {
+        $authService = $container->get(\App\Security\AuthService::class);
+        $isAuthenticated = false;
+        
+        if ($authMethod === 'session' || $authMethod === 'both') {
+            $isAuthenticated = $authService->isAuthenticated();
+        }
+        
+        if (!$isAuthenticated && ($authMethod === 'token' || $authMethod === 'both')) {
+            $queryParams = $request->getQueryParams();
+            $isAuthenticated = $authService->isAuthenticatedByToken($queryParams);
+        }
+        
+        // Si non authentifié, rediriger vers login
+        if (!$isAuthenticated) {
+            $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+            if (strpos($scriptName, '/public/index.php') !== false) {
+                $basePath = dirname(dirname($scriptName));
+            } else {
+                $basePath = dirname($scriptName);
+            }
+            $basePath = rtrim($basePath, '/');
+            
+            $loginPath = ($basePath !== '' ? $basePath : '') . '/login';
+            $redirectUrl = $loginPath . '?redirect=' . urlencode($path);
+            
+            $response = new \Slim\Psr7\Response();
+            return $response
+                ->withStatus(302)
+                ->withHeader('Location', $redirectUrl);
+        }
+    }
+    
+    return $handler->handle($request);
+});
+
+// ====================================================================
 // Routes PUBLIQUES (pas d'authentification requise)
 // ====================================================================
 

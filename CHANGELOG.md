@@ -7,6 +7,19 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.54] - 2026-02-12
+
+### 🐛 Correction - Middleware global pour protéger les routes avant le routage
+- **Problème** : Accès direct à `/control` retournait un 404 au lieu de rediriger vers `/login`
+- **Cause** : Le middleware d'authentification ne s'exécutait que si la route était trouvée, donc les 404 n'étaient pas interceptés
+- **Solution** : Ajout d'un middleware global qui intercepte toutes les requêtes vers les chemins protégés AVANT le routage
+- **Fonctionnalité** : Le middleware vérifie si le chemin demandé commence par un chemin protégé et redirige vers `/login` si non authentifié
+- **Chemins protégés** : `/control*`, `/dashboard*`, `/supervision`, `/tide-stats*`, `/export-data*`, `/admin/*`, `/api/outputs*`, `/api/realtime*` (toutes variantes test/test3/s3 incluses)
+- **Fichiers modifiés** : `public/index.php`
+- **Note** : Les routes publiques (`/aquaponie`, `/post-data`, etc.) ne sont pas affectées par ce middleware
+
+---
+
 ## [4.9.53] - 2026-02-12
 
 ### 🔗 Amélioration - Lien Administration vers page Supervision
