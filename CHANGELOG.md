@@ -7,6 +7,16 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.49] - 2026-02-12
+
+### 🐛 Correction - Calcul du basePath pour l'accès via index.php racine
+- **Problème** : Erreur 404 lors de l'accès à `/ffp3/` via le fichier `index.php` racine
+- **Cause** : Le calcul du `basePath` dans Slim ne fonctionnait pas correctement quand on accédait via `/ffp3/index.php` au lieu de `/ffp3/public/index.php`
+- **Correction** : Amélioration du calcul du `basePath` pour détecter correctement le chemin de base selon le point d'entrée utilisé (public/index.php ou index.php racine)
+- **Fichiers modifiés** : `public/index.php`
+
+---
+
 ## [4.9.48] - 2026-02-12
 
 ### 🐛 Correction - Création d'un index.php racine pour éviter l'arborescence Apache

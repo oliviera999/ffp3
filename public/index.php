@@ -34,8 +34,23 @@ AppFactory::setContainer($container);
 $app = AppFactory::create();
 
 // Forcer le chemin base pour être identique à l'ancien (dossier parent de /public)
-$basePath = str_replace('\\', '/', dirname(dirname($_SERVER['SCRIPT_NAME'])));
-if ($basePath !== '/' && $basePath !== '') {
+// Détection du basePath selon le point d'entrée utilisé
+$scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']);
+
+if (strpos($scriptName, '/public/index.php') !== false) {
+    // Accès via public/index.php : remonter de 2 niveaux depuis /public/
+    // Ex: /ffp3/public/index.php -> /ffp3
+    $basePath = dirname(dirname($scriptName));
+} else {
+    // Accès via index.php racine : utiliser le répertoire de SCRIPT_NAME
+    // Ex: /ffp3/index.php -> /ffp3
+    $basePath = dirname($scriptName);
+}
+
+// Normaliser le basePath (enlever les points et slashes multiples)
+$basePath = rtrim($basePath, '/');
+// Ne pas définir de basePath si c'est la racine du serveur
+if ($basePath !== '' && $basePath !== '/') {
     $app->setBasePath($basePath);
 }
 
