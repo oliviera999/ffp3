@@ -1,6 +1,3 @@
-# Désactiver l'affichage de l'arborescence des répertoires
-Options -Indexes
-
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
@@ -15,4 +12,10 @@ Options -Indexes
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule . index.php [L]
+</IfModule>
+
+# Désactiver l'affichage de l'arborescence des répertoires
+# (placé après mod_rewrite pour éviter les conflits)
+<IfModule mod_autoindex.c>
+    Options -Indexes
 </IfModule> 

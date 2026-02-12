@@ -7,6 +7,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.47] - 2026-02-12
+
+### 🐛 Correction - Configuration Apache pour éviter l'affichage de l'arborescence
+- **Problème** : Le lien "n3 iot datas" vers `https://iot.olution.info/ffp3/` affichait l'arborescence Apache au lieu de la page d'accueil
+- **Corrections** :
+  - Retrait de `Options -Indexes` du `.htaccess` racine (causait des erreurs 403)
+  - Déplacement de `Options -Indexes` dans `public/.htaccess` avec condition `<IfModule mod_autoindex.c>`
+  - Suppression de la règle problématique `RewriteRule ^ffp3/?$ public/index.php` (déjà gérée par le `.htaccess` dans `public/`)
+- **Fichiers modifiés** : `.htaccess`, `public/.htaccess`
+
+---
+
 ## [4.9.45] - 2026-02-02
 
 ### 🐛 Correction - Page de contrôle : prise en compte des changements issus du serveur distant

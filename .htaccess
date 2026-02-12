@@ -1,6 +1,3 @@
-# Désactiver l'affichage de l'arborescence des répertoires
-Options -Indexes
-
 # Activation du moteur de réécriture
 RewriteEngine On
 
@@ -19,12 +16,6 @@ RewriteRule ^export-data\.php$ /ffp3/export-data [R=308,L]
 
 # Ancienne page publique legacy → nouvelle route interne
 RewriteRule ^ffp3-data\.php$ /ffp3/aquaponie [R=308,L] 
-
-# -----------------------------------------------------------------------------
-# Forcer /ffp3/ (avec ou sans slash final) à passer par index.php
-# pour éviter l'affichage de l'arborescence Apache
-# -----------------------------------------------------------------------------
-RewriteRule ^ffp3/?$ public/index.php [L]
 
 # -----------------------------------------------------------------------------
 # Router générique : toute requête qui ne correspond pas à un fichier ou dossier
