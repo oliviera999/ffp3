@@ -140,3 +140,4 @@ class HeartbeatController
         return htmlspecialchars(trim(stripslashes($data)), ENT_QUOTES, 'UTF-8');
     }
 }
+

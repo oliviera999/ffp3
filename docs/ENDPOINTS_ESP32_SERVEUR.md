@@ -17,7 +17,7 @@ build_flags =
     -DPROFILE_TEST  ← Environnement TEST actif
 ```
 
-**Endpoints** (`include/project_config.h` lignes 60-68):
+**Endpoints** (`include/config.h` namespace `ServerConfig`):
 
 #### 1️⃣ POST Data (Envoi données capteurs + états)
 ```cpp
@@ -54,13 +54,18 @@ http://iot.olution.info/ffp3/api/outputs-test/state
 
 ## 🔄 Comparaison Environnements
 
-| Aspect | TEST (wroom-test) | PROD (wroom-prod) |
-|--------|-------------------|-------------------|
-| **Profil** | `PROFILE_TEST` | `PROFILE_PROD` |
-| **Endpoint POST** | `/ffp3/post-data-test` | `/ffp3/post-data` |
-| **Endpoint GET** | `/ffp3/api/outputs-test/state` | `/ffp3/api/outputs/state` |
-| **Table Data** | `ffp3Data2` | `ffp3Data` |
-| **Table Outputs** | `ffp3Outputs2` | `ffp3Outputs` |
+| Aspect | TEST (wroom-test) | TEST3 (wroom-s3-test) | PROD (wroom-prod) | S3 PROD (wroom-s3-prod) |
+|--------|-------------------|------------------------|-------------------|--------------------------|
+| **Profil** | `PROFILE_TEST` | `PROFILE_TEST` + `USE_TEST3_ENDPOINTS` | `PROFILE_PROD` | `BOARD_S3` + `PROFILE_PROD` |
+| **Endpoint POST** | `/ffp3/post-data-test` | `/ffp3/post-data3-test` | `/ffp3/post-data` | `/ffp3/post-data3` |
+| **Endpoint GET** | `/ffp3/api/outputs-test/state` | `/ffp3/api/outputs3-test/state` | `/ffp3/api/outputs/state` | `/ffp3/api/outputs3/state` |
+| **Endpoint Heartbeat** | `/ffp3/heartbeat-test` | `/ffp3/heartbeat3-test` | `/ffp3/heartbeat` | `/ffp3/heartbeat3` |
+| **Table Data** | `ffp3Data2` | `ffp3Data3` | `ffp3Data` | `ffp3Data4` |
+| **Table Outputs** | `ffp3Outputs2` | `ffp3Outputs3` | `ffp3Outputs` | `ffp3Outputs4` |
+| **Page contrôle** | `/control-test` | `/control3-test` | `/control` | `/control3` |
+| **Page aquaponie** | `/aquaponie-test` | `/aquaponie3-test` | `/aquaponie` | `/aquaponie3` |
+
+**S3 PROD** : Environnement dédié aux ESP32-S3 en production (`wroom-s3-prod`). Routes serveur sans suffixe `-test` (`post-data3`, `api/outputs3/state`, `heartbeat3`). Configuration firmware dans `include/config.h` (condition `BOARD_S3 && PROFILE_PROD`). Middleware serveur `EnvironmentMiddleware('s3')` → tables `ffp3Data4`, `ffp3Outputs4`, board `5`, `ffp3Heartbeat4`.
 
 ---
 
@@ -70,7 +75,7 @@ Le client ESP32 utilise un **timeout POST de 8 s** (dérogation à la règle pro
 
 - **PHP** : `PostDataController::handle()` appelle `set_time_limit(10)` au début de la requête (marge par rapport aux 8 s client).
 - **À vérifier sur l'hébergement** :
-  - `max_execution_time` (php.ini) ≥ 10 s pour les requêtes POST `/ffp3/post-data` et `/ffp3/post-data-test`.
+  - `max_execution_time` (php.ini) ≥ 10 s pour les requêtes POST `/ffp3/post-data`, `/ffp3/post-data-test`, `/ffp3/post-data3-test` et `/ffp3/post-data3`.
   - Nginx : `proxy_read_timeout` (et éventuellement `fastcgi_read_timeout`) ≥ 10 s.
   - Apache : `Timeout` et `ProxyTimeout` ≥ 10 s si reverse proxy vers PHP.
 - **Réduction de latence** : la route POST fait 1 INSERT (données capteurs) + 1 UPDATE groupé (états GPIO via `CASE gpio WHEN … THEN … END`) + 1 UPDATE (dernière requête board) + invalidation cache en mémoire, pour limiter le nombre d'allers-retours BDD.
@@ -83,10 +88,14 @@ Le client ESP32 utilise un **timeout POST de 8 s** (dérogation à la règle pro
 
 - **Page `/control` (PROD)** → toggle/paramètres → table **ffp3Outputs** (PROD).
 - **Page `/control-test` (TEST)** → toggle/paramètres → table **ffp3Outputs2** (TEST).
+- **Page `/control3-test` (TEST3, ex. ESP32-S3 test)** → toggle/paramètres → table **ffp3Outputs3** (TEST3).
+- **Page `/control3` (S3 PROD)** → toggle/paramètres → table **ffp3Outputs4** (S3 PROD).
 
 **Pour que l’ESP32 applique ces commandes**, il doit **lire la même table** en faisant un GET sur le **même environnement** :
 
 - Si vous pilotez depuis **control-test** : l’ESP32 doit faire `GET /ffp3/api/outputs-test/state` (table ffp3Outputs2).
+- Si vous pilotez depuis **control3-test** (profil wroom-s3-test) : l'ESP32 doit faire `GET /ffp3/api/outputs3-test/state` (table ffp3Outputs3).
+- Si vous pilotez depuis **control3** (profil wroom-s3-prod) : l’ESP32 doit faire `GET /ffp3/api/outputs3/state` (table ffp3Outputs4).
 - Si vous pilotez depuis **control** (prod) : l’ESP32 doit faire `GET /ffp3/api/outputs/state` (table ffp3Outputs).
 
 **À vérifier en priorité (côté ESP32)** :
@@ -100,7 +109,7 @@ Si l’URL de poll et la page de contrôle sont sur le même environnement (test
 
 ## 🔍 Diagnostic Erreur HTTP 500
 
-Si `/ffp3/post-data-test` ou `/ffp3/post-data` renvoie 500 :
+Si `/ffp3/post-data-test`, `/ffp3/post-data3-test`, `/ffp3/post-data3` ou `/ffp3/post-data` renvoie 500 :
 
 ### Possibilité 1: **Erreur PHP côté Slim**
 ```

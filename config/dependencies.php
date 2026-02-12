@@ -25,6 +25,7 @@ use App\Service\TideAnalysisService;
 use App\Service\WaterBalanceService;
 use App\Service\OutputSyncService;
 use App\Security\CsrfService;
+use App\Security\AuthService;
 use Psr\Container\ContainerInterface;
 
 return [
@@ -145,6 +146,10 @@ return [
         return new CsrfService();
     },
 
+    AuthService::class => function (ContainerInterface $c) {
+        return new AuthService();
+    },
+
     TemplateRenderer::class => function (ContainerInterface $c) {
         return new TemplateRenderer(
             __DIR__ . '/../templates',
@@ -251,6 +256,26 @@ return [
         return new \App\Middleware\ErrorHandlerMiddleware(
             $c->get(\App\Service\LogService::class),
             $c->get(\App\Service\ErrorAlertService::class)
+        );
+    },
+
+    \App\Middleware\AuthMiddleware::class => function (ContainerInterface $c) {
+        return new \App\Middleware\AuthMiddleware(
+            $c->get(\App\Security\AuthService::class)
+        );
+    },
+
+    \App\Middleware\TokenAuthMiddleware::class => function (ContainerInterface $c) {
+        return new \App\Middleware\TokenAuthMiddleware(
+            $c->get(\App\Security\AuthService::class)
+        );
+    },
+
+    \App\Controller\AuthController::class => function (ContainerInterface $c) {
+        return new \App\Controller\AuthController(
+            $c->get(\App\Security\AuthService::class),
+            $c->get(\App\Service\TemplateRenderer::class),
+            $c->get(\App\Security\CsrfService::class)
         );
     },
 ];

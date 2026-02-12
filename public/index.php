@@ -4,6 +4,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use App\Config\Env;
 use App\Controller\AquaponieController;
+use App\Controller\AuthController;
 use App\Controller\CacheController;
 use App\Controller\DashboardController;
 use App\Controller\ExportController;
@@ -14,7 +15,9 @@ use App\Controller\PostDataController;
 use App\Controller\RealtimeApiController;
 use App\Controller\SupervisionController;
 use App\Controller\TideStatsController;
+use App\Middleware\AuthMiddleware;
 use App\Middleware\EnvironmentMiddleware;
+use App\Middleware\TokenAuthMiddleware;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -60,6 +63,49 @@ if ($basePath !== '' && $basePath !== '/') {
 $app->add($container->get(\App\Middleware\ErrorHandlerMiddleware::class));
 
 // ====================================================================
+// Routes d'authentification (publiques - pas d'auth requise)
+// ====================================================================
+$app->get('/login', [AuthController::class, 'showLogin']);
+$app->post('/login', [AuthController::class, 'handleLogin']);
+$app->get('/logout', [AuthController::class, 'handleLogout']);
+
+// Déterminer la méthode d'authentification à utiliser
+Env::load();
+$authMethod = $_ENV['AUTH_METHOD'] ?? 'session'; // 'session', 'token', ou 'both'
+
+// Fonction helper pour appliquer l'authentification selon la méthode configurée
+$applyAuth = function ($request, $handler) use ($container, $authMethod) {
+    if ($authMethod === 'none' || empty($authMethod)) {
+        // Pas d'authentification si désactivée
+        return $handler->handle($request);
+    }
+    
+    $authMiddleware = $container->get(AuthMiddleware::class);
+    $tokenAuthMiddleware = $container->get(TokenAuthMiddleware::class);
+    $authService = $container->get(\App\Security\AuthService::class);
+    
+    if ($authMethod === 'session') {
+        return $authMiddleware->process($request, $handler);
+    } elseif ($authMethod === 'token') {
+        return $tokenAuthMiddleware->process($request, $handler);
+    } elseif ($authMethod === 'both') {
+        // Les deux méthodes : vérifier session d'abord, puis token si session échoue
+        if ($authService->isAuthenticated()) {
+            return $handler->handle($request);
+        }
+        // Si pas de session, essayer le token
+        $queryParams = $request->getQueryParams();
+        if ($authService->isAuthenticatedByToken($queryParams)) {
+            return $handler->handle($request);
+        }
+        // Aucune authentification valide, rediriger vers login
+        return $authMiddleware->process($request, $handler);
+    }
+    // Par défaut, utiliser l'authentification par session
+    return $authMiddleware->process($request, $handler);
+};
+
+// ====================================================================
 // Routes PRODUCTION (par défaut) - avec middleware pour forcer 'prod'
 // ====================================================================
 $app->group('', function ($group) {
@@ -69,13 +115,13 @@ $app->group('', function ($group) {
         return $response->withHeader('Location', '/ffp3/')->withStatus(301);
     });
 
-    // Page de supervision (liens vers toutes les pages)
+    // Page de supervision (liens vers toutes les pages) - PROTÉGÉE
     $group->get('/supervision', [SupervisionController::class, 'show']);
 
-    // Dashboard
+    // Dashboard - PROTÉGÉ
     $group->get('/dashboard', [DashboardController::class, 'show']);
 
-    // Page aquaponie
+    // Page aquaponie - PROTÉGÉE
     $group->map(['GET', 'POST'], '/aquaponie', [AquaponieController::class, 'show']);
     $group->get('/ffp3-data', function (Request $request, Response $response) {
         return $response->withHeader('Location', '/ffp3/aquaponie')->withStatus(301);
@@ -85,14 +131,14 @@ $app->group('', function ($group) {
     $group->post('/post-data', [PostDataController::class, 'handle']);
     $group->post('/post-ffp3-data.php', [PostDataController::class, 'handle']); // Alias legacy
 
-    // Export CSV
+    // Export CSV - PROTÉGÉ
     $group->get('/export-data', [ExportController::class, 'downloadCsv']);
     $group->get('/export-data.php', [ExportController::class, 'downloadCsv']); // Alias legacy
 
-    // Statistiques marées
+    // Statistiques marées - PROTÉGÉES
     $group->map(['GET', 'POST'], '/tide-stats', [TideStatsController::class, 'show']);
 
-    // Interface de contrôle PROD
+    // Interface de contrôle PROD - PROTÉGÉE
     $group->get('/control', [OutputController::class, 'showInterface']);
     $group->get('/api/outputs/toggle', [OutputController::class, 'toggleOutput']);
     $group->get('/api/outputs/toggle-test', [OutputController::class, 'toggleOutputTest']);
@@ -113,7 +159,7 @@ $app->group('', function ($group) {
     $group->get('/api/health', [RealtimeApiController::class, 'getSystemHealth']);
 
     // ====================================================================
-    // Administration - Gestion du cache PROD
+    // Administration - Gestion du cache PROD - PROTÉGÉE
     // ====================================================================
     $group->get('/admin/clear-cache', [CacheController::class, 'clearCache']);
     $group->get('/admin/clear-cache-page', [CacheController::class, 'clearCachePage']);
@@ -137,28 +183,29 @@ $app->group('', function ($group) {
         }
         return $response->withStatus(404);
     });
-})->add(new EnvironmentMiddleware('prod'));
+})->add(new EnvironmentMiddleware('prod'))
+  ->add($applyAuth);
 
 // ====================================================================
 // Groupe de routes TEST (avec middleware EnvironmentMiddleware)
 // ====================================================================
 $app->group('', function ($group) {
-    // Dashboard TEST
+    // Dashboard TEST - PROTÉGÉ
     $group->get('/dashboard-test', [DashboardController::class, 'show']);
     
-    // Page aquaponie TEST
+    // Page aquaponie TEST - PROTÉGÉE
     $group->map(['GET', 'POST'], '/aquaponie-test', [AquaponieController::class, 'show']);
     
-    // Post data TEST
+    // Post data TEST (pas protégé - utilisé par ESP32)
     $group->post('/post-data-test', [PostDataController::class, 'handle']);
     
-    // Statistiques marées TEST
+    // Statistiques marées TEST - PROTÉGÉES
     $group->map(['GET', 'POST'], '/tide-stats-test', [TideStatsController::class, 'show']);
     
-    // Export CSV TEST
+    // Export CSV TEST - PROTÉGÉ
     $group->get('/export-data-test', [ExportController::class, 'downloadCsv']);
     
-    // Interface de contrôle TEST
+    // Interface de contrôle TEST - PROTÉGÉE
     $group->get('/control-test', [OutputController::class, 'showInterface']);
     $group->get('/api/outputs-test/toggle', [OutputController::class, 'toggleOutputTest']);
     $group->get('/api/outputs-test/state', [OutputController::class, 'getOutputsState']);
@@ -177,12 +224,12 @@ $app->group('', function ($group) {
     $group->get('/api/realtime/system/health-test', [RealtimeApiController::class, 'getSystemHealth']);
     
     // ====================================================================
-    // Administration - Gestion du cache TEST
+    // Administration - Gestion du cache TEST - PROTÉGÉE
     // ====================================================================
     $group->get('/admin/clear-cache-test', [CacheController::class, 'clearCache']);
     $group->get('/admin/clear-cache-page-test', [CacheController::class, 'clearCachePage']);
     
-    // Heartbeat ESP32 TEST
+    // Heartbeat ESP32 TEST (pas protégé - utilisé par ESP32)
     $group->post('/heartbeat-test', [HeartbeatController::class, 'handle']);
     $group->post('/heartbeat-test.php', [HeartbeatController::class, 'handle']); // Alias legacy
     
@@ -191,28 +238,29 @@ $app->group('', function ($group) {
     // ====================================================================
     // Note: Les fichiers statiques sont gérés par le groupe global pour éviter les conflits de routes
     
-})->add(new EnvironmentMiddleware('test'));
+})->add(new EnvironmentMiddleware('test'))
+  ->add($applyAuth);
 
 // ====================================================================
 // Groupe de routes TEST3 (avec middleware EnvironmentMiddleware)
 // ====================================================================
 $app->group('', function ($group) {
-    // Dashboard TEST3
+    // Dashboard TEST3 - PROTÉGÉ
     $group->get('/dashboard3-test', [DashboardController::class, 'show']);
 
-    // Page aquaponie TEST3
+    // Page aquaponie TEST3 - PROTÉGÉE
     $group->map(['GET', 'POST'], '/aquaponie3-test', [AquaponieController::class, 'show']);
 
-    // Post data TEST3
+    // Post data TEST3 (pas protégé - utilisé par ESP32)
     $group->post('/post-data3-test', [PostDataController::class, 'handle']);
 
-    // Statistiques marées TEST3
+    // Statistiques marées TEST3 - PROTÉGÉES
     $group->map(['GET', 'POST'], '/tide-stats3-test', [TideStatsController::class, 'show']);
 
-    // Export CSV TEST3
+    // Export CSV TEST3 - PROTÉGÉ
     $group->get('/export-data3-test', [ExportController::class, 'downloadCsv']);
 
-    // Interface de contrôle TEST3
+    // Interface de contrôle TEST3 - PROTÉGÉE
     $group->get('/control3-test', [OutputController::class, 'showInterface']);
     $group->get('/api/outputs3-test/toggle', [OutputController::class, 'toggleOutputTest3']);
     $group->get('/api/outputs3-test/state', [OutputController::class, 'getOutputsState']);
@@ -226,34 +274,35 @@ $app->group('', function ($group) {
     $group->get('/api/realtime3-test/system/health', [RealtimeApiController::class, 'getSystemHealth']);
     $group->get('/api/realtime3-test/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
 
-    // Administration - Gestion du cache TEST3
+    // Administration - Gestion du cache TEST3 - PROTÉGÉE
     $group->get('/admin/clear-cache3-test', [CacheController::class, 'clearCache']);
     $group->get('/admin/clear-cache-page3-test', [CacheController::class, 'clearCachePage']);
 
-    // Heartbeat ESP32 TEST3
+    // Heartbeat ESP32 TEST3 (pas protégé - utilisé par ESP32)
     $group->post('/heartbeat3-test', [HeartbeatController::class, 'handle']);
-})->add(new EnvironmentMiddleware('test3'));
+})->add(new EnvironmentMiddleware('test3'))
+  ->add($applyAuth);
 
 // ====================================================================
 // Groupe de routes S3 prod (aquaponie3, control3 - tables 4, board 5)
 // ====================================================================
 $app->group('', function ($group) {
-    // Dashboard S3
+    // Dashboard S3 - PROTÉGÉ
     $group->get('/dashboard3', [DashboardController::class, 'show']);
 
-    // Page aquaponie S3
+    // Page aquaponie S3 - PROTÉGÉE
     $group->map(['GET', 'POST'], '/aquaponie3', [AquaponieController::class, 'show']);
 
-    // Post data S3
+    // Post data S3 (pas protégé - utilisé par ESP32)
     $group->post('/post-data3', [PostDataController::class, 'handle']);
 
-    // Statistiques marées S3
+    // Statistiques marées S3 - PROTÉGÉES
     $group->map(['GET', 'POST'], '/tide-stats3', [TideStatsController::class, 'show']);
 
-    // Export CSV S3
+    // Export CSV S3 - PROTÉGÉ
     $group->get('/export-data3', [ExportController::class, 'downloadCsv']);
 
-    // Interface de contrôle S3
+    // Interface de contrôle S3 - PROTÉGÉE
     $group->get('/control3', [OutputController::class, 'showInterface']);
     $group->get('/api/outputs3/toggle', [OutputController::class, 'toggleOutputS3']);
     $group->get('/api/outputs3/state', [OutputController::class, 'getOutputsState']);
@@ -267,13 +316,14 @@ $app->group('', function ($group) {
     $group->get('/api/realtime3/system/health', [RealtimeApiController::class, 'getSystemHealth']);
     $group->get('/api/realtime3/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
 
-    // Administration - Gestion du cache S3
+    // Administration - Gestion du cache S3 - PROTÉGÉE
     $group->get('/admin/clear-cache3', [CacheController::class, 'clearCache']);
     $group->get('/admin/clear-cache-page3', [CacheController::class, 'clearCachePage']);
 
-    // Heartbeat ESP32 S3
+    // Heartbeat ESP32 S3 (pas protégé - utilisé par ESP32)
     $group->post('/heartbeat3', [HeartbeatController::class, 'handle']);
-})->add(new EnvironmentMiddleware('s3'));
+})->add(new EnvironmentMiddleware('s3'))
+  ->add($applyAuth);
 
 // ====================================================================
 // Fichiers statiques GLOBAUX (disponibles pour PROD et TEST)
@@ -309,7 +359,8 @@ $app->get('/assets/css/{filename}', function (Request $request, Response $respon
     $allowedFiles = [
         'control-styles.css',
         'mobile-optimized.css',
-        'realtime-styles.css'
+        'realtime-styles.css',
+        'login-styles.css'
     ];
     
     if (!in_array($filename, $allowedFiles)) {

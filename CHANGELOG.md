@@ -7,6 +7,34 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.50] - 2026-02-12
+
+### 🔒 Sécurité - Système d'authentification pour les pages d'administration
+- **Ajout** : Implémentation complète d'un système d'authentification pour protéger les pages sensibles
+- **Fonctionnalités** :
+  - Authentification par session avec formulaire de login (recommandée)
+  - Authentification par token (URL ou cookie) pour usage simple
+  - Mode combiné (session + token) pour flexibilité maximale
+  - Rate limiting (5 tentatives / 15 min) pour protection contre brute force
+  - Protection CSRF sur le formulaire de login
+  - Sessions sécurisées (HttpOnly, Secure si HTTPS)
+  - Timeout de session (2 heures d'inactivité)
+- **Pages protégées** : `/control*`, `/dashboard*`, `/aquaponie*`, `/supervision`, `/tide-stats*`, `/admin/*`, `/export-data*`, `/api/outputs/*`
+- **Pages publiques** : `/` (accueil), `/login`, `/logout`, `/post-data*`, `/heartbeat*` (endpoints ESP32)
+- **Configuration** : Variables `AUTH_METHOD`, `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH`, `ADMIN_TOKEN` dans `.env`
+- **Fichiers créés** :
+  - `src/Security/AuthService.php` - Service d'authentification
+  - `src/Middleware/AuthMiddleware.php` - Middleware session
+  - `src/Middleware/TokenAuthMiddleware.php` - Middleware token
+  - `src/Controller/AuthController.php` - Contrôleur login/logout
+  - `templates/login.twig` - Page de login
+  - `public/assets/css/login-styles.css` - Styles login
+  - `tools/generate_password_hash.php` - Script helper pour générer hash
+  - `docs/AUTHENTICATION.md` - Documentation complète
+- **Fichiers modifiés** : `public/index.php`, `config/dependencies.php`, `env.dist`
+
+---
+
 ## [4.9.49] - 2026-02-12
 
 ### 🐛 Correction - Calcul du basePath pour l'accès via index.php racine
