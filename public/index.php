@@ -117,6 +117,41 @@ $app->add(function (Request $request, $handler) use ($container, $authMethod) {
     $uri = $request->getUri();
     $path = $uri->getPath();
     
+    // Liste des chemins publics (doivent commencer par ces chemins) - exclus de la protection
+    $publicPaths = [
+        '/api/realtime',           // API temps réel pour pages aquaponie publiques
+        '/api/realtime-test',
+        '/api/realtime3',
+        '/api/realtime3-test',
+        '/post-data',              // Endpoints firmware ESP32
+        '/post-data-test',
+        '/post-data3',
+        '/post-data3-test',
+        '/heartbeat',              // Heartbeat firmware ESP32
+        '/heartbeat-test',
+        '/heartbeat3',
+        '/heartbeat3-test'
+    ];
+    
+    // Vérifier si le chemin est public (GET /api/outputs*/state uniquement)
+    $isPublic = false;
+    foreach ($publicPaths as $publicPath) {
+        if (strpos($path, $publicPath) === 0) {
+            $isPublic = true;
+            break;
+        }
+    }
+    
+    // Les endpoints GET /api/outputs*/state sont publics (utilisés par firmware ESP32)
+    if (!$isPublic && preg_match('#^/api/outputs(-test|3-test|3)?/state$#', $path)) {
+        $isPublic = true;
+    }
+    
+    // Si le chemin est public, ne pas vérifier l'authentification
+    if ($isPublic) {
+        return $handler->handle($request);
+    }
+    
     // Liste des chemins protégés (doivent commencer par ces chemins)
     $protectedPaths = [
         '/control',
@@ -137,14 +172,10 @@ $app->add(function (Request $request, $handler) use ($container, $authMethod) {
         '/export-data3',
         '/export-data3-test',
         '/admin',
-        '/api/outputs',
+        '/api/outputs',            // Protégé sauf /state (géré ci-dessus)
         '/api/outputs-test',
         '/api/outputs3',
-        '/api/outputs3-test',
-        '/api/realtime',
-        '/api/realtime-test',
-        '/api/realtime3',
-        '/api/realtime3-test'
+        '/api/outputs3-test'
     ];
     
     // Vérifier si le chemin demandé est protégé
@@ -228,6 +259,84 @@ $app->group('', function ($group) {
 })->add(new EnvironmentMiddleware('s3'));
 
 // ====================================================================
+// Routes API PUBLIQUES (utilisées par pages aquaponie et firmware ESP32)
+// ====================================================================
+
+// API Temps Réel - PUBLIQUES (utilisées par pages aquaponie)
+// PRODUCTION
+$app->group('', function ($group) {
+    $group->get('/api/realtime/sensors/latest', [RealtimeApiController::class, 'getLatestSensors']);
+    $group->get('/api/realtime/sensors/since/{timestamp}', [RealtimeApiController::class, 'getSensorsSince']);
+    $group->get('/api/realtime/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
+    $group->get('/api/realtime/system/health', [RealtimeApiController::class, 'getSystemHealth']);
+    $group->get('/api/realtime/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
+    $group->get('/api/health', [RealtimeApiController::class, 'getSystemHealth']); // Alias
+})->add(new EnvironmentMiddleware('prod'));
+
+// TEST
+$app->group('', function ($group) {
+    $group->get('/api/realtime-test/sensors/latest', [RealtimeApiController::class, 'getLatestSensors']);
+    $group->get('/api/realtime-test/sensors/since/{timestamp}', [RealtimeApiController::class, 'getSensorsSince']);
+    $group->get('/api/realtime-test/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
+    $group->get('/api/realtime-test/system/health', [RealtimeApiController::class, 'getSystemHealth']);
+    $group->get('/api/realtime-test/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
+    $group->get('/api/health-test', [RealtimeApiController::class, 'getSystemHealth']); // Alias
+    $group->get('/api/realtime/system/health-test', [RealtimeApiController::class, 'getSystemHealth']); // Alias
+})->add(new EnvironmentMiddleware('test'));
+
+// TEST3
+$app->group('', function ($group) {
+    $group->get('/api/realtime3-test/sensors/latest', [RealtimeApiController::class, 'getLatestSensors']);
+    $group->get('/api/realtime3-test/sensors/since/{timestamp}', [RealtimeApiController::class, 'getSensorsSince']);
+    $group->get('/api/realtime3-test/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
+    $group->get('/api/realtime3-test/system/health', [RealtimeApiController::class, 'getSystemHealth']);
+    $group->get('/api/realtime3-test/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
+})->add(new EnvironmentMiddleware('test3'));
+
+// S3 PROD
+$app->group('', function ($group) {
+    $group->get('/api/realtime3/sensors/latest', [RealtimeApiController::class, 'getLatestSensors']);
+    $group->get('/api/realtime3/sensors/since/{timestamp}', [RealtimeApiController::class, 'getSensorsSince']);
+    $group->get('/api/realtime3/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
+    $group->get('/api/realtime3/system/health', [RealtimeApiController::class, 'getSystemHealth']);
+    $group->get('/api/realtime3/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
+})->add(new EnvironmentMiddleware('s3'));
+
+// Endpoints Firmware ESP32 - PUBLICS
+// PRODUCTION
+$app->group('', function ($group) {
+    $group->post('/post-data', [PostDataController::class, 'handle']);
+    $group->post('/post-ffp3-data.php', [PostDataController::class, 'handle']); // Alias legacy
+    $group->get('/api/outputs/state', [OutputController::class, 'getOutputsState']);
+    $group->post('/heartbeat', [HeartbeatController::class, 'handle']);
+    $group->post('/heartbeat.php', function (Request $request, Response $response) {
+        return $response->withHeader('Location', '/ffp3/heartbeat')->withStatus(301);
+    }); // Redirection legacy
+})->add(new EnvironmentMiddleware('prod'));
+
+// TEST
+$app->group('', function ($group) {
+    $group->post('/post-data-test', [PostDataController::class, 'handle']);
+    $group->get('/api/outputs-test/state', [OutputController::class, 'getOutputsState']);
+    $group->post('/heartbeat-test', [HeartbeatController::class, 'handle']);
+    $group->post('/heartbeat-test.php', [HeartbeatController::class, 'handle']); // Alias legacy
+})->add(new EnvironmentMiddleware('test'));
+
+// TEST3
+$app->group('', function ($group) {
+    $group->post('/post-data3-test', [PostDataController::class, 'handle']);
+    $group->get('/api/outputs3-test/state', [OutputController::class, 'getOutputsState']);
+    $group->post('/heartbeat3-test', [HeartbeatController::class, 'handle']);
+})->add(new EnvironmentMiddleware('test3'));
+
+// S3 PROD
+$app->group('', function ($group) {
+    $group->post('/post-data3', [PostDataController::class, 'handle']);
+    $group->get('/api/outputs3/state', [OutputController::class, 'getOutputsState']);
+    $group->post('/heartbeat3', [HeartbeatController::class, 'handle']);
+})->add(new EnvironmentMiddleware('s3'));
+
+// ====================================================================
 // Routes PRODUCTION (par défaut) - avec middleware pour forcer 'prod'
 // ====================================================================
 $app->group('', function ($group) {
@@ -236,10 +345,6 @@ $app->group('', function ($group) {
 
     // Dashboard - PROTÉGÉ
     $group->get('/dashboard', [DashboardController::class, 'show']);
-
-    // Post data depuis ESP32
-    $group->post('/post-data', [PostDataController::class, 'handle']);
-    $group->post('/post-ffp3-data.php', [PostDataController::class, 'handle']); // Alias legacy
 
     // Export CSV - PROTÉGÉ
     $group->get('/export-data', [ExportController::class, 'downloadCsv']);
@@ -252,35 +357,15 @@ $app->group('', function ($group) {
     $group->get('/control', [OutputController::class, 'showInterface']);
     $group->get('/api/outputs/toggle', [OutputController::class, 'toggleOutput']);
     $group->get('/api/outputs/toggle-test', [OutputController::class, 'toggleOutputTest']);
-    $group->get('/api/outputs/state', [OutputController::class, 'getOutputsState']);
+    // Note: /api/outputs/state est public (défini dans le groupe public ci-dessus)
     $group->post('/api/outputs/parameters', [OutputController::class, 'updateParameters']);
     $group->get('/api/outputs/board/{board}/status', [OutputController::class, 'getBoardStatus']);
-
-    // ====================================================================
-    // API Temps Réel PROD
-    // ====================================================================
-    $group->get('/api/realtime/sensors/latest', [RealtimeApiController::class, 'getLatestSensors']);
-    $group->get('/api/realtime/sensors/since/{timestamp}', [RealtimeApiController::class, 'getSensorsSince']);
-    $group->get('/api/realtime/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
-    $group->get('/api/realtime/system/health', [RealtimeApiController::class, 'getSystemHealth']);
-    $group->get('/api/realtime/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
-    
-    // Alias de compatibilité pour l'ancienne URL
-    $group->get('/api/health', [RealtimeApiController::class, 'getSystemHealth']);
 
     // ====================================================================
     // Administration - Gestion du cache PROD - PROTÉGÉE
     // ====================================================================
     $group->get('/admin/clear-cache', [CacheController::class, 'clearCache']);
     $group->get('/admin/clear-cache-page', [CacheController::class, 'clearCachePage']);
-
-    // ====================================================================
-    // Heartbeat ESP32 PROD
-    // ====================================================================
-    $group->post('/heartbeat', [HeartbeatController::class, 'handle']);
-    $group->post('/heartbeat.php', function (Request $request, Response $response) {
-        return $response->withHeader('Location', '/ffp3/heartbeat')->withStatus(301);
-    }); // Redirection legacy vers heartbeat
 
     // ====================================================================
     // Fichiers statiques PROD (fallback si serveur web ne les sert pas)
@@ -303,9 +388,6 @@ $app->group('', function ($group) {
     // Dashboard TEST - PROTÉGÉ
     $group->get('/dashboard-test', [DashboardController::class, 'show']);
     
-    // Post data TEST (pas protégé - utilisé par ESP32)
-    $group->post('/post-data-test', [PostDataController::class, 'handle']);
-    
     // Statistiques marées TEST - PROTÉGÉES
     $group->map(['GET', 'POST'], '/tide-stats-test', [TideStatsController::class, 'show']);
     
@@ -315,30 +397,15 @@ $app->group('', function ($group) {
     // Interface de contrôle TEST - PROTÉGÉE
     $group->get('/control-test', [OutputController::class, 'showInterface']);
     $group->get('/api/outputs-test/toggle', [OutputController::class, 'toggleOutputTest']);
-    $group->get('/api/outputs-test/state', [OutputController::class, 'getOutputsState']);
+    // Note: /api/outputs-test/state est public (défini dans le groupe public ci-dessus)
     $group->post('/api/outputs-test/parameters', [OutputController::class, 'updateParameters']);
     $group->get('/api/outputs-test/board/{board}/status', [OutputController::class, 'getBoardStatus']);
-    
-    // API Temps Réel TEST
-    $group->get('/api/realtime-test/sensors/latest', [RealtimeApiController::class, 'getLatestSensors']);
-    $group->get('/api/realtime-test/sensors/since/{timestamp}', [RealtimeApiController::class, 'getSensorsSince']);
-    $group->get('/api/realtime-test/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
-    $group->get('/api/realtime-test/system/health', [RealtimeApiController::class, 'getSystemHealth']);
-    $group->get('/api/realtime-test/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
-    
-    // Alias de compatibilité pour l'ancienne URL TEST
-    $group->get('/api/health-test', [RealtimeApiController::class, 'getSystemHealth']);
-    $group->get('/api/realtime/system/health-test', [RealtimeApiController::class, 'getSystemHealth']);
     
     // ====================================================================
     // Administration - Gestion du cache TEST - PROTÉGÉE
     // ====================================================================
     $group->get('/admin/clear-cache-test', [CacheController::class, 'clearCache']);
     $group->get('/admin/clear-cache-page-test', [CacheController::class, 'clearCachePage']);
-    
-    // Heartbeat ESP32 TEST (pas protégé - utilisé par ESP32)
-    $group->post('/heartbeat-test', [HeartbeatController::class, 'handle']);
-    $group->post('/heartbeat-test.php', [HeartbeatController::class, 'handle']); // Alias legacy
     
     // ====================================================================
     // Fichiers statiques TEST (fallback si serveur web ne les sert pas)
@@ -355,9 +422,6 @@ $app->group('', function ($group) {
     // Dashboard TEST3 - PROTÉGÉ
     $group->get('/dashboard3-test', [DashboardController::class, 'show']);
 
-    // Post data TEST3 (pas protégé - utilisé par ESP32)
-    $group->post('/post-data3-test', [PostDataController::class, 'handle']);
-
     // Statistiques marées TEST3 - PROTÉGÉES
     $group->map(['GET', 'POST'], '/tide-stats3-test', [TideStatsController::class, 'show']);
 
@@ -367,23 +431,13 @@ $app->group('', function ($group) {
     // Interface de contrôle TEST3 - PROTÉGÉE
     $group->get('/control3-test', [OutputController::class, 'showInterface']);
     $group->get('/api/outputs3-test/toggle', [OutputController::class, 'toggleOutputTest3']);
-    $group->get('/api/outputs3-test/state', [OutputController::class, 'getOutputsState']);
+    // Note: /api/outputs3-test/state est public (défini dans le groupe public ci-dessus)
     $group->post('/api/outputs3-test/parameters', [OutputController::class, 'updateParameters']);
     $group->get('/api/outputs3-test/board/{board}/status', [OutputController::class, 'getBoardStatus']);
-
-    // API Temps Réel TEST3
-    $group->get('/api/realtime3-test/sensors/latest', [RealtimeApiController::class, 'getLatestSensors']);
-    $group->get('/api/realtime3-test/sensors/since/{timestamp}', [RealtimeApiController::class, 'getSensorsSince']);
-    $group->get('/api/realtime3-test/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
-    $group->get('/api/realtime3-test/system/health', [RealtimeApiController::class, 'getSystemHealth']);
-    $group->get('/api/realtime3-test/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
 
     // Administration - Gestion du cache TEST3 - PROTÉGÉE
     $group->get('/admin/clear-cache3-test', [CacheController::class, 'clearCache']);
     $group->get('/admin/clear-cache-page3-test', [CacheController::class, 'clearCachePage']);
-
-    // Heartbeat ESP32 TEST3 (pas protégé - utilisé par ESP32)
-    $group->post('/heartbeat3-test', [HeartbeatController::class, 'handle']);
 })->add(new EnvironmentMiddleware('test3'))
   ->add($applyAuth);
 
@@ -394,9 +448,6 @@ $app->group('', function ($group) {
     // Dashboard S3 - PROTÉGÉ
     $group->get('/dashboard3', [DashboardController::class, 'show']);
 
-    // Post data S3 (pas protégé - utilisé par ESP32)
-    $group->post('/post-data3', [PostDataController::class, 'handle']);
-
     // Statistiques marées S3 - PROTÉGÉES
     $group->map(['GET', 'POST'], '/tide-stats3', [TideStatsController::class, 'show']);
 
@@ -406,23 +457,13 @@ $app->group('', function ($group) {
     // Interface de contrôle S3 - PROTÉGÉE
     $group->get('/control3', [OutputController::class, 'showInterface']);
     $group->get('/api/outputs3/toggle', [OutputController::class, 'toggleOutputS3']);
-    $group->get('/api/outputs3/state', [OutputController::class, 'getOutputsState']);
+    // Note: /api/outputs3/state est public (défini dans le groupe public ci-dessus)
     $group->post('/api/outputs3/parameters', [OutputController::class, 'updateParameters']);
     $group->get('/api/outputs3/board/{board}/status', [OutputController::class, 'getBoardStatus']);
-
-    // API Temps Réel S3
-    $group->get('/api/realtime3/sensors/latest', [RealtimeApiController::class, 'getLatestSensors']);
-    $group->get('/api/realtime3/sensors/since/{timestamp}', [RealtimeApiController::class, 'getSensorsSince']);
-    $group->get('/api/realtime3/outputs/state', [RealtimeApiController::class, 'getOutputsState']);
-    $group->get('/api/realtime3/system/health', [RealtimeApiController::class, 'getSystemHealth']);
-    $group->get('/api/realtime3/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
 
     // Administration - Gestion du cache S3 - PROTÉGÉE
     $group->get('/admin/clear-cache3', [CacheController::class, 'clearCache']);
     $group->get('/admin/clear-cache-page3', [CacheController::class, 'clearCachePage']);
-
-    // Heartbeat ESP32 S3 (pas protégé - utilisé par ESP32)
-    $group->post('/heartbeat3', [HeartbeatController::class, 'handle']);
 })->add(new EnvironmentMiddleware('s3'))
   ->add($applyAuth);
 

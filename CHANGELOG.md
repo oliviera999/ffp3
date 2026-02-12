@@ -7,6 +7,29 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.55] - 2026-02-12
+
+### 🐛 Correction - Endpoints API bloqués par authentification
+- **Problème** : Les pages aquaponie publiques affichaient "réseau instable" et les POST/GET du firmware ESP32 ne fonctionnaient plus
+- **Cause** : Le middleware global d'authentification ajouté dans v4.9.54 bloquait tous les endpoints `/api/realtime*` et `/api/outputs*` même pour les routes publiques
+- **Solution** :
+  - Exclusion des endpoints publics du middleware global : `/api/realtime*`, `/post-data*`, `/api/outputs*/state` (GET uniquement), `/heartbeat*`
+  - Création de groupes de routes publiques pour ces endpoints dans tous les environnements (PROD, TEST, TEST3, S3)
+  - Suppression des routes dupliquées des groupes avec authentification
+- **Endpoints rendus publics** :
+  - `/api/realtime/*` (toutes variantes) - utilisés par les pages aquaponie publiques
+  - `/post-data*` (toutes variantes) - utilisés par le firmware ESP32
+  - `/api/outputs*/state` (GET uniquement) - utilisé par le firmware ESP32 pour récupérer les états
+  - `/heartbeat*` (toutes variantes) - utilisé par le firmware ESP32
+- **Endpoints restés protégés** :
+  - `/api/outputs*/toggle` - modification d'état (nécessite authentification)
+  - `/api/outputs*/parameters` - modification de paramètres (nécessite authentification)
+  - `/control*`, `/dashboard*`, `/supervision` - pages d'administration (nécessitent authentification)
+- **Fichiers modifiés** : `public/index.php`
+- **Note** : Les pages aquaponie peuvent maintenant accéder aux API temps réel sans authentification, et le firmware ESP32 peut envoyer/recevoir des données normalement
+
+---
+
 ## [4.9.54] - 2026-02-12
 
 ### 🐛 Correction - Middleware global pour protéger les routes avant le routage
