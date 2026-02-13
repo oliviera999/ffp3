@@ -74,7 +74,13 @@ class OutputCacheService
             isset(self::$cache[$env]) &&
             isset(self::$cacheTimestamp[$env]) &&
             ($now - self::$cacheTimestamp[$env]) < self::CACHE_TTL_SECONDS) {
-            return self::$cache[$env];
+            $cached = self::$cache[$env];
+            // Demande OTA : injecter triggerOtaCheck dans la réponse même en cas de cache hit (sinon l'ESP32 ne le reçoit jamais)
+            if (isset(self::$triggerOtaRequested[$env]) && self::$triggerOtaRequested[$env]) {
+                unset(self::$triggerOtaRequested[$env]);
+                $cached = $cached + ['triggerOtaCheck' => true];
+            }
+            return $cached;
         }
         
         // Requête BDD (cache expiré, inexistant, ou bypass demandé)
