@@ -7,6 +7,12 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.56] - 2026-02-12
+
+### Bump version
+
+---
+
 ## [4.9.55] - 2026-02-12
 
 ### 🐛 Correction - Endpoints API bloqués par authentification
