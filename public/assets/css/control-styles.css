@@ -1368,6 +1368,26 @@
             background: #fff5f4;
         }
 
+        .trigger-ota-btn {
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: 1px solid var(--control-primary);
+            background: var(--control-primary-muted);
+            color: var(--control-primary);
+            font-weight: 600;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: background var(--control-transition-fast), color var(--control-transition-fast);
+        }
+        .trigger-ota-btn:hover:not(:disabled) {
+            background: var(--control-primary);
+            color: #fff;
+        }
+        .trigger-ota-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .parameters-panel h3 {
             margin: 0 0 12px 0;
             font-size: 1.1em;

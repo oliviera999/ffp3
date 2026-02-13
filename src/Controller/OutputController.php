@@ -259,4 +259,17 @@ class OutputController
             return ResponseHelper::error($response, 'Internal server error', 500);
         }
     }
+
+    /**
+     * POST: Demande de vérification OTA pour l'environnement courant.
+     * Le prochain GET state renverra triggerOtaCheck: true à l'ESP32 une fois.
+     */
+    public function triggerOtaCheck(Request $request, Response $response): Response
+    {
+        $this->outputCache->setTriggerOtaCheckRequested();
+        return ResponseHelper::json($response, [
+            'ok' => true,
+            'message' => "Demande envoyée. L'ESP32 vérifiera la mise à jour au prochain cycle.",
+        ], 200);
+    }
 }

@@ -339,7 +339,7 @@
 
                         <article class="controls-column">
                             <header>
-                                <h2><i class="fas fa-envelope"></i> Notifications & Système</h2>
+                                <h2><i class="fas fa-envelope"></i> Notifications</h2>
                             </header>
                             <div class="control-cards-grid">
                                 {% set notificationOutputs = [] %}
@@ -366,7 +366,24 @@
                                         </footer>
                                     </article>
                                 {% endfor %}
+                            </div>
+                            <section class="parameters-panel">
+                                <h3>Configuration</h3>
+                                <div class="parameters-grid">
+                                    <label class="parameter-item">
+                                        <span>Email d'alerte</span>
+                                        <input type="email" name="mail" id="mail" data-parameter="mail" data-parameter-gpio="{{ parameter_gpio_map['mail'] }}" value="{{ params.mail|default('') }}" placeholder="email@exemple.com">
+                                        <small class="save-indicator" data-save-indicator data-parameter="mail" data-state="idle"></small>
+                                    </label>
+                                </div>
+                            </section>
+                        </article>
 
+                        <article class="controls-column">
+                            <header>
+                                <h2><i class="fas fa-cog"></i> Système</h2>
+                            </header>
+                            <div class="control-cards-grid">
                                 {% set systemOutputs = [] %}
                                 {% for output in outputs %}
                                     {% if output.gpio == 110 or output.gpio == 115 %}
@@ -379,7 +396,7 @@
                                             <div class="action-icon"><i class="fas {{ output.gpio == 110 ? 'fa-arrows-rotate' : 'fa-clock' }}"></i></div>
                                             <div>
                                                 <h3>{{ output.gpio == 110 ? 'Reset ESP' : 'Forçage réveil' }}</h3>
-                                        </div>
+                                            </div>
                                         </header>
                                         <p class="action-description">{{ output.gpio == 110 ? 'Redémarre le microcontrôleur. À utiliser en dernier recours.' : 'Force le réveil de l\'ESP32 pour envoyer toutes les mesures.' }}</p>
                                         <footer>
@@ -392,16 +409,22 @@
                                         </footer>
                                     </article>
                                 {% endfor %}
+                                <article class="action-card" data-action="trigger-ota">
+                                    <header>
+                                        <div class="action-icon"><i class="fas fa-download"></i></div>
+                                        <div>
+                                            <h3>Vérifier mise à jour firmware</h3>
+                                        </div>
+                                    </header>
+                                    <p class="action-description">Demande à l'ESP32 de vérifier si une mise à jour OTA est disponible au prochain cycle de synchronisation.</p>
+                                    <footer>
+                                        <button type="button" id="btn-trigger-ota" class="trigger-ota-btn" aria-label="Vérifier la mise à jour OTA">Vérifier OTA</button>
+                                    </footer>
+                                </article>
                             </div>
-
                             <section class="parameters-panel">
                                 <h3>Configuration</h3>
                                 <div class="parameters-grid">
-                                    <label class="parameter-item">
-                                        <span>Email d'alerte</span>
-                                        <input type="email" name="mail" id="mail" data-parameter="mail" data-parameter-gpio="{{ parameter_gpio_map['mail'] }}" value="{{ params.mail|default('') }}" placeholder="email@exemple.com">
-                                        <small class="save-indicator" data-save-indicator data-parameter="mail" data-state="idle"></small>
-                                    </label>
                                     <label class="parameter-item">
                                         <span>Temps de sommeil (s)</span>
                                         <input type="number" name="FreqWakeUp" min="0" id="FreqWakeUp" data-parameter="FreqWakeUp" data-parameter-gpio="{{ parameter_gpio_map['FreqWakeUp'] }}" value="{{ params.FreqWakeUp|default(0) }}">
@@ -470,6 +493,32 @@
                     pollInterval: 15000,
                     enabled: true
                 });
+
+                const btnOta = document.getElementById('btn-trigger-ota');
+                if (btnOta) {
+                    btnOta.addEventListener('click', async () => {
+                        btnOta.disabled = true;
+                        try {
+                            const res = await fetch(controlApiBase + '/trigger-ota-check', {
+                                method: 'POST',
+                                credentials: 'include',
+                                headers: { 'Accept': 'application/json' }
+                            });
+                            const data = res.ok ? await res.json().catch(() => ({})) : null;
+                            if (res.ok && typeof toastManager !== 'undefined') {
+                                toastManager.showSuccess(data?.message || 'Demande envoyée. L\'ESP32 vérifiera la mise à jour au prochain cycle.', 5000);
+                            } else if (!res.ok && typeof toastManager !== 'undefined') {
+                                toastManager.showError('Échec de la demande OTA', 5000);
+                            }
+                        } catch (e) {
+                            if (typeof toastManager !== 'undefined') {
+                                toastManager.showError('Erreur réseau', 5000);
+                            }
+                        } finally {
+                            btnOta.disabled = false;
+                        }
+                    });
+                }
             });
         </script>
 </body>

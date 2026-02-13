@@ -359,6 +359,7 @@ $app->group('', function ($group) {
     $group->get('/api/outputs/toggle-test', [OutputController::class, 'toggleOutputTest']);
     // Note: /api/outputs/state est public (défini dans le groupe public ci-dessus)
     $group->post('/api/outputs/parameters', [OutputController::class, 'updateParameters']);
+    $group->post('/api/outputs/trigger-ota-check', [OutputController::class, 'triggerOtaCheck']);
     $group->get('/api/outputs/board/{board}/status', [OutputController::class, 'getBoardStatus']);
 
     // ====================================================================
@@ -399,6 +400,7 @@ $app->group('', function ($group) {
     $group->get('/api/outputs-test/toggle', [OutputController::class, 'toggleOutputTest']);
     // Note: /api/outputs-test/state est public (défini dans le groupe public ci-dessus)
     $group->post('/api/outputs-test/parameters', [OutputController::class, 'updateParameters']);
+    $group->post('/api/outputs-test/trigger-ota-check', [OutputController::class, 'triggerOtaCheck']);
     $group->get('/api/outputs-test/board/{board}/status', [OutputController::class, 'getBoardStatus']);
     
     // ====================================================================
@@ -433,6 +435,7 @@ $app->group('', function ($group) {
     $group->get('/api/outputs3-test/toggle', [OutputController::class, 'toggleOutputTest3']);
     // Note: /api/outputs3-test/state est public (défini dans le groupe public ci-dessus)
     $group->post('/api/outputs3-test/parameters', [OutputController::class, 'updateParameters']);
+    $group->post('/api/outputs3-test/trigger-ota-check', [OutputController::class, 'triggerOtaCheck']);
     $group->get('/api/outputs3-test/board/{board}/status', [OutputController::class, 'getBoardStatus']);
 
     // Administration - Gestion du cache TEST3 - PROTÉGÉE
@@ -459,6 +462,7 @@ $app->group('', function ($group) {
     $group->get('/api/outputs3/toggle', [OutputController::class, 'toggleOutputS3']);
     // Note: /api/outputs3/state est public (défini dans le groupe public ci-dessus)
     $group->post('/api/outputs3/parameters', [OutputController::class, 'updateParameters']);
+    $group->post('/api/outputs3/trigger-ota-check', [OutputController::class, 'triggerOtaCheck']);
     $group->get('/api/outputs3/board/{board}/status', [OutputController::class, 'getBoardStatus']);
 
     // Administration - Gestion du cache S3 - PROTÉGÉE

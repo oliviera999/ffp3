@@ -43,6 +43,12 @@ class OutputCacheService
      */
     private static array $cache = [];
     private static array $cacheTimestamp = [];
+
+    /**
+     * Demande de vérification OTA par environnement (page contrôle).
+     * Une seule réponse GET state contiendra triggerOtaCheck: true puis le flag est effacé.
+     */
+    private static array $triggerOtaRequested = [];
     
     /**
      * Récupère les états outputs depuis le cache ou la base de données
@@ -125,8 +131,24 @@ class OutputCacheService
             self::$cache[$env] = $result;
             self::$cacheTimestamp[$env] = $now;
         }
+
+        // Demande OTA depuis la page contrôle : une seule réponse contient triggerOtaCheck puis le flag est effacé
+        if (isset(self::$triggerOtaRequested[$env]) && self::$triggerOtaRequested[$env]) {
+            $result['triggerOtaCheck'] = true;
+            unset(self::$triggerOtaRequested[$env]);
+        }
         
         return $result;
+    }
+
+    /**
+     * Enregistre une demande de vérification OTA pour l'environnement courant.
+     * Le prochain GET state (ESP32 ou page) recevra triggerOtaCheck: true une fois.
+     */
+    public function setTriggerOtaCheckRequested(): void
+    {
+        $env = TableConfig::getEnvironment();
+        self::$triggerOtaRequested[$env] = true;
     }
     
     /**
