@@ -253,13 +253,13 @@ Après exécution d'une commande distante, l'ESP32 envoie un **acquittement imm�
 bool AutomatismSync::sendCommandAck(const char* command, const char* status) {
     char ackPayload[256];
     snprintf(ackPayload, sizeof(ackPayload),
-             "api_key=%s&sensor=%s&ack_command=%s&ack_status=%s&ack_timestamp=%lu",
-             ApiConfig::API_KEY, ProjectConfig::BOARD_TYPE, command, status, millis());
-    return AppTasks::netPostRaw(ackPayload, NetworkConfig::HTTP_POST_TIMEOUT_MS);
+             "api_key=%s&sensor=%s&version=%s&ack_command=%s&ack_status=%s&ack_timestamp=%lu",
+             ApiConfig::API_KEY, ProjectConfig::BOARD_TYPE, ProjectConfig::VERSION, command, status, millis());
+    return AppTasks::netPostRaw(ackPayload, NetworkConfig::HTTP_POST_RPC_TIMEOUT_MS);
 }
 ```
 
-**Note :** Le payload ACK ne contient pas le champ `version` requis par l’endpoint POST data ; le serveur peut donc rejeter cette requête. L’acquittement fonctionnel du nourrissage repose sur le reset des flags (POST complet avec `bouffePetits=0&108=0`).
+**Note :** Le payload ACK ne contient pas le champ `version` requis par l’endpoint POST data ; le serveur peut donc recevoir une réponse 200 (le payload inclut désormais sensor et version). L’acquittement fonctionnel du nourrissage repose sur le reset des flags (POST complet avec `bouffePetits=0&108=0`).
 
 ### Champs ACK
 
@@ -267,11 +267,16 @@ bool AutomatismSync::sendCommandAck(const char* command, const char* status) {
 |-------|-------------|---------|
 | `api_key` | Clé API | `fdGTMoptd5CD2ert3` |
 | `sensor` | Identifiant ESP32 | `esp32-wroom` |
+| `version` | Version firmware (requis par POST data) | `11.172` |
 | `ack_command` | Commande exécutée | `bouffePetits` |
 | `ack_status` | Statut | `executed`, `on`, `off` |
 | `ack_timestamp` | Timestamp millis() | `123456789` |
 
 **Note:** Le serveur peut ignorer ces champs si non implémenté. L'envoi périodique contient l'état complet de toute façon.
+
+### Vérification après correctifs (nourrissage / ACK)
+
+Après mise à jour du firmware (payload ACK avec `sensor` et `version`) ou du serveur (noms bouffeMatin/bouffeMidi harmonisés), il est recommandé de lancer une session de validation : erase flash, flash firmware + LittleFS, monitor 5 min (ex. script `erase_flash_fs_monitor_5min_analyze.ps1`). Vérifier dans les logs qu’aucun POST ne reçoit de réponse 400 pour les requêtes de type ACK ou reset flags nourrissage (payload désormais complet).
 
 ---
 

@@ -36,8 +36,8 @@ class PostDataController
      */
     public function handle(Request $request, Response $response): Response
     {
-        // Client ESP32 timeout = 5 s ; laisser marge côté serveur pour répondre avant coupure
-        set_time_limit(10);
+        // Client ESP32 timeout = 18–26 s (config firmware). Laisser marge côté serveur pour répondre avant coupure.
+        set_time_limit(30);
 
         // Vérifier méthode POST
         if ($request->getMethod() !== 'POST') {
@@ -177,21 +177,44 @@ class PostDataController
         );
 
         try {
+            $t0 = microtime(true);
+
             // Insertion des données capteurs via le repository injecté
             $this->sensorRepo->insert($data);
+            $t1 = microtime(true);
 
             // Synchroniser les états dans ffp3Outputs/ffp3Outputs2
             $this->outputRepo->syncStatesFromSensorData($data);
-            
+            $t2 = microtime(true);
+
             // Invalider le cache après synchronisation ESP32
             $this->outputCache->invalidateCache();
+            $t3 = microtime(true);
 
             // Mettre à jour le timestamp de la dernière requête de la board
             $boardId = TableConfig::getPostDataBoardId();
             $this->boardRepo->updateLastRequest($boardId);
+            $t4 = microtime(true);
 
-            $this->logger->info('Données capteurs insérées et outputs synchronisés', ['sensor' => $data->sensor, 'version' => $data->version]);
-            
+            $insertMs = round(($t1 - $t0) * 1000);
+            $syncMs = round(($t2 - $t1) * 1000);
+            $cacheMs = round(($t3 - $t2) * 1000);
+            $boardMs = round(($t4 - $t3) * 1000);
+            $totalMs = round(($t4 - $t0) * 1000);
+
+            $this->logger->info(
+                'PostData OK sensor={sensor} version={version} timing_ms: insert={insertMs} sync={syncMs} cache={cacheMs} board={boardMs} total={totalMs}',
+                [
+                    'sensor' => $data->sensor,
+                    'version' => $data->version,
+                    'insertMs' => $insertMs,
+                    'syncMs' => $syncMs,
+                    'cacheMs' => $cacheMs,
+                    'boardMs' => $boardMs,
+                    'totalMs' => $totalMs,
+                ]
+            );
+
             return ResponseHelper::text($response, 'Données enregistrées avec succès', 200);
             
         } catch (Throwable $e) {

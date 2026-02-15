@@ -216,10 +216,10 @@ Réponse JSON (17 paramètres):
   "taThr": "80",
   "104": "18",         // chauff
   "chauff": "18",
-  "105": "8",          // bouffeMat
-  "bouffeMat": "8",
-  "106": "12",         // bouffeMid
-  "bouffeMid": "12",
+  "105": "8",          // bouffeMatin (heure matin)
+  "bouffeMatin": "8",
+  "106": "12",         // bouffeMidi (heure midi)
+  "bouffeMidi": "12",
   "107": "19",         // bouffeSoir
   "bouffeSoir": "19",
   "111": "2",          // tempsGros

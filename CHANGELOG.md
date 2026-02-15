@@ -7,6 +7,12 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.57] - 2026-02-12
+
+### Bump version
+
+---
+
 ## [4.9.56] - 2026-02-12
 
 ### Bump version
@@ -290,7 +296,7 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 - **Correction erreur 500** : Ajout de la variable `parameter_gpio_map` manquante dans `OutputController`
   - La variable était utilisée dans le template `control.twig` mais n'était pas passée par le contrôleur
   - Correction de l'erreur HTTP 500 qui rendait la page `/control` inaccessible
-  - Mapping complet des paramètres vers leurs GPIOs (aqThr, taThr, bouffeMat, etc.)
+  - Mapping complet des paramètres vers leurs GPIOs (aqThr, taThr, bouffeMatin, etc.)
 - **Amélioration gestion d'erreurs** : Logging détaillé des exceptions dans `OutputController::showInterface()`
   - Ajout de logs détaillés avec stack trace pour faciliter le debugging
   - Messages d'erreur adaptés selon l'environnement (développement vs production)
