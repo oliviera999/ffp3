@@ -131,7 +131,8 @@ $app->add(function (Request $request, $handler) use ($container, $authMethod) {
         '/heartbeat',              // Heartbeat firmware ESP32
         '/heartbeat-test',
         '/heartbeat3',
-        '/heartbeat3-test'
+        '/heartbeat3-test',
+        '/ping'                    // Diagnostic latence (GET/POST, réponse minimale)
     ];
     
     // Vérifier si le chemin est public (GET /api/outputs*/state uniquement)
@@ -302,6 +303,17 @@ $app->group('', function ($group) {
     $group->get('/api/realtime3/system/health', [RealtimeApiController::class, 'getSystemHealth']);
     $group->get('/api/realtime3/alerts/active', [RealtimeApiController::class, 'getActiveAlerts']);
 })->add(new EnvironmentMiddleware('s3'));
+
+// Ping / diagnostic latence - PUBLIC (GET et POST, réponse minimale, pas de BDD)
+$app->map(['GET', 'POST'], '/ping', function (Request $request, Response $response): Response {
+    $body = 'OK';
+    $response->getBody()->write($body);
+    return $response
+        ->withHeader('Content-Type', 'text/plain; charset=utf-8')
+        ->withHeader('Content-Length', (string) strlen($body))
+        ->withHeader('Connection', 'close')
+        ->withStatus(200);
+});
 
 // Endpoints Firmware ESP32 - PUBLICS
 // PRODUCTION

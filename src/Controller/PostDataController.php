@@ -39,6 +39,15 @@ class PostDataController
         // Client ESP32 timeout = 18–26 s (config firmware). Laisser marge côté serveur pour répondre avant coupure.
         set_time_limit(30);
 
+        // Diagnostic latence : heure de réception de la requête (corrélation avec log ESP32)
+        $tReceived = microtime(true);
+        $sec = (int) $tReceived;
+        $us = (int) (($tReceived - $sec) * 1000000);
+        $this->logger->info(
+            'PostData request received at={at} ts={ts}',
+            ['at' => date('Y-m-d H:i:s', $sec) . '.' . sprintf('%06d', $us), 'ts' => round($tReceived, 3)]
+        );
+
         // Vérifier méthode POST
         if ($request->getMethod() !== 'POST') {
             $this->logger->warning('PostData: Méthode non autorisée', ['method' => $request->getMethod()]);
@@ -215,7 +224,7 @@ class PostDataController
                 ]
             );
 
-            return ResponseHelper::text($response, 'Données enregistrées avec succès', 200);
+            return ResponseHelper::textClose($response, 'Données enregistrées avec succès', 200);
             
         } catch (Throwable $e) {
             $errorMessage = 'Erreur insertion données';

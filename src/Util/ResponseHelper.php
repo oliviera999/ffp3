@@ -48,6 +48,26 @@ class ResponseHelper
     }
 
     /**
+     * Réponse texte avec Content-Length et Connection: close.
+     * Réduit le risque de buffer proxy et signale la fin de la réponse (latence ESP32/o2switch).
+     *
+     * @param Response $response Objet Response PSR-7
+     * @param string $message Message texte
+     * @param int $status Code HTTP (200 par défaut)
+     * @return Response
+     */
+    public static function textClose(Response $response, string $message, int $status = 200): Response
+    {
+        $response->getBody()->write($message);
+        $len = strlen($message);
+        return $response
+            ->withHeader('Content-Type', 'text/plain; charset=utf-8')
+            ->withHeader('Content-Length', (string) $len)
+            ->withHeader('Connection', 'close')
+            ->withStatus($status);
+    }
+
+    /**
      * Retourne une réponse d'erreur JSON standardisée
      *
      * @param Response $response Objet Response PSR-7
