@@ -7,6 +7,12 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.59] - 2026-02-12
+
+### Bump version
+
+---
+
 ## [4.9.58] - 2026-02-12
 
 ### Bump version
