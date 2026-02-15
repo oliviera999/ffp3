@@ -74,6 +74,18 @@ class HeartbeatController
             return ResponseHelper::text($response, "CRC mismatch (calc={$calcCrc}, posted={$crc})", 400);
         }
 
+        // IP locale optionnelle : écriture dans un fichier (pas en BDD)
+        $deviceIp = $this->sanitizeIp($get('ip'));
+        if ($deviceIp !== '') {
+            $projectRoot = dirname(__DIR__, 2);
+            $varDir = $projectRoot . '/var';
+            if (!is_dir($varDir)) {
+                @mkdir($varDir, 0755, true);
+            }
+            $ipFile = $varDir . '/last_device_ip_' . TableConfig::getEnvironment() . '.txt';
+            @file_put_contents($ipFile, $deviceIp);
+        }
+
         // Insertion en base de données
         try {
             $pdo = Database::getConnection();
@@ -138,6 +150,22 @@ class HeartbeatController
     private function sanitizeString(string $data): string
     {
         return htmlspecialchars(trim(stripslashes($data)), ENT_QUOTES, 'UTF-8');
+    }
+
+    /**
+     * Nettoie une IP (chiffres et points uniquement, max 45 caractères)
+     *
+     * @param string $data Valeur reçue (ex. 192.168.1.42)
+     * @return string IP sanitized ou chaîne vide
+     */
+    private function sanitizeIp(string $data): string
+    {
+        $trimmed = trim($data);
+        if ($trimmed === '' || strlen($trimmed) > 45) {
+            return '';
+        }
+        $filtered = preg_replace('/[^0-9.]/', '', $trimmed);
+        return strlen($filtered) <= 45 ? $filtered : substr($filtered, 0, 45);
     }
 }
 

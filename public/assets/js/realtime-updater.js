@@ -276,6 +276,12 @@ class RealtimeUpdater {
             }
         }
 
+        // IP locale (ESP)
+        const deviceIpEl = document.getElementById('device-ip');
+        if (deviceIpEl) {
+            deviceIpEl.textContent = health.device_ip || '-';
+        }
+
         // Statut online/offline
         const statusIndicator = document.getElementById('system-status-indicator');
         if (statusIndicator) {

@@ -63,13 +63,15 @@ class BoardRepository extends AbstractRepository
 
     /**
      * Met à jour la dernière requête d'une board
-     * 
+     * Convention : heure serveur (NOW()), alignée avec Outputs.requestTime et APP_TIMEZONE.
+     * Voir docs/TIMEZONE_MANAGEMENT.md.
+     *
      * @param string $board Nom de la board
      * @return bool Succès de l'opération
      */
     public function updateLastRequest(string $board): bool
     {
-        $sql = "UPDATE Boards SET last_request = UTC_TIMESTAMP() WHERE board = :board";
+        $sql = "UPDATE Boards SET last_request = NOW() WHERE board = :board";
         
         return $this->execute($sql, [':board' => $board]);
     }
@@ -99,9 +101,10 @@ class BoardRepository extends AbstractRepository
     }
 
     /**
-     * Formate un timestamp UTC en date locale lisible
+     * Formate un timestamp (heure serveur, APP_TIMEZONE) en date lisible
+     * last_request est stocké avec NOW() donc déjà en heure serveur.
      *
-     * @param string|null $timestamp Timestamp UTC
+     * @param string|null $timestamp Timestamp en heure serveur (APP_TIMEZONE)
      * @return string|null Timestamp formaté ou null
      */
     private function formatTimestamp(?string $timestamp): ?string
@@ -111,10 +114,8 @@ class BoardRepository extends AbstractRepository
         }
 
         try {
-            $utc = new \DateTimeImmutable($timestamp, new \DateTimeZone('UTC'));
             $tz = new \DateTimeZone($_ENV['APP_TIMEZONE'] ?? 'Europe/Paris');
-
-            return $utc->setTimezone($tz)->format('d/m/Y H:i:s');
+            return (new \DateTimeImmutable($timestamp, $tz))->format('d/m/Y H:i:s');
         } catch (\Exception $e) {
             return $timestamp;
         }

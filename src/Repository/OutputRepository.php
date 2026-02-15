@@ -229,11 +229,14 @@ class OutputRepository extends AbstractRepository
         $configIsSynced = ($data->configSynced === 1);
         
         // Actionneurs physiques - toujours synchronisés (états réels des relais)
+        // 110 (resetMode) : l'ESP32 envoie toujours 0 (après reset ou idle) ; le sync permet
+        // de remettre le switch à "désactivé" une fois le reset effectif (évite switch bloqué à "activé")
         $gpioUpdates = [
             2 => $data->etatHeat,
             15 => $data->etatUV,
             16 => $data->etatPompeAqua,
             18 => $data->etatPompeTank,
+            110 => $data->resetMode,
         ];
         
         // v11.168: Variables de configuration - UNIQUEMENT si configSynced=1
@@ -266,7 +269,7 @@ class OutputRepository extends AbstractRepository
         // Note: Si configSynced=0, on ne log pas ici pour éviter spam
         // Le log est fait côté ESP32
         
-        // Priorité plus longue pour 108/109 (nourrissage) : l'ESP32 poll toutes les 12 s,
+        // Priorité plus longue pour 108/109 (nourrissage) : l'ESP32 poll toutes les 6 s,
         // on protège 20 s pour qu'au moins un GET voie la commande avant qu'un POST n'écrase.
         $feedGpios = [108 => $gpioUpdates[108] ?? null, 109 => $gpioUpdates[109] ?? null];
         $feedGpios = array_filter($feedGpios, fn($v) => $v !== null);

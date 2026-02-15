@@ -38,7 +38,7 @@ APP_TIMEZONE=Europe/Paris  # Stockage serveur
 
 ### Impact sur les Timestamps
 
-- ✅ **Stockage PHP/BD** : Timestamps en heure de Paris (`Europe/Paris`)
+- ✅ **Stockage PHP/BD** : Tous les timestamps applicatifs sont en **heure serveur** (`APP_TIMEZONE`, défaut `Europe/Paris`) : `Boards.last_request`, `ffp3Outputs*.requestTime`, tables d’alertes (`created_at`, etc.). Utilisation de `NOW()` en SQL ; la session MySQL doit être cohérente avec le timezone PHP (voir configuration hébergement). *Note : les anciennes valeurs de `Boards.last_request` (stockées en UTC avant unification) peuvent s'afficher avec un décalage jusqu'au prochain POST de la board.*
 - ✅ **Affichage web** : Dates converties et affichées en heure de Casablanca (`Africa/Casablanca`)
 - ✅ **Conversion automatique** : moment-timezone gère la conversion entre les deux fuseaux
 - ℹ️ **Décalage** : 0h en hiver, -1h en été (Casablanca en retard sur Paris)

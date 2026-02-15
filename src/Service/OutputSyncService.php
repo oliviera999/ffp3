@@ -47,7 +47,8 @@ class OutputSyncService
         // Commandes nourrissage (flags remis à 0 par ESP32 après exécution)
         108 => 'bouffePetits',     // Flag nourrissage petits poissons
         109 => 'bouffeGros',       // Flag nourrissage gros poissons
-        
+        110 => 'resetMode',        // Reset ESP32 (aligné gpio_mapping.h / VARIABLE_NAMING.md)
+
         // Paramètres timing
         111 => 'tempsGros',        // Temps nourrissage gros
         112 => 'tempsPetits',      // Temps nourrissage petits

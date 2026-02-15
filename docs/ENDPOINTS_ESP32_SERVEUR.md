@@ -1,8 +1,16 @@
 # 🌐 Endpoints ESP32 ↔ Serveur - Configuration Complète
 
-**Version ESP32**: 11.35  
+**Version ESP32**: 11.205  
 **Version Serveur**: 11.36  
-**Date**: 3 Février 2026  
+**Date**: 15 Février 2026  
+
+---
+
+## ⚠️ Périmètre de ce document (serveur distant uniquement)
+
+Ce document décrit les **endpoints du serveur distant** (ffp3 sur iot.olution.info) utilisés par l’ESP32 : POST données, GET state, heartbeat. **Le serveur distant n’appelle jamais l’ESP32** ; tout le flux est initié par le firmware.
+
+- **API locale (serveur embarqué ESP32)** : HTTP port 80, WebSocket port 81 path `/ws`. Documentée dans le dépôt firmware : `docs/technical/api-endpoints.yaml` et `docs/technical/VARIABLE_NAMING.md` (noms de champs alignés firmware ↔ serveur distant).
 
 ---
 
@@ -69,16 +77,34 @@ http://iot.olution.info/ffp3/api/outputs-test/state
 
 ---
 
-## ⏱ Timeouts côté serveur (POST ≤ 8 s)
+## ⏱ Timeouts côté client (firmware) et serveur
 
-Le client ESP32 utilise un **timeout POST de 8 s** (dérogation à la règle projet 5 s, documentée dans `include/config.h` — `HTTP_POST_TIMEOUT_MS`). Le serveur doit répondre dans ce délai.
+Le client ESP32 utilise les timeouts suivants (définis dans `include/config.h`, namespace `NetworkConfig`) :
 
-- **PHP** : `PostDataController::handle()` appelle `set_time_limit(10)` au début de la requête (marge par rapport aux 8 s client).
+- **POST post-data** : **18 s** (`HTTP_POST_TIMEOUT_MS`) — dérogation à la règle projet 5 s, justifiée par la latence réseau (4G, hébergement). Le RPC côté firmware attend au plus **26 s** (`HTTP_POST_RPC_TIMEOUT_MS`) avant d’abandonner.
+- **GET outputs/state** : 10 s (`OUTPUTS_STATE_HTTP_TIMEOUT_MS`).
+
+Le serveur doit répondre au POST dans le délai client (18 s) pour éviter timeout côté ESP32.
+
+- **PHP** : `PostDataController::handle()` appelle `set_time_limit(30)` au début de la requête (marge par rapport aux 18 s client).
 - **À vérifier sur l'hébergement** :
-  - `max_execution_time` (php.ini) ≥ 10 s pour les requêtes POST `/ffp3/post-data`, `/ffp3/post-data-test`, `/ffp3/post-data3-test` et `/ffp3/post-data3`.
-  - Nginx : `proxy_read_timeout` (et éventuellement `fastcgi_read_timeout`) ≥ 10 s.
-  - Apache : `Timeout` et `ProxyTimeout` ≥ 10 s si reverse proxy vers PHP.
+  - `max_execution_time` (php.ini) ≥ 30 s pour les requêtes POST `/ffp3/post-data`, `/ffp3/post-data-test`, `/ffp3/post-data3-test` et `/ffp3/post-data3`.
+  - Nginx : `proxy_read_timeout` (et éventuellement `fastcgi_read_timeout`) ≥ 30 s.
+  - Apache : `Timeout` et `ProxyTimeout` ≥ 30 s si reverse proxy vers PHP.
 - **Réduction de latence** : la route POST fait 1 INSERT (données capteurs) + 1 UPDATE groupé (états GPIO via `CASE gpio WHEN … THEN … END`) + 1 UPDATE (dernière requête board) + invalidation cache en mémoire, pour limiter le nombre d'allers-retours BDD.
+
+---
+
+## 📏 Validation des champs POST (PostDataController)
+
+- **sensor**, **version** : tronqués à 30 caractères (taille colonne BDD).
+- **mail**, **mailNotif** : tronqués à 255 caractères avant insertion (évite erreur SQL si colonnes VARCHAR(255)).  
+  Fichier : `ffp3/src/Controller/PostDataController.php`.
+
+### Timestamp et signature HMAC (optionnel)
+
+- Si le client envoie **timestamp** et **signature** : le serveur valide la signature HMAC. La fenêtre de validité est définie par la variable d'environnement **SIG_VALID_WINDOW** (secondes, défaut 300). Le RTC de l'ESP32 doit rester synchronisé (NTP + correction de dérive) à ± cette fenêtre pour que la signature soit acceptée. Actuellement le firmware n'envoie pas ces champs dans le POST post-data principal ; l'API reste en mode compatibilité (validation par API_KEY).
+- Champ optionnel **device_time** : non utilisé aujourd'hui ; peut être ajouté à l'avenir (epoch ou ISO) pour corrélation logs ESP32 / serveur et diagnostic. Non obligatoire pour le contrat actuel.
 
 ---
 
@@ -91,7 +117,9 @@ Le client ESP32 utilise un **timeout POST de 8 s** (dérogation à la règle pro
 - **Page `/control3-test` (TEST3, ex. ESP32-S3 test)** → toggle/paramètres → table **ffp3Outputs3** (TEST3).
 - **Page `/control3` (S3 PROD)** → toggle/paramètres → table **ffp3Outputs4** (S3 PROD).
 
-**Pour que l’ESP32 applique ces commandes**, il doit **lire la même table** en faisant un GET sur le **même environnement** :
+**Protection des changements web** : Les changements faits depuis l'interface web sont protégés pendant 10 s (20 s pour nourrissage) contre l'écrasement par le POST ESP ; voir `SYNCHRONISATION_BIDIRECTIONNELLE.md`.
+
+**Pour que l'ESP32 applique ces commandes**, il doit **lire la même table** en faisant un GET sur le **même environnement** :
 
 - Si vous pilotez depuis **control-test** : l’ESP32 doit faire `GET /ffp3/api/outputs-test/state` (table ffp3Outputs2).
 - Si vous pilotez depuis **control3-test** (profil wroom-s3-test) : l'ESP32 doit faire `GET /ffp3/api/outputs3-test/state` (table ffp3Outputs3).
@@ -142,8 +170,10 @@ Route: /ffp3/post-data-test (Slim → PostDataController::handle)
 Méthode: POST
 Content-Type: application/x-www-form-urlencoded
 
-Payload (31 paramètres):
-api_key=fdGTMoptd5CD2ert3
+Payload (exemple) : `api_key` (valeur côté firmware dans `include/config.h` ApiConfig::API_KEY ; côté serveur dans `.env` API_KEY), puis champs capteurs et GPIO. Ne pas dupliquer la clé en clair dans la doc.
+
+Exemple (31 paramètres) :
+api_key=<valeur .env>
 &sensor=esp32-wroom
 &version=11.35
 &TempAir=28.0
@@ -191,50 +221,25 @@ Fichier: /path/to/ffp3/public/index.php
 Route: Slim Framework → OutputController::getOutputsState()
 Méthode: GET
 
-Réponse JSON (17 paramètres):
-{
-  "16": "0",           // pump_aqua
-  "pump_aqua": "0",
-  "18": 0,             // pump_tank
-  "pump_tank": 0,
-  "2": "0",            // heat ← État chauffage lu
-  "heat": "0",
-  "15": "1",           // light
-  "light": "1",
-  "101": "1",          // mailNotif
-  "mailNotif": "1",
-  "115": "0",          // WakeUp
-  "WakeUp": "0",
-  "108": "1",          // bouffePetits
-  "109": "1",          // bouffeGros
-  "110": "0",          // resetMode
-  "100": "oliv.arn.lau@gmail.com",  // mail
-  "mail": "oliv.arn.lau@gmail.com",
-  "102": "18",         // aqThr
-  "aqThr": "18",
-  "103": "80",         // taThr
-  "taThr": "80",
-  "104": "18",         // chauff
-  "chauff": "18",
-  "105": "8",          // bouffeMatin (heure matin)
-  "bouffeMatin": "8",
-  "106": "12",         // bouffeMidi (heure midi)
-  "bouffeMidi": "12",
-  "107": "19",         // bouffeSoir
-  "bouffeSoir": "19",
-  "111": "2",          // tempsGros
-  "tempsGros": "2",
-  "112": "2",          // tempsPetits
-  "tempsPetits": "2",
-  "113": "5",          // tempsRemplissageSec
-  "tempsRemplissageSec": "5",
-  "114": "8",          // limFlood
-  "limFlood": "8",
-  "116": "6",          // FreqWakeUp
-  "FreqWakeUp": "6"
-}
+Réponse JSON : clés numériques (GPIO) + clés symboliques (alignées `gpio_mapping.h` / VARIABLE_NAMING.md). L’ESP32 accepte les deux formats. Champs additionnels pour la page de contrôle : `dataStates`, `dataStatesReadingTime`, `triggerOtaCheck` (une fois) — l’ESP32 n’utilise que les clés GPIO et `triggerOtaCheck`.
 
-Source: SELECT gpio, state FROM ffp3Outputs2
+Exemple (extrait) :
+```json
+{
+  "2": "0", "15": "1", "16": "0", "18": 0,
+  "100": "...", "101": "1", "102": "18", "103": "80", "104": "18",
+  "105": "8", "106": "12", "107": "19", "108": "0", "109": "0", "110": "0",
+  "111": "2", "112": "2", "113": "5", "114": "8", "115": "0", "116": "6",
+  "etatHeat": "0", "etatUV": "1", "etatPompeAqua": "0", "etatPompeTank": 0,
+  "mail": "...", "mailNotif": "1", "aqThreshold": "18", "tankThreshold": "80",
+  "chauffageThreshold": "18", "bouffeMatin": "8", "bouffeMidi": "12", "bouffeSoir": "19",
+  "bouffePetits": "0", "bouffeGros": "0", "resetMode": "0",
+  "tempsGros": "2", "tempsPetits": "2", "tempsRemplissageSec": "5",
+  "limFlood": "8", "WakeUp": "0", "FreqWakeUp": "6"
+}
+```
+
+Source : `OutputCacheService::getOutputsState()` (SELECT gpio, state depuis table outputs + noms symboliques via `OutputSyncService::getGpioMapping()`).
 ```
 
 ---

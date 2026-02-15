@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Config\TableConfig;
 use App\Repository\SensorReadRepository;
 use App\Repository\OutputRepository;
 use PDO;
@@ -157,6 +158,7 @@ class RealtimeDataService
                 'uptime_percentage' => 0.0,
                 'readings_today' => 0,
                 'average_latency_seconds' => null,
+                'device_ip' => $this->readDeviceIpFile(),
             ];
         }
 
@@ -183,7 +185,27 @@ class RealtimeDataService
             'uptime_percentage' => $uptimePercentage,
             'readings_today' => $readingsToday,
             'average_latency_seconds' => $averageLatency,
+            'device_ip' => $this->readDeviceIpFile(),
         ];
+    }
+
+    /**
+     * Lit l'IP locale ESP depuis le fichier écrit par HeartbeatController
+     */
+    private function readDeviceIpFile(): ?string
+    {
+        $projectRoot = dirname(__DIR__, 2);
+        $env = TableConfig::getEnvironment();
+        $path = $projectRoot . '/var/last_device_ip_' . $env . '.txt';
+        if (!is_file($path)) {
+            return null;
+        }
+        $content = @file_get_contents($path);
+        if ($content === false) {
+            return null;
+        }
+        $trimmed = trim($content);
+        return $trimmed === '' ? null : $trimmed;
     }
 
     /**

@@ -553,6 +553,15 @@ $app->get('/assets/icons/{filename}', function (Request $request, Response $resp
     return $response->withStatus(404);
 });
 
+$app->get('/assets/logo.png', function (Request $request, Response $response) {
+    $filePath = __DIR__ . '/assets/logo.png';
+    if (file_exists($filePath)) {
+        $response->getBody()->write(file_get_contents($filePath));
+        return $response->withHeader('Content-Type', 'image/png');
+    }
+    return $response->withStatus(404);
+});
+
 $app->get('/service-worker.js', function (Request $request, Response $response) {
     $swPath = __DIR__ . '/service-worker.js';
     if (file_exists($swPath)) {

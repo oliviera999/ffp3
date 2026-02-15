@@ -102,32 +102,51 @@ class ControlValuesUpdater {
     }
     
     /**
-     * Met à jour l'affichage d'un paramètre
-     * 
+     * Met à jour l'affichage d'un paramètre.
+     * Le flash vert (value-updated) n'est appliqué que si la valeur a réellement changé.
+     *
      * @param {number} gpio - Numéro GPIO
      * @param {*} value - Nouvelle valeur
      */
     updateParameterDisplay(gpio, value) {
         if (!this.isInitialized) return;
-        
+
         const inputElement = this.parameterElements.get(gpio);
-        
+
         if (inputElement) {
-            // Mettre à jour la valeur de l'input
+            const currentValue = inputElement.type === 'checkbox'
+                ? (inputElement.checked ? 1 : 0)
+                : inputElement.value;
+            const normalizedNew = this._normalizeParamValue(value);
+            const normalizedCurrent = this._normalizeParamValue(currentValue);
+            const hasChanged = normalizedNew !== normalizedCurrent;
+
             if (inputElement.type === 'checkbox') {
                 inputElement.checked = value == 1;
             } else {
                 inputElement.value = value;
             }
-            
-            // Animation flash
-            inputElement.classList.add('value-updated');
-            setTimeout(() => {
-                inputElement.classList.remove('value-updated');
-            }, 500);
-            
-            this.log(`Updated parameter GPIO ${gpio} to ${value}`);
+
+            if (hasChanged) {
+                inputElement.classList.add('value-updated');
+                setTimeout(() => {
+                    inputElement.classList.remove('value-updated');
+                }, 500);
+                this.log(`Updated parameter GPIO ${gpio} to ${value}`);
+            }
         }
+    }
+
+    /**
+     * Normalise une valeur pour comparaison (évite flash sur "5" vs 5, etc.)
+     * @private
+     */
+    _normalizeParamValue(value) {
+        if (value === null || value === undefined) return '';
+        const s = String(value).trim();
+        if (s === '') return '';
+        const n = Number(s);
+        return Number.isNaN(n) ? s : n;
     }
     
     /**

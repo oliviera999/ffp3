@@ -148,6 +148,13 @@ class PostDataController
         $sensor = substr($sensor, 0, 30);
         $version = substr($version, 0, 30);
 
+        // Limiter mail/mailNotif à 255 caractères (évite erreur BDD si colonnes VARCHAR(255))
+        $mailMaxLen = 255;
+        $mail = $sanitize('mail');
+        $mail = $mail !== null ? substr($mail, 0, $mailMaxLen) : null;
+        $mailNotif = $sanitize('mailNotif');
+        $mailNotif = $mailNotif !== null ? substr($mailNotif, 0, $mailMaxLen) : null;
+
         // Construction de l'objet transférant les données capteurs -------------
         $data = new SensorData(
             sensor: $sensor,
@@ -170,9 +177,9 @@ class PostDataController
             bouffeGros: $toInt('bouffeGros'),
             aqThreshold: $toInt('aqThreshold'),
             tankThreshold: $toInt('tankThreshold'),
-            chauffageThreshold: $toInt('chauffageThreshold'),
-            mail: $sanitize('mail'),
-            mailNotif: $sanitize('mailNotif'),
+            chauffageThreshold: $toFloat('chauffageThreshold'),
+            mail: $mail,
+            mailNotif: $mailNotif,
             resetMode: $toInt('resetMode'),
             bouffeSoir: $toInt('bouffeSoir'),
             tempsGros: $toInt('tempsGros'),

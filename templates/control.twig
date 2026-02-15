@@ -20,7 +20,7 @@
     <link rel="manifest" href="/ffp3/manifest.json" />
     <link rel="apple-touch-icon" href="/ffp3/assets/icons/icon-192.png" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <link rel="shortcut icon" type="image/png" href="https://iot.olution.info/images/favico.png"/>
+    <link rel="shortcut icon" type="image/png" href="/ffp3/assets/logo.png"/>
     
     <!-- Styles de contrôle extraits vers fichier externe -->
     <link rel="stylesheet" href="/ffp3/assets/css/control-styles.css" />
@@ -35,7 +35,7 @@
         
         <!-- Header -->
         <header id="header">
-            <a href="https://iot.olution.info/ffp3/" class="logo">n3 iot datas</a>
+            <a href="https://iot.olution.info/ffp3/" class="logo"><img src="/ffp3/assets/logo.png" alt="n3 iot datas" /></a>
         </header>
 
         <!-- Nav -->
@@ -122,6 +122,10 @@
                             <div class="status-value" id="system-uptime">
                                 <i class="fas fa-spinner fa-spin"></i>
                             </div>
+                        </div>
+                        <div class="status-card">
+                            <div class="status-label">IP locale</div>
+                            <div class="status-value" id="device-ip">-</div>
                         </div>
                     </div>
                     
@@ -406,7 +410,7 @@
                                         </footer>
                                     </article>
                                 {% endfor %}
-                                <article class="action-card" data-action="trigger-ota">
+                                <article class="action-card action-card-ota" data-action="trigger-ota">
                                     <header>
                                         <div class="action-icon"><i class="fas fa-download"></i></div>
                                         <div>
@@ -414,7 +418,7 @@
                                         </div>
                                     </header>
                                     <p class="action-description">Demande à l'ESP32 de vérifier si une mise à jour OTA est disponible au prochain cycle de synchronisation. Utilisez la page de contrôle correspondant à l'environnement de votre ESP32 (prod, test, test3 ou S3 — voir badge ci-dessus).</p>
-                                    <footer>
+                                    <footer class="action-card-ota-footer">
                                         <button type="button" id="btn-trigger-ota" class="trigger-ota-btn" aria-label="Vérifier la mise à jour OTA">Vérifier OTA</button>
                                     </footer>
                                 </article>

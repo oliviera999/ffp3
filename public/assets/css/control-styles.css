@@ -1368,20 +1368,43 @@
             background: #fff5f4;
         }
 
+        /* Carte OTA : footer centré verticalement */
+        .action-card-ota {
+            display: flex;
+            flex-direction: column;
+        }
+        .action-card-ota .action-description {
+            flex: 1;
+        }
+        .action-card-ota-footer {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+        }
         .trigger-ota-btn {
-            padding: 10px 18px;
-            border-radius: 10px;
-            border: 1px solid var(--control-primary);
-            background: var(--control-primary-muted);
-            color: var(--control-primary);
-            font-weight: 600;
-            font-size: 0.95em;
+            padding: var(--control-padding-md) var(--control-padding-xl);
+            border-radius: var(--control-radius-md);
+            border: none;
+            background: linear-gradient(135deg, var(--control-primary), var(--control-primary-light));
+            color: #fff;
+            font-weight: var(--control-font-weight-semibold);
+            font-size: var(--control-font-size-base);
             cursor: pointer;
-            transition: background var(--control-transition-fast), color var(--control-transition-fast);
+            transition: transform var(--control-transition-base), box-shadow var(--control-transition-base);
+            box-shadow: var(--control-shadow-sm);
         }
         .trigger-ota-btn:hover:not(:disabled) {
-            background: var(--control-primary);
-            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: var(--control-shadow-primary);
+        }
+        .trigger-ota-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        .trigger-ota-btn:focus-visible {
+            outline: 2px solid var(--control-primary);
+            outline-offset: 2px;
         }
         .trigger-ota-btn:disabled {
             opacity: 0.6;

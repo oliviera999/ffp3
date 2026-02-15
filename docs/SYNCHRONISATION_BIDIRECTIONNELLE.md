@@ -43,16 +43,18 @@ Interface Web (control.twig)
 
 **Cause**: L'ESP32 envoie ses états actuels via `syncStatesFromSensorData()` qui écrase systématiquement la base de données.
 
-**Solution Implémentée**: **Pas de Protection Nécessaire**
-- L'ESP32 récupère les états toutes les **4 secondes** (pas 2-3 minutes)
-- Les changements web sont appliqués très rapidement par l'ESP32
-- Nouvelle colonne `lastModifiedBy` pour tracker la source des modifications (debugging)
+**Solution Implémentée**: **Protection par fenêtre de priorité**
+- L'ESP32 récupère les états toutes les **6 secondes** (firmware : `REMOTE_FETCH_INTERVAL_MS`)
+- Les changements faits depuis l'interface web ne sont **pas écrasés** par le POST ESP pendant une fenêtre de priorité : **10 s** (actionneurs/config) ou **20 s** (GPIO 108/109 nourrissage)
+- Colonnes `lastModifiedBy` et `requestTime` : le serveur n'applique l'UPDATE du POST que si `lastModifiedBy != 'web'` ou si `requestTime` est antérieur à cette fenêtre
 
 ```sql
--- Logique simplifiée dans syncStatesFromSensorData()
+-- Logique dans syncStatesFromSensorData() / batchUpdateStatesSingleQuery()
+-- L'UPDATE ne s'applique que si la ligne n'a pas été modifiée récemment par le web :
 UPDATE ffp3Outputs2 
 SET state = :state, requestTime = NOW(), lastModifiedBy = 'esp32'
 WHERE gpio = :gpio AND name IS NOT NULL AND name != ''
+  AND (lastModifiedBy != 'web' OR requestTime IS NULL OR requestTime < NOW() - INTERVAL :priority SECOND)
 ```
 
 ### Problème 2: Logique Inversée GPIO 18 Inconsistante
@@ -91,7 +93,7 @@ WHERE gpio = :gpio AND name IS NOT NULL AND name != ''
 
 - **Dernière sync ESP32**: Timestamp de la dernière communication
 - **Délai de synchronisation**: 2-3 minutes (incompressible)
-- **Protection changements web**: 5 minutes
+- **Protection changements web**: 10 s (actionneurs/config), 20 s (nourrissage 108/109) — pendant cette fenêtre, le POST ESP n'écrase pas les valeurs écrites par l'interface
 
 ---
 
@@ -99,12 +101,12 @@ WHERE gpio = :gpio AND name IS NOT NULL AND name != ''
 
 ### Délais de Synchronisation
 
-1. **Délai de synchronisation ESP32**: 4 secondes maximum
-   - L'ESP32 récupère les états toutes les 4 secondes
-   - Vos changements web sont appliqués très rapidement
+1. **Délai de synchronisation ESP32**: 6 secondes (poll GET outputs/state)
+   - L'ESP32 récupère les états toutes les 6 secondes (`REMOTE_FETCH_INTERVAL_MS`)
+   - Vos changements web sont appliqués au prochain GET par l'ESP32
 
-2. **Pas de protection nécessaire**: 
-   - Avec un polling de 4 secondes, la protection est inutile
+2. **Protection contre écrasement par le POST**:
+   - Les écritures web (`lastModifiedBy = 'web'`, `requestTime = NOW()`) sont protégées pendant 10 s (ou 20 s pour nourrissage) : le POST ESP ne met pas à jour ces lignes tant que la fenêtre n'est pas expirée
    - Comportement simple et prévisible
 
 ### Limitations Techniques
@@ -152,10 +154,10 @@ ALTER TABLE ffp3Outputs2 ADD COLUMN lastModifiedBy ENUM('web', 'esp32') NULL;
 1. **Changement web → Protection**
    - ✅ Changer état sur interface web
    - ✅ Vérifier `lastModifiedBy='web'` en BDD
-   - ✅ ESP32 POST → Vérifier que l'état n'est PAS écrasé (< 5 min)
+   - ✅ ESP32 POST dans les 10 s → Vérifier que l'état n'est PAS écrasé
 
 2. **Expiration protection → Écrasement**
-   - ✅ Attendre 6 minutes après changement web
+   - ✅ Attendre > 10 s (ou > 20 s pour GPIO 108/109) après changement web
    - ✅ ESP32 POST → Vérifier que l'état est maintenant écrasé
 
 3. **GPIO 18 cohérence**
@@ -253,7 +255,7 @@ tail -f /path/to/ffp3/cronlog.txt | grep "Données capteurs insérées"
 ## 🔮 Améliorations Futures
 
 ### Court Terme
-- [ ] Configuration de la fenêtre de protection (5 min → configurable)
+- [ ] Configuration de la fenêtre de protection (10 s / 20 s → configurable via .env)
 - [ ] Notifications push pour conflits de synchronisation
 - [ ] Historique des changements d'état
 

@@ -33,7 +33,7 @@ class SensorData
      * @param ?int    $bouffeGros       Distribution nourriture gros poissons
      * @param ?int    $aqThreshold      Seuil de niveau aquarium pour alerte
      * @param ?int    $tankThreshold    Seuil de niveau réserve pour alerte
-     * @param ?int    $chauffageThreshold Seuil de température pour chauffage
+     * @param ?float  $chauffageThreshold Seuil de température pour chauffage (°C, aligné firmware)
      * @param ?string $mail             Adresse e-mail de notification principale
      * @param ?string $mailNotif        Adresse e-mail secondaire pour notifications
      * @param ?int    $resetMode        Indicateur de reset du mode système
@@ -69,7 +69,7 @@ class SensorData
         public ?int    $bouffeGros,
         public ?int    $aqThreshold,
         public ?int    $tankThreshold,
-        public ?int    $chauffageThreshold,
+        public ?float  $chauffageThreshold,
         public ?string $mail,
         public ?string $mailNotif,
         public ?int    $resetMode,
