@@ -10,6 +10,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+use Slim\Exception\HttpNotFoundException;
 use Throwable;
 
 /**
@@ -30,9 +31,19 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     {
         try {
             return $handler->handle($request);
+        } catch (HttpNotFoundException $e) {
+            // 404 : log explicite dans error_log (même fichier que les traces PHP) pour diagnostic
+            $uri = (string) $request->getUri();
+            $line = sprintf('[FFP3 404] %s %s', $request->getMethod(), $uri);
+            error_log($line);
+            $this->logger->info($line);
+
+            $response = new \Slim\Psr7\Response();
+            $response->getBody()->write('Not found.');
+            return $response->withStatus(404)->withHeader('Content-Type', 'text/plain; charset=utf-8');
         } catch (Throwable $e) {
             $errorMessage = 'Exception non gérée';
-            
+
             // Logger l'erreur avec contexte
             $this->logger->error($errorMessage, [
                 'message' => $e->getMessage(),
@@ -42,7 +53,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
                 'url' => (string) $request->getUri(),
                 'method' => $request->getMethod(),
             ]);
-            
+
             // Enregistrer l'erreur pour détection répétée
             $this->errorAlert->recordError($errorMessage, [
                 'error' => $e->getMessage(),
@@ -55,7 +66,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             // Créer une réponse d'erreur
             $response = new \Slim\Psr7\Response();
             $response->getBody()->write('Une erreur serveur est survenue. Veuillez réessayer ultérieurement.');
-            
+
             return $response->withStatus(500)
                            ->withHeader('Content-Type', 'text/plain; charset=utf-8');
         }

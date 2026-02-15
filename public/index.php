@@ -20,7 +20,9 @@ use App\Middleware\EnvironmentMiddleware;
 use App\Middleware\TokenAuthMiddleware;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
+use Throwable;
 
 // Charge les variables d'environnement (.env)
 Env::load();
@@ -554,5 +556,17 @@ $app->get('/service-worker.js', function (Request $request, Response $response) 
 // ====================================================================
 $app->addRoutingMiddleware();
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
+
+// Gestionnaire 404 personnalisé : log l'URL pour faciliter le diagnostic (error.log serveur)
+$errorMiddleware->setErrorHandler(
+    HttpNotFoundException::class,
+    function (Request $request, Throwable $exception, bool $displayErrorDetails): Response {
+        $uri = (string) $request->getUri();
+        error_log(sprintf('[FFP3 404] %s %s', $request->getMethod(), $uri));
+        $response = new \Slim\Psr7\Response();
+        $response->getBody()->write('Not found.');
+        return $response->withStatus(404)->withHeader('Content-Type', 'text/plain; charset=utf-8');
+    }
+);
 
 $app->run();
