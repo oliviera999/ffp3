@@ -35,7 +35,7 @@
         
         <!-- Header -->
         <header id="header">
-            <a href="https://iot.olution.info/ffp3/" class="logo"><img src="/ffp3/assets/logo.png" alt="n3 iot datas" /></a>
+            <a href="https://iot.olution.info/ffp3/" class="logo"><img src="/ffp3/assets/logo.png" alt="n3 iot datas" /><span class="logo-text">IOT</span></a>
         </header>
 
         <!-- Nav -->
@@ -333,7 +333,7 @@
                                 <div class="parameters-grid">
                                     <label class="parameter-item">
                                         <span>Température min (°C)</span>
-                                        <input type="number" name="chauff" min="0" step="0.1" id="chauff" data-parameter="chauff" data-parameter-gpio="{{ parameter_gpio_map['chauff'] }}" value="{{ params.chauff|default(0) }}">
+                                        <input type="number" name="chauff" min="0" step="1" id="chauff" data-parameter="chauff" data-parameter-gpio="{{ parameter_gpio_map['chauff'] }}" value="{{ params.chauff|default(0) }}">
                                         <small class="save-indicator" data-save-indicator data-parameter="chauff" data-state="idle"></small>
                                     </label>
                                 </div>

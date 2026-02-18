@@ -18,7 +18,7 @@ html {
 }
 body {
     position: relative;
-    background: #1a1a1a;
+    background: transparent; /* permet à body::before (image + fondu) d’être visible sur toutes les pages */
     min-height: 100%;
 }
 body::before {
@@ -38,16 +38,33 @@ body::before {
     to { opacity: 1; }
 }
 
+/* Wrapper semi-transparent pour laisser voir l’image de fond (fondu) sur les pages type contrôle */
+#wrapper.control-wrapper {
+    background: linear-gradient(180deg, rgba(248, 250, 252, 0.94) 0%, rgba(238, 242, 246, 0.94) 100%);
+}
+
 /**
  * Styles pour système temps réel et PWA
  */
 
-/* Logo header (image) */
+/* Logo header (image + IOT) */
+#header .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+}
 #header .logo img {
     height: 2rem;
     width: auto;
     display: block;
     vertical-align: middle;
+}
+#header .logo .logo-text {
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 0.05em;
 }
 
 /* =================================================================
