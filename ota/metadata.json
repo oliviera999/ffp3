@@ -1,36 +1,48 @@
 {
-    "version":  "11.205",
-    "bin_url":  "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin",
-    "size":  1472112,
-    "md5":  "ff7c95f476bb68a84e3f92b69f3e7524",
-    "channels":  {
-                     "prod":  {
-                                  "esp32-wroom":  {
-                                                      "size":  1472112,
-                                                      "md5":  "ff7c95f476bb68a84e3f92b69f3e7524",
-                                                      "version":  "11.205",
-                                                      "bin_url":  "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin"
-                                                  },
-                                  "default":  {
-                                                  "size":  1472112,
-                                                  "md5":  "ff7c95f476bb68a84e3f92b69f3e7524",
-                                                  "version":  "11.205",
-                                                  "bin_url":  "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin"
-                                              }
-                              },
-                     "test":  {
-                                  "esp32-wroom":  {
-                                                      "size":  1472144,
-                                                      "md5":  "6a6026aa9f622fbe9925d249080e3af1",
-                                                      "version":  "11.205",
-                                                      "bin_url":  "https://iot.olution.info/ffp3/ota/esp32-wroom-beta/firmware.bin"
-                                                  },
-                                  "default":  {
-                                                  "size":  1472144,
-                                                  "md5":  "6a6026aa9f622fbe9925d249080e3af1",
-                                                  "version":  "11.205",
-                                                  "bin_url":  "https://iot.olution.info/ffp3/ota/esp32-wroom-beta/firmware.bin"
-                                              }
-                              }
-                 }
+  "version": "12.00",
+  "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin",
+  "size": 1473552,
+  "md5": "af1086e7b0ab5cb865ecbbe63e1f2331",
+  "channels": {
+    "prod": {
+      "esp32-wroom": {
+        "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/littlefs.bin",
+        "filesystem_size": 720896,
+        "md5": "af1086e7b0ab5cb865ecbbe63e1f2331",
+        "version": "12.00",
+        "filesystem_md5": "79e4ce85d614e39bc3c1de03f7865873",
+        "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin",
+        "size": 1473552
+      },
+      "default": {
+        "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/littlefs.bin",
+        "filesystem_size": 720896,
+        "md5": "af1086e7b0ab5cb865ecbbe63e1f2331",
+        "version": "12.00",
+        "filesystem_md5": "79e4ce85d614e39bc3c1de03f7865873",
+        "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin",
+        "size": 1473552
+      }
+    },
+    "test": {
+      "esp32-wroom": {
+        "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-wroom-beta/littlefs.bin",
+        "filesystem_size": 720896,
+        "md5": "459a3cf48cda76d6f0db32a0dda63850",
+        "version": "12.00",
+        "filesystem_md5": "7f3507d2ad3d5f0e06ae3cfa288f1f5a",
+        "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom-beta/firmware.bin",
+        "size": 1473568
+      },
+      "default": {
+        "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-wroom-beta/littlefs.bin",
+        "filesystem_size": 720896,
+        "md5": "459a3cf48cda76d6f0db32a0dda63850",
+        "version": "12.00",
+        "filesystem_md5": "7f3507d2ad3d5f0e06ae3cfa288f1f5a",
+        "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom-beta/firmware.bin",
+        "size": 1473568
+      }
+    }
+  }
 }
