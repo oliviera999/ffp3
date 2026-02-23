@@ -6,36 +6,42 @@
   "channels": {
     "prod": {
       "esp32-wroom": {
-        "size": 1474848,
-        "md5": "27e50fd9e0b72b1ff1cbd90f5b1e775d",
+        "version": "12.07",
+        "filesystem_md5": "c69bdf6e2993ff5b8539cf05d3a56cb9",
         "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin",
-        "version": "12.07"
+        "size": 1474848,
+        "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/littlefs.bin",
+        "filesystem_size": 720896,
+        "md5": "27e50fd9e0b72b1ff1cbd90f5b1e775d"
       },
       "default": {
-        "size": 1474848,
-        "md5": "27e50fd9e0b72b1ff1cbd90f5b1e775d",
+        "version": "12.07",
+        "filesystem_md5": "c69bdf6e2993ff5b8539cf05d3a56cb9",
         "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin",
-        "version": "12.07"
+        "size": 1474848,
+        "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/littlefs.bin",
+        "filesystem_size": 720896,
+        "md5": "27e50fd9e0b72b1ff1cbd90f5b1e775d"
       }
     },
     "test": {
       "esp32-wroom": {
+        "version": "12.07",
+        "filesystem_md5": "8de423b61154548c8d9a593d4daef44e",
         "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom-beta/firmware.bin",
+        "size": 1474864,
         "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-wroom-beta/littlefs.bin",
-        "size": 1474320,
-        "version": "12.04",
-        "md5": "e17099201d5a92e276bf7163d0feb5af",
         "filesystem_size": 720896,
-        "filesystem_md5": "0486c435621fa8315ee7430dccebf350"
+        "md5": "8e38fa0425b336998795a534aa08c783"
       },
       "default": {
+        "version": "12.07",
+        "filesystem_md5": "8de423b61154548c8d9a593d4daef44e",
         "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom-beta/firmware.bin",
+        "size": 1474864,
         "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-wroom-beta/littlefs.bin",
-        "size": 1474320,
-        "version": "12.04",
-        "md5": "e17099201d5a92e276bf7163d0feb5af",
         "filesystem_size": 720896,
-        "filesystem_md5": "0486c435621fa8315ee7430dccebf350"
+        "md5": "8e38fa0425b336998795a534aa08c783"
       }
     }
   }
