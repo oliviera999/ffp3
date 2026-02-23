@@ -159,6 +159,18 @@ ORDER BY gpio;
 
 ---
 
+## 🔍 Diagnostic : données non publiées en ligne (mails OK)
+
+Lorsque l’ESP32 cesse d’envoyer des données alors que les mails partent correctement, vérifier côté **serveur** :
+
+1. **Logs PHP** : rechercher `PostData OK sensor=...` (succès 200) vs `PostData: ...`, `Clé API incorrecte` (401), `Champs requis manquants` (400), `Erreur insertion données` (500). Corréler avec les horodatages des logs série firmware (`[HTTP] POST ...`, code réponse, durée).
+2. **Cohérence API_KEY** : la valeur dans `.env` (`API_KEY`) doit être identique à celle du firmware (`include/config.h` ou secrets). En cas de signature HMAC, vérifier aussi `API_SIG_SECRET` et la fenêtre `SIG_VALID_WINDOW`.
+3. **Durée d’exécution** : si les requêtes POST dépassent systématiquement ~15–18 s, le client ESP32 peut timeout avant de recevoir la réponse. Vérifier les timings dans les logs (`timing_ms: insert=... sync=... total=...`) et optimiser BDD/cache si besoin.
+
+Côté **firmware**, les logs série à rechercher : `[netRPC] Pool plein`, `[netRPC] Requête abandonnée: file net pleine`, `[netRPC] Timeout (... ms), abandon`, `[Sync] POST échoué (...)`, `[Sync] Envoi POST bloqué`, et `GET /api/remote-flags` pour vérifier `sendEnabled`.
+
+---
+
 ## 📊 Résumé Endpoints
 
 ### ESP32 → Serveur (POST)

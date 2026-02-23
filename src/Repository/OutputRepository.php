@@ -253,9 +253,14 @@ class OutputRepository extends AbstractRepository
                 106 => $data->bouffeMidi,
                 107 => $data->bouffeSoir,
                 
-                // Commandes nourrissage (flags remis à 0 par ESP32 après exécution)
-                108 => $data->bouffePetits,
-                109 => $data->bouffeGros,
+                // Commandes nourrissage (108/109) : ne jamais écrire 1 depuis le POST ESP32.
+                // Un 1 reçu = ack "nourrissage exécuté" (auto ou manuel). Si on le persistait ici,
+                // le prochain GET renverrait 1 → front montant côté ESP → nourrissage manuel en double.
+                // On force 0 pour que le serveur ne réinjecte pas 108/109=1 au prochain poll.
+                // Le suivi en BDD est assuré par SensorRepository::insert() (table données capteurs),
+                // appelé avant syncStatesFromSensorData : bouffePetits/bouffeGros y sont enregistrés.
+                108 => 0,
+                109 => 0,
                 
                 // Paramètres timing
                 111 => $data->tempsGros,
