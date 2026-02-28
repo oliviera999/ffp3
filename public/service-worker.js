@@ -11,6 +11,7 @@ const STATIC_ASSETS = [
     '/ffp3/',
     '/ffp3/dashboard',
     '/ffp3/aquaponie',
+    '/ffp3/aquaponie-description',
     '/ffp3/control',
     '/ffp3/assets/css/realtime-styles.css',
     '/ffp3/assets/js/toast-notifications.js',

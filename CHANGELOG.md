@@ -7,6 +7,19 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.62] - 2026-02-26
+
+### Ajout - Page Caractéristiques du module FFP3
+- Nouvelle page publique `/aquaponie-description` : description du système, capteurs, actionneurs, firmware et serveurs (embarqué et distant)
+- Hero de la page aquaponie : lien « En savoir plus sur le module » vers la page description
+- Nav aquaponie et page Supervision : lien « Caractéristiques » / « Caractéristiques du module »
+- Photos illustrant la page dans `public/assets/images/aquaponie-description/` (introduction, vue générale, électronique, poissons)
+- Script `scripts/copy_photos_aquaponie.ps1` pour copier les photos depuis `photos aquaponie/` à la racine du projet
+- README : précision de l’emplacement de la racine du projet et de l’arborescence `photos aquaponie` / assets
+- Service Worker : URL `/ffp3/aquaponie-description` ajoutée aux assets en cache
+
+---
+
 ## [4.9.61] - 2026-02-15
 
 ### Bump version

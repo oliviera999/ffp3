@@ -260,6 +260,9 @@ $app->group('', function ($group) {
     $group->map(['GET', 'POST'], '/aquaponie3', [AquaponieController::class, 'show']);
 })->add(new EnvironmentMiddleware('s3'));
 
+// Page Caractéristiques du module FFP3 - PUBLIQUE (pas de variante env)
+$app->get('/aquaponie-description', [AquaponieController::class, 'showDescription']);
+
 // ====================================================================
 // Routes API PUBLIQUES (utilisées par pages aquaponie et firmware ESP32)
 // ====================================================================
@@ -560,6 +563,20 @@ $app->get('/assets/logo.png', function (Request $request, Response $response) {
         return $response->withHeader('Content-Type', 'image/png');
     }
     return $response->withStatus(404);
+});
+
+$app->get('/assets/images/aquaponie-description/{filename}', function (Request $request, Response $response, array $args) {
+    $allowed = ['introduction.jpg', 'vue-generale.jpg', 'electronique.jpg', 'poissons.jpg'];
+    $filename = $args['filename'];
+    if (!in_array($filename, $allowed, true)) {
+        return $response->withStatus(404);
+    }
+    $filePath = __DIR__ . '/assets/images/aquaponie-description/' . $filename;
+    if (!is_file($filePath)) {
+        return $response->withStatus(404);
+    }
+    $response->getBody()->write(file_get_contents($filePath));
+    return $response->withHeader('Content-Type', 'image/jpeg');
 });
 
 $app->get('/service-worker.js', function (Request $request, Response $response) {

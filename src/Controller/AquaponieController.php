@@ -140,6 +140,19 @@ class AquaponieController
     }
 
     /**
+     * Affiche la page Caractéristiques du module FFP3 (description, capteurs, actionneurs, firmware, serveurs).
+     */
+    public function showDescription(Request $request, Response $response): Response
+    {
+        $html = $this->renderer->render('aquaponie_description.twig', [
+            'page_title' => 'Caractéristiques du module FFP3 - n3 iot datas',
+            'images_base' => '/ffp3/assets/images/aquaponie-description',
+        ]);
+        $response->getBody()->write($html);
+        return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
+    }
+
+    /**
      * Extrait la plage de dates depuis les paramètres POST
      * 
      * @throws \RuntimeException Si le token CSRF est invalide

@@ -35,8 +35,15 @@ Application PHP 8.1+ pour la supervision complète d'un système d'aquaponie pi
 
 ## Architecture & dossiers
 
+**Racine du projet** : dossier qui contient `public/`, `src/`, `templates/`, etc.  
+Sur une machine de développement typique : `C:\ffp5cs\ffp3` (ou le chemin où le dépôt a été cloné).
+
 ```
 ├── public/              # Front controller Slim (index.php, assets exposés)
+│   └── assets/
+│       └── images/
+│           └── aquaponie-description/   # Photos page Caractéristiques (copiées depuis photos aquaponie/)
+├── photos aquaponie/    # Photos sources pour la page Caractéristiques (script scripts/copy_photos_aquaponie.ps1)
 ├── src/
 │   ├── Config/          # Env, PDO, TableConfig, dépendances container
 │   ├── Controller/      # Routes HTTP (Slim)

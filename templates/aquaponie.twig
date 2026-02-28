@@ -93,6 +93,19 @@
                 text-align: center;
             }
             
+            .header-more {
+                margin-top: 1em;
+                opacity: 0.95;
+            }
+            .header-more a {
+                color: white;
+                text-decoration: underline;
+            }
+            .header-more a:hover {
+                text-decoration: none;
+                opacity: 0.9;
+            }
+            
             .system-status-badge {
                 display: inline-flex;
                 align-items: center;
@@ -569,6 +582,7 @@
                 <ul class="links">
                     <li><a href="https://iot.olution.info/ffp3/">Accueil</a></li>
                     <li class="active"><a href="https://iot.olution.info/ffp3/aquaponie{{ environment == 'test' ? '-test' : (environment == 'test3' ? '3-test' : (environment == 's3' ? '3' : '')) }}">L'aquaponie (FFP3)</a></li>
+                    <li><a href="https://iot.olution.info/ffp3/aquaponie-description">Caractéristiques</a></li>
                     <li><a href="https://iot.olution.info/msp1/msp1datas/msp1-data.php">Le potager</a></li>
                     <li><a href="https://iot.olution.info/n3pp/n3ppdatas/n3pp-data.php">L'élevage d'insectes</a></li>
                 </ul>
@@ -591,6 +605,7 @@
                         <p class="header-subtitle">
                             Supervision en direct des capteurs, pompes et indicateurs de la ferme aquaponique.
                         </p>
+                        <p class="header-more"><a href="https://iot.olution.info/ffp3/aquaponie-description">En savoir plus sur le module</a></p>
                     </div>
                 </div>
 
