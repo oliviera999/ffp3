@@ -571,6 +571,13 @@
             /* =================================================================
                VUE PAYSAGE (aquaponie-alt) – Données | Graphique
             ================================================================= */
+            .alt-synthesis-title {
+                background: #f0faf8;
+                padding: 14px 20px;
+                border-left: 4px solid #008B74;
+                border-radius: 8px;
+                margin: 0 0 1rem 0;
+            }
             .alt-data-chart-row {
                 display: grid;
                 grid-template-columns: minmax(280px, 1fr) minmax(400px, 1.5fr);
@@ -604,7 +611,13 @@
             .alt-data-chart-row .alt-stats-column .stat-card .progress-bar-container {
                 margin: 4px 0;
             }
-            .alt-data-chart-row .alt-stats-column .stat-card > div:last-child {
+            .stat-card-secondary {
+                font-size: 0.75em;
+                color: #7f8c8d;
+                margin-top: 8px;
+                line-height: 1.4;
+            }
+            .alt-data-chart-row .alt-stats-column .stat-card-secondary {
                 font-size: 0.7em;
                 margin-top: 4px;
             }
@@ -639,16 +652,33 @@
                 padding-top: 15px;
                 border-top: 1px solid rgba(0,139,116,0.15);
             }
+            .alt-chart-column {
+                background: rgba(255,255,255,0.6);
+                border-radius: 12px;
+                padding: 12px;
+                box-shadow: 0 2px 8px rgba(0,139,116,0.06);
+            }
             .alt-section-title-full {
                 width: 100%;
+                margin: 20px 0 12px 0 !important;
+            }
+            /* Surcharge page alt : harmonisation avec filter-section et chimie */
+            .system-health-panel {
+                border-radius: 16px;
+                border-top: 5px solid #008B74;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             }
             .alt-two-cols {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
                 gap: 1.5rem;
-                margin: 30px 0;
+                margin: 2.5rem 0 30px 0;
             }
-            /* Passage en une colonne : paysage confortable au-dessus de 900px, empilage en dessous ou en portrait */
+            .alt-two-cols .filter-section {
+                max-width: 100%;
+                margin: 0;
+            }
+            /* Passage en une colonne : au-dessus de 900px la vue alt garde données|graphique côte à côte (paysage confortable) ; en dessous ou en portrait tout s'empile (stats puis graphique pour chaque bloc). */
             @media (max-width: 900px), (orientation: portrait) {
                 .alt-data-chart-row {
                     grid-template-columns: 1fr;
@@ -658,6 +688,11 @@
                 }
                 .alt-two-cols {
                     grid-template-columns: 1fr;
+                }
+                .alt-two-cols .filter-section,
+                .system-health-panel {
+                    max-width: 100%;
+                    width: 100%;
                 }
             }
         </style>
@@ -705,7 +740,7 @@
 
                 <!-- Featured Post -->
                 <article class="post featured">
-                    <h2>📊 Synthèse des mesures du <span id="summary-start-date">{{ start_date|date('d/m/Y H:i:s') }}</span> au <span id="summary-end-date">{{ end_date|date('d/m/Y H:i:s') }}</span></h2>
+                    <h2 class="alt-synthesis-title">📊 Synthèse des mesures du <span id="summary-start-date">{{ start_date|date('d/m/Y H:i:s') }}</span> au <span id="summary-end-date">{{ end_date|date('d/m/Y H:i:s') }}</span></h2>
 
                     <!-- Titre pleine largeur : Niveaux d'eau -->
                     <div class="section-header alt-section-title-full">
@@ -724,7 +759,7 @@
                                     <div class="progress-bar-container">
                                         <div class="progress-bar" id="eaureserve-progress" style="width: {{ (last_reading_eaureserve|default(0) / 100 * 100)|round(0) }}%;"></div>
                                     </div>
-                                    <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                    <div class="stat-card-secondary">
                                         <div>Moy: <span id="eaureserve-avg">{{ avg_eaureserve|default(0)|round(1) }}</span> cm | ET: <span id="eaureserve-stddev">{{ stddev_eaureserve|default(0)|round(2) }}</span></div>
                                         <div>Min: <span id="eaureserve-min">{{ min_eaureserve|default(0) }}</span> cm | Max: <span id="eaureserve-max">{{ max_eaureserve|default(0) }}</span> cm</div>
                                     </div>
@@ -738,7 +773,7 @@
                                     <div class="progress-bar-container">
                                         <div class="progress-bar" id="eaupota-progress" style="width: {{ (last_reading_eaupota|default(0) / 100 * 100)|round(0) }}%;"></div>
                                     </div>
-                                    <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                    <div class="stat-card-secondary">
                                         <div>Moy: <span id="eaupota-avg">{{ avg_eaupota|default(0)|round(1) }}</span> cm | ET: <span id="eaupota-stddev">{{ stddev_eaupota|default(0)|round(2) }}</span></div>
                                         <div>Min: <span id="eaupota-min">{{ min_eaupota|default(0) }}</span> cm | Max: <span id="eaupota-max">{{ max_eaupota|default(0) }}</span> cm</div>
                                     </div>
@@ -752,7 +787,7 @@
                                     <div class="progress-bar-container">
                                         <div class="progress-bar" id="eauaqua-progress" style="width: {{ (last_reading_eauaqua|default(0) / 100 * 100)|round(0) }}%;"></div>
                                     </div>
-                                    <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                    <div class="stat-card-secondary">
                                         <div>Moy: <span id="eauaqua-avg">{{ avg_eauaqua|default(0)|round(1) }}</span> cm | ET: <span id="eauaqua-stddev">{{ stddev_eauaqua|default(0)|round(2) }}</span></div>
                                         <div>Min: <span id="eauaqua-min">{{ min_eauaqua|default(0) }}</span> cm | Max: <span id="eauaqua-max">{{ max_eauaqua|default(0) }}</span> cm</div>
                                     </div>
@@ -878,7 +913,7 @@
                                     <div class="progress-bar-container">
                                         <div class="progress-bar" id="tempeau-progress" style="width: {{ (last_reading_tempeau|default(0) / 40 * 100)|round(0) }}%;"></div>
                                     </div>
-                                    <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                    <div class="stat-card-secondary">
                                         <div>Moy: <span id="tempeau-avg">{{ avg_tempeau|default(0)|round(1) }}</span> °C | ET: <span id="tempeau-stddev">{{ stddev_tempeau|default(0)|round(2) }}</span></div>
                                         <div>Min: <span id="tempeau-min">{{ min_tempeau|default(0) }}</span> °C | Max: <span id="tempeau-max">{{ max_tempeau|default(0) }}</span> °C</div>
                                     </div>
@@ -892,7 +927,7 @@
                                     <div class="progress-bar-container">
                                         <div class="progress-bar" id="tempair-progress" style="width: {{ (last_reading_tempair|default(0) / 40 * 100)|round(0) }}%;"></div>
                                     </div>
-                                    <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                    <div class="stat-card-secondary">
                                         <div>Moy: <span id="tempair-avg">{{ avg_tempair|default(0)|round(1) }}</span> °C | ET: <span id="tempair-stddev">{{ stddev_tempair|default(0)|round(2) }}</span></div>
                                         <div>Min: <span id="tempair-min">{{ min_tempair|default(0) }}</span> °C | Max: <span id="tempair-max">{{ max_tempair|default(0) }}</span> °C</div>
                                     </div>
@@ -906,7 +941,7 @@
                                     <div class="progress-bar-container">
                                         <div class="progress-bar" id="humi-progress" style="width: {{ last_reading_humi|default(0) }}%;"></div>
                                     </div>
-                                    <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                    <div class="stat-card-secondary">
                                         <div>Moy: <span id="humi-avg">{{ avg_humi|default(0)|round(1) }}</span> % | ET: <span id="humi-stddev">{{ stddev_humi|default(0)|round(2) }}</span></div>
                                         <div>Min: <span id="humi-min">{{ min_humi|default(0) }}</span> % | Max: <span id="humi-max">{{ max_humi|default(0) }}</span> %</div>
                                     </div>
@@ -920,7 +955,7 @@
                                     <div class="progress-bar-container">
                                         <div class="progress-bar" id="lumi-progress" style="width: {{ (last_reading_lumi|default(0) / 4000 * 100)|round(0) }}%;"></div>
                                     </div>
-                                    <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                    <div class="stat-card-secondary">
                                         <div>Moy: <span id="lumi-avg">{{ avg_lumi|default(0)|round(0) }}</span> UA | ET: <span id="lumi-stddev">{{ stddev_lumi|default(0)|round(2) }}</span></div>
                                         <div>Min: <span id="lumi-min">{{ min_lumi|default(0) }}</span> UA | Max: <span id="lumi-max">{{ max_lumi|default(0) }}</span> UA</div>
                                     </div>
@@ -942,9 +977,9 @@
                         
                         .balance-card {
                             background: white;
-                            border-radius: 12px;
+                            border-radius: 16px;
                             padding: 20px;
-                            box-shadow: 0 2px 8px rgba(0,139,116,0.15);
+                            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
                             transition: transform 0.2s, box-shadow 0.2s;
                             border: 1px solid rgba(0,139,116,0.1);
                         }
@@ -1067,7 +1102,7 @@
                             margin: 30px auto;
                             max-width: 900px;
                             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-                            border-top: 5px solid #007E61;
+                            border-top: 5px solid #008B74;
                         }
                         
                         .filter-header {
@@ -1081,17 +1116,17 @@
                         
                         .filter-header h3 {
                             margin: 0;
-                            color: #007E61;
+                            color: #008B74;
                             font-size: 1.5em;
                         }
                         
                         .filter-header i {
                             font-size: 1.8em;
-                            color: #007E61;
+                            color: #008B74;
                         }
                         
                         .period-info {
-                            background: linear-gradient(135deg, #007E61 0%, #00B794 100%);
+                            background: linear-gradient(135deg, #008B74 0%, #00B794 100%);
                             color: white;
                             padding: 20px;
                             border-radius: 12px;
@@ -1190,8 +1225,8 @@
                         .quick-filter-btn {
                             padding: 12px 20px;
                             background: white;
-                            color: #007E61;
-                            border: 2px solid #007E61;
+                            color: #008B74;
+                            border: 2px solid #008B74;
                             border-radius: 8px;
                             cursor: pointer;
                             transition: all 0.3s;
@@ -1203,7 +1238,7 @@
                         }
                         
                         .quick-filter-btn:hover {
-                            background: #007E61;
+                            background: #008B74;
                             color: white;
                             transform: translateY(-2px);
                             box-shadow: 0 4px 12px rgba(0,126,97,0.3);
@@ -1253,7 +1288,7 @@
                         }
                         
                         .datetime-field label i {
-                            color: #007E61;
+                            color: #008B74;
                         }
                         
                         .datetime-field input {
@@ -1267,7 +1302,7 @@
                         
                         .datetime-field input:focus {
                             outline: none;
-                            border-color: #007E61;
+                            border-color: #008B74;
                             box-shadow: 0 0 0 3px rgba(0,126,97,0.1);
                         }
                         
@@ -1280,7 +1315,7 @@
                         
                         .btn-primary {
                             padding: 14px 25px;
-                            background: linear-gradient(135deg, #007E61 0%, #00B794 100%);
+                            background: linear-gradient(135deg, #008B74 0%, #00B794 100%);
                             color: white;
                             border: none;
                             border-radius: 8px;
@@ -1302,8 +1337,8 @@
                         .btn-secondary {
                             padding: 14px 25px;
                             background: white;
-                            color: #007E61;
-                            border: 2px solid #007E61;
+                            color: #008B74;
+                            border: 2px solid #008B74;
                             border-radius: 8px;
                             cursor: pointer;
                             font-weight: 600;
@@ -1316,7 +1351,7 @@
                         }
                         
                         .btn-secondary:hover {
-                            background: #007E61;
+                            background: #008B74;
                             color: white;
                             transform: translateY(-2px);
                             box-shadow: 0 6px 20px rgba(0,126,97,0.3);
@@ -2418,7 +2453,7 @@
                                         name: 'Eau réserve', 
                                         type: 'areaspline',
                                         data: EauReserve, 
-                                        color: '#007E61',
+                                        color: '#008B74',
                                         fillColor: {
                                             linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
                                             stops: [[0, 'rgba(0,126,97,0.3)'], [1, 'rgba(0,126,97,0.05)']]
@@ -2496,7 +2531,7 @@
                                         name: 'Tendance réserve (linéaire)', 
                                         type: 'line', 
                                         data: EauReserveTrendLine ? EauReserveTrendLine.data : [],
-                                        color: '#007E61',
+                                        color: '#008B74',
                                         lineWidth: 2,
                                         dashStyle: 'Dash',
                                         visible: false,
@@ -2537,7 +2572,7 @@
                                         name: 'Tendance réserve (moy. mobile)', 
                                         type: 'line', 
                                         data: EauReserveMovingAvg || [],
-                                        color: '#007E61',
+                                        color: '#008B74',
                                         lineWidth: 2,
                                         dashStyle: 'Solid',
                                         opacity: 0.7,
@@ -2838,7 +2873,7 @@
                                         type: 'areaspline',
                                         data: TempAir, 
                                         yAxis: 0, 
-                                        color: '#007E61',
+                                        color: '#008B74',
                                         fillColor: {
                                             linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
                                             stops: [[0, 'rgba(0,126,97,0.3)'], [1, 'rgba(0,126,97,0.05)']]
