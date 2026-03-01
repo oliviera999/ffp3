@@ -1731,6 +1731,29 @@
                             margin-right: auto;
                         }
                         
+                        .chemistry-content-row {
+                            display: grid;
+                            grid-template-columns: minmax(400px, 1.5fr) minmax(280px, 1fr);
+                            gap: 1.5rem;
+                            align-items: start;
+                            margin-top: 25px;
+                        }
+                        
+                        .chemistry-content-row .chemistry-charts-grid {
+                            margin-top: 0;
+                            max-width: none;
+                            margin-left: 0;
+                            margin-right: 0;
+                            grid-template-columns: 1fr;
+                            justify-items: stretch;
+                        }
+                        
+                        .chemistry-content-row .chemistry-legend {
+                            margin-top: 0;
+                            position: sticky;
+                            top: 1rem;
+                        }
+                        
                         .chemistry-chart-card {
                             background: #f8f9fa;
                             border-radius: 12px;
@@ -1783,7 +1806,6 @@
                         }
                         
                         .chemistry-legend {
-                            margin-top: 25px;
                             padding: 20px;
                             background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
                             border-radius: 12px;
@@ -1845,6 +1867,14 @@
                                 margin: 20px 10px;
                             }
                             
+                            .chemistry-content-row {
+                                grid-template-columns: 1fr;
+                            }
+                            
+                            .chemistry-content-row .chemistry-legend {
+                                position: static;
+                            }
+                            
                             .chemistry-charts-grid {
                                 grid-template-columns: 1fr;
                             }
@@ -1889,6 +1919,8 @@
                             </div>
                         </div>
 
+                        <!-- Graphiques et paramètres surveillés en 2 colonnes -->
+                        <div class="chemistry-content-row">
                         <!-- Grille des graphiques -->
                         <div class="chemistry-charts-grid">
                             <!-- Graphique 1 -->
@@ -1967,6 +1999,7 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         </div>
                     </div>
 
