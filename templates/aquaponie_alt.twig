@@ -586,12 +586,18 @@
             .alt-data-chart-row .alt-stats-column .stats-grid {
                 margin: 0;
             }
+            .alt-data-chart-row + .alt-data-chart-row {
+                margin-top: 2.5rem;
+                padding-top: 2rem;
+                border-top: 1px solid rgba(0,139,116,0.15);
+            }
             .alt-two-cols {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
                 gap: 1.5rem;
                 margin: 30px 0;
             }
+            /* Passage en une colonne : paysage confortable au-dessus de 900px, empilage en dessous ou en portrait */
             @media (max-width: 900px), (orientation: portrait) {
                 .alt-data-chart-row {
                     grid-template-columns: 1fr;
@@ -655,50 +661,50 @@
                                 <h3>Niveaux d'eau</h3>
                             </div>
                             <div class="stats-grid">
-                        <!-- Aquarium -->
-                        <div class="stat-card water">
-                            <i class="fas fa-fish stat-card-icon"></i>
-                            <div class="stat-card-label">Aquarium</div>
-                            <div class="stat-card-value" id="eauaqua-display">{{ last_reading_eauaqua|default(0)|round(0) }} <span class="stat-card-unit">cm</span></div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="eauaqua-progress" style="width: {{ (last_reading_eauaqua|default(0) / 100 * 100)|round(0) }}%;"></div>
-                            </div>
-                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: <span id="eauaqua-avg">{{ avg_eauaqua|default(0)|round(1) }}</span> cm | ET: <span id="eauaqua-stddev">{{ stddev_eauaqua|default(0)|round(2) }}</span></div>
-                                <div>Min: <span id="eauaqua-min">{{ min_eauaqua|default(0) }}</span> cm | Max: <span id="eauaqua-max">{{ max_eauaqua|default(0) }}</span> cm</div>
+                                <!-- Réserve (ordre aligné avec les séries du graphique) -->
+                                <div class="stat-card water">
+                                    <i class="fas fa-droplet stat-card-icon"></i>
+                                    <div class="stat-card-label">Réserve</div>
+                                    <div class="stat-card-value" id="eaureserve-display">{{ last_reading_eaureserve|default(0)|round(0) }} <span class="stat-card-unit">cm</span></div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="eaureserve-progress" style="width: {{ (last_reading_eaureserve|default(0) / 100 * 100)|round(0) }}%;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                        <div>Moy: <span id="eaureserve-avg">{{ avg_eaureserve|default(0)|round(1) }}</span> cm | ET: <span id="eaureserve-stddev">{{ stddev_eaureserve|default(0)|round(2) }}</span></div>
+                                        <div>Min: <span id="eaureserve-min">{{ min_eaureserve|default(0) }}</span> cm | Max: <span id="eaureserve-max">{{ max_eaureserve|default(0) }}</span> cm</div>
+                                    </div>
+                                </div>
+
+                                <!-- Potager -->
+                                <div class="stat-card water">
+                                    <i class="fas fa-seedling stat-card-icon"></i>
+                                    <div class="stat-card-label">Potager</div>
+                                    <div class="stat-card-value" id="eaupota-display">{{ last_reading_eaupota|default(0)|round(0) }} <span class="stat-card-unit">cm</span></div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="eaupota-progress" style="width: {{ (last_reading_eaupota|default(0) / 100 * 100)|round(0) }}%;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                        <div>Moy: <span id="eaupota-avg">{{ avg_eaupota|default(0)|round(1) }}</span> cm | ET: <span id="eaupota-stddev">{{ stddev_eaupota|default(0)|round(2) }}</span></div>
+                                        <div>Min: <span id="eaupota-min">{{ min_eaupota|default(0) }}</span> cm | Max: <span id="eaupota-max">{{ max_eaupota|default(0) }}</span> cm</div>
+                                    </div>
+                                </div>
+
+                                <!-- Aquarium -->
+                                <div class="stat-card water">
+                                    <i class="fas fa-fish stat-card-icon"></i>
+                                    <div class="stat-card-label">Aquarium</div>
+                                    <div class="stat-card-value" id="eauaqua-display">{{ last_reading_eauaqua|default(0)|round(0) }} <span class="stat-card-unit">cm</span></div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="eauaqua-progress" style="width: {{ (last_reading_eauaqua|default(0) / 100 * 100)|round(0) }}%;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                        <div>Moy: <span id="eauaqua-avg">{{ avg_eauaqua|default(0)|round(1) }}</span> cm | ET: <span id="eauaqua-stddev">{{ stddev_eauaqua|default(0)|round(2) }}</span></div>
+                                        <div>Min: <span id="eauaqua-min">{{ min_eauaqua|default(0) }}</span> cm | Max: <span id="eauaqua-max">{{ max_eauaqua|default(0) }}</span> cm</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        
-                        <!-- Réserve -->
-                        <div class="stat-card water">
-                            <i class="fas fa-droplet stat-card-icon"></i>
-                            <div class="stat-card-label">Réserve</div>
-                            <div class="stat-card-value" id="eaureserve-display">{{ last_reading_eaureserve|default(0)|round(0) }} <span class="stat-card-unit">cm</span></div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="eaureserve-progress" style="width: {{ (last_reading_eaureserve|default(0) / 100 * 100)|round(0) }}%;"></div>
-                            </div>
-                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: <span id="eaureserve-avg">{{ avg_eaureserve|default(0)|round(1) }}</span> cm | ET: <span id="eaureserve-stddev">{{ stddev_eaureserve|default(0)|round(2) }}</span></div>
-                                <div>Min: <span id="eaureserve-min">{{ min_eaureserve|default(0) }}</span> cm | Max: <span id="eaureserve-max">{{ max_eaureserve|default(0) }}</span> cm</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Potager -->
-                        <div class="stat-card water">
-                            <i class="fas fa-seedling stat-card-icon"></i>
-                            <div class="stat-card-label">Potager</div>
-                            <div class="stat-card-value" id="eaupota-display">{{ last_reading_eaupota|default(0)|round(0) }} <span class="stat-card-unit">cm</span></div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="eaupota-progress" style="width: {{ (last_reading_eaupota|default(0) / 100 * 100)|round(0) }}%;"></div>
-                            </div>
-                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: <span id="eaupota-avg">{{ avg_eaupota|default(0)|round(1) }}</span> cm | ET: <span id="eaupota-stddev">{{ stddev_eaupota|default(0)|round(2) }}</span></div>
-                                <div>Min: <span id="eaupota-min">{{ min_eaupota|default(0) }}</span> cm | Max: <span id="eaupota-max">{{ max_eaupota|default(0) }}</span> cm</div>
-                            </div>
-                        </div>
-                            </div>
-                        </div>
-                        <div>
+                        <div class="alt-chart-column">
                             <h3 class="chart-container-title">📊 Niveaux d'eau</h3>
                             <div id="chart-stock-area-eau-D" class="container"></div>
                         </div>
@@ -712,64 +718,64 @@
                                 <h3>Paramètres physiques</h3>
                             </div>
                             <div class="stats-grid">
-                        <!-- Température eau -->
-                        <div class="stat-card temp">
-                            <i class="fas fa-water stat-card-icon"></i>
-                            <div class="stat-card-label">Température eau</div>
-                            <div class="stat-card-value" id="tempeau-display">{{ last_reading_tempeau|default(0)|round(1) }} <span class="stat-card-unit">°C</span></div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="tempeau-progress" style="width: {{ (last_reading_tempeau|default(0) / 40 * 100)|round(0) }}%;"></div>
-                            </div>
-                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: <span id="tempeau-avg">{{ avg_tempeau|default(0)|round(1) }}</span> °C | ET: <span id="tempeau-stddev">{{ stddev_tempeau|default(0)|round(2) }}</span></div>
-                                <div>Min: <span id="tempeau-min">{{ min_tempeau|default(0) }}</span> °C | Max: <span id="tempeau-max">{{ max_tempeau|default(0) }}</span> °C</div>
+                                <!-- Température eau -->
+                                <div class="stat-card temp">
+                                    <i class="fas fa-water stat-card-icon"></i>
+                                    <div class="stat-card-label">Température eau</div>
+                                    <div class="stat-card-value" id="tempeau-display">{{ last_reading_tempeau|default(0)|round(1) }} <span class="stat-card-unit">°C</span></div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="tempeau-progress" style="width: {{ (last_reading_tempeau|default(0) / 40 * 100)|round(0) }}%;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                        <div>Moy: <span id="tempeau-avg">{{ avg_tempeau|default(0)|round(1) }}</span> °C | ET: <span id="tempeau-stddev">{{ stddev_tempeau|default(0)|round(2) }}</span></div>
+                                        <div>Min: <span id="tempeau-min">{{ min_tempeau|default(0) }}</span> °C | Max: <span id="tempeau-max">{{ max_tempeau|default(0) }}</span> °C</div>
+                                    </div>
+                                </div>
+
+                                <!-- Température air -->
+                                <div class="stat-card temp">
+                                    <i class="fas fa-temperature-high stat-card-icon"></i>
+                                    <div class="stat-card-label">Température air</div>
+                                    <div class="stat-card-value" id="tempair-display">{{ last_reading_tempair|default(0)|round(1) }} <span class="stat-card-unit">°C</span></div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="tempair-progress" style="width: {{ (last_reading_tempair|default(0) / 40 * 100)|round(0) }}%;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                        <div>Moy: <span id="tempair-avg">{{ avg_tempair|default(0)|round(1) }}</span> °C | ET: <span id="tempair-stddev">{{ stddev_tempair|default(0)|round(2) }}</span></div>
+                                        <div>Min: <span id="tempair-min">{{ min_tempair|default(0) }}</span> °C | Max: <span id="tempair-max">{{ max_tempair|default(0) }}</span> °C</div>
+                                    </div>
+                                </div>
+
+                                <!-- Humidité -->
+                                <div class="stat-card humidity">
+                                    <i class="fas fa-cloud stat-card-icon"></i>
+                                    <div class="stat-card-label">Humidité</div>
+                                    <div class="stat-card-value" id="humi-display">{{ last_reading_humi|default(0)|round(1) }} <span class="stat-card-unit">%</span></div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="humi-progress" style="width: {{ last_reading_humi|default(0) }}%;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                        <div>Moy: <span id="humi-avg">{{ avg_humi|default(0)|round(1) }}</span> % | ET: <span id="humi-stddev">{{ stddev_humi|default(0)|round(2) }}</span></div>
+                                        <div>Min: <span id="humi-min">{{ min_humi|default(0) }}</span> % | Max: <span id="humi-max">{{ max_humi|default(0) }}</span> %</div>
+                                    </div>
+                                </div>
+
+                                <!-- Luminosité -->
+                                <div class="stat-card light">
+                                    <i class="fas fa-lightbulb stat-card-icon"></i>
+                                    <div class="stat-card-label">Luminosité</div>
+                                    <div class="stat-card-value" id="lumi-display">{{ last_reading_lumi|default(0)|round(0) }} <span class="stat-card-unit">UA</span></div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="lumi-progress" style="width: {{ (last_reading_lumi|default(0) / 4000 * 100)|round(0) }}%;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
+                                        <div>Moy: <span id="lumi-avg">{{ avg_lumi|default(0)|round(0) }}</span> UA | ET: <span id="lumi-stddev">{{ stddev_lumi|default(0)|round(2) }}</span></div>
+                                        <div>Min: <span id="lumi-min">{{ min_lumi|default(0) }}</span> UA | Max: <span id="lumi-max">{{ max_lumi|default(0) }}</span> UA</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        
-                        <!-- Température air -->
-                        <div class="stat-card temp">
-                            <i class="fas fa-temperature-high stat-card-icon"></i>
-                            <div class="stat-card-label">Température air</div>
-                            <div class="stat-card-value" id="tempair-display">{{ last_reading_tempair|default(0)|round(1) }} <span class="stat-card-unit">°C</span></div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="tempair-progress" style="width: {{ (last_reading_tempair|default(0) / 40 * 100)|round(0) }}%;"></div>
-                            </div>
-                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: <span id="tempair-avg">{{ avg_tempair|default(0)|round(1) }}</span> °C | ET: <span id="tempair-stddev">{{ stddev_tempair|default(0)|round(2) }}</span></div>
-                                <div>Min: <span id="tempair-min">{{ min_tempair|default(0) }}</span> °C | Max: <span id="tempair-max">{{ max_tempair|default(0) }}</span> °C</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Humidité -->
-                        <div class="stat-card humidity">
-                            <i class="fas fa-cloud stat-card-icon"></i>
-                            <div class="stat-card-label">Humidité</div>
-                            <div class="stat-card-value" id="humi-display">{{ last_reading_humi|default(0)|round(1) }} <span class="stat-card-unit">%</span></div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="humi-progress" style="width: {{ last_reading_humi|default(0) }}%;"></div>
-                            </div>
-                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: <span id="humi-avg">{{ avg_humi|default(0)|round(1) }}</span> % | ET: <span id="humi-stddev">{{ stddev_humi|default(0)|round(2) }}</span></div>
-                                <div>Min: <span id="humi-min">{{ min_humi|default(0) }}</span> % | Max: <span id="humi-max">{{ max_humi|default(0) }}</span> %</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Luminosité -->
-                        <div class="stat-card light">
-                            <i class="fas fa-lightbulb stat-card-icon"></i>
-                            <div class="stat-card-label">Luminosité</div>
-                            <div class="stat-card-value" id="lumi-display">{{ last_reading_lumi|default(0)|round(0) }} <span class="stat-card-unit">UA</span></div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="lumi-progress" style="width: {{ (last_reading_lumi|default(0) / 4000 * 100)|round(0) }}%;"></div>
-                            </div>
-                            <div style="font-size: 0.75em; color: #7f8c8d; margin-top: 8px; line-height: 1.4;">
-                                <div>Moy: <span id="lumi-avg">{{ avg_lumi|default(0)|round(0) }}</span> UA | ET: <span id="lumi-stddev">{{ stddev_lumi|default(0)|round(2) }}</span></div>
-                                <div>Min: <span id="lumi-min">{{ min_lumi|default(0) }}</span> UA | Max: <span id="lumi-max">{{ max_lumi|default(0) }}</span> UA</div>
-                            </div>
-                        </div>
-                            </div>
-                        </div>
-                        <div>
+                        <div class="alt-chart-column">
                             <h3 class="chart-container-title">🌡️ Paramètres physiques</h3>
                             <div id="chart-stock-area-temp-D" class="container"></div>
                         </div>
