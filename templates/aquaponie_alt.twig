@@ -574,9 +574,9 @@
             .alt-data-chart-row {
                 display: grid;
                 grid-template-columns: minmax(280px, 1fr) minmax(400px, 1.5fr);
-                gap: 2rem;
+                gap: 1.25rem;
                 align-items: start;
-                margin: 30px 0;
+                margin: 15px 0;
             }
             .alt-data-chart-row .alt-stats-column {
                 display: flex;
@@ -584,12 +584,63 @@
                 gap: 1rem;
             }
             .alt-data-chart-row .alt-stats-column .stats-grid {
-                margin: 0;
+                margin: 10px 0;
+                gap: 12px;
+            }
+            /* Version compacte des stat-cards dans la colonne gauche */
+            .alt-data-chart-row .alt-stats-column .stat-card {
+                padding: 12px;
+            }
+            .alt-data-chart-row .alt-stats-column .stat-card-icon {
+                font-size: 1.8em;
+                margin-bottom: 8px;
+            }
+            .alt-data-chart-row .alt-stats-column .stat-card-value {
+                font-size: 1.4em;
+            }
+            .alt-data-chart-row .alt-stats-column .stat-card-label {
+                font-size: 0.8em;
+            }
+            .alt-data-chart-row .alt-stats-column .stat-card .progress-bar-container {
+                margin: 4px 0;
+            }
+            .alt-data-chart-row .alt-stats-column .stat-card > div:last-child {
+                font-size: 0.7em;
+                margin-top: 4px;
+            }
+            /* Bilan hydrique compact dans la colonne Niveaux d'eau */
+            .alt-data-chart-row .alt-stats-column .water-balance-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                margin: 10px 0;
+            }
+            .alt-data-chart-row .alt-stats-column .balance-card {
+                padding: 12px;
+            }
+            .alt-data-chart-row .alt-stats-column .balance-card-header {
+                margin-bottom: 10px;
+                padding-bottom: 8px;
+            }
+            .alt-data-chart-row .alt-stats-column .balance-card-title {
+                font-size: 0.95em;
+            }
+            .alt-data-chart-row .alt-stats-column .balance-stat-value {
+                font-size: 1em;
+            }
+            .alt-data-chart-row .alt-stats-column .balance-stat {
+                padding: 6px 0;
+            }
+            .alt-data-chart-row .alt-stats-column .balance-note {
+                font-size: 0.75em;
+                margin-top: 8px;
             }
             .alt-data-chart-row + .alt-data-chart-row {
-                margin-top: 2.5rem;
-                padding-top: 2rem;
+                margin-top: 15px;
+                padding-top: 15px;
                 border-top: 1px solid rgba(0,139,116,0.15);
+            }
+            .alt-section-title-full {
+                width: 100%;
             }
             .alt-two-cols {
                 display: grid;
@@ -600,6 +651,9 @@
             /* Passage en une colonne : paysage confortable au-dessus de 900px, empilage en dessous ou en portrait */
             @media (max-width: 900px), (orientation: portrait) {
                 .alt-data-chart-row {
+                    grid-template-columns: 1fr;
+                }
+                .alt-data-chart-row .alt-stats-column .water-balance-grid {
                     grid-template-columns: 1fr;
                 }
                 .alt-two-cols {
@@ -653,13 +707,14 @@
                 <article class="post featured">
                     <h2>📊 Synthèse des mesures du <span id="summary-start-date">{{ start_date|date('d/m/Y H:i:s') }}</span> au <span id="summary-end-date">{{ end_date|date('d/m/Y H:i:s') }}</span></h2>
 
+                    <!-- Titre pleine largeur : Niveaux d'eau -->
+                    <div class="section-header alt-section-title-full">
+                        <i class="fas fa-tint"></i>
+                        <h3>Niveaux d'eau</h3>
+                    </div>
                     <!-- Bloc 1 : Niveaux d'eau – données à gauche, graphique à droite -->
                     <div class="alt-data-chart-row">
                         <div class="alt-stats-column">
-                            <div class="section-header">
-                                <i class="fas fa-tint"></i>
-                                <h3>Niveaux d'eau</h3>
-                            </div>
                             <div class="stats-grid">
                                 <!-- Réserve (ordre aligné avec les séries du graphique) -->
                                 <div class="stat-card water">
@@ -703,20 +758,117 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="water-balance-grid">
+                                <!-- Carte Réserve -->
+                                <div class="balance-card reserve">
+                                    <div class="balance-card-header">
+                                        <i class="fas fa-droplet balance-card-icon"></i>
+                                        <h4 class="balance-card-title">Réserve d'eau</h4>
+                                    </div>
+                                    <div class="balance-stat">
+                                        <span class="balance-stat-label">
+                                            <i class="fas fa-arrow-down" style="color: #e74c3c;"></i>
+                                            Consommation totale
+                                        </span>
+                                        <span class="balance-stat-value negative">
+                                            {{ reserve_consumption|default(0)|round(1) }}
+                                            <span class="balance-stat-unit">cm</span>
+                                        </span>
+                                    </div>
+                                    <div class="balance-stat">
+                                        <span class="balance-stat-label">
+                                            <i class="fas fa-arrow-up" style="color: #27ae60;"></i>
+                                            Ravitaillement total
+                                        </span>
+                                        <span class="balance-stat-value positive">
+                                            {{ reserve_refill|default(0)|round(1) }}
+                                            <span class="balance-stat-unit">cm</span>
+                                        </span>
+                                    </div>
+                                    <div class="balance-stat">
+                                        <span class="balance-stat-label">
+                                            <i class="fas fa-balance-scale" style="color: #3498db;"></i>
+                                            Bilan net
+                                        </span>
+                                        <span class="balance-stat-value {% if reserve_balance|default(0) > 0 %}positive{% elseif reserve_balance|default(0) < 0 %}negative{% else %}neutral{% endif %}">
+                                            {% if reserve_balance|default(0) > 0 %}+{% endif %}{{ reserve_balance|default(0)|round(1) }}
+                                            <span class="balance-stat-unit">cm</span>
+                                        </span>
+                                    </div>
+                                    <div class="balance-note">
+                                        <i class="fas fa-info-circle"></i>
+                                        <strong>Note :</strong> Les variations ≤ 1 cm sont considérées comme des incertitudes de mesure et ne sont pas prises en compte.
+                                    </div>
+                                </div>
+                                <!-- Carte Aquarium - Marées -->
+                                <div class="balance-card aquarium">
+                                    <div class="balance-card-header">
+                                        <i class="fas fa-water balance-card-icon"></i>
+                                        <h4 class="balance-card-title">Cycles de marée</h4>
+                                    </div>
+                                    <div class="balance-stat">
+                                        <span class="balance-stat-label">
+                                            <i class="fas fa-arrows-alt-v"></i>
+                                            Marnage moyen
+                                        </span>
+                                        <span class="balance-stat-value neutral">
+                                            {{ tide_marnage|default(0)|round(2) }}
+                                            <span class="balance-stat-unit">cm</span>
+                                            {% if tide_marnage_stddev is not null %}
+                                                <span style="font-size: 0.7em; color: #95a5a6;">
+                                                    ± {{ tide_marnage_stddev|round(2) }}</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="balance-stat">
+                                        <span class="balance-stat-label">
+                                            <i class="fas fa-clock"></i>
+                                            Fréquence des marées
+                                        </span>
+                                        <span class="balance-stat-value neutral">
+                                            {{ tide_frequency|default(0)|round(2) }}
+                                            <span class="balance-stat-unit">/heure</span>
+                                            {% if tide_frequency_stddev is not null %}
+                                                <span style="font-size: 0.7em; color: #95a5a6;">
+                                                    ± {{ tide_frequency_stddev|round(2) }}</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="balance-stat">
+                                        <span class="balance-stat-label">
+                                            <i class="fas fa-repeat"></i>
+                                            Nombre de cycles
+                                        </span>
+                                        <span class="balance-stat-value neutral">
+                                            {{ tide_cycles|default(0) }}
+                                        </span>
+                                    </div>
+                                    <div class="balance-stat">
+                                        <span class="balance-stat-label">
+                                            <i class="fas fa-chart-line"></i>
+                                            Consommation moyenne
+                                        </span>
+                                        <span class="balance-stat-value neutral">
+                                            {{ aquarium_consumption|default(0)|round(2) }}
+                                            <span class="balance-stat-unit">cm</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="alt-chart-column">
-                            <h3 class="chart-container-title">📊 Niveaux d'eau</h3>
                             <div id="chart-stock-area-eau-D" class="container"></div>
                         </div>
                     </div>
 
+                    <!-- Titre pleine largeur : Paramètres physiques -->
+                    <div class="section-header alt-section-title-full">
+                        <i class="fas fa-thermometer-half"></i>
+                        <h3>Paramètres physiques</h3>
+                    </div>
                     <!-- Bloc 2 : Paramètres physiques – données à gauche, graphique à droite -->
                     <div class="alt-data-chart-row">
                         <div class="alt-stats-column">
-                            <div class="section-header">
-                                <i class="fas fa-thermometer-half"></i>
-                                <h3>Paramètres physiques</h3>
-                            </div>
                             <div class="stats-grid">
                                 <!-- Température eau -->
                                 <div class="stat-card temp">
@@ -776,15 +928,8 @@
                             </div>
                         </div>
                         <div class="alt-chart-column">
-                            <h3 class="chart-container-title">🌡️ Paramètres physiques</h3>
                             <div id="chart-stock-area-temp-D" class="container"></div>
                         </div>
-                    </div>
-
-                    <!-- Section Bilan Hydrique -->
-                    <div class="section-header">
-                        <i class="fas fa-water"></i>
-                        <h3>Bilan Hydrique</h3>
                     </div>
 
                     <style>
@@ -907,115 +1052,6 @@
                             }
                         }
                     </style>
-
-                    <div class="water-balance-grid">
-                        <!-- Carte Réserve -->
-                        <div class="balance-card reserve">
-                            <div class="balance-card-header">
-                                <i class="fas fa-droplet balance-card-icon"></i>
-                                <h4 class="balance-card-title">Réserve d'eau</h4>
-                            </div>
-                            
-                            <div class="balance-stat">
-                                <span class="balance-stat-label">
-                                    <i class="fas fa-arrow-down" style="color: #e74c3c;"></i>
-                                    Consommation totale
-                                </span>
-                                <span class="balance-stat-value negative">
-                                    {{ reserve_consumption|default(0)|round(1) }}
-                                    <span class="balance-stat-unit">cm</span>
-                                </span>
-                            </div>
-                            
-                            <div class="balance-stat">
-                                <span class="balance-stat-label">
-                                    <i class="fas fa-arrow-up" style="color: #27ae60;"></i>
-                                    Ravitaillement total
-                                </span>
-                                <span class="balance-stat-value positive">
-                                    {{ reserve_refill|default(0)|round(1) }}
-                                    <span class="balance-stat-unit">cm</span>
-                                </span>
-                            </div>
-                            
-                            <div class="balance-stat">
-                                <span class="balance-stat-label">
-                                    <i class="fas fa-balance-scale" style="color: #3498db;"></i>
-                                    Bilan net
-                                </span>
-                                <span class="balance-stat-value {% if reserve_balance|default(0) > 0 %}positive{% elseif reserve_balance|default(0) < 0 %}negative{% else %}neutral{% endif %}">
-                                    {% if reserve_balance|default(0) > 0 %}+{% endif %}{{ reserve_balance|default(0)|round(1) }}
-                                    <span class="balance-stat-unit">cm</span>
-                                </span>
-                            </div>
-                            
-                            <div class="balance-note">
-                                <i class="fas fa-info-circle"></i>
-                                <strong>Note :</strong> Les variations ≤ 1 cm sont considérées comme des incertitudes de mesure et ne sont pas prises en compte.
-                            </div>
-                        </div>
-                        
-                        <!-- Carte Aquarium - Marées -->
-                        <div class="balance-card aquarium">
-                            <div class="balance-card-header">
-                                <i class="fas fa-water balance-card-icon"></i>
-                                <h4 class="balance-card-title">Cycles de marée</h4>
-                            </div>
-                            
-                            <div class="balance-stat">
-                                <span class="balance-stat-label">
-                                    <i class="fas fa-arrows-alt-v"></i>
-                                    Marnage moyen
-                                </span>
-                                <span class="balance-stat-value neutral">
-                                    {{ tide_marnage|default(0)|round(2) }}
-                                    <span class="balance-stat-unit">cm</span>
-                                    {% if tide_marnage_stddev is not null %}
-                                        <span style="font-size: 0.7em; color: #95a5a6;">
-                                            ± {{ tide_marnage_stddev|round(2) }}
-                                        </span>
-                                    {% endif %}
-                                </span>
-                            </div>
-                            
-                            <div class="balance-stat">
-                                <span class="balance-stat-label">
-                                    <i class="fas fa-clock"></i>
-                                    Fréquence des marées
-                                </span>
-                                <span class="balance-stat-value neutral">
-                                    {{ tide_frequency|default(0)|round(2) }}
-                                    <span class="balance-stat-unit">/heure</span>
-                                    {% if tide_frequency_stddev is not null %}
-                                        <span style="font-size: 0.7em; color: #95a5a6;">
-                                            ± {{ tide_frequency_stddev|round(2) }}
-                                        </span>
-                                    {% endif %}
-                                </span>
-                            </div>
-                            
-                            <div class="balance-stat">
-                                <span class="balance-stat-label">
-                                    <i class="fas fa-repeat"></i>
-                                    Nombre de cycles
-                                </span>
-                                <span class="balance-stat-value neutral">
-                                    {{ tide_cycles|default(0) }}
-                                </span>
-                            </div>
-                            
-                            <div class="balance-stat">
-                                <span class="balance-stat-label">
-                                    <i class="fas fa-chart-line"></i>
-                                    Consommation moyenne
-                                </span>
-                                <span class="balance-stat-value neutral">
-                                    {{ aquarium_consumption|default(0)|round(2) }}
-                                    <span class="balance-stat-unit">cm</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
 
                     {# --------------------------------------------------------------------- #}
                     {# FORMULAIRE DE FILTRAGE MODERNE ET ERGONOMIQUE                              #}
@@ -1430,6 +1466,8 @@
                         <!-- Informations système -->
                     </div>
 
+                    </div>
+                    <div>
                     <!-- Panneau d'état du système (temps réel) -->
                     <div class="system-health-panel">
                         <h3>
@@ -1573,7 +1611,8 @@
                     <br />
 
                     </div>
-                    <div>
+                    </div>
+
                     {# --------------------------------------------------------------------- #}
                     {# PARAMÈTRES CHIMIQUES (Google Sheets)                                       #}
                     {# --------------------------------------------------------------------- #}
@@ -1895,7 +1934,6 @@
                             </div>
                         </div>
                     </div>
-                    </div></div>
 
                     {# --------------------------------------------------------------------- #}
                     {# SCRIPTS JS – INJECTION DES DONNÉES                                         #}

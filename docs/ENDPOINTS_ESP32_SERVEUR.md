@@ -86,7 +86,7 @@ Le client ESP32 utilise les timeouts suivants (définis dans `include/config.h`,
 
 Le serveur doit répondre au POST dans le délai client (18 s) pour éviter timeout côté ESP32.
 
-- **PHP** : `PostDataController::handle()` appelle `set_time_limit(30)` au début de la requête (marge par rapport aux 18 s client).
+- **PHP** : `PostDataController::handle()` appelle `set_time_limit(30)` au début de la requête (marge par rapport aux 18 s client). La réponse 200 est renvoyée immédiatement après l’insert BDD, la synchro outputs, l’invalidation cache et la mise à jour du timestamp board (aucun appel externe bloquant).
 - **À vérifier sur l'hébergement** :
   - `max_execution_time` (php.ini) ≥ 30 s pour les requêtes POST `/ffp3/post-data`, `/ffp3/post-data-test`, `/ffp3/post-data3-test` et `/ffp3/post-data3`.
   - Nginx : `proxy_read_timeout` (et éventuellement `fastcgi_read_timeout`) ≥ 30 s.
