@@ -567,6 +567,39 @@
                 border-color: rgba(46, 213, 115, 0.3);
                 color: #2d8659;
             }
+
+            /* =================================================================
+               VUE PAYSAGE (aquaponie-alt) – Données | Graphique
+            ================================================================= */
+            .alt-data-chart-row {
+                display: grid;
+                grid-template-columns: minmax(280px, 1fr) minmax(400px, 1.5fr);
+                gap: 2rem;
+                align-items: start;
+                margin: 30px 0;
+            }
+            .alt-data-chart-row .alt-stats-column {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .alt-data-chart-row .alt-stats-column .stats-grid {
+                margin: 0;
+            }
+            .alt-two-cols {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+                margin: 30px 0;
+            }
+            @media (max-width: 900px), (orientation: portrait) {
+                .alt-data-chart-row {
+                    grid-template-columns: 1fr;
+                }
+                .alt-two-cols {
+                    grid-template-columns: 1fr;
+                }
+            }
         </style>
     </head>
     <body class="is-preload">
@@ -581,8 +614,8 @@
             <nav id="nav">
                 <ul class="links">
                     <li><a href="https://iot.olution.info/ffp3/">Accueil</a></li>
-                    <li class="active"><a href="https://iot.olution.info/ffp3/aquaponie{{ environment == 'test' ? '-test' : (environment == 'test3' ? '3-test' : (environment == 's3' ? '3' : '')) }}">L'aquaponie (FFP3)</a></li>
-                    <li><a href="https://iot.olution.info/ffp3/aquaponie-alt{{ environment == 'test' ? '-test' : (environment == 'test3' ? '3-test' : (environment == 's3' ? '3' : '')) }}">Vue paysage</a></li>
+                    <li><a href="https://iot.olution.info/ffp3/aquaponie{{ environment == 'test' ? '-test' : (environment == 'test3' ? '3-test' : (environment == 's3' ? '3' : '')) }}">Vue classique</a></li>
+                    <li class="active"><a href="https://iot.olution.info/ffp3/aquaponie-alt{{ environment == 'test' ? '-test' : (environment == 'test3' ? '3-test' : (environment == 's3' ? '3' : '')) }}">Vue paysage</a></li>
                     <li><a href="https://iot.olution.info/ffp3/aquaponie-description">Caractéristiques</a></li>
                     <li><a href="https://iot.olution.info/msp1/msp1datas/msp1-data.php">Le potager</a></li>
                     <li><a href="https://iot.olution.info/n3pp/n3ppdatas/n3pp-data.php">L'élevage d'insectes</a></li>
@@ -604,10 +637,9 @@
                             <i class="fas fa-fish"></i>
                         </div>
                         <p class="header-subtitle">
-                            Supervision en direct des capteurs, pompes et indicateurs de la ferme aquaponique.
+                            Supervision en direct des capteurs, pompes et indicateurs de la ferme aquaponique. <strong>Vue paysage</strong> – données en vis-à-vis des graphiques.
                         </p>
                         <p class="header-more"><a href="https://iot.olution.info/ffp3/aquaponie-description">En savoir plus sur le module</a></p>
-                        <p class="header-more"><a href="https://iot.olution.info/ffp3/aquaponie-alt{{ environment == 'test' ? '-test' : (environment == 'test3' ? '3-test' : (environment == 's3' ? '3' : '')) }}">Vue paysage</a> (données en vis-à-vis des graphiques)</p>
                     </div>
                 </div>
 
@@ -615,13 +647,14 @@
                 <article class="post featured">
                     <h2>📊 Synthèse des mesures du <span id="summary-start-date">{{ start_date|date('d/m/Y H:i:s') }}</span> au <span id="summary-end-date">{{ end_date|date('d/m/Y H:i:s') }}</span></h2>
 
-                    <!-- Section Niveaux d'eau -->
-                    <div class="section-header">
-                        <i class="fas fa-tint"></i>
-                        <h3>Niveaux d'eau</h3>
-                    </div>
-                    
-                    <div class="stats-grid">
+                    <!-- Bloc 1 : Niveaux d'eau – données à gauche, graphique à droite -->
+                    <div class="alt-data-chart-row">
+                        <div class="alt-stats-column">
+                            <div class="section-header">
+                                <i class="fas fa-tint"></i>
+                                <h3>Niveaux d'eau</h3>
+                            </div>
+                            <div class="stats-grid">
                         <!-- Aquarium -->
                         <div class="stat-card water">
                             <i class="fas fa-fish stat-card-icon"></i>
@@ -662,16 +695,23 @@
                                 <div>Moy: <span id="eaupota-avg">{{ avg_eaupota|default(0)|round(1) }}</span> cm | ET: <span id="eaupota-stddev">{{ stddev_eaupota|default(0)|round(2) }}</span></div>
                                 <div>Min: <span id="eaupota-min">{{ min_eaupota|default(0) }}</span> cm | Max: <span id="eaupota-max">{{ max_eaupota|default(0) }}</span> cm</div>
                             </div>
+                        </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="chart-container-title">📊 Niveaux d'eau</h3>
+                            <div id="chart-stock-area-eau-D" class="container"></div>
+                        </div>
                     </div>
-                </div>
 
-                    <!-- Section Paramètres physiques -->
-                    <div class="section-header">
-                        <i class="fas fa-thermometer-half"></i>
-                        <h3>Paramètres physiques</h3>
-                    </div>
-                    
-                    <div class="stats-grid">
+                    <!-- Bloc 2 : Paramètres physiques – données à gauche, graphique à droite -->
+                    <div class="alt-data-chart-row">
+                        <div class="alt-stats-column">
+                            <div class="section-header">
+                                <i class="fas fa-thermometer-half"></i>
+                                <h3>Paramètres physiques</h3>
+                            </div>
+                            <div class="stats-grid">
                         <!-- Température eau -->
                         <div class="stat-card temp">
                             <i class="fas fa-water stat-card-icon"></i>
@@ -726,6 +766,12 @@
                                 <div>Moy: <span id="lumi-avg">{{ avg_lumi|default(0)|round(0) }}</span> UA | ET: <span id="lumi-stddev">{{ stddev_lumi|default(0)|round(2) }}</span></div>
                                 <div>Min: <span id="lumi-min">{{ min_lumi|default(0) }}</span> UA | Max: <span id="lumi-max">{{ max_lumi|default(0) }}</span> UA</div>
                             </div>
+                        </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="chart-container-title">🌡️ Paramètres physiques</h3>
+                            <div id="chart-stock-area-temp-D" class="container"></div>
                         </div>
                     </div>
 
@@ -965,21 +1011,12 @@
                         </div>
                     </div>
 
-                    <hr />
-
-                    <!-- Graphiques Stock Navigator + Aires colorées -->
-                    <h3 class="chart-container-title">📊 Niveaux d'eau</h3>
-                    <div id="chart-stock-area-eau-D" class="container"></div>
-                    
-                    <h3 class="chart-container-title">🌡️ Paramètres physiques</h3>
-                    <div id="chart-stock-area-temp-D" class="container"></div>
-                    
-                    <hr />
-
                     {# --------------------------------------------------------------------- #}
                     {# FORMULAIRE DE FILTRAGE MODERNE ET ERGONOMIQUE                              #}
                     {# --------------------------------------------------------------------- #}
 
+                    <div class="alt-two-cols">
+                    <div>
                     <style>
                         .filter-section {
                             background: white;
@@ -1529,6 +1566,8 @@
                     <hr />
                     <br />
 
+                    </div>
+                    <div>
                     {# --------------------------------------------------------------------- #}
                     {# PARAMÈTRES CHIMIQUES (Google Sheets)                                       #}
                     {# --------------------------------------------------------------------- #}
@@ -1850,6 +1889,7 @@
                             </div>
                         </div>
                     </div>
+                    </div></div>
 
                     {# --------------------------------------------------------------------- #}
                     {# SCRIPTS JS – INJECTION DES DONNÉES                                         #}

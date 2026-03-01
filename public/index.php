@@ -240,6 +240,7 @@ $app->get('/index.html', function (Request $request, Response $response) {
 // PRODUCTION
 $app->group('', function ($group) {
     $group->map(['GET', 'POST'], '/aquaponie', [AquaponieController::class, 'show']);
+    $group->map(['GET', 'POST'], '/aquaponie-alt', [AquaponieController::class, 'showAlt']);
     $group->get('/ffp3-data', function (Request $request, Response $response) {
         return $response->withHeader('Location', '/ffp3/aquaponie')->withStatus(301);
     }); // Redirection legacy vers aquaponie
@@ -248,16 +249,19 @@ $app->group('', function ($group) {
 // TEST
 $app->group('', function ($group) {
     $group->map(['GET', 'POST'], '/aquaponie-test', [AquaponieController::class, 'show']);
+    $group->map(['GET', 'POST'], '/aquaponie-alt-test', [AquaponieController::class, 'showAlt']);
 })->add(new EnvironmentMiddleware('test'));
 
 // TEST3
 $app->group('', function ($group) {
     $group->map(['GET', 'POST'], '/aquaponie3-test', [AquaponieController::class, 'show']);
+    $group->map(['GET', 'POST'], '/aquaponie-alt3-test', [AquaponieController::class, 'showAlt']);
 })->add(new EnvironmentMiddleware('test3'));
 
 // S3 PROD
 $app->group('', function ($group) {
     $group->map(['GET', 'POST'], '/aquaponie3', [AquaponieController::class, 'show']);
+    $group->map(['GET', 'POST'], '/aquaponie-alt3', [AquaponieController::class, 'showAlt']);
 })->add(new EnvironmentMiddleware('s3'));
 
 // Page Caractéristiques du module FFP3 - PUBLIQUE (pas de variante env)
