@@ -7,6 +7,19 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.63] - 2026-03-01
+
+### Changement - Schéma de nommage des pages aquamobile et control
+- **Pages aquaponie3 → aquamobile** : `/aquaponie3` → `/aquamobile`, `/aquaponie3-test` → `/aquamobile-test`, variantes alt → `/aquamobile-alt`, `/aquamobile-alt-test`
+- **Pages control → contextuelles** :
+  - WROOM PROD/TEST : `/control` → `/aquaponie-control`, `/control-test` → `/aquaponie-control-test`
+  - S3 TEST/PROD : `/control3-test` → `/aquamobile-control-test`, `/control3` → `/aquamobile-control`
+- **Redirections 301** : anciennes URL (`/control`, `/control-test`, `/control3`, `/control3-test`, `/aquaponie3`, `/aquaponie3-test`, `/aquaponie-alt3`, `/aquaponie-alt3-test`) redirigent vers les nouvelles
+- **Fichiers modifiés** : `public/index.php` (routes, chemins protégés, redirections), templates (supervision, control, dashboard, aquaponie, aquaponie_alt, tide_stats), `public/service-worker.js`, `public/manifest.json`, `bin/diagnose-controllers.php`, docs (AUTHENTICATION.md, ENDPOINTS_ESP32_SERVEUR.md, CACHE_MANAGEMENT.md, DEPLOYMENT_GUIDE.md, ENVIRONNEMENT_TEST.md, README.md)
+- **Note** : Les endpoints API (`/api/outputs/state`, etc.) et firmware (post-data, heartbeat) sont inchangés
+
+---
+
 ## [4.9.62] - 2026-02-26
 
 ### Ajout - Page Caractéristiques du module FFP3

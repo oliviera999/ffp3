@@ -122,7 +122,7 @@ rm -rf var/cache/di/*
 2. **Tester les pages PROD** :
    - https://iot.olution.info/ffp3/aquaponie
    - https://iot.olution.info/ffp3/dashboard
-   - https://iot.olution.info/ffp3/control
+   - https://iot.olution.info/ffp3/aquaponie-control
 
 3. **Vérifier dans le navigateur** :
    - Ouvrir F12 (Console)
@@ -133,7 +133,7 @@ rm -rf var/cache/di/*
 4. **Tester les pages TEST** (toujours sans cache) :
    - https://iot.olution.info/ffp3/aquaponie-test
    - https://iot.olution.info/ffp3/dashboard-test
-   - https://iot.olution.info/ffp3/control-test
+   - https://iot.olution.info/ffp3/aquaponie-control-test
 
 ### Désactiver temporairement le cache
 
@@ -212,7 +212,7 @@ chmod -R 775 var/cache/
    ```
    /aquaponie-test
    /dashboard-test
-   /control-test
+   /aquaponie-control-test
    ```
    _(Ces routes n'utilisent jamais le cache, idéal pour le dev)_
 

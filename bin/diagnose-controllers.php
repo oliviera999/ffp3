@@ -21,7 +21,7 @@ echo "==================================\n\n";
 $baseUrl = 'http://iot.olution.info/ffp3';
 $controllers = [
     'OutputController' => [
-        'endpoints' => ['/control', '/control-test', '/api/outputs/state', '/api/outputs-test/state'],
+        'endpoints' => ['/aquaponie-control', '/aquaponie-control-test', '/aquamobile-control-test', '/aquamobile-control', '/api/outputs/state', '/api/outputs-test/state'],
         'constructor' => [
             'App\Service\OutputService',
             'App\Service\TemplateRenderer', 
@@ -29,7 +29,7 @@ $controllers = [
         ]
     ],
     'AquaponieController' => [
-        'endpoints' => ['/aquaponie', '/aquaponie-test'],
+        'endpoints' => ['/aquaponie', '/aquaponie-test', '/aquamobile-test', '/aquamobile'],
         'constructor' => [
             'App\Repository\SensorReadRepository',
             'App\Service\StatisticsAggregatorService',

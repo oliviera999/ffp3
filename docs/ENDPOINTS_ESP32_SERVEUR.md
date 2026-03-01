@@ -70,8 +70,8 @@ http://iot.olution.info/ffp3/api/outputs-test/state
 | **Endpoint Heartbeat** | `/ffp3/heartbeat-test` | `/ffp3/heartbeat3-test` | `/ffp3/heartbeat` | `/ffp3/heartbeat3` |
 | **Table Data** | `ffp3Data2` | `ffp3Data3` | `ffp3Data` | `ffp3Data4` |
 | **Table Outputs** | `ffp3Outputs2` | `ffp3Outputs3` | `ffp3Outputs` | `ffp3Outputs4` |
-| **Page contrôle** | `/control-test` | `/control3-test` | `/control` | `/control3` |
-| **Page aquaponie** | `/aquaponie-test` | `/aquaponie3-test` | `/aquaponie` | `/aquaponie3` |
+| **Page contrôle** | `/aquaponie-control-test` | `/aquamobile-control-test` | `/aquaponie-control` | `/aquamobile-control` |
+| **Page aquaponie** | `/aquaponie-test` | `/aquamobile-test` | `/aquaponie` | `/aquamobile` |
 
 **S3 PROD** : Environnement dédié aux ESP32-S3 en production (`wroom-s3-prod`). Routes serveur sans suffixe `-test` (`post-data3`, `api/outputs3/state`, `heartbeat3`). Configuration firmware dans `include/config.h` (condition `BOARD_S3 && PROFILE_PROD`). Middleware serveur `EnvironmentMiddleware('s3')` → tables `ffp3Data4`, `ffp3Outputs4`, board `5`, `ffp3Heartbeat4`.
 
@@ -112,19 +112,19 @@ Le serveur doit répondre au POST dans le délai client (18 s) pour éviter time
 
 **Contrat côté serveur** : les commandes envoyées depuis la page de contrôle (toggle, paramètres) sont enregistrées dans la table **correspondant à l’environnement de la page** :
 
-- **Page `/control` (PROD)** → toggle/paramètres → table **ffp3Outputs** (PROD).
-- **Page `/control-test` (TEST)** → toggle/paramètres → table **ffp3Outputs2** (TEST).
-- **Page `/control3-test` (TEST3, ex. ESP32-S3 test)** → toggle/paramètres → table **ffp3Outputs3** (TEST3).
-- **Page `/control3` (S3 PROD)** → toggle/paramètres → table **ffp3Outputs4** (S3 PROD).
+- **Page `/aquaponie-control` (PROD)** → toggle/paramètres → table **ffp3Outputs** (PROD).
+- **Page `/aquaponie-control-test` (TEST)** → toggle/paramètres → table **ffp3Outputs2** (TEST).
+- **Page `/aquamobile-control-test` (TEST3, ex. ESP32-S3 test)** → toggle/paramètres → table **ffp3Outputs3** (TEST3).
+- **Page `/aquamobile-control` (S3 PROD)** → toggle/paramètres → table **ffp3Outputs4** (S3 PROD).
 
 **Protection des changements web** : Les changements faits depuis l'interface web sont protégés pendant 10 s (20 s pour nourrissage) contre l'écrasement par le POST ESP ; voir `SYNCHRONISATION_BIDIRECTIONNELLE.md`.
 
 **Pour que l'ESP32 applique ces commandes**, il doit **lire la même table** en faisant un GET sur le **même environnement** :
 
-- Si vous pilotez depuis **control-test** : l’ESP32 doit faire `GET /ffp3/api/outputs-test/state` (table ffp3Outputs2).
-- Si vous pilotez depuis **control3-test** (profil wroom-s3-test) : l'ESP32 doit faire `GET /ffp3/api/outputs3-test/state` (table ffp3Outputs3).
-- Si vous pilotez depuis **control3** (profil wroom-s3-prod) : l’ESP32 doit faire `GET /ffp3/api/outputs3/state` (table ffp3Outputs4).
-- Si vous pilotez depuis **control** (prod) : l’ESP32 doit faire `GET /ffp3/api/outputs/state` (table ffp3Outputs).
+- Si vous pilotez depuis **aquaponie-control-test** : l’ESP32 doit faire `GET /ffp3/api/outputs-test/state` (table ffp3Outputs2).
+- Si vous pilotez depuis **aquamobile-control-test** (profil wroom-s3-test) : l'ESP32 doit faire `GET /ffp3/api/outputs3-test/state` (table ffp3Outputs3).
+- Si vous pilotez depuis **aquamobile-control** (profil wroom-s3-prod) : l’ESP32 doit faire `GET /ffp3/api/outputs3/state` (table ffp3Outputs4).
+- Si vous pilotez depuis **aquaponie-control** (prod) : l’ESP32 doit faire `GET /ffp3/api/outputs/state` (table ffp3Outputs).
 
 **À vérifier en priorité (côté ESP32)** :
 

@@ -62,7 +62,7 @@ ENV=prod
 
 | Fonctionnalité | PRODUCTION | TEST |
 |---------------|------------|------|
-| **Interface de contrôle** | `/control` | `/control-test` |
+| **Interface de contrôle** | `/aquaponie-control` | `/aquaponie-control-test` |
 
 ### 📥 API pour ESP32
 
@@ -79,7 +79,7 @@ ENV=prod
 ```
 https://iot.olution.info/ffp3/dashboard
 https://iot.olution.info/ffp3/aquaponie
-https://iot.olution.info/ffp3/control
+https://iot.olution.info/ffp3/aquaponie-control
 https://iot.olution.info/ffp3/post-data
 ```
 
@@ -87,7 +87,7 @@ https://iot.olution.info/ffp3/post-data
 ```
 https://iot.olution.info/ffp3/dashboard-test
 https://iot.olution.info/ffp3/aquaponie-test
-https://iot.olution.info/ffp3/control-test
+https://iot.olution.info/ffp3/aquaponie-control-test
 https://iot.olution.info/ffp3/post-data-test
 ```
 
@@ -179,7 +179,7 @@ TableConfig::isTest();                          // Booléen : true si TEST
 
 ```
 1. Modifier le code
-2. Tester sur /aquaponie-test, /control-test
+2. Tester sur /aquaponie-test, /aquaponie-control-test
 3. Vérifier que les données vont dans ffp3Data2
 4. Valider les fonctionnalités
 ```
@@ -233,7 +233,7 @@ SELECT COUNT(*) FROM ffp3Data2 WHERE reading_time > NOW() - INTERVAL 5 MINUTE;
 **Test 3** : Vérifier le contrôle GPIO
 
 ```
-1. Toggle un GPIO sur /control-test
+1. Toggle un GPIO sur /aquaponie-control-test
 2. Vérifier ffp3Outputs2 (pas ffp3Outputs)
 3. L'état doit changer uniquement dans ffp3Outputs2
 ```
@@ -263,7 +263,7 @@ SELECT COUNT(*) FROM ffp3Data2 WHERE reading_time > NOW() - INTERVAL 5 MINUTE;
 
 ### Authentification
 
-Les interfaces de contrôle (`/control` et `/control-test`) peuvent être protégées par :
+Les interfaces de contrôle (`/aquaponie-control` et `/aquaponie-control-test`, `/aquamobile-control*`) peuvent être protégées par :
 
 - **HTTP Basic Authentication** (`.htaccess`)
 - **Authentification applicative** (future évolution)

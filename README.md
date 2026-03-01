@@ -26,7 +26,7 @@ Application PHP 8.1+ pour la supervision complète d'un système d'aquaponie pi
 - **Ingestion sécurisée des données capteurs** (`POST /post-data*`) avec double protection : clé API legacy et signature HMAC-SHA256.
 - **Dashboard interactif** (Highcharts) : filtres temporels, exports CSV, courbes personnalisables.
 - **Surveillance aquaponie** : statistiques eau/aquarium/potager, alerte niveau bas, marée et analyse de tendance.
-- **Contrôle des GPIO** via interface web (`/control*`) et API temps réel (synchronisation ESP32 ↔ serveur).
+- **Contrôle des GPIO** via interface web (`/aquaponie-control*`, `/aquamobile-control*`) et API temps réel (synchronisation ESP32 ↔ serveur).
 - **Automatisations planifiées** : commandes Slim (`CleanDataCommand`, `ProcessTasksCommand`, etc.) protégées par verrou `flock`.
 - **Logging centralisé** : `LogService` (Monolog) configurable via `.env`.
 - **Stack prête pour la production** : configuration par environnement, cache Twig, services injectés par container.

@@ -156,10 +156,10 @@ $app->add(function (Request $request, $handler) use ($container, $authMethod) {
     
     // Liste des chemins protégés (doivent commencer par ces chemins)
     $protectedPaths = [
-        '/control',
-        '/control-test',
-        '/control3',
-        '/control3-test',
+        '/aquaponie-control',
+        '/aquaponie-control-test',
+        '/aquamobile-control',
+        '/aquamobile-control-test',
         '/dashboard',
         '/dashboard-test',
         '/dashboard3',
@@ -236,6 +236,33 @@ $app->get('/index.html', function (Request $request, Response $response) {
     return $response->withHeader('Location', '/ffp3/')->withStatus(301);
 });
 
+// Redirections 301 : anciennes URL vers nouveau schéma de nommage
+$basePath = $app->getBasePath() ?: '';
+$app->get('/control', function (Request $request, Response $response) use ($basePath) {
+    return $response->withHeader('Location', $basePath . '/aquaponie-control')->withStatus(301);
+});
+$app->get('/control-test', function (Request $request, Response $response) use ($basePath) {
+    return $response->withHeader('Location', $basePath . '/aquaponie-control-test')->withStatus(301);
+});
+$app->get('/control3-test', function (Request $request, Response $response) use ($basePath) {
+    return $response->withHeader('Location', $basePath . '/aquamobile-control-test')->withStatus(301);
+});
+$app->get('/control3', function (Request $request, Response $response) use ($basePath) {
+    return $response->withHeader('Location', $basePath . '/aquamobile-control')->withStatus(301);
+});
+$app->map(['GET', 'POST'], '/aquaponie3-test', function (Request $request, Response $response) use ($basePath) {
+    return $response->withHeader('Location', $basePath . '/aquamobile-test')->withStatus(301);
+});
+$app->map(['GET', 'POST'], '/aquaponie3', function (Request $request, Response $response) use ($basePath) {
+    return $response->withHeader('Location', $basePath . '/aquamobile')->withStatus(301);
+});
+$app->map(['GET', 'POST'], '/aquaponie-alt3-test', function (Request $request, Response $response) use ($basePath) {
+    return $response->withHeader('Location', $basePath . '/aquamobile-alt-test')->withStatus(301);
+});
+$app->map(['GET', 'POST'], '/aquaponie-alt3', function (Request $request, Response $response) use ($basePath) {
+    return $response->withHeader('Location', $basePath . '/aquamobile-alt')->withStatus(301);
+});
+
 // Pages aquaponie - PUBLIQUES (avec middleware d'environnement mais sans authentification)
 // PRODUCTION
 $app->group('', function ($group) {
@@ -254,14 +281,14 @@ $app->group('', function ($group) {
 
 // TEST3
 $app->group('', function ($group) {
-    $group->map(['GET', 'POST'], '/aquaponie3-test', [AquaponieController::class, 'show']);
-    $group->map(['GET', 'POST'], '/aquaponie-alt3-test', [AquaponieController::class, 'showAlt']);
+    $group->map(['GET', 'POST'], '/aquamobile-test', [AquaponieController::class, 'show']);
+    $group->map(['GET', 'POST'], '/aquamobile-alt-test', [AquaponieController::class, 'showAlt']);
 })->add(new EnvironmentMiddleware('test3'));
 
 // S3 PROD
 $app->group('', function ($group) {
-    $group->map(['GET', 'POST'], '/aquaponie3', [AquaponieController::class, 'show']);
-    $group->map(['GET', 'POST'], '/aquaponie-alt3', [AquaponieController::class, 'showAlt']);
+    $group->map(['GET', 'POST'], '/aquamobile', [AquaponieController::class, 'show']);
+    $group->map(['GET', 'POST'], '/aquamobile-alt', [AquaponieController::class, 'showAlt']);
 })->add(new EnvironmentMiddleware('s3'));
 
 // Page Caractéristiques du module FFP3 - PUBLIQUE (pas de variante env)
@@ -374,7 +401,7 @@ $app->group('', function ($group) {
     $group->map(['GET', 'POST'], '/tide-stats', [TideStatsController::class, 'show']);
 
     // Interface de contrôle PROD - PROTÉGÉE
-    $group->get('/control', [OutputController::class, 'showInterface']);
+    $group->get('/aquaponie-control', [OutputController::class, 'showInterface']);
     $group->get('/api/outputs/toggle', [OutputController::class, 'toggleOutput']);
     $group->get('/api/outputs/toggle-test', [OutputController::class, 'toggleOutputTest']);
     // Note: /api/outputs/state est public (défini dans le groupe public ci-dessus)
@@ -416,7 +443,7 @@ $app->group('', function ($group) {
     $group->get('/export-data-test', [ExportController::class, 'downloadCsv']);
     
     // Interface de contrôle TEST - PROTÉGÉE
-    $group->get('/control-test', [OutputController::class, 'showInterface']);
+    $group->get('/aquaponie-control-test', [OutputController::class, 'showInterface']);
     $group->get('/api/outputs-test/toggle', [OutputController::class, 'toggleOutputTest']);
     // Note: /api/outputs-test/state est public (défini dans le groupe public ci-dessus)
     $group->post('/api/outputs-test/parameters', [OutputController::class, 'updateParameters']);
@@ -451,7 +478,7 @@ $app->group('', function ($group) {
     $group->get('/export-data3-test', [ExportController::class, 'downloadCsv']);
 
     // Interface de contrôle TEST3 - PROTÉGÉE
-    $group->get('/control3-test', [OutputController::class, 'showInterface']);
+    $group->get('/aquamobile-control-test', [OutputController::class, 'showInterface']);
     $group->get('/api/outputs3-test/toggle', [OutputController::class, 'toggleOutputTest3']);
     // Note: /api/outputs3-test/state est public (défini dans le groupe public ci-dessus)
     $group->post('/api/outputs3-test/parameters', [OutputController::class, 'updateParameters']);
@@ -465,7 +492,7 @@ $app->group('', function ($group) {
   ->add($applyAuth);
 
 // ====================================================================
-// Groupe de routes S3 prod (aquaponie3, control3 - tables 4, board 5)
+// Groupe de routes S3 prod (aquamobile, aquamobile-control - tables 4, board 5)
 // ====================================================================
 $app->group('', function ($group) {
     // Dashboard S3 - PROTÉGÉ
@@ -478,7 +505,7 @@ $app->group('', function ($group) {
     $group->get('/export-data3', [ExportController::class, 'downloadCsv']);
 
     // Interface de contrôle S3 - PROTÉGÉE
-    $group->get('/control3', [OutputController::class, 'showInterface']);
+    $group->get('/aquamobile-control', [OutputController::class, 'showInterface']);
     $group->get('/api/outputs3/toggle', [OutputController::class, 'toggleOutputS3']);
     // Note: /api/outputs3/state est public (défini dans le groupe public ci-dessus)
     $group->post('/api/outputs3/parameters', [OutputController::class, 'updateParameters']);

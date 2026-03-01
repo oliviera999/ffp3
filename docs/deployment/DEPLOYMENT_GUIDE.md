@@ -421,7 +421,7 @@ sudo systemctl restart httpd
 
 - **Main Site**: https://iot.olution.info/ffp3/
 - **Dashboard**: https://iot.olution.info/ffp3/dashboard
-- **Control**: https://iot.olution.info/ffp3/control
+- **Control**: https://iot.olution.info/ffp3/aquaponie-control
 - **System Health API**: https://iot.olution.info/ffp3/api/realtime/system/health
 - **GPIO State API**: https://iot.olution.info/ffp3/api/outputs/state
 

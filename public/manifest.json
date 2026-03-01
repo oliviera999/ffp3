@@ -95,7 +95,7 @@
       "name": "Contrôle",
       "short_name": "Contrôle",
       "description": "Contrôle des équipements",
-      "url": "/ffp3/control",
+      "url": "/ffp3/aquaponie-control",
       "icons": [{ "src": "assets/icons/icon-96.png", "sizes": "96x96" }]
     }
   ]

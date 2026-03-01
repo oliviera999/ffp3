@@ -5,7 +5,7 @@ Ce document explique comment configurer et utiliser le système d'authentificati
 ## Vue d'ensemble
 
 Le système d'authentification protège les pages suivantes :
-- Pages de contrôle : `/control`, `/control-test`, `/control3`, `/control3-test`
+- Pages de contrôle : `/aquaponie-control`, `/aquaponie-control-test`, `/aquamobile-control`, `/aquamobile-control-test`
 - Pages d'administration : `/admin/*`
 - Dashboards : `/dashboard*`, `/supervision`, `/tide-stats*`
 - APIs sensibles : `/api/outputs/*`
@@ -13,7 +13,7 @@ Le système d'authentification protège les pages suivantes :
 
 **Pages publiques** (non protégées) :
 - `/` (page d'accueil)
-- Toutes les pages aquaponie : `/aquaponie`, `/aquaponie-test`, `/aquaponie3`, `/aquaponie3-test`
+- Toutes les pages aquaponie : `/aquaponie`, `/aquaponie-test`, `/aquamobile`, `/aquamobile-test`
 - `/login`, `/logout` (routes d'authentification)
 - `/post-data*`, `/heartbeat*` (endpoints ESP32 - utilisent déjà HMAC/API_KEY)
 
@@ -113,7 +113,7 @@ ADMIN_TOKEN=votre_token_aleatoire_ici
 
 ### Authentification par session
 
-1. Accédez à n'importe quelle page protégée (ex: `/control`)
+1. Accédez à n'importe quelle page protégée (ex: `/aquaponie-control`)
 2. Vous serez redirigé vers `/login`
 3. Entrez votre nom d'utilisateur et mot de passe
 4. Vous serez redirigé vers la page demandée
@@ -126,7 +126,7 @@ ADMIN_TOKEN=votre_token_aleatoire_ici
 
 **Méthode 1 : Paramètre URL**
 ```
-https://iot.olution.info/ffp3/control?token=votre_token
+https://iot.olution.info/ffp3/aquaponie-control?token=votre_token
 ```
 
 **Méthode 2 : Cookie**
