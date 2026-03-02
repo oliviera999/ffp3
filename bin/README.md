@@ -24,7 +24,12 @@ php bin/clear-cache.php
 - Lorsque les modifications ne sont pas visibles en production
 - Pour forcer la recompilation des caches
 
-**Note** : Ce script est appelé automatiquement par le hook Git `post-merge` après chaque `git pull`.
+**Note** : Ce script est appelé automatiquement par le hook Git `post-merge` après chaque `git pull`. Le hook est versionné dans `bin/hooks/post-merge` (à installer sur le serveur, voir `bin/hooks/README.md`).
+
+---
+
+### `hooks/`
+Hooks Git versionnés (à copier dans `.git/hooks/` sur le serveur). Voir **`hooks/README.md`** pour l’installation du hook `post-merge` (vidage automatique des caches après `git pull`).
 
 ---
 
@@ -81,7 +86,8 @@ Pour plus d'informations sur la gestion des caches, consultez :
 
 ## 🔗 Fichiers liés
 
-- `.git/hooks/post-merge` : Hook Git qui appelle automatiquement `clear-cache.php`
+- `hooks/post-merge` : Hook Git versionné (copier vers `.git/hooks/post-merge` sur le serveur)
+- `hooks/README.md` : Instructions d’installation du hook
 - `src/Service/TemplateRenderer.php` : Configuration du cache Twig
 - `config/container.php` : Configuration du cache DI Container
 

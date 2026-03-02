@@ -12,7 +12,28 @@ Hook exécuté automatiquement après chaque `git pull` ou `git merge` pour vide
 
 ## 🚀 Installation sur le serveur de production
 
-### Méthode 1 : Création manuelle (recommandé)
+### Méthode 1 : Copie depuis le fichier versionné (recommandé)
+
+Le hook est versionné dans le dépôt sous `bin/hooks/post-merge`. Sur le serveur, après un `git pull` :
+
+```bash
+# Connexion SSH au serveur
+ssh oliviera@toaster
+
+# Navigation vers le projet
+cd /home4/oliviera/iot.olution.info/ffp3
+
+# Copier le hook et le rendre exécutable
+cp bin/hooks/post-merge .git/hooks/post-merge
+chmod +x .git/hooks/post-merge
+
+# Vérifier
+ls -la .git/hooks/post-merge
+```
+
+À faire **une seule fois** (ou après mise à jour du hook dans le dépôt).
+
+### Méthode 2 : Création manuelle
 
 Connectez-vous au serveur et créez le hook :
 
@@ -59,9 +80,9 @@ chmod +x .git/hooks/post-merge
 ls -la .git/hooks/post-merge
 ```
 
-### Méthode 2 : Copie depuis le dossier local
+### Méthode 3 : Copie depuis votre machine locale
 
-Si vous avez déjà le hook dans votre dépôt local :
+Si vous avez déjà le hook dans votre dépôt local `.git/hooks/` :
 
 ```bash
 # Sur votre machine locale
@@ -163,10 +184,10 @@ Les hooks Git ne sont **jamais** versionnés dans le dépôt pour des raisons de
 
 ### Mise à jour du hook
 
-Si le contenu du hook change, vous devez :
+Le hook est désormais versionné dans `bin/hooks/post-merge`. Si son contenu change dans le dépôt :
 
-1. Mettre à jour le fichier manuellement sur le serveur
-2. Ou recréer le hook avec la méthode 1 ci-dessus
+1. Sur le serveur : `git pull`
+2. Réinstaller : `cp bin/hooks/post-merge .git/hooks/post-merge && chmod +x .git/hooks/post-merge`
 
 ### Alternative sans hook
 
@@ -181,10 +202,12 @@ Ce script intègre le vidage de cache.
 
 ## 🔗 Fichiers liés
 
+- `bin/hooks/post-merge` : Hook versionné (copier vers `.git/hooks/post-merge` sur le serveur)
+- `bin/hooks/README.md` : Instructions d’installation
 - `bin/clear-cache.php` : Script de vidage des caches (versionné)
 - `bin/deploy.sh` : Script de déploiement complet (versionné)
 - `docs/deployment/CACHE_MANAGEMENT.md` : Documentation de la gestion des caches
-- `.git/hooks/post-merge` : Hook Git (non versionné, à installer manuellement)
+- `.git/hooks/post-merge` : Emplacement final du hook sur le serveur (non versionné)
 
 ## 📚 Références
 
