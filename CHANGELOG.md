@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.71] - 2026-03-03
+
+### Correctif - Vue paysage : superposition section chimie / cadres Filtrage et État du système
+- `.alt-two-cols` : `position: relative`, `z-index: 1`, `isolation: isolate` pour rester au premier plan
+- `.alt-chemistry-section` : `margin-top: 3rem`, `padding-top: 1.5rem`, `z-index: 0` ; `::before` bloc 2rem pour espace non collapsible
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.70] - 2026-03-03
 
 ### Changement - Vue paysage : Suivi des paramètres chimiques aligné sur Niveaux d'eau / Paramètres physiques
