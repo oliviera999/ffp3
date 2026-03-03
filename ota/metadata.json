@@ -1,36 +1,48 @@
 {
-    "version":  "12.14",
-    "bin_url":  "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin",
-    "size":  1476848,
-    "md5":  "8d2650424c15899602779bad5fbb5e7f",
-    "channels":  {
-                     "prod":  {
-                                  "esp32-wroom":  {
-                                                      "size":  1476848,
-                                                      "md5":  "8d2650424c15899602779bad5fbb5e7f",
-                                                      "version":  "12.14",
-                                                      "bin_url":  "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin"
-                                                  },
-                                  "default":  {
-                                                  "size":  1476848,
-                                                  "md5":  "8d2650424c15899602779bad5fbb5e7f",
-                                                  "version":  "12.14",
-                                                  "bin_url":  "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin"
-                                              }
-                              },
-                     "test":  {
-                                  "esp32-wroom":  {
-                                                      "md5":  "ea1b51cfcb2368030bc9caf51a19dfa4",
-                                                      "version":  "12.09",
-                                                      "bin_url":  "https://iot.olution.info/ffp3/ota/esp32-wroom-beta/firmware.bin",
-                                                      "size":  1476192
-                                                  },
-                                  "default":  {
-                                                  "md5":  "ea1b51cfcb2368030bc9caf51a19dfa4",
-                                                  "version":  "12.09",
-                                                  "bin_url":  "https://iot.olution.info/ffp3/ota/esp32-wroom-beta/firmware.bin",
-                                                  "size":  1476192
-                                              }
-                              }
-                 }
+  "version": "12.15",
+  "bin_url": "https://iot.olution.info/ffp3/ota/esp32-s3-test/firmware.bin",
+  "size": 2004672,
+  "md5": "89e070bbdce233f204d76b9bec4447f6",
+  "channels": {
+    "prod": {
+      "esp32-wroom": {
+        "size": 1476848,
+        "md5": "8d2650424c15899602779bad5fbb5e7f",
+        "version": "12.14",
+        "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin"
+      },
+      "default": {
+        "size": 1476848,
+        "md5": "8d2650424c15899602779bad5fbb5e7f",
+        "version": "12.14",
+        "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin"
+      }
+    },
+    "test": {
+      "esp32-wroom": {
+        "md5": "ea1b51cfcb2368030bc9caf51a19dfa4",
+        "version": "12.09",
+        "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom-beta/firmware.bin",
+        "size": 1476192
+      },
+      "default": {
+        "version": "12.15",
+        "bin_url": "https://iot.olution.info/ffp3/ota/esp32-s3-test/firmware.bin",
+        "filesystem_md5": "cf99cf16f94901b2ac3bf177c4b93e35",
+        "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-s3-test/littlefs.bin",
+        "filesystem_size": 2097152,
+        "size": 2004672,
+        "md5": "89e070bbdce233f204d76b9bec4447f6"
+      },
+      "esp32-s3": {
+        "version": "12.15",
+        "bin_url": "https://iot.olution.info/ffp3/ota/esp32-s3-test/firmware.bin",
+        "filesystem_md5": "cf99cf16f94901b2ac3bf177c4b93e35",
+        "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-s3-test/littlefs.bin",
+        "filesystem_size": 2097152,
+        "size": 2004672,
+        "md5": "89e070bbdce233f204d76b9bec4447f6"
+      }
+    }
+  }
 }
