@@ -2685,7 +2685,7 @@
                                                 trackBorderRadius: 8,
                                                 trackBorderColor: '#CCC'
                                             },
-                                            /* Humidité et Luminosité fusionnés : même panneau, 2 axes Y (gauche %, droite UA) */
+                                            /* Panneaux 1 et 2 : occupation verticale similaire (50 % chacun) */
                                             yAxis: [{
                                                 labels: { 
                                                     format: '{value}°C',
@@ -2695,7 +2695,7 @@
                                                     text: 'Températures (°C)',
                                                     style: { fontSize: '11px' }
                                                 },
-                                                height: '25%',
+                                                height: '50%',
                                                 lineWidth: 2
                                             }, {
                                                 labels: { 
@@ -2703,8 +2703,8 @@
                                                     style: { fontSize: '10px' }
                                                 },
                                                 title: { text: 'Humidité (%)', style: { fontSize: '11px' } },
-                                                top: '30%',
-                                                height: '70%',
+                                                top: '50%',
+                                                height: '50%',
                                                 offset: 0,
                                                 lineWidth: 2
                                             }, {
@@ -2714,16 +2714,16 @@
                                                 },
                                                 title: { text: 'Luminosité (UA)', style: { fontSize: '11px' } },
                                                 opposite: true,
-                                                top: '30%',
-                                                height: '70%',
+                                                top: '50%',
+                                                height: '50%',
                                                 offset: 0,
                                                 lineWidth: 2
                                             }, {
                                                 labels: { enabled: false },
                                                 title: { text: '' },
                                                 opposite: true,
-                                                top: '30%',
-                                                height: '70%',
+                                                top: '50%',
+                                                height: '50%',
                                                 offset: -35,
                                                 max: 1.5,
                                                 lineWidth: 1
@@ -2818,33 +2818,33 @@
                                     type: 'datetime',
                                     ordinal: false  // Espacement proportionnel au temps réel entre les mesures
                                 },
-                                /* Humidité et Luminosité : même panneau, axe gauche % et axe droit UA */
+                                /* Panneaux 1 et 2 : occupation verticale similaire (50 % chacun) */
                                 yAxis: [{ 
                                     labels: { format: '{value}°C' },
                                     title: { text: 'Températures (°C)' },
-                                    height: '25%',
+                                    height: '50%',
                                     lineWidth: 2
                                 }, {
                                     labels: { format: '{value}%' },
                                     title: { text: 'Humidité (%)' },
-                                    top: '30%',
-                                    height: '70%',
+                                    top: '50%',
+                                    height: '50%',
                                     offset: 0,
                                     lineWidth: 2
                                 }, {
                                     labels: { format: '{value} UA' },
                                     title: { text: 'Luminosité (UA)' },
                                     opposite: true,
-                                    top: '30%',
-                                    height: '70%',
+                                    top: '50%',
+                                    height: '50%',
                                     offset: 0,
                                     lineWidth: 2
                                 }, {
                                     labels: { enabled: false },
                                     title: { text: '' },
                                     opposite: true,
-                                    top: '30%',
-                                    height: '70%',
+                                    top: '50%',
+                                    height: '50%',
                                     offset: -35,
                                     max: 1.5,
                                     lineWidth: 1
