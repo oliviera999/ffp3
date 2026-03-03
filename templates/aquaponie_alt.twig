@@ -597,29 +597,31 @@
                 font-size: 0.65em;
                 margin-top: 2px;
             }
-            /* Bilan hydrique compact dans la colonne Niveaux d'eau */
-            .alt-data-chart-row .alt-stats-column .water-balance-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-                margin: 10px 0;
+            /* Bilan hydrique : Réserve d'eau et Cycles de marée sous le graphique, 2 colonnes de largeur similaire */
+            .alt-balance-below-chart {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin-top: 1rem;
+                width: 100%;
             }
-            .alt-data-chart-row .alt-stats-column .balance-card {
+            .alt-balance-below-chart .balance-card {
                 padding: 12px;
             }
-            .alt-data-chart-row .alt-stats-column .balance-card-header {
+            .alt-balance-below-chart .balance-card-header {
                 margin-bottom: 10px;
                 padding-bottom: 8px;
             }
-            .alt-data-chart-row .alt-stats-column .balance-card-title {
+            .alt-balance-below-chart .balance-card-title {
                 font-size: 0.95em;
             }
-            .alt-data-chart-row .alt-stats-column .balance-stat-value {
+            .alt-balance-below-chart .balance-stat-value {
                 font-size: 1em;
             }
-            .alt-data-chart-row .alt-stats-column .balance-stat {
+            .alt-balance-below-chart .balance-stat {
                 padding: 6px 0;
             }
-            .alt-data-chart-row .alt-stats-column .balance-note {
+            .alt-balance-below-chart .balance-note {
                 font-size: 0.75em;
                 margin-top: 8px;
             }
@@ -671,7 +673,7 @@
                 .alt-data-chart-row {
                     grid-template-columns: 1fr;
                 }
-                .alt-data-chart-row .alt-stats-column .water-balance-grid {
+                .alt-balance-below-chart {
                     grid-template-columns: 1fr;
                 }
                 .alt-data-chart-row .alt-stats-column .stats-grid {
@@ -783,9 +785,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="water-balance-grid">
-                                <!-- Carte Réserve -->
-                                <div class="balance-card reserve">
+                        </div>
+                        <div class="alt-chart-column">
+                            <div id="chart-stock-area-eau-D" class="container"></div>
+                        </div>
+                    </div>
+                    <!-- Bilan hydrique : Réserve d'eau et Cycles de marée sous le graphique, 2 colonnes -->
+                    <div class="alt-balance-below-chart">
+                        <div class="balance-card reserve">
                                     <div class="balance-card-header">
                                         <i class="fas fa-droplet balance-card-icon"></i>
                                         <h4 class="balance-card-title">Réserve d'eau</h4>
@@ -824,9 +831,9 @@
                                         <i class="fas fa-info-circle"></i>
                                         <strong>Note :</strong> Les variations ≤ 1 cm sont considérées comme des incertitudes de mesure et ne sont pas prises en compte.
                                     </div>
-                                </div>
-                                <!-- Carte Aquarium - Marées -->
-                                <div class="balance-card aquarium">
+                        </div>
+                        <!-- Carte Aquarium - Marées -->
+                        <div class="balance-card aquarium">
                                     <div class="balance-card-header">
                                         <i class="fas fa-water balance-card-icon"></i>
                                         <h4 class="balance-card-title">Cycles de marée</h4>
@@ -878,11 +885,6 @@
                                             <span class="balance-stat-unit">cm</span>
                                         </span>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="alt-chart-column">
-                            <div id="chart-stock-area-eau-D" class="container"></div>
                         </div>
                     </div>
 

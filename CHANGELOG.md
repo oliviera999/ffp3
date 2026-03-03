@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.64] - 2026-03-03
+
+### Changement - Vue paysage (aquaponie-alt) : Réserve d'eau et Cycles de marée sous le graphique
+- Les blocs **Réserve d'eau** et **Cycles de marée** (bilan hydrique) sont affichés sous le graphique des niveaux d'eau, en vis-à-vis sur 2 colonnes de largeur similaire
+- Nouveau conteneur `.alt-balance-below-chart` en grille 2 colonnes ; passage en 1 colonne en responsive (max-width 900px ou portrait)
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.63] - 2026-03-01
 
 ### Changement - Schéma de nommage des pages aquamobile et control
