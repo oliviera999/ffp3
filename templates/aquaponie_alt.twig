@@ -693,6 +693,54 @@
                 max-width: 100%;
                 margin: 0;
             }
+            /* Cadre État du système : interlignes et espacements réduits (vue alt) */
+            .alt-two-cols .system-health-panel {
+                padding: 12px;
+            }
+            .alt-two-cols .system-health-panel h3 {
+                margin-bottom: 8px;
+                padding-bottom: 6px;
+                font-size: 1.15em;
+            }
+            .alt-two-cols .health-grid {
+                gap: 8px;
+                margin-top: 8px;
+            }
+            .alt-two-cols .health-item {
+                padding: 8px;
+                line-height: 1.2;
+            }
+            .alt-two-cols .health-item-label {
+                margin-bottom: 3px;
+                font-size: 0.82em;
+            }
+            .alt-two-cols .health-item-value {
+                font-size: 1.25em;
+                line-height: 1.25;
+            }
+            .alt-two-cols .health-item-value .reading-timestamp {
+                margin-top: 2px;
+            }
+            .alt-two-cols .next-update-countdown {
+                padding: 6px;
+                margin-top: 6px;
+                font-size: 0.88em;
+                line-height: 1.25;
+            }
+            .alt-two-cols .live-controls-integrated {
+                margin-top: 8px;
+                padding-top: 8px;
+            }
+            .alt-two-cols .live-control-row {
+                gap: 8px;
+            }
+            .alt-two-cols .live-control-item {
+                padding: 6px 10px;
+                font-size: 0.9em;
+            }
+            .alt-two-cols .status-indicator {
+                padding: 6px 12px;
+            }
             /* Passage en une colonne : au-dessus de 900px la vue alt garde données|graphique côte à côte (paysage confortable) ; en dessous ou en portrait tout s'empile (stats puis graphique pour chaque bloc). */
             @media (max-width: 900px), (orientation: portrait) {
                 .alt-data-chart-row {
