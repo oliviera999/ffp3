@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.69] - 2026-03-03
+
+### Correctif - Vue paysage : Filtrage des données et État du système
+- Alignement hauteur : Filtrage et État du système en hauteur égale (min-height: 0, overflow-y: auto sur .filter-section)
+- Boutons Filtrage : texte contenu (quick-filter-btn et btn-primary/secondary avec overflow, word-break, tailles réduites), plus de débordement
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.68] - 2026-03-03
 
 ### Changement - Vue paysage : hauteur des graphiques = hauteur des colonnes de badges
