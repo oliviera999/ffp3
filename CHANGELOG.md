@@ -7,6 +7,14 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.67] - 2026-03-03
+
+### Correctif - Vue paysage : panneau 2 Paramètres physiques jusqu'à l'axe des abscisses
+- Graphique Paramètres physiques : hauteur du panneau Humidité/Luminosité/LEDs passée de 25 % à 70 % (30 % → 100 %), suppression du blanc entre le panneau et l'axe des abscisses
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.66] - 2026-03-03
 
 ### Changement - Vue paysage : LEDs et Nourriture sur le panneau Humidité/Luminosité
