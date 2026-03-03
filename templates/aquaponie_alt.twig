@@ -643,6 +643,13 @@
                 padding: 12px;
                 box-shadow: 0 2px 8px rgba(0,139,116,0.06);
             }
+            .alt-chemistry-wrapper {
+                background: rgba(255,255,255,0.6);
+                border-radius: 12px;
+                padding: 12px;
+                box-shadow: 0 2px 8px rgba(0,139,116,0.06);
+                margin-top: 0;
+            }
             .alt-section-title-full {
                 width: 100%;
                 margin: 20px 0 12px 0 !important;
@@ -664,18 +671,18 @@
                 display: flex;
                 flex-direction: column;
                 min-height: 0;
+                min-width: 0;
             }
+            /* Même hauteur stricte pour les deux cadres */
             .alt-two-cols .filter-section,
             .alt-two-cols .system-health-panel {
-                flex: 1;
+                flex: 1 1 0;
+                min-height: 0;
                 display: flex;
                 flex-direction: column;
-                min-height: 0;
             }
             .alt-two-cols .filter-section {
                 overflow-y: auto;
-            }
-            .alt-two-cols .filter-section {
                 max-width: 100%;
                 margin: 0;
             }
@@ -1662,36 +1669,6 @@
                     {# --------------------------------------------------------------------- #}
 
                     <style>
-                        .chemistry-section {
-                            background: white;
-                            border-radius: 16px;
-                            padding: 30px;
-                            margin: 30px auto;
-                            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-                            border-top: 5px solid #008B74;
-                        }
-                        
-                        .chemistry-header {
-                            display: flex;
-                            align-items: center;
-                            gap: 15px;
-                            margin-bottom: 25px;
-                            padding-bottom: 15px;
-                            border-bottom: 3px solid #008B74;
-                        }
-                        
-                        .chemistry-header h2 {
-                            margin: 0;
-                            color: #008B74;
-                            font-size: 1.8em;
-                            font-weight: bold;
-                        }
-                        
-                        .chemistry-header i {
-                            font-size: 2em;
-                            color: #008B74;
-                        }
-                        
                         .chemistry-info-banner {
                             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                             color: white;
@@ -1872,9 +1849,8 @@
                         }
                         
                         @media (max-width: 768px) {
-                            .chemistry-section {
-                                padding: 20px;
-                                margin: 20px 10px;
+                            .alt-chemistry-wrapper {
+                                padding: 16px;
                             }
                             
                             .chemistry-content-row {
@@ -1896,13 +1872,12 @@
                         }
                     </style>
 
-                    <div class="chemistry-section">
-                        <!-- En-tête de la section -->
-                        <div class="chemistry-header">
-                            <i class="fas fa-flask"></i>
-                    <h2>Suivi des paramètres chimiques de l'eau</h2>
-                        </div>
-
+                    <!-- Titre pleine largeur : même style que Niveaux d'eau / Paramètres physiques -->
+                    <div class="section-header alt-section-title-full">
+                        <i class="fas fa-flask"></i>
+                        <h3>Suivi des paramètres chimiques de l'eau</h3>
+                    </div>
+                    <div class="alt-chemistry-wrapper">
                         <!-- Bannière d'information -->
                         <div class="chemistry-info-banner">
                             <div class="chemistry-info-icon">
