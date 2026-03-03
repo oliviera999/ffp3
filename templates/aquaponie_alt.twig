@@ -2685,6 +2685,7 @@
                                                 trackBorderRadius: 8,
                                                 trackBorderColor: '#CCC'
                                             },
+                                            /* Humidité et Luminosité fusionnés : même panneau, 2 axes Y (gauche %, droite UA) */
                                             yAxis: [{
                                                 labels: { 
                                                     format: '{value}°C',
@@ -2701,10 +2702,7 @@
                                                     format: '{value}%',
                                                     style: { fontSize: '10px' }
                                                 },
-                                                title: { 
-                                                    text: 'Humidité (%)',
-                                                    style: { fontSize: '11px' }
-                                                },
+                                                title: { text: 'Humidité (%)', style: { fontSize: '11px' } },
                                                 top: '30%',
                                                 height: '25%',
                                                 offset: 0,
@@ -2714,18 +2712,16 @@
                                                     format: '{value} UA',
                                                     style: { fontSize: '10px' }
                                                 },
-                                                title: { 
-                                                    text: 'Luminosité (UA)',
-                                                    style: { fontSize: '11px' }
-                                                },
-                                                top: '60%',
+                                                title: { text: 'Luminosité (UA)', style: { fontSize: '11px' } },
+                                                opposite: true,
+                                                top: '30%',
                                                 height: '25%',
                                                 offset: 0,
                                                 lineWidth: 2
                                             }, {
                                                 labels: { enabled: false },
                                                 title: { text: '' },
-                                                top: '88%',
+                                                top: '55%',
                                                 height: '10%',
                                                 offset: 0,
                                                 max: 1.5
@@ -2820,6 +2816,7 @@
                                     type: 'datetime',
                                     ordinal: false  // Espacement proportionnel au temps réel entre les mesures
                                 },
+                                /* Humidité et Luminosité : même panneau, axe gauche % et axe droit UA */
                                 yAxis: [{ 
                                     labels: { format: '{value}°C' },
                                     title: { text: 'Températures (°C)' },
@@ -2835,14 +2832,15 @@
                                 }, {
                                     labels: { format: '{value} UA' },
                                     title: { text: 'Luminosité (UA)' },
-                                    top: '60%',
+                                    opposite: true,
+                                    top: '30%',
                                     height: '25%',
                                     offset: 0,
                                     lineWidth: 2
                                 }, {
                                     labels: { enabled: false },
                                     title: { text: '' },
-                                    top: '88%',
+                                    top: '55%',
                                     height: '10%',
                                     offset: 0,
                                     max: 1.5

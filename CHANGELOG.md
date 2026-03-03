@@ -7,6 +7,14 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.65] - 2026-03-03
+
+### Changement - Vue paysage : Humidité et Luminosité sur un même panneau (2 axes Y)
+- Graphique Paramètres physiques : panneaux **Humidité** et **Luminosité** fusionnés en un seul avec axe gauche (%) et axe droit (UA), gain de place verticale
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.64] - 2026-03-03
 
 ### Changement - Vue paysage (aquaponie-alt) : Réserve d'eau et Cycles de marée sous le graphique
