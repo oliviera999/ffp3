@@ -10,7 +10,7 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <meta name="theme-color" content="#008B74" />
-        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <!-- <meta http-equiv="refresh" content="60"/> -->
         <link rel="stylesheet" href="https://iot.olution.info/assets/css/main.css" />
@@ -690,8 +690,7 @@
             }
             .alt-two-cols .filter-section,
             .alt-two-cols .system-health-panel {
-                flex: 1 1 0;
-                min-height: 0;
+                flex: 1;
                 display: flex;
                 flex-direction: column;
             }
@@ -1668,6 +1667,9 @@
                         }
                     </script>
 
+                    <hr />
+                    <br />
+
                     </div>
                     </div>
 
@@ -2078,22 +2080,6 @@
                             bouffePetits[i]  = [ reading_time[i], bouffePetits[i]  ];
                             bouffeGros[i]    = [ reading_time[i], bouffeGros[i]    ];
                         }
-
-                        // Tri ascendant par timestamp (requis par Highcharts, évite warning #15)
-                        var sortByX = function(a, b) { return (a[0] - b[0]); };
-                        EauAquarium.sort(sortByX);
-                        EauReserve.sort(sortByX);
-                        EauPotager.sort(sortByX);
-                        etatPompeAqua.sort(sortByX);
-                        etatPompeTank.sort(sortByX);
-                        etatHeat.sort(sortByX);
-                        TempEau.sort(sortByX);
-                        TempAir.sort(sortByX);
-                        Humidite.sort(sortByX);
-                        Luminosite.sort(sortByX);
-                        etatUV.sort(sortByX);
-                        bouffePetits.sort(sortByX);
-                        bouffeGros.sort(sortByX);
 
                         // ==============================================
                         // Calcul des lignes de tendance pour les niveaux d'eau
