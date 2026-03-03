@@ -643,6 +643,11 @@
                 padding: 12px;
                 box-shadow: 0 2px 8px rgba(0,139,116,0.06);
             }
+            .alt-chemistry-section {
+                clear: both;
+                margin-top: 2.5rem;
+                width: 100%;
+            }
             .alt-chemistry-wrapper {
                 background: rgba(255,255,255,0.6);
                 border-radius: 12px;
@@ -1665,9 +1670,10 @@
                     </div>
 
                     {# --------------------------------------------------------------------- #}
-                    {# PARAMÈTRES CHIMIQUES (Google Sheets)                                       #}
+                    {# PARAMÈTRES CHIMIQUES (Google Sheets) – bloc isolé pour éviter chevauchement #}
                     {# --------------------------------------------------------------------- #}
 
+                    <div class="alt-chemistry-section">
                     <style>
                         .chemistry-info-banner {
                             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -1975,6 +1981,7 @@
                             </div>
                         </div>
                         </div>
+                    </div>
                     </div>
 
                     {# --------------------------------------------------------------------- #}

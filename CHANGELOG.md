@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.70] - 2026-03-03
+
+### Changement - Vue paysage : Suivi des paramètres chimiques aligné sur Niveaux d'eau / Paramètres physiques
+- Titre en `section-header alt-section-title-full` (icône + h3), contenu dans `.alt-chemistry-wrapper` (même style que `.alt-chart-column`)
+- Correctif chevauchement : bloc chimie isolé dans `.alt-chemistry-section` avec `clear: both` et `margin-top: 2.5rem`
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.69] - 2026-03-03
 
 ### Correctif - Vue paysage : Filtrage des données et État du système
