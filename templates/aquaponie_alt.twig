@@ -441,44 +441,12 @@
                 border-left: 4px solid #008B74;
             }
             
-            /* Conteneurs de graphiques Highcharts - Fix mobile */
+            /* Conteneurs de graphiques Highcharts : hauteur alignée sur .highcharts-background (réglée en JS après création/resize) */
             #chart-stock-area-eau-D,
             #chart-stock-area-temp-D {
-                min-height: 350px;
+                min-height: 280px;
                 width: 100%;
                 position: relative;
-            }
-            
-            @media (max-width: 480px) {
-                #chart-stock-area-eau-D,
-                #chart-stock-area-temp-D {
-                    min-height: 400px;
-                }
-            }
-            
-            @media (min-width: 481px) and (max-width: 768px) {
-                #chart-stock-area-eau-D,
-                #chart-stock-area-temp-D {
-                    min-height: 450px;
-                }
-            }
-            
-            @media (min-width: 769px) and (max-width: 1024px) {
-                #chart-stock-area-eau-D {
-                    min-height: 500px;
-                }
-                #chart-stock-area-temp-D {
-                    min-height: 600px;
-                }
-            }
-            
-            @media (min-width: 1025px) {
-                #chart-stock-area-eau-D {
-                    min-height: 600px;
-                }
-                #chart-stock-area-temp-D {
-                    min-height: 700px;
-                }
             }
 
             .context-badges {
@@ -2204,14 +2172,18 @@
                         }
                         
                         function handleChartResize() {
-                            // Redimensionner les graphiques existants
+                            // Redimensionner les graphiques existants et aligner la hauteur des conteneurs sur le graphique
                             if (window.chartEau) {
                                 var newHeight = getChartHeight('eau');
                                 window.chartEau.setSize(null, newHeight);
+                                var elEau = document.getElementById('chart-stock-area-eau-D');
+                                if (elEau) elEau.style.height = newHeight + 'px';
                             }
                             if (window.chartTemp) {
                                 var newHeight = getChartHeight('temp');
                                 window.chartTemp.setSize(null, newHeight);
+                                var elTemp = document.getElementById('chart-stock-area-temp-D');
+                                if (elTemp) elTemp.style.height = newHeight + 'px';
                             }
                         }
                         
@@ -2655,6 +2627,7 @@
                                 scrollbar: { enabled: true },
                                 credits: { enabled: false }
                             });
+                            if (containerEau && window.chartEau) containerEau.style.height = window.chartEau.chartHeight + 'px';
                             
                             // 2. Stock Chart Paramètres physiques avec aires
                             window.chartTemp = Highcharts.stockChart('chart-stock-area-temp-D', {
@@ -2990,6 +2963,7 @@
                                 scrollbar: { enabled: true },
                                 credits: { enabled: false }
                             });
+                            if (containerTemp && window.chartTemp) containerTemp.style.height = window.chartTemp.chartHeight + 'px';
                             
                             console.log('[Highcharts] Graphiques créés avec succès');
                         }
