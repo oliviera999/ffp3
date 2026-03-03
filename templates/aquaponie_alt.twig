@@ -1175,16 +1175,17 @@
                         .filter-header {
                             display: flex;
                             align-items: center;
-                            gap: 8px;
-                            margin: 0 0 10px 0;
-                            padding-bottom: 8px;
+                            gap: 6px;
+                            margin: 0 0 6px 0;
+                            padding-bottom: 6px;
                             border-bottom: 2px solid #008B74;
                         }
                         
                         .filter-header h3 {
                             margin: 0;
                             color: #008B74;
-                            font-size: 1.3em;
+                            font-size: 1.2em;
+                            line-height: 1.2;
                         }
                         
                         .filter-header i {
@@ -1291,7 +1292,7 @@
                             display: grid;
                             grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
                             gap: 6px;
-                            margin-bottom: 8px;
+                            margin-bottom: 4px;
                         }
                         
                         .quick-filter-btn {
@@ -1327,41 +1328,43 @@
                         
                         .custom-filter {
                             background: #f8f9fa;
-                            padding: 10px 12px;
+                            padding: 6px 10px;
                             border-radius: 8px;
-                            margin-top: 10px;
+                            margin-top: 6px;
                         }
                         
                         .custom-filter-title {
-                            font-size: 0.9em;
+                            font-size: 0.85em;
                             color: #2c3e50;
-                            margin-bottom: 8px;
+                            margin-bottom: 4px;
                             font-weight: 600;
                             display: flex;
                             align-items: center;
-                            gap: 6px;
+                            gap: 5px;
+                            line-height: 1.2;
                         }
                         
                         .datetime-grid {
                             display: grid;
                             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                            gap: 8px;
-                            margin-bottom: 8px;
+                            gap: 4px;
+                            margin-bottom: 4px;
                         }
                         
                         .datetime-field {
                             display: flex;
                             flex-direction: column;
-                            gap: 4px;
+                            gap: 2px;
                         }
                         
                         .datetime-field label {
                             font-weight: 600;
                             color: #2c3e50;
-                            font-size: 0.88em;
+                            font-size: 0.82em;
                             display: flex;
                             align-items: center;
-                            gap: 6px;
+                            gap: 5px;
+                            line-height: 1.2;
                         }
                         
                         .datetime-field label i {
@@ -1369,10 +1372,10 @@
                         }
                         
                         .datetime-field input {
-                            padding: 8px 10px;
+                            padding: 5px 8px;
                             border: 2px solid #e0e0e0;
                             border-radius: 6px;
-                            font-size: 0.95em;
+                            font-size: 0.9em;
                             transition: all 0.3s;
                             background: white;
                         }
@@ -1386,28 +1389,28 @@
                         .action-buttons {
                             display: grid;
                             grid-template-columns: repeat(2, minmax(0, 1fr));
-                            gap: 8px;
-                            margin-top: 8px;
+                            gap: 4px;
+                            margin-top: 4px;
                         }
                         
                         .btn-primary,
                         .btn-secondary {
-                            padding: 8px 10px;
+                            padding: 6px 8px;
                             border-radius: 6px;
                             cursor: pointer;
                             font-weight: 600;
-                            font-size: 0.82em;
+                            font-size: 0.78em;
                             transition: all 0.3s;
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            gap: 6px;
+                            gap: 4px;
                             min-width: 0;
                             overflow: hidden;
                             text-align: center;
                             white-space: normal;
                             word-break: break-word;
-                            line-height: 1.25;
+                            line-height: 1.2;
                         }
                         
                         .btn-primary {
@@ -2972,6 +2975,7 @@
                                         data: Humidite, 
                                         yAxis: 1, 
                                         color: '#2980b9',
+                                        showInLegend: false,
                                         fillColor: {
                                             linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
                                             stops: [[0, 'rgba(41,128,185,0.3)'], [1, 'rgba(41,128,185,0.05)']]
@@ -2980,7 +2984,7 @@
                                         tooltip: { valueSuffix: '%' } 
                                     },
                                     { 
-                                        name: 'Luminosité', 
+                                        name: 'Luminosité (UA)', 
                                         type: 'areaspline',
                                         data: Luminosite, 
                                         yAxis: 2, 
