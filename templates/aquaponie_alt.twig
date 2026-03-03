@@ -10,7 +10,7 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <meta name="theme-color" content="#008B74" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <!-- <meta http-equiv="refresh" content="60"/> -->
         <link rel="stylesheet" href="https://iot.olution.info/assets/css/main.css" />
@@ -681,6 +681,19 @@
                 grid-template-columns: repeat(2, 1fr);
                 gap: 1.5rem;
                 margin: 2.5rem 0 30px 0;
+                align-items: stretch;
+            }
+            .alt-two-cols > div {
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+            }
+            .alt-two-cols .filter-section,
+            .alt-two-cols .system-health-panel {
+                flex: 1 1 0;
+                min-height: 0;
+                display: flex;
+                flex-direction: column;
             }
             .alt-two-cols .filter-section {
                 max-width: 100%;
@@ -1105,11 +1118,11 @@
                     <div class="alt-two-cols">
                     <div>
                     <style>
-                        /* Aligné sur .system-health-panel : même apparence et taille de bloc */
+                        /* Aligné sur .system-health-panel : même apparence et hauteur stricte */
                         .filter-section {
                             background: white;
                             border-radius: 16px;
-                            padding: 20px;
+                            padding: 14px;
                             margin: 0;
                             max-width: 100%;
                             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -1120,9 +1133,9 @@
                         .filter-header {
                             display: flex;
                             align-items: center;
-                            gap: 10px;
-                            margin: 0 0 15px 0;
-                            padding-bottom: 10px;
+                            gap: 8px;
+                            margin: 0 0 10px 0;
+                            padding-bottom: 8px;
                             border-bottom: 2px solid #008B74;
                         }
                         
@@ -1140,21 +1153,21 @@
                         .period-info {
                             background: linear-gradient(135deg, #008B74 0%, #00B794 100%);
                             color: white;
-                            padding: 15px;
-                            border-radius: 12px;
-                            margin-bottom: 15px;
+                            padding: 10px 12px;
+                            border-radius: 10px;
+                            margin-bottom: 10px;
                             text-align: center;
                         }
                         
                         .period-info-title {
-                            font-size: 0.85em;
+                            font-size: 0.8em;
                             opacity: 0.9;
-                            margin-bottom: 8px;
+                            margin-bottom: 4px;
                             text-transform: uppercase;
-                            letter-spacing: 1px;
+                            letter-spacing: 0.5px;
                             display: flex;
                             align-items: center;
-                            gap: 10px;
+                            gap: 8px;
                             flex-wrap: wrap;
                         }
                         
@@ -1197,17 +1210,17 @@
                         }
                         
                         .period-info-dates {
-                            font-size: 1.15em;
+                            font-size: 1em;
                             font-weight: bold;
-                            margin-bottom: 10px;
+                            margin-bottom: 6px;
                         }
                         
                         .period-info-stats {
                             display: grid;
                             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                            gap: 12px;
-                            margin-top: 12px;
-                            padding-top: 12px;
+                            gap: 8px;
+                            margin-top: 8px;
+                            padding-top: 8px;
                             border-top: 1px solid rgba(255,255,255,0.3);
                         }
                         
@@ -1216,26 +1229,27 @@
                         }
                         
                         .period-stat-value {
-                            font-size: 1.25em;
+                            font-size: 1.1em;
                             font-weight: bold;
                             display: block;
                         }
                         
                         .period-stat-label {
-                            font-size: 0.8em;
+                            font-size: 0.75em;
                             opacity: 0.9;
-                            margin-top: 4px;
+                            margin-top: 2px;
                         }
                         
                         .quick-filters {
                             display: grid;
-                            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-                            gap: 10px;
-                            margin-bottom: 15px;
+                            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+                            gap: 6px;
+                            margin-bottom: 10px;
                         }
                         
                         .quick-filter-btn {
-                            padding: 10px 14px;
+                            padding: 6px 10px;
+                            font-size: 0.88em;
                             background: white;
                             color: #008B74;
                             border: 2px solid #008B74;
@@ -1262,41 +1276,41 @@
                         
                         .custom-filter {
                             background: #f8f9fa;
-                            padding: 15px;
-                            border-radius: 10px;
-                            margin-top: 15px;
+                            padding: 10px 12px;
+                            border-radius: 8px;
+                            margin-top: 10px;
                         }
                         
                         .custom-filter-title {
-                            font-size: 1em;
+                            font-size: 0.9em;
                             color: #2c3e50;
-                            margin-bottom: 12px;
+                            margin-bottom: 8px;
                             font-weight: 600;
                             display: flex;
                             align-items: center;
-                            gap: 8px;
+                            gap: 6px;
                         }
                         
                         .datetime-grid {
                             display: grid;
-                            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                            gap: 12px;
-                            margin-bottom: 12px;
+                            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                            gap: 8px;
+                            margin-bottom: 8px;
                         }
                         
                         .datetime-field {
                             display: flex;
                             flex-direction: column;
-                            gap: 8px;
+                            gap: 4px;
                         }
                         
                         .datetime-field label {
                             font-weight: 600;
                             color: #2c3e50;
-                            font-size: 0.95em;
+                            font-size: 0.88em;
                             display: flex;
                             align-items: center;
-                            gap: 8px;
+                            gap: 6px;
                         }
                         
                         .datetime-field label i {
@@ -1304,10 +1318,10 @@
                         }
                         
                         .datetime-field input {
-                            padding: 12px 15px;
+                            padding: 8px 10px;
                             border: 2px solid #e0e0e0;
-                            border-radius: 8px;
-                            font-size: 1em;
+                            border-radius: 6px;
+                            font-size: 0.95em;
                             transition: all 0.3s;
                             background: white;
                         }
@@ -1320,25 +1334,25 @@
                         
                         .action-buttons {
                             display: grid;
-                            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                            gap: 10px;
-                            margin-top: 12px;
+                            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                            gap: 8px;
+                            margin-top: 8px;
                         }
                         
                         .btn-primary {
-                            padding: 10px 18px;
+                            padding: 8px 12px;
                             background: linear-gradient(135deg, #008B74 0%, #00B794 100%);
                             color: white;
                             border: none;
-                            border-radius: 8px;
+                            border-radius: 6px;
                             cursor: pointer;
                             font-weight: 600;
-                            font-size: 1em;
+                            font-size: 0.9em;
                             transition: all 0.3s;
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            gap: 10px;
+                            gap: 8px;
                         }
                         
                         .btn-primary:hover {
@@ -1347,19 +1361,19 @@
                         }
                         
                         .btn-secondary {
-                            padding: 10px 18px;
+                            padding: 8px 12px;
                             background: white;
                             color: #008B74;
                             border: 2px solid #008B74;
-                            border-radius: 8px;
+                            border-radius: 6px;
                             cursor: pointer;
                             font-weight: 600;
-                            font-size: 1em;
+                            font-size: 0.9em;
                             transition: all 0.3s;
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            gap: 10px;
+                            gap: 8px;
                         }
                         
                         .btn-secondary:hover {
@@ -1370,7 +1384,7 @@
                         }
                         
                         .btn-primary i, .btn-secondary i {
-                            font-size: 1.2em;
+                            font-size: 1em;
                         }
                         
                         @media (max-width: 768px) {
@@ -1653,9 +1667,6 @@
                             document.getElementById('customFilterForm').submit();
                         }
                     </script>
-
-                    <hr />
-                    <br />
 
                     </div>
                     </div>
@@ -2067,6 +2078,22 @@
                             bouffePetits[i]  = [ reading_time[i], bouffePetits[i]  ];
                             bouffeGros[i]    = [ reading_time[i], bouffeGros[i]    ];
                         }
+
+                        // Tri ascendant par timestamp (requis par Highcharts, évite warning #15)
+                        var sortByX = function(a, b) { return (a[0] - b[0]); };
+                        EauAquarium.sort(sortByX);
+                        EauReserve.sort(sortByX);
+                        EauPotager.sort(sortByX);
+                        etatPompeAqua.sort(sortByX);
+                        etatPompeTank.sort(sortByX);
+                        etatHeat.sort(sortByX);
+                        TempEau.sort(sortByX);
+                        TempAir.sort(sortByX);
+                        Humidite.sort(sortByX);
+                        Luminosite.sort(sortByX);
+                        etatUV.sort(sortByX);
+                        bouffePetits.sort(sortByX);
+                        bouffeGros.sort(sortByX);
 
                         // ==============================================
                         // Calcul des lignes de tendance pour les niveaux d'eau
