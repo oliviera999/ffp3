@@ -1738,19 +1738,14 @@
                         
                         .chemistry-content-row {
                             display: grid;
-                            grid-template-columns: minmax(400px, 1.5fr) minmax(280px, 1fr);
+                            grid-template-columns: 1fr 1fr;
                             gap: 1.5rem;
                             align-items: start;
                             margin-top: 25px;
                         }
                         
-                        .chemistry-content-row .chemistry-charts-grid {
-                            margin-top: 0;
+                        .chemistry-content-row .chemistry-chart-card {
                             max-width: none;
-                            margin-left: 0;
-                            margin-right: 0;
-                            grid-template-columns: 1fr;
-                            justify-items: stretch;
                         }
                         
                         .chemistry-content-row .chemistry-legend {
@@ -1801,11 +1796,17 @@
                             border-radius: 8px;
                             overflow: hidden;
                             box-shadow: 0 1px 3px rgba(0,0,0,0.1) inset;
+                            width: 100%;
+                            aspect-ratio: 4/3;
+                            position: relative;
                         }
                         
                         .chemistry-chart-container iframe {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
                             width: 100%;
-                            height: 400px;
+                            height: 100%;
                             border: none;
                             display: block;
                         }
@@ -1880,17 +1881,9 @@
                                 position: static;
                             }
                             
-                            .chemistry-charts-grid {
-                                grid-template-columns: 1fr;
-                            }
-                            
                             .chemistry-info-banner {
                                 flex-direction: column;
                                 text-align: center;
-                            }
-                            
-                            .chemistry-chart-container iframe {
-                                height: 350px;
                             }
                             
                             .chemistry-legend-grid {
@@ -1924,51 +1917,48 @@
                             </div>
                         </div>
 
-                        <!-- Graphiques et paramètres surveillés en 2 colonnes -->
+                        <!-- Graphiques et paramètres surveillés : ligne 1 = Paramètres principaux | Nutriments et minéraux ; ligne 2 = Équilibre chimique | Paramètres surveillés -->
                         <div class="chemistry-content-row">
-                        <!-- Grille des graphiques -->
-                        <div class="chemistry-charts-grid">
-                            <!-- Graphique 1 -->
+                            <!-- Graphique 1 : Paramètres principaux -->
                             <div class="chemistry-chart-card">
                                 <div class="chemistry-chart-header">
                                     <i class="fas fa-chart-line chemistry-chart-icon"></i>
                                     <h3 class="chemistry-chart-title">Paramètres principaux</h3>
                                 </div>
                                 <div class="chemistry-chart-container">
-                                    <iframe seamless scrolling="no" 
+                                    <iframe seamless scrolling="no"
                                             src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTrF6mLbo5-qLN-uhd7J2LeeV7LvE9LEr9nkyXgh7KUUh7lL-Houdx3XpIQ_-3vJk50e7dTuUAvQ-dR/pubchart?oid=209032696&amp;format=interactive">
                                     </iframe>
                                 </div>
                             </div>
 
-                            <!-- Graphique 2 -->
+                            <!-- Graphique 2 : Nutriments et minéraux -->
                             <div class="chemistry-chart-card">
                                 <div class="chemistry-chart-header">
                                     <i class="fas fa-chart-area chemistry-chart-icon"></i>
                                     <h3 class="chemistry-chart-title">Nutriments et minéraux</h3>
                                 </div>
                                 <div class="chemistry-chart-container">
-                                    <iframe seamless scrolling="no" 
+                                    <iframe seamless scrolling="no"
                                             src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTrF6mLbo5-qLN-uhd7J2LeeV7LvE9LEr9nkyXgh7KUUh7lL-Houdx3XpIQ_-3vJk50e7dTuUAvQ-dR/pubchart?oid=699943208&amp;format=interactive">
                                     </iframe>
                                 </div>
                             </div>
 
-                            <!-- Graphique 3 -->
+                            <!-- Graphique 3 : Équilibre chimique -->
                             <div class="chemistry-chart-card">
                                 <div class="chemistry-chart-header">
                                     <i class="fas fa-chart-bar chemistry-chart-icon"></i>
                                     <h3 class="chemistry-chart-title">Équilibre chimique</h3>
                                 </div>
                                 <div class="chemistry-chart-container">
-                                    <iframe seamless scrolling="no" 
+                                    <iframe seamless scrolling="no"
                                             src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTrF6mLbo5-qLN-uhd7J2LeeV7LvE9LEr9nkyXgh7KUUh7lL-Houdx3XpIQ_-3vJk50e7dTuUAvQ-dR/pubchart?oid=1338338691&amp;format=interactive">
                                     </iframe>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Légende informative -->
+                        <!-- Légende informative : Paramètres surveillés (vis-à-vis Équilibre chimique) -->
                         <div class="chemistry-legend">
                             <div class="chemistry-legend-title">
                                 <i class="fas fa-info-circle"></i>
