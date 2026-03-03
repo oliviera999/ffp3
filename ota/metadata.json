@@ -26,16 +26,22 @@
         "size": 1476192
       },
       "default": {
-        "version": "12.15",
+        "md5": "b67ff3f1b990e69f4050c63fba01a28c",
+        "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-s3-test/littlefs.bin",
         "size": 2004672,
+        "filesystem_md5": "f6f0d191cb89f48944777c59054cb664",
+        "version": "12.15",
         "bin_url": "https://iot.olution.info/ffp3/ota/esp32-s3-test/firmware.bin",
-        "md5": "b67ff3f1b990e69f4050c63fba01a28c"
+        "filesystem_size": 2097152
       },
       "esp32-s3": {
-        "version": "12.15",
+        "md5": "b67ff3f1b990e69f4050c63fba01a28c",
+        "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-s3-test/littlefs.bin",
         "size": 2004672,
+        "filesystem_md5": "f6f0d191cb89f48944777c59054cb664",
+        "version": "12.15",
         "bin_url": "https://iot.olution.info/ffp3/ota/esp32-s3-test/firmware.bin",
-        "md5": "b67ff3f1b990e69f4050c63fba01a28c"
+        "filesystem_size": 2097152
       }
     }
   }
