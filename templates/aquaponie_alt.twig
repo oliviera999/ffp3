@@ -2637,7 +2637,7 @@
                                     height: getChartHeight('temp'),
                                     spacingTop: 20,
                                     spacingRight: 20,
-                                    spacingBottom: 20,
+                                    spacingBottom: 8,
                                     spacingLeft: 20
                                 },
                                 responsive: {
@@ -2953,9 +2953,17 @@
                                         showInNavigator: false
                                     }
                                 ],
+                                legend: {
+                                    verticalAlign: 'bottom',
+                                    layout: 'horizontal',
+                                    itemMarginBottom: 2,
+                                    itemStyle: { fontSize: '11px' },
+                                    symbolHeight: 10,
+                                    symbolWidth: 10
+                                },
                                 navigator: { 
                                     enabled: true,
-                                    height: 40,
+                                    height: 28,
                                     xAxis: {
                                         ordinal: false  // Forcer l'espacement proportionnel dans le navigator aussi
                                     }
