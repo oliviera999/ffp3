@@ -7,6 +7,14 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.66] - 2026-03-03
+
+### Changement - Vue paysage : LEDs et Nourriture sur le panneau Humidité/Luminosité
+- Graphique Paramètres physiques : séries **LEDs** et **Nourriture** (gros/petits) affichées dans le même panneau que Humidité et Luminosité (axe Y décalé à droite), suppression du 4ᵉ panneau et de l'espace vide sous le graphique
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.65] - 2026-03-03
 
 ### Changement - Vue paysage : Humidité et Luminosité sur un même panneau (2 axes Y)
