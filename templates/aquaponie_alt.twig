@@ -1290,7 +1290,7 @@
                         
                         .quick-filters {
                             display: grid;
-                            grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+                            grid-template-columns: repeat(4, 1fr);
                             gap: 6px;
                             margin-bottom: 4px;
                         }
@@ -1507,7 +1507,7 @@
                             </div>
                         </div>
 
-                        <!-- Filtres rapides -->
+                        <!-- Filtres rapides : 2 lignes × 4 boutons -->
                         <div class="quick-filters">
                             <button class="quick-filter-btn" onclick="setPeriod(1, 'hours')">
                                 <i class="far fa-clock"></i> 1 h
@@ -1529,6 +1529,9 @@
                             </button>
                             <button class="quick-filter-btn" onclick="setPeriod(30, 'days')">
                                 <i class="far fa-calendar-alt"></i> 1 mois
+                            </button>
+                            <button class="quick-filter-btn" onclick="setPeriod(6, 'months')">
+                                <i class="far fa-calendar-alt"></i> 6 mois
                             </button>
                         </div>
 
@@ -1707,6 +1710,8 @@
                                 start = start.subtract(value, 'hours');
                             } else if (unit === 'days') {
                                 start = start.subtract(value, 'days');
+                            } else if (unit === 'months') {
+                                start = start.subtract(value, 'months');
                             }
                             
                             // Mise à jour dynamique des champs sans recharger la page
@@ -2765,7 +2770,7 @@
                                                     format: '{value}%',
                                                     style: { fontSize: '10px' }
                                                 },
-                                                title: { text: 'Humidité (%)', style: { fontSize: '11px' } },
+                                                title: { text: 'Humidité (%)', enabled: true, style: { fontSize: '11px' } },
                                                 top: '50%',
                                                 height: '50%',
                                                 offset: 0,
@@ -2775,7 +2780,7 @@
                                                     format: '{value} UA',
                                                     style: { fontSize: '10px' }
                                                 },
-                                                title: { text: 'Luminosité (UA)', style: { fontSize: '11px' } },
+                                                title: { text: 'Luminosité (UA)', enabled: true, style: { fontSize: '11px' } },
                                                 opposite: true,
                                                 top: '50%',
                                                 height: '50%',
@@ -2825,26 +2830,17 @@
                                                 height: 35
                                             },
                                             yAxis: [{
-                                                labels: { 
-                                                    style: { fontSize: '11px' }
-                                                },
-                                                title: { 
-                                                    style: { fontSize: '12px' }
-                                                }
+                                                labels: { style: { fontSize: '11px' } },
+                                                title: { text: 'Températures (°C)', style: { fontSize: '12px' } }
                                             }, {
-                                                labels: { 
-                                                    style: { fontSize: '11px' }
-                                                },
-                                                title: { 
-                                                    style: { fontSize: '12px' }
-                                                }
+                                                labels: { style: { fontSize: '11px' } },
+                                                title: { text: 'Humidité (%)', style: { fontSize: '12px' } }
                                             }, {
-                                                labels: { 
-                                                    style: { fontSize: '11px' }
-                                                },
-                                                title: { 
-                                                    style: { fontSize: '12px' }
-                                                }
+                                                labels: { style: { fontSize: '11px' } },
+                                                title: { text: 'Luminosité (UA)', style: { fontSize: '12px' } }
+                                            }, {
+                                                labels: { enabled: false },
+                                                title: { text: '' }
                                             }]
                                         }
                                     }, {
@@ -2881,22 +2877,22 @@
                                     type: 'datetime',
                                     ordinal: false  // Espacement proportionnel au temps réel entre les mesures
                                 },
-                                /* Panneaux 1 et 2 : occupation verticale similaire (50 % chacun) */
+                                /* Panneaux 1 et 2 : occupation verticale similaire (50 % chacun). Axes humidité/luminosité : titres explicites. */
                                 yAxis: [{ 
                                     labels: { format: '{value}°C' },
-                                    title: { text: 'Températures (°C)' },
+                                    title: { text: 'Températures (°C)', enabled: true },
                                     height: '50%',
                                     lineWidth: 2
                                 }, {
                                     labels: { format: '{value}%' },
-                                    title: { text: 'Humidité (%)' },
+                                    title: { text: 'Humidité (%)', enabled: true },
                                     top: '50%',
                                     height: '50%',
                                     offset: 0,
                                     lineWidth: 2
                                 }, {
                                     labels: { format: '{value} UA' },
-                                    title: { text: 'Luminosité (UA)' },
+                                    title: { text: 'Luminosité (UA)', enabled: true },
                                     opposite: true,
                                     top: '50%',
                                     height: '50%',
