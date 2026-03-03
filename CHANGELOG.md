@@ -7,6 +7,14 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.68] - 2026-03-03
+
+### Changement - Vue paysage : hauteur des graphiques = hauteur des colonnes de badges
+- Les deux blocs de graphiques (niveaux d'eau, paramètres physiques) prennent la hauteur de leur colonne de badges à gauche ; `syncChartHeightsToStats()` appelée après création et au resize
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.67] - 2026-03-03
 
 ### Correctif - Vue paysage : panneau 2 Paramètres physiques jusqu'à l'axe des abscisses

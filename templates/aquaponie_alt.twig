@@ -2173,20 +2173,30 @@
                             }
                         }
                         
+                        function syncChartHeightsToStats() {
+                            var rows = document.querySelectorAll('.alt-data-chart-row');
+                            if (rows.length < 2) return;
+                            var statsColEau = rows[0].querySelector('.alt-stats-column');
+                            var statsColTemp = rows[1].querySelector('.alt-stats-column');
+                            var elEau = document.getElementById('chart-stock-area-eau-D');
+                            var elTemp = document.getElementById('chart-stock-area-temp-D');
+                            if (statsColEau && elEau && window.chartEau) {
+                                var hEau = statsColEau.offsetHeight;
+                                if (hEau > 0) {
+                                    window.chartEau.setSize(null, hEau);
+                                    elEau.style.height = hEau + 'px';
+                                }
+                            }
+                            if (statsColTemp && elTemp && window.chartTemp) {
+                                var hTemp = statsColTemp.offsetHeight;
+                                if (hTemp > 0) {
+                                    window.chartTemp.setSize(null, hTemp);
+                                    elTemp.style.height = hTemp + 'px';
+                                }
+                            }
+                        }
                         function handleChartResize() {
-                            // Redimensionner les graphiques existants et aligner la hauteur des conteneurs sur le graphique
-                            if (window.chartEau) {
-                                var newHeight = getChartHeight('eau');
-                                window.chartEau.setSize(null, newHeight);
-                                var elEau = document.getElementById('chart-stock-area-eau-D');
-                                if (elEau) elEau.style.height = newHeight + 'px';
-                            }
-                            if (window.chartTemp) {
-                                var newHeight = getChartHeight('temp');
-                                window.chartTemp.setSize(null, newHeight);
-                                var elTemp = document.getElementById('chart-stock-area-temp-D');
-                                if (elTemp) elTemp.style.height = newHeight + 'px';
-                            }
+                            syncChartHeightsToStats();
                         }
                         
                         // Écouter les changements de taille d'écran
@@ -2976,7 +2986,7 @@
                                 credits: { enabled: false }
                             });
                             if (containerTemp && window.chartTemp) containerTemp.style.height = window.chartTemp.chartHeight + 'px';
-                            
+                            syncChartHeightsToStats();
                             console.log('[Highcharts] Graphiques créés avec succès');
                         }
                         
