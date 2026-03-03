@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.72] - 2026-03-03
+
+### Correctif - Vue paysage : cadres Filtrage et État du système lisibles, contenu contenu
+- `.alt-two-cols` : `align-items: start` pour hauteur naturelle par colonne (plus de hauteur forcée égale)
+- Suppression `flex: 1 1 0`, `min-height: 0`, `overflow-y: auto` sur les panneaux : plus d’ascenseur illisible ni débordement sur la chimie
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.71] - 2026-03-03
 
 ### Correctif - Vue paysage : superposition section chimie / cadres Filtrage et État du système

@@ -679,27 +679,17 @@
                 grid-template-columns: repeat(2, 1fr);
                 gap: 1.5rem;
                 margin: 2.5rem 0 30px 0;
-                align-items: stretch;
+                align-items: start;
                 position: relative;
                 z-index: 1;
                 isolation: isolate;
             }
             .alt-two-cols > div {
-                display: flex;
-                flex-direction: column;
-                min-height: 0;
                 min-width: 0;
+                width: 100%;
             }
-            /* Même hauteur stricte pour les deux cadres */
             .alt-two-cols .filter-section,
             .alt-two-cols .system-health-panel {
-                flex: 1 1 0;
-                min-height: 0;
-                display: flex;
-                flex-direction: column;
-            }
-            .alt-two-cols .filter-section {
-                overflow-y: auto;
                 max-width: 100%;
                 margin: 0;
             }
@@ -1122,7 +1112,7 @@
                     <div class="alt-two-cols">
                     <div>
                     <style>
-                        /* Aligné sur .system-health-panel : même apparence et hauteur stricte */
+                        /* Aligné sur .system-health-panel : même apparence, hauteur au contenu */
                         .filter-section {
                             background: white;
                             border-radius: 16px;
@@ -1132,8 +1122,6 @@
                             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
                             border: 1px solid rgba(0,139,116,0.1);
                             border-top: 5px solid #008B74;
-                            min-height: 0;
-                            overflow-y: auto;
                         }
                         
                         .filter-header {
