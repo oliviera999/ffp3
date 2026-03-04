@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.75] - 2026-03-03
+
+### Correctif - Vue paysage : Filtrage et État du système en hauteur naturelle
+- Suppression de la contrainte « même hauteur » sur grand écran (media 901px) : Filtrage et État du système repassent en hauteur naturelle
+- Évite l’écrasement du bloc Filtrage (plus d’ascenseur illisible) et la superposition du contenu État du système sur la section Analyse chimique
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.74] - 2026-03-03
 
 ### Changement - Vue paysage (aquaponie-alt) : visuels et layout
