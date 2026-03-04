@@ -7,6 +7,16 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.78] - 2026-03-04
+
+### Correctif - Fondu image de fond : calque HTML #page-bg
+- Cause : main.css (HTML5 UP) applique `body.is-preload *:before { animation: none !important }` et `#wrapper.fade-in:before { background: #1e252d }`, ce qui masquait ou bloquait le fondu sur plusieurs pages (aquaponie, aquaponie-alt, control).
+- Solution : calque de fond en element HTML `<div id="page-bg">` ajoute en premier dans le body de chaque template (control, aquaponie, aquaponie_alt, dashboard, home, tide_stats, aquaponie_description, login). L'animation et le fond sont appliques a ce div, non affecte par les regles sur les pseudo-elements.
+- CSS : dans `realtime-styles.css`, styles pour `#page-bg` (position fixed, z-index -1, image + bgFadeIn avec !important), fallback `body::before` conserve ; `#wrapper.control-wrapper` en semi-transparent avec !important pour laisser voir le fond.
+- Fichiers modifies : `public/assets/css/realtime-styles.css`, templates (control, aquaponie, aquaponie_alt, dashboard, home, tide_stats, aquaponie_description, login).
+
+---
+
 ## [4.9.77] - 2026-03-03
 
 ### Correctif - Image de fond en fondu sur toutes les pages (aquaponie, etc.)
