@@ -292,18 +292,17 @@
 
         <!-- Main -->
         <div id="main">
-            <div class="modern-header">
-                <div class="header-content">
-                    <div class="header-title">
-                        <i class="fas fa-chart-line" aria-hidden="true"></i>
-                        Dashboard des capteurs
-                        <i class="fas fa-chart-line" aria-hidden="true"></i>
-                    </div>
-                    <p class="header-subtitle">Vue d'ensemble des données collectées par les capteurs ESP32</p>
-                </div>
-            </div>
-
             <article class="post featured">
+                <header class="major">
+                    <h2>
+                        <i class="icon solid fa-chart-line"></i>
+                        Dashboard des capteurs
+                        <i class="icon solid fa-chart-line"></i>
+                    </h2>
+                    <p>Vue d'ensemble des données collectées par les capteurs ESP32</p>
+                    <hr />
+                </header>
+
                 <!-- Bannière période -->
                 <div class="info-banner">
                     <div class="info-banner-title">📊 Période analysée</div>
@@ -510,9 +509,9 @@
             </article>
         </div>
     
-    <!-- Footer (aligné aquaponie-alt) -->
-        <footer id="footer">
-        <p class="footer-copyright">{{ version }} | Firmware ESP32: v{{ firmware_version }} | Système d'aquaponie FFP3 | © 2025 olution</p>
+    <!-- Footer avec version -->
+        <footer id="footer" style="text-align: center; padding: 20px 0; color: #999; font-size: 0.9em;">
+        <p>{{ version }} | Firmware ESP32: v{{ firmware_version }} | Système d'aquaponie FFP3 | © 2025 olution</p>
     </footer>
     </div>
 
