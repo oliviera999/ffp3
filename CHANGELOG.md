@@ -7,6 +7,14 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.76] - 2026-03-03
+
+### Changement - Photo de fond avec fondu sur toutes les pages
+- Inclusion de `realtime-styles.css` sur la page de connexion (`login.twig`) pour appliquer la même image de fond et animation de fondu que sur le reste du site
+- Fichier modifié : `templates/login.twig`
+
+---
+
 ## [4.9.75] - 2026-03-03
 
 ### Correctif - Vue paysage : Filtrage et État du système en hauteur naturelle
