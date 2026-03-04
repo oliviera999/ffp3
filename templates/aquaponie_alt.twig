@@ -57,12 +57,13 @@
                HEADER MODERNE ET HERO SECTION
             ================================================================= */
             .modern-header {
-                background: linear-gradient(135deg, #008B74 0%, #00B794 50%, #008B74 100%);
+                background: linear-gradient(145deg, #008B74 0%, #007A61 25%, #00B794 50%, #008B74 100%);
                 color: white;
-                padding: 50px 0;
+                padding: 58px 0;
                 margin: -20px -20px 20px -20px;
                 position: relative;
                 overflow: hidden;
+                border-radius: 0 0 16px 16px;
             }
             
             .modern-header::before {
@@ -73,7 +74,7 @@
                 right: 0;
                 bottom: 0;
                 background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-                opacity: 0.3;
+                opacity: 0.2;
             }
             
             .header-content {
@@ -89,7 +90,7 @@
                 font-size: 3.5em;
                 font-weight: bold;
                 margin: 0 0 15px 0;
-                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                text-shadow: 0 1px 2px rgba(0,0,0,0.2);
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -98,17 +99,19 @@
             
             .header-title i {
                 font-size: 0.8em;
+            }
+            .header-title i.header-icon-float {
                 animation: float 3s ease-in-out infinite;
             }
             
             @keyframes float {
-                0%, 100% { transform: translateY(0px); }
-                50% { transform: translateY(-10px); }
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-6px); }
             }
             
             .header-subtitle {
                 font-size: 1.3em;
-                margin: 0 0 30px 0;
+                margin: 0 0 1.25rem 0;
                 opacity: 0.9;
                 font-weight: 300;
                 line-height: 1.6;
@@ -116,26 +119,38 @@
             }
             
             .header-synthesis {
-                font-size: 1.05em;
-                margin: 0 0 20px 0;
-                opacity: 0.95;
+                display: inline-block;
+                font-size: 0.95em;
+                margin: 0 0 1rem 0;
+                padding: 10px 18px;
+                background: rgba(255,255,255,0.18);
+                border-radius: 12px;
                 font-weight: 400;
                 line-height: 1.5;
                 text-align: center;
                 color: white;
+                border: 1px solid rgba(255,255,255,0.25);
+                backdrop-filter: blur(6px);
             }
             
             .header-more {
-                margin-top: 1em;
+                margin-top: 1rem;
                 opacity: 0.95;
             }
             .header-more a {
+                display: inline-block;
                 color: white;
-                text-decoration: underline;
+                text-decoration: none;
+                border: 1px solid rgba(255,255,255,0.8);
+                border-radius: 8px;
+                padding: 8px 16px;
+                font-weight: 500;
+                transition: background 0.3s ease, border-color 0.3s ease;
             }
             .header-more a:hover {
-                text-decoration: none;
-                opacity: 0.9;
+                background: rgba(255,255,255,0.2);
+                border-color: white;
+                opacity: 1;
             }
             
             .system-status-badge {
@@ -438,8 +453,13 @@
             
             @media (max-width: 480px) {
                 .modern-header {
-                    padding: 30px 0;
+                    padding: 32px 0;
                     margin: -20px -10px 30px -10px;
+                }
+                
+                .header-synthesis {
+                    font-size: 0.9em;
+                    padding: 8px 14px;
                 }
                 
                 .quick-stats {
@@ -491,7 +511,7 @@
                 font-size: 0.9em;
                 line-height: 1.5;
                 border-top: 1px solid rgba(0,139,116,0.15);
-                background: rgba(255,255,255,0.4);
+                background: rgba(255,255,255,0.92);
             }
             #footer .context-badges {
                 margin: 0 auto 1rem;
@@ -876,9 +896,9 @@
                 <div class="modern-header">
                     <div class="header-content">
                         <div class="header-title">
-                            <i class="fas fa-seedling"></i>
+                            <i class="fas fa-seedling header-icon-float" aria-hidden="true"></i>
                             Plateforme Aquaponie FFP3
-                            <i class="fas fa-fish"></i>
+                            <i class="fas fa-fish" aria-hidden="true"></i>
                         </div>
                         <p class="header-subtitle">
                             Supervision en direct des capteurs, pompes et indicateurs de la ferme aquaponique. <strong>Vue paysage</strong> – données en vis-à-vis des graphiques.
