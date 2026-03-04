@@ -7,6 +7,14 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.80] - 2026-03-04
+
+### Correctif - Aquaponie-alt : fond de page comme l'accueil (fondu + preload)
+- Alignement sur la page d'accueil : animation de fondu (pageBgFadeIn 1.2s) au lieu d'affichage direct, meme proprietes d'image (cover, center), preload de l'image de fond pour une meilleure nette au chargement
+- Fichier modifie : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.79] - 2026-03-04
 
 ### Changement - Vue paysage (aquaponie-alt) : boutons filtres et marges
