@@ -584,6 +584,12 @@
                 gap: 10px;
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
+            /* Dernière tuile seule (ex. Potager) : centrée, même largeur qu'une colonne */
+            .alt-data-chart-row .alt-stats-column .stats-grid .stat-card:last-child:nth-child(odd) {
+                grid-column: 1 / -1;
+                justify-self: center;
+                max-width: calc(50% - 5px);
+            }
             /* Version compacte des stat-cards dans la colonne gauche (2 par ligne) */
             .alt-data-chart-row .alt-stats-column .stat-card {
                 padding: 8px 10px;
@@ -764,6 +770,11 @@
                 }
                 .alt-data-chart-row .alt-stats-column .stats-grid {
                     grid-template-columns: 1fr;
+                }
+                .alt-data-chart-row .alt-stats-column .stats-grid .stat-card:last-child:nth-child(odd) {
+                    grid-column: auto;
+                    justify-self: stretch;
+                    max-width: none;
                 }
                 .alt-two-cols {
                     grid-template-columns: 1fr;
@@ -1274,7 +1285,7 @@
                         
                         .period-info-stats {
                             display: grid;
-                            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                            grid-template-columns: repeat(3, 1fr);
                             gap: 4px;
                             margin-top: 4px;
                             padding-top: 4px;
