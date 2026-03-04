@@ -446,7 +446,9 @@
             #chart-stock-area-temp-D {
                 min-height: 280px;
                 width: 100%;
+                max-width: 100%;
                 position: relative;
+                overflow: hidden;
             }
 
             .context-badges {
@@ -552,6 +554,13 @@
             #main > .post.featured {
                 max-width: none;
                 padding: 2rem;
+                overflow-x: hidden;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            #main > .post.featured > * {
+                min-width: 0;
+                max-width: 100%;
             }
             .alt-data-chart-row {
                 display: grid;
@@ -559,22 +568,21 @@
                 gap: 1.25rem;
                 align-items: start;
                 margin: 15px 0;
+                min-width: 0;
+            }
+            .alt-data-chart-row > * {
+                min-width: 0;
             }
             .alt-data-chart-row .alt-stats-column {
                 display: flex;
                 flex-direction: column;
                 gap: 1rem;
+                min-width: 0;
             }
             .alt-data-chart-row .alt-stats-column .stats-grid {
                 margin: 10px 0;
                 gap: 10px;
                 grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-            /* Dernière carte seule sur sa ligne (nombre impair) : centrée, uniquement en 2 colonnes */
-            .alt-data-chart-row .alt-stats-column .stats-grid .stat-card:last-child:nth-child(odd) {
-                grid-column: 1 / -1;
-                justify-self: center;
-                max-width: calc(50% - 5px);
             }
             /* Version compacte des stat-cards dans la colonne gauche (2 par ligne) */
             .alt-data-chart-row .alt-stats-column .stat-card {
@@ -607,10 +615,11 @@
             /* Bilan hydrique : Réserve d'eau et Cycles de marée sous le graphique, 2 colonnes de largeur similaire */
             .alt-balance-below-chart {
                 display: grid;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
                 gap: 1rem;
                 margin-top: 1rem;
                 width: 100%;
+                min-width: 0;
             }
             .alt-balance-below-chart .balance-card {
                 padding: 12px;
@@ -642,20 +651,18 @@
                 border-radius: 12px;
                 padding: 12px;
                 box-shadow: 0 2px 8px rgba(0,139,116,0.06);
+                min-width: 0;
+                overflow: hidden;
             }
             .alt-chemistry-section {
                 clear: both;
-                margin-top: 3rem;
-                padding-top: 1.5rem;
+                margin-top: 0;
+                padding-top: 0;
                 width: 100%;
+                max-width: 100%;
+                min-width: 0;
                 position: relative;
                 z-index: 0;
-            }
-            /* Espace bloquant avant la chimie pour éviter toute superposition (collapse de marges, floats) */
-            .alt-chemistry-section::before {
-                content: '';
-                display: block;
-                height: 2rem;
             }
             .alt-chemistry-wrapper {
                 background: rgba(255,255,255,0.6);
@@ -663,10 +670,15 @@
                 padding: 12px;
                 box-shadow: 0 2px 8px rgba(0,139,116,0.06);
                 margin-top: 0;
+                min-width: 0;
+                max-width: 100%;
             }
             .alt-section-title-full {
                 width: 100%;
                 margin: 20px 0 12px 0 !important;
+            }
+            .alt-chemistry-section .section-header.alt-section-title-full {
+                margin-top: 0 !important;
             }
             /* Surcharge page alt : harmonisation avec filter-section et chimie */
             .system-health-panel {
@@ -676,22 +688,43 @@
             }
             .alt-two-cols {
                 display: grid;
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 1.5rem;
                 margin: 2.5rem 0 30px 0;
                 align-items: start;
                 position: relative;
                 z-index: 1;
                 isolation: isolate;
+                min-width: 0;
             }
             .alt-two-cols > div {
                 min-width: 0;
-                width: 100%;
+                max-width: 100%;
             }
             .alt-two-cols .filter-section,
             .alt-two-cols .system-health-panel {
                 max-width: 100%;
                 margin: 0;
+            }
+            /* Grand écran : même hauteur pour les deux cadres */
+            @media (min-width: 901px) {
+                .alt-two-cols {
+                    align-items: stretch;
+                }
+                .alt-two-cols > div {
+                    display: flex;
+                    flex-direction: column;
+                }
+                .alt-two-cols .filter-section,
+                .alt-two-cols .system-health-panel {
+                    flex: 1 1 0;
+                    min-height: 0;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .alt-two-cols .filter-section {
+                    overflow-y: auto;
+                }
             }
             /* Cadre État du système : interlignes et espacements réduits (vue alt) */
             .alt-two-cols .system-health-panel {
@@ -751,12 +784,6 @@
                 }
                 .alt-data-chart-row .alt-stats-column .stats-grid {
                     grid-template-columns: 1fr;
-                }
-                /* En 1 colonne (mobile) : toutes les stat-cards même taille, pas de réduction sur la dernière */
-                .alt-data-chart-row .alt-stats-column .stats-grid .stat-card:last-child:nth-child(odd) {
-                    grid-column: auto;
-                    justify-self: stretch;
-                    max-width: none;
                 }
                 .alt-two-cols {
                     grid-template-columns: 1fr;
@@ -1295,24 +1322,24 @@
                         .quick-filters {
                             display: grid;
                             grid-template-columns: repeat(4, 1fr);
-                            gap: 6px;
-                            margin-bottom: 4px;
+                            gap: 4px;
+                            margin-bottom: 3px;
                         }
                         
                         .quick-filter-btn {
-                            padding: 6px 8px;
-                            font-size: 0.8em;
+                            padding: 4px 6px;
+                            font-size: 0.72em;
                             background: white;
                             color: #008B74;
-                            border: 2px solid #008B74;
-                            border-radius: 8px;
+                            border: 1px solid #008B74;
+                            border-radius: 6px;
                             cursor: pointer;
                             transition: all 0.3s;
                             font-weight: 500;
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            gap: 4px;
+                            gap: 3px;
                             min-width: 0;
                             overflow: hidden;
                             text-overflow: ellipsis;
@@ -1322,12 +1349,12 @@
                         .quick-filter-btn:hover {
                             background: #008B74;
                             color: white;
-                            transform: translateY(-2px);
-                            box-shadow: 0 4px 12px rgba(0,126,97,0.3);
+                            transform: translateY(-1px);
+                            box-shadow: 0 3px 10px rgba(0,126,97,0.3);
                         }
                         
                         .quick-filter-btn i {
-                            font-size: 1.1em;
+                            font-size: 0.95em;
                         }
                         
                         .custom-filter {
@@ -2993,28 +3020,34 @@
                                         tooltip: { valueSuffix: ' UA' } 
                                     },
                                     { 
-                                        name: 'LEDs', 
-                                        data: etatUV, 
-                                        type: 'column', 
+                                        name: 'LEDs ON', 
+                                        type: 'scatter', 
+                                        data: etatUV.filter(p => p[1] > 0), 
                                         yAxis: 3, 
-                                        color: 'rgba(243,156,18,0.7)',
-                                        showInNavigator: false
+                                        color: 'rgba(243,156,18,0.8)',
+                                        marker: { symbol: 'circle', radius: 3 },
+                                        showInNavigator: false,
+                                        tooltip: { pointFormat: 'LEDs: <b>ON</b>' }
                                     },
                                     { 
                                         name: 'Nourriture gros', 
-                                        data: bouffeGros, 
-                                        type: 'column', 
+                                        type: 'scatter', 
+                                        data: bouffeGros.filter(p => p[1] > 0), 
                                         yAxis: 3, 
-                                        color: 'rgba(231,76,60,0.7)',
-                                        showInNavigator: false
+                                        color: 'rgba(231,76,60,0.8)',
+                                        marker: { symbol: 'square', radius: 3 },
+                                        showInNavigator: false,
+                                        tooltip: { pointFormat: 'Nourriture gros: <b>ON</b>' }
                                     },
                                     { 
                                         name: 'Nourriture petits', 
-                                        data: bouffePetits, 
-                                        type: 'column', 
+                                        type: 'scatter', 
+                                        data: bouffePetits.filter(p => p[1] > 0), 
                                         yAxis: 3, 
-                                        color: 'rgba(155,89,182,0.7)',
-                                        showInNavigator: false
+                                        color: 'rgba(155,89,182,0.8)',
+                                        marker: { symbol: 'triangle', radius: 4 },
+                                        showInNavigator: false,
+                                        tooltip: { pointFormat: 'Nourriture petits: <b>ON</b>' }
                                     }
                                 ],
                                 legend: {

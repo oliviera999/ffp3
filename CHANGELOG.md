@@ -7,6 +7,17 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.74] - 2026-03-03
+
+### Changement - Vue paysage (aquaponie-alt) : visuels et layout
+- **Graph Paramètres physiques** : LEDs et Nourriture en scatter (même visuel que pompes/chauffage), tuile Potager même largeur (règle last-child supprimée)
+- **Cadre post featured** : overflow contenu (min-width: 0, max-width: 100%, overflow-x/overflow hidden) pour éviter débordement à droite
+- **Section chimie** : gap avant le titre supprimé (margin/padding/::before à 0, margin-top titre à 0)
+- **Filtrage / État du système** : même hauteur sur grand écran (media min-width 901px, align-items stretch, flex), boutons 1h…6 mois plus compacts (padding, font-size, border)
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.73] - 2026-03-03
 
 ### Changement - Bloc IP locale supprimé, badges Niveaux d'eau, filtres
