@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.92] - 2026-03-04
+
+### Correctif - Tuile Eau potager : même largeur que les autres et centrée sur la 2e ligne
+- **Vue paysage (aquaponie_alt)** : dernière tuile seule (Potager) avec `width: 100%`, `max-width: calc((100% - 10px) / 2)`, `justify-self: center` et marges auto ; règle alignée dans la media query 900px
+- **Vue classique (aquaponie)** : règle déjà présente en 768px pour `.stats-grid .stat-card:last-child:nth-child(odd)` (même largeur, centrage)
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.91] - 2026-03-04
 
 ### Changement - Suivi : courbe eau réserve cachée par défaut, axe températures adapté à la gamme
