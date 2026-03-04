@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.79] - 2026-03-04
+
+### Changement - Vue paysage (aquaponie-alt) : boutons filtres et marges
+- Boutons 1h, 3h… : hauteur réduite (padding 2px 5px, font-size 0.7em, border-radius 5px)
+- Marge sous les boutons « Afficher les mesures » et « Télécharger CSV » réduite (padding-bottom section filtres 4px desktop / 8px mobile, margin-bottom action-buttons à 0)
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.78] - 2026-03-04
 
 ### Correctif - Fondu image de fond : calque HTML #page-bg
