@@ -7,6 +7,14 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.85] - 2026-03-04
+
+### Correctif - Bouton « En savoir plus » : couleur du texte au survol
+- Survol : les caractères du lien passent en orange (#FF6300) via `color: #FF6300 !important` pour priorité sur les styles externes
+- Fichiers modifiés : `templates/aquaponie.twig`, `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.84] - 2026-03-04
 
 ### Changement - Bouton « En savoir plus sur le module » (hero aquaponie)
