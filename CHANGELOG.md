@@ -7,6 +7,16 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.86] - 2026-03-04
+
+### Changement - Audit page aquaponie-description (contenu et mise en page)
+- **Priorité haute** : attribut `lang="fr"` sur `<html>` ; footer avec copyright « Système d'aquaponie FFP3 | © 2025 olution »
+- **Priorité moyenne** : meta PWA (apple-mobile-web-app-capable, apple-mobile-web-app-status-bar-style) ; preload + integrity pour Font Awesome ; blocs de contenu en `<section class="desc-section">` pour une structure sémantique claire
+- **Priorité basse** : précision du capteur Luminosité (type, unité UA) ; lien « Voir les données en direct » dans le hero vers `/ffp3/aquaponie` avec styles header-more (survol orange)
+- Fichier modifié : `templates/aquaponie_description.twig`
+
+---
+
 ## [4.9.85] - 2026-03-04
 
 ### Correctif - Bouton « En savoir plus » : couleur du texte au survol
