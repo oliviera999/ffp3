@@ -815,6 +815,9 @@
                 .alt-two-cols .filter-section form#customFilterForm {
                     grid-template-columns: 1fr;
                 }
+                .alt-two-cols .filter-section form#customFilterForm .datetime-grid {
+                    grid-column: 1;
+                }
                 .alt-two-cols .filter-section form#customFilterForm .action-buttons {
                     grid-column: 1;
                 }
@@ -1220,14 +1223,14 @@
                     <div class="alt-two-cols">
                     <div>
                     <style>
-                        /* Aligné sur .system-health-panel ; contenu en colonnes pour limiter la hauteur */
+                        /* Filtrage : en-tête, puis 2 colonnes (Période analysée | Filtres rapides), puis Période personnalisée pleine largeur */
                         .filter-section {
                             display: grid;
-                            grid-template-columns: repeat(3, minmax(0, 1fr));
-                            gap: 12px;
+                            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                            gap: 12px 16px;
                             background: white;
                             border-radius: 16px;
-                            padding: 12px 12px 4px 12px;
+                            padding: 12px 14px 12px 14px;
                             margin: 0;
                             max-width: 100%;
                             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -1237,6 +1240,20 @@
                         
                         .filter-section .filter-header {
                             grid-column: 1 / -1;
+                        }
+                        
+                        .filter-section .period-info {
+                            margin-bottom: 0;
+                            min-width: 0;
+                        }
+                        
+                        .filter-section .quick-filters {
+                            min-width: 0;
+                        }
+                        
+                        .filter-section .custom-filter {
+                            grid-column: 1 / -1;
+                            min-width: 0;
                         }
                         
                         .filter-header {
@@ -1396,22 +1413,28 @@
                         
                         .custom-filter {
                             background: #f8f9fa;
-                            padding: 6px 10px;
+                            padding: 10px 12px;
                             border-radius: 8px;
-                            margin-top: 0;
+                            border: 1px solid rgba(0,139,116,0.12);
                         }
                         .filter-section form#customFilterForm {
                             display: grid;
-                            grid-template-columns: 1fr auto;
-                            gap: 10px;
+                            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+                            gap: 10px 14px;
                             align-items: end;
                         }
                         .filter-section form#customFilterForm .datetime-grid {
-                            grid-column: 1;
+                            grid-column: 1 / 3;
+                            display: grid;
+                            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                            gap: 10px;
+                            margin-bottom: 0;
                         }
                         .filter-section form#customFilterForm .action-buttons {
-                            grid-column: 2;
+                            grid-column: 3;
+                            grid-template-columns: 1fr;
                             margin-top: 0;
+                            gap: 6px;
                         }
                         
                         .custom-filter-title {
@@ -1526,31 +1549,32 @@
                         @media (max-width: 768px) {
                             .filter-section {
                                 grid-template-columns: 1fr;
-                                padding: 20px 20px 8px 20px;
+                                padding: 14px 16px 14px 16px;
                                 margin: 20px 10px;
                             }
                             .filter-section form#customFilterForm {
                                 grid-template-columns: 1fr;
                             }
-                            .filter-section form#customFilterForm .action-buttons {
+                            .filter-section form#customFilterForm .datetime-grid {
                                 grid-column: 1;
                             }
+                            .filter-section form#customFilterForm .action-buttons {
+                                grid-column: 1;
+                                grid-template-columns: repeat(2, minmax(0, 1fr));
+                            }
                             .quick-filters {
-                                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-                                gap: 8px;
+                                grid-template-columns: repeat(4, 1fr);
+                                gap: 6px;
                             }
                             .quick-filter-btn {
-                                padding: 10px 15px;
-                                font-size: 0.9em;
+                                padding: 6px 8px;
+                                font-size: 0.78em;
                             }
                             .datetime-grid {
                                 grid-template-columns: repeat(2, minmax(0, 1fr));
                             }
-                            .action-buttons {
-                                grid-template-columns: 1fr;
-                            }
                             .period-info-stats {
-                                grid-template-columns: 1fr;
+                                grid-template-columns: repeat(3, 1fr);
                             }
                         }
                     </style>
@@ -2852,7 +2876,7 @@
                                                 },
                                                 title: { text: 'Humidité (%)', enabled: true, style: { fontSize: '11px' } },
                                                 top: '50%',
-                                                height: '50%',
+                                                height: '45%',
                                                 offset: 0,
                                                 lineWidth: 2
                                             }, {
@@ -2863,18 +2887,19 @@
                                                 title: { text: 'Luminosité (UA)', enabled: true, style: { fontSize: '11px' } },
                                                 opposite: true,
                                                 top: '50%',
-                                                height: '50%',
+                                                height: '45%',
                                                 offset: 0,
                                                 lineWidth: 2
                                             }, {
                                                 labels: { enabled: false },
                                                 title: { text: '' },
                                                 opposite: true,
-                                                top: '50%',
-                                                height: '50%',
-                                                offset: -35,
-                                                max: 1.5,
-                                                lineWidth: 1
+                                                top: '95%',
+                                                height: '5%',
+                                                min: 0,
+                                                max: 1,
+                                                lineWidth: 0,
+                                                gridLineWidth: 0
                                             }]
                                         }
                                     }, {
@@ -2914,13 +2939,23 @@
                                                 title: { text: 'Températures (°C)', style: { fontSize: '12px' } }
                                             }, {
                                                 labels: { style: { fontSize: '11px' } },
-                                                title: { text: 'Humidité (%)', style: { fontSize: '12px' } }
+                                                title: { text: 'Humidité (%)', style: { fontSize: '12px' } },
+                                                top: '50%',
+                                                height: '45%'
                                             }, {
                                                 labels: { style: { fontSize: '11px' } },
-                                                title: { text: 'Luminosité (UA)', style: { fontSize: '12px' } }
+                                                title: { text: 'Luminosité (UA)', style: { fontSize: '12px' } },
+                                                top: '50%',
+                                                height: '45%'
                                             }, {
                                                 labels: { enabled: false },
-                                                title: { text: '' }
+                                                title: { text: '' },
+                                                top: '95%',
+                                                height: '5%',
+                                                min: 0,
+                                                max: 1,
+                                                lineWidth: 0,
+                                                gridLineWidth: 0
                                             }]
                                         }
                                     }, {
@@ -2957,7 +2992,7 @@
                                     type: 'datetime',
                                     ordinal: false  // Espacement proportionnel au temps réel entre les mesures
                                 },
-                                /* Panneaux 1 et 2 : occupation verticale similaire (50 % chacun). Axes humidité/luminosité : titres explicites. */
+                                /* Panneaux : Temp 50 %, Humidité/Luminosité ~45 %, LEDs/Nourriture en bande sur l'axe des abscisses (5 %). */
                                 yAxis: [{ 
                                     labels: { format: '{value}°C' },
                                     title: { text: 'Températures (°C)', enabled: true },
@@ -2967,7 +3002,7 @@
                                     labels: { format: '{value}%' },
                                     title: { text: 'Humidité (%)', enabled: true },
                                     top: '50%',
-                                    height: '50%',
+                                    height: '45%',
                                     offset: 0,
                                     lineWidth: 2
                                 }, {
@@ -2975,18 +3010,19 @@
                                     title: { text: 'Luminosité (UA)', enabled: true },
                                     opposite: true,
                                     top: '50%',
-                                    height: '50%',
+                                    height: '45%',
                                     offset: 0,
                                     lineWidth: 2
                                 }, {
                                     labels: { enabled: false },
                                     title: { text: '' },
                                     opposite: true,
-                                    top: '50%',
-                                    height: '50%',
-                                    offset: -35,
-                                    max: 1.5,
-                                    lineWidth: 1
+                                    top: '95%',
+                                    height: '5%',
+                                    min: 0,
+                                    max: 1,
+                                    lineWidth: 0,
+                                    gridLineWidth: 0
                                 }],
                                 tooltip: { 
                                     shared: true, 
@@ -3075,7 +3111,7 @@
                                     { 
                                         name: 'LEDs ON', 
                                         type: 'scatter', 
-                                        data: etatUV.filter(p => p[1] > 0), 
+                                        data: etatUV.filter(p => p[1] > 0).map(p => [p[0], 0]), 
                                         yAxis: 3, 
                                         color: 'rgba(243,156,18,0.8)',
                                         marker: { symbol: 'circle', radius: 3 },
@@ -3085,7 +3121,7 @@
                                     { 
                                         name: 'Nourriture gros', 
                                         type: 'scatter', 
-                                        data: bouffeGros.filter(p => p[1] > 0), 
+                                        data: bouffeGros.filter(p => p[1] > 0).map(p => [p[0], 0]), 
                                         yAxis: 3, 
                                         color: 'rgba(231,76,60,0.8)',
                                         marker: { symbol: 'square', radius: 3 },
@@ -3095,7 +3131,7 @@
                                     { 
                                         name: 'Nourriture petits', 
                                         type: 'scatter', 
-                                        data: bouffePetits.filter(p => p[1] > 0), 
+                                        data: bouffePetits.filter(p => p[1] > 0).map(p => [p[0], 0]), 
                                         yAxis: 3, 
                                         color: 'rgba(155,89,182,0.8)',
                                         marker: { symbol: 'triangle', radius: 4 },

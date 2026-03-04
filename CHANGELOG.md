@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.82] - 2026-03-04
+
+### Changement - Vue paysage (aquaponie-alt)
+- **Graph Paramètres physiques** : LEDs ON, Nourriture gros et Nourriture petits affichés sur l’axe des abscisses (bande 5 % en bas, y=0), panneau Humidité/Luminosité à 45 %
+- **Filtrage des données** : agencement simplifié — 2 colonnes (Période analysée | Filtres rapides), Période personnalisée en pleine largeur en dessous ; formulaire en 3 colonnes (dates début/fin | boutons Afficher/CSV) ; responsive cohérent (≤ 900 px / ≤ 768 px)
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.81] - 2026-03-04
 
 ### Changement - Vue paysage : Filtrage et État du système empilés, contenu en colonnes
