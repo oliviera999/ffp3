@@ -714,9 +714,10 @@
                 border-top: 5px solid #008B74;
                 box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             }
+            /* Cadres Filtrage et État du système empilés (un sous l'autre), contenu en colonnes pour limiter la hauteur */
             .alt-two-cols {
                 display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-columns: 1fr;
                 gap: 1.5rem;
                 margin: 2.5rem 0 30px 0;
                 align-items: start;
@@ -744,6 +745,8 @@
                 font-size: 1.15em;
             }
             .alt-two-cols .health-grid {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
                 gap: 8px;
                 margin-top: 8px;
             }
@@ -805,6 +808,18 @@
                 .system-health-panel {
                     max-width: 100%;
                     width: 100%;
+                }
+                .alt-two-cols .filter-section {
+                    grid-template-columns: 1fr;
+                }
+                .alt-two-cols .filter-section form#customFilterForm {
+                    grid-template-columns: 1fr;
+                }
+                .alt-two-cols .filter-section form#customFilterForm .action-buttons {
+                    grid-column: 1;
+                }
+                .alt-two-cols .health-grid {
+                    grid-template-columns: 1fr;
                 }
             }
         </style>
@@ -1205,8 +1220,11 @@
                     <div class="alt-two-cols">
                     <div>
                     <style>
-                        /* Aligné sur .system-health-panel : même apparence, hauteur au contenu */
+                        /* Aligné sur .system-health-panel ; contenu en colonnes pour limiter la hauteur */
                         .filter-section {
+                            display: grid;
+                            grid-template-columns: repeat(3, minmax(0, 1fr));
+                            gap: 12px;
                             background: white;
                             border-radius: 16px;
                             padding: 12px 12px 4px 12px;
@@ -1215,6 +1233,10 @@
                             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
                             border: 1px solid rgba(0,139,116,0.1);
                             border-top: 5px solid #008B74;
+                        }
+                        
+                        .filter-section .filter-header {
+                            grid-column: 1 / -1;
                         }
                         
                         .filter-header {
@@ -1376,7 +1398,20 @@
                             background: #f8f9fa;
                             padding: 6px 10px;
                             border-radius: 8px;
-                            margin-top: 6px;
+                            margin-top: 0;
+                        }
+                        .filter-section form#customFilterForm {
+                            display: grid;
+                            grid-template-columns: 1fr auto;
+                            gap: 10px;
+                            align-items: end;
+                        }
+                        .filter-section form#customFilterForm .datetime-grid {
+                            grid-column: 1;
+                        }
+                        .filter-section form#customFilterForm .action-buttons {
+                            grid-column: 2;
+                            margin-top: 0;
                         }
                         
                         .custom-filter-title {
@@ -1490,28 +1525,30 @@
                         
                         @media (max-width: 768px) {
                             .filter-section {
+                                grid-template-columns: 1fr;
                                 padding: 20px 20px 8px 20px;
                                 margin: 20px 10px;
                             }
-                            
+                            .filter-section form#customFilterForm {
+                                grid-template-columns: 1fr;
+                            }
+                            .filter-section form#customFilterForm .action-buttons {
+                                grid-column: 1;
+                            }
                             .quick-filters {
                                 grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
                                 gap: 8px;
                             }
-                            
                             .quick-filter-btn {
                                 padding: 10px 15px;
                                 font-size: 0.9em;
                             }
-                            
                             .datetime-grid {
                                 grid-template-columns: repeat(2, minmax(0, 1fr));
                             }
-                            
                             .action-buttons {
                                 grid-template-columns: 1fr;
                             }
-                            
                             .period-info-stats {
                                 grid-template-columns: 1fr;
                             }

@@ -7,6 +7,17 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.81] - 2026-03-04
+
+### Changement - Vue paysage : Filtrage et État du système empilés, contenu en colonnes
+- Cadres « Filtrage des données » et « État du système » affichés l'un sous l'autre (une seule colonne)
+- Filtrage : contenu en 3 colonnes (Période analysée | Boutons rapides | Période personnalisée), formulaire personnalisé en 2 colonnes (dates | boutons)
+- État du système : health-grid en 4 colonnes (Statut, Dernière réception, Uptime, Lectures) sur une ligne
+- En ≤ 900 px : contenu repasse en 1 colonne pour chaque bloc
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.80] - 2026-03-04
 
 ### Correctif - Aquaponie-alt : fond de page comme l'accueil (fondu + preload)
