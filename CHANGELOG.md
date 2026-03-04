@@ -9,14 +9,8 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [4.9.89] - 2026-03-04
 
-### Changement - Héros et footers cohérents sur toutes les pages (référence aquaponie-alt)
-- **CSS partagé** : styles `.modern-header`, `.header-content`, `.header-title`, `.header-subtitle`, `.header-more` et `#footer`, `.footer-copyright`, `.context-badge` (dont test/prod) ajoutés dans `realtime-styles.css`
-- **home.twig** : hero modern-header (N3 IoT Datas + sous-titre + lien aquaponie), footer avec classes (sans inline)
-- **aquaponie.twig** : footer sans style inline, classe `footer-copyright` ; suppression des styles footer/context-badges dupliqués (utilise le CSS partagé)
-- **tide_stats.twig** : hero modern-header (Statistiques marées), footer avec `.footer-copyright`
-- **dashboard.twig** : hero modern-header (Dashboard des capteurs), footer avec `.footer-copyright`
-- **aquaponie_description.twig** : suppression des styles hero/footer dupliqués (utilise le CSS partagé)
-- Fichiers modifiés : `public/assets/css/realtime-styles.css`, `templates/home.twig`, `templates/aquaponie.twig`, `templates/tide_stats.twig`, `templates/dashboard.twig`, `templates/aquaponie_description.twig`
+### Divers
+- Incrément de version
 
 ---
 
