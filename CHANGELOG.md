@@ -7,6 +7,16 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.73] - 2026-03-03
+
+### Changement - Bloc IP locale supprimé, badges Niveaux d'eau, filtres
+- **IP locale** : bloc supprimé sur toutes les vues (`aquaponie_alt.twig`, `aquaponie.twig`, `dashboard.twig`, `control.twig`)
+- **Niveaux d'eau** : badge Aquarium en premier (puis Réserve, Potager) ; sur smartphone toutes les stat-cards même taille (override `max-width` / `grid-column` en 1 colonne)
+- **Filtrage** : champs Date début/fin sur la même ligne (grille 2 colonnes)
+- Fichiers modifiés : `templates/aquaponie_alt.twig`, `templates/aquaponie.twig`, `templates/dashboard.twig`, `templates/control.twig`
+
+---
+
 ## [4.9.72] - 2026-03-03
 
 ### Correctif - Vue paysage : cadres Filtrage et État du système lisibles, contenu contenu

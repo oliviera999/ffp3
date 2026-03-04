@@ -570,7 +570,7 @@
                 gap: 10px;
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
-            /* Dernière carte seule sur sa ligne (nombre impair) : centrée */
+            /* Dernière carte seule sur sa ligne (nombre impair) : centrée, uniquement en 2 colonnes */
             .alt-data-chart-row .alt-stats-column .stats-grid .stat-card:last-child:nth-child(odd) {
                 grid-column: 1 / -1;
                 justify-self: center;
@@ -752,6 +752,12 @@
                 .alt-data-chart-row .alt-stats-column .stats-grid {
                     grid-template-columns: 1fr;
                 }
+                /* En 1 colonne (mobile) : toutes les stat-cards même taille, pas de réduction sur la dernière */
+                .alt-data-chart-row .alt-stats-column .stats-grid .stat-card:last-child:nth-child(odd) {
+                    grid-column: auto;
+                    justify-self: stretch;
+                    max-width: none;
+                }
                 .alt-two-cols {
                     grid-template-columns: 1fr;
                 }
@@ -816,7 +822,20 @@
                     <div class="alt-data-chart-row">
                         <div class="alt-stats-column">
                             <div class="stats-grid">
-                                <!-- Réserve (ordre aligné avec les séries du graphique) -->
+                                <!-- Aquarium (en premier), puis Réserve, Potager -->
+                                <div class="stat-card water">
+                                    <i class="fas fa-fish stat-card-icon"></i>
+                                    <div class="stat-card-label">Aquarium</div>
+                                    <div class="stat-card-value" id="eauaqua-display">{{ last_reading_eauaqua|default(0)|round(0) }} <span class="stat-card-unit">cm</span></div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar" id="eauaqua-progress" style="width: {{ (last_reading_eauaqua|default(0) / 100 * 100)|round(0) }}%;"></div>
+                                    </div>
+                                    <div class="stat-card-secondary">
+                                        <div>Moy: <span id="eauaqua-avg">{{ avg_eauaqua|default(0)|round(1) }}</span> cm | ET: <span id="eauaqua-stddev">{{ stddev_eauaqua|default(0)|round(2) }}</span></div>
+                                        <div>Min: <span id="eauaqua-min">{{ min_eauaqua|default(0) }}</span> cm | Max: <span id="eauaqua-max">{{ max_eauaqua|default(0) }}</span> cm</div>
+                                    </div>
+                                </div>
+
                                 <div class="stat-card water">
                                     <i class="fas fa-droplet stat-card-icon"></i>
                                     <div class="stat-card-label">Réserve</div>
@@ -830,7 +849,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Potager -->
                                 <div class="stat-card water">
                                     <i class="fas fa-seedling stat-card-icon"></i>
                                     <div class="stat-card-label">Potager</div>
@@ -841,20 +859,6 @@
                                     <div class="stat-card-secondary">
                                         <div>Moy: <span id="eaupota-avg">{{ avg_eaupota|default(0)|round(1) }}</span> cm | ET: <span id="eaupota-stddev">{{ stddev_eaupota|default(0)|round(2) }}</span></div>
                                         <div>Min: <span id="eaupota-min">{{ min_eaupota|default(0) }}</span> cm | Max: <span id="eaupota-max">{{ max_eaupota|default(0) }}</span> cm</div>
-                                    </div>
-                                </div>
-
-                                <!-- Aquarium -->
-                                <div class="stat-card water">
-                                    <i class="fas fa-fish stat-card-icon"></i>
-                                    <div class="stat-card-label">Aquarium</div>
-                                    <div class="stat-card-value" id="eauaqua-display">{{ last_reading_eauaqua|default(0)|round(0) }} <span class="stat-card-unit">cm</span></div>
-                                    <div class="progress-bar-container">
-                                        <div class="progress-bar" id="eauaqua-progress" style="width: {{ (last_reading_eauaqua|default(0) / 100 * 100)|round(0) }}%;"></div>
-                                    </div>
-                                    <div class="stat-card-secondary">
-                                        <div>Moy: <span id="eauaqua-avg">{{ avg_eauaqua|default(0)|round(1) }}</span> cm | ET: <span id="eauaqua-stddev">{{ stddev_eauaqua|default(0)|round(2) }}</span></div>
-                                        <div>Min: <span id="eauaqua-min">{{ min_eauaqua|default(0) }}</span> cm | Max: <span id="eauaqua-max">{{ max_eauaqua|default(0) }}</span> cm</div>
                                     </div>
                                 </div>
                             </div>
@@ -1636,10 +1640,6 @@
                                     </span>
                                     <span class="reading-hint" data-reading-hint>/ jour</span>
                                 </div>
-                            </div>
-                            <div class="health-item">
-                                <div class="health-item-label">IP locale</div>
-                                <div class="health-item-value" id="device-ip">-</div>
                             </div>
                         </div>
                         
