@@ -7,6 +7,16 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.77] - 2026-03-03
+
+### Correctif - Image de fond en fondu sur toutes les pages (aquaponie, etc.)
+- Dans `realtime-styles.css` : neutralisation du fond opaque de main.css pour que `body::before` (image aquaponie + animation fondu) soit visible
+- `body { background: transparent !important }` pour priorité sur le thème externe
+- `#wrapper > .bg` et `#wrapper.fade-in::before` forcés à transparent pour laisser voir l’image de fond
+- Fichier modifié : `public/assets/css/realtime-styles.css`
+
+---
+
 ## [4.9.76] - 2026-03-03
 
 ### Changement - Photo de fond avec fondu sur toutes les pages

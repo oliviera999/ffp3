@@ -18,7 +18,7 @@ html {
 }
 body {
     position: relative;
-    background: transparent; /* permet à body::before (image + fondu) d’être visible sur toutes les pages */
+    background: transparent !important; /* permet à body::before (image + fondu) d’être visible sur toutes les pages */
     min-height: 100%;
 }
 body::before {
@@ -39,6 +39,16 @@ body::before {
 }
 
 /* Wrapper semi-transparent pour laisser voir l’image de fond (fondu) sur les pages type contrôle */
+/* Neutraliser le fond opaque de main.css pour que body::before (image fondu) soit visible */
+#wrapper > .bg {
+    background: none !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+#wrapper.fade-in::before {
+    background: transparent !important;
+}
+
 #wrapper.control-wrapper {
     background: linear-gradient(180deg, rgba(248, 250, 252, 0.94) 0%, rgba(238, 242, 246, 0.94) 100%);
 }
