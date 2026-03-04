@@ -18,6 +18,20 @@
         <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link rel="stylesheet" href="/ffp3/assets/css/realtime-styles.css" />
+        <style id="page-bg-override">
+            /* Force fond de page sur aquaponie-alt : priorite sur main.css (body noir, wrapper::before) */
+            body { background: transparent !important; }
+            #page-bg {
+                position: fixed !important; top: 0; left: 0; right: 0; bottom: 0;
+                z-index: -1 !important;
+                background-color: #e8f4f2;
+                background-image: url('/ffp3/assets/bg-aquaponie.png');
+                background-size: cover; background-position: center; background-repeat: no-repeat;
+                opacity: 1 !important;
+                pointer-events: none;
+            }
+            #wrapper.fade-in::before { background: transparent !important; background-color: transparent !important; }
+        </style>
         <link rel="shortcut icon" type="image/png" href="/ffp3/assets/logo.png"/>
         <link rel="manifest" href="/ffp3/manifest.json" />
         <link rel="apple-touch-icon" href="/ffp3/assets/icons/icon-192.png" />
@@ -584,11 +598,11 @@
                 gap: 10px;
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
-            /* Dernière tuile seule (ex. Potager) : centrée, même largeur qu'une colonne */
+            /* Dernière tuile seule (ex. Potager) : même largeur qu'Aquarium et Réserve (1 colonne, alignée à gauche) */
             .alt-data-chart-row .alt-stats-column .stats-grid .stat-card:last-child:nth-child(odd) {
-                grid-column: 1 / -1;
-                justify-self: center;
-                max-width: calc(50% - 5px);
+                grid-column: 1;
+                justify-self: stretch;
+                max-width: none;
             }
             /* Version compacte des stat-cards dans la colonne gauche (2 par ligne) */
             .alt-data-chart-row .alt-stats-column .stat-card {
