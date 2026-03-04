@@ -136,6 +136,7 @@
             .header-more {
                 margin-top: 1rem;
                 opacity: 0.95;
+                text-align: center;
             }
             .header-more a {
                 display: inline-block;
@@ -145,11 +146,12 @@
                 border-radius: 8px;
                 padding: 8px 16px;
                 font-weight: 500;
-                transition: background 0.3s ease, border-color 0.3s ease;
+                transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
             }
             .header-more a:hover {
+                color: #FF6300;
                 background: rgba(255,255,255,0.2);
-                border-color: white;
+                border-color: #FF6300;
                 opacity: 1;
             }
             
@@ -901,10 +903,10 @@
                             <i class="fas fa-fish" aria-hidden="true"></i>
                         </div>
                         <p class="header-subtitle">
-                            Supervision en direct des capteurs, pompes et indicateurs de la ferme aquaponique. <strong>Vue paysage</strong> – données en vis-à-vis des graphiques.
+                            Supervision en direct des capteurs, pompes et indicateurs de la ferme aquaponique.
                         </p>
-                        <p class="header-synthesis">📊 Synthèse des mesures du <span id="summary-start-date">{{ start_date|date('d/m/Y H:i:s') }}</span> au <span id="summary-end-date">{{ end_date|date('d/m/Y H:i:s') }}</span></p>
                         <p class="header-more"><a href="https://iot.olution.info/ffp3/aquaponie-description">En savoir plus sur le module</a></p>
+                        <p class="header-synthesis">📊 Synthèse des mesures du <span id="summary-start-date">{{ start_date|date('d/m/Y H:i:s') }}</span> au <span id="summary-end-date">{{ end_date|date('d/m/Y H:i:s') }}</span></p>
                     </div>
                 </div>
 

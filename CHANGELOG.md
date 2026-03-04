@@ -7,22 +7,13 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
-## [4.9.85] - 2026-03-04
-
-### Changement - Template aquaponie_alt (header, footer, responsive)
-- Header : dégradé 145deg, padding 58px, border-radius bas, grille opacity 0.2 ; titre avec text-shadow léger ; icône seedling en float animation (header-icon-float)
-- Synthèse : bloc avec fond semi-transparent, border-radius 12px, bordure, backdrop-filter
-- Lien « En savoir plus » : style bouton (bordure, padding, hover)
-- Footer : fond rgba(255,255,255,0.92) ; responsive header-synthesis (font-size, padding)
-- Fichier modifié : `templates/aquaponie_alt.twig`
-
----
-
 ## [4.9.84] - 2026-03-04
 
-### Changement - Fond de page
-- Nouvelle image de fond (jeunes plantes, lumière naturelle) en remplacement de l'ancienne, affichée en fondu sur toutes les pages via `public/assets/bg-aquaponie.png`
-- Animation fondu inchangée (bgFadeIn 1.2s) dans `realtime-styles.css`
+### Changement - Bouton « En savoir plus sur le module » (hero aquaponie)
+- Bouton centré (`text-align: center` sur `.header-more`)
+- Survol en orange charte (`#FF6300`) au lieu de vert/blanc
+- Position : au-dessus de « Synthèse des mesures » (aquaponie_alt)
+- Fichiers modifiés : `templates/aquaponie.twig`, `templates/aquaponie_alt.twig`
 
 ---
 
