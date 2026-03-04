@@ -2,20 +2,26 @@
   "version": "12.18",
   "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin",
   "size": 1478112,
-  "md5": "6aa1825d39b8eb095b0b83497b26b213",
+  "md5": "1b95e1d3a4fba9cdf62c8296a238bf37",
   "channels": {
     "prod": {
       "esp32-wroom": {
-        "version": "12.18",
+        "md5": "1b95e1d3a4fba9cdf62c8296a238bf37",
         "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin",
+        "filesystem_size": 720896,
         "size": 1478112,
-        "md5": "6aa1825d39b8eb095b0b83497b26b213"
+        "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/littlefs.bin",
+        "filesystem_md5": "270e4f04d0977f1880ebc86c209efc56",
+        "version": "12.18"
       },
       "default": {
-        "version": "12.18",
+        "md5": "1b95e1d3a4fba9cdf62c8296a238bf37",
         "bin_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/firmware.bin",
+        "filesystem_size": 720896,
         "size": 1478112,
-        "md5": "6aa1825d39b8eb095b0b83497b26b213"
+        "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-wroom/littlefs.bin",
+        "filesystem_md5": "270e4f04d0977f1880ebc86c209efc56",
+        "version": "12.18"
       }
     },
     "test": {
@@ -26,16 +32,22 @@
         "size": 1476192
       },
       "default": {
-        "version": "12.18",
+        "md5": "bd88775ac31e37c42e3165c71f9be060",
         "bin_url": "https://iot.olution.info/ffp3/ota/esp32-s3-test/firmware.bin",
+        "filesystem_size": 2031616,
         "size": 2008176,
-        "md5": "aac7085bb48da8f995b422be6a5d3689"
+        "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-s3-test/littlefs.bin",
+        "filesystem_md5": "20236e06c421050c9a4986869f1a53d2",
+        "version": "12.18"
       },
       "esp32-s3": {
-        "version": "12.18",
+        "md5": "bd88775ac31e37c42e3165c71f9be060",
         "bin_url": "https://iot.olution.info/ffp3/ota/esp32-s3-test/firmware.bin",
+        "filesystem_size": 2031616,
         "size": 2008176,
-        "md5": "aac7085bb48da8f995b422be6a5d3689"
+        "filesystem_url": "https://iot.olution.info/ffp3/ota/esp32-s3-test/littlefs.bin",
+        "filesystem_md5": "20236e06c421050c9a4986869f1a53d2",
+        "version": "12.18"
       }
     }
   }
