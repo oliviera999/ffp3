@@ -12,16 +12,40 @@
 /* =================================================================
    FOND DE PAGE : IMAGE AQUAPONIE AVEC APPARITION EN FONDU
    Remplace le fond noir (main.css externe) sur toutes les pages.
-   Règles renforcées pour aquaponie, aquaponie-alt, control, etc.
+   Regles renforcees pour aquaponie, aquaponie-alt, control, etc.
 ================================================================= */
 html {
     min-height: 100%;
 }
 body {
     position: relative;
-    background: transparent !important; /* permet à body::before (image + fondu) d’être visible sur toutes les pages */
+    background: transparent !important;
     min-height: 100%;
 }
+
+/* Calque de fond en element reel (#page-bg) : non affecte par body.is-preload * { animation: none } de main.css */
+#page-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e8f4f2;
+    background-image: url('../bg-aquaponie.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+    opacity: 0;
+    animation: bgFadeIn 1.2s ease-out forwards !important;
+    pointer-events: none;
+}
+@keyframes bgFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Fallback body::before si #page-bg absent */
 body::before {
     content: '';
     position: fixed;
@@ -29,26 +53,20 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #e8f4f2; /* fallback si l’image ne charge pas (évite le noir) */
+    background-color: #e8f4f2;
     background-image: url('../bg-aquaponie.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    z-index: -1;
+    z-index: -2;
     opacity: 0;
-    animation: bgFadeIn 1.2s ease-out forwards !important; /* priorité sur body.is-preload *:before { animation: none } */
+    animation: bgFadeIn 1.2s ease-out forwards !important;
 }
-@keyframes bgFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Avec is-preload, le body::before doit quand même animer (pas un descendant de body pour le sélecteur *) */
 body.is-preload::before {
     animation: bgFadeIn 1.2s ease-out forwards !important;
 }
 
-/* Wrapper semi-transparent pour laisser voir l’image de fond (fondu) sur les pages type contrôle */
+/* Wrapper semi-transparent pour laisser voir l'image de fond (fondu) sur les pages type controle */
 /* Neutraliser le fond opaque et le calque sombre de main.css (#wrapper.fade-in:before { background: #1e252d }) */
 #wrapper > .bg {
     background: none !important;
@@ -62,11 +80,11 @@ body.is-preload #wrapper.fade-in::before {
 }
 
 #wrapper.control-wrapper {
-    background: linear-gradient(180deg, rgba(248, 250, 252, 0.94) 0%, rgba(238, 242, 246, 0.94) 100%);
+    background: linear-gradient(180deg, rgba(248, 250, 252, 0.94) 0%, rgba(238, 242, 246, 0.94) 100%) !important;
 }
 
 /**
- * Styles pour système temps réel et PWA
+ * Styles pour syst├¿me temps r├®el et PWA
  */
 
 /* Logo header (image + IOT) */
@@ -241,7 +259,7 @@ body.is-preload #wrapper.fade-in::before {
 }
 
 /* =================================================================
-   DASHBOARD SYSTÈME
+   DASHBOARD SYST├êME
 ================================================================= */
 .system-health-panel {
     background: white;
@@ -447,7 +465,7 @@ body.is-preload #wrapper.fade-in::before {
 }
 
 /* =================================================================
-   SPINNER DE RAFRAÎCHISSEMENT
+   SPINNER DE RAFRA├ÄCHISSEMENT
 ================================================================= */
 .refresh-spinner {
     display: inline-block;
@@ -668,7 +686,7 @@ body.is-preload #wrapper.fade-in::before {
 }
 
 /* =================================================================
-   MODE SOMBRE (POUR FUTURE IMPLÉMENTATION)
+   MODE SOMBRE (POUR FUTURE IMPL├ëMENTATION)
 ================================================================= */
 @media (prefers-color-scheme: dark) {
     .toast {
@@ -705,7 +723,7 @@ body.is-preload #wrapper.fade-in::before {
 }
 
 /* =================================================================
-   ANIMATIONS MISE À JOUR TEMPS RÉEL
+   ANIMATIONS MISE ├Ç JOUR TEMPS R├ëEL
 ================================================================= */
 .value-updated {
     animation: glowValue 0.9s ease-in-out;
@@ -734,7 +752,7 @@ body.is-preload #wrapper.fade-in::before {
 }
 
 /* =================================================================
-   CONTRÔLES MODE LIVE INTÉGRÉS (dans État du système)
+   CONTR├öLES MODE LIVE INT├ëGR├ëS (dans ├ëtat du syst├¿me)
 ================================================================= */
 .live-controls-integrated {
     margin-top: 15px;
