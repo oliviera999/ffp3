@@ -7,6 +7,16 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.90] - 2026-03-04
+
+### Changement - Inversion pages de suivi : vue paysage = principale, vue classique = alternative
+- **Routes** : `/aquaponie` (et variantes test, aquamobile) sert désormais la vue paysage (aquaponie_alt.twig) ; `/aquaponie-alt` sert la vue classique (aquaponie.twig)
+- **Navigation** : « L'aquaponie (FFP3) » pointe vers la page principale (paysage), « Vue classique » vers l'alternative ; libellés et `active` ajustés dans les deux templates
+- **Contrôleur** : commentaires mis à jour (show = vue classique à /aquaponie-alt, showAlt = vue paysage à /aquaponie)
+- Fichiers modifiés : `public/index.php`, `templates/aquaponie.twig`, `templates/aquaponie_alt.twig`, `src/Controller/AquaponieController.php`
+
+---
+
 ## [4.9.89] - 2026-03-04
 
 ### Divers

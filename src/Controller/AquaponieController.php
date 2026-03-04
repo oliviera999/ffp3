@@ -45,7 +45,7 @@ class AquaponieController
     }
 
     /**
-     * Affiche la page publique des données d'aquaponie
+     * Affiche la page suivi « vue classique » (servie à /aquaponie-alt).
      */
     public function show(Request $request, Response $response): Response
     {
@@ -75,7 +75,7 @@ class AquaponieController
     }
 
     /**
-     * Affiche la page alternative aquaponie-alt (vue paysage).
+     * Affiche la page suivi principale « vue paysage » (servie à /aquaponie).
      */
     public function showAlt(Request $request, Response $response): Response
     {
@@ -105,7 +105,7 @@ class AquaponieController
     }
 
     /**
-     * Construit les données communes pour les pages aquaponie et aquaponie-alt.
+     * Construit les données communes pour les pages suivi (vue classique et vue paysage).
      * Retourne un tableau de données pour le template, ou une Response (redirection / export CSV) à retourner par l'appelant.
      */
     private function getAquaponieData(Request $request, Response $response): array|Response
