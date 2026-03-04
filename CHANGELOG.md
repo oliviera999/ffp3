@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.91] - 2026-03-04
+
+### Changement - Suivi : courbe eau réserve cachée par défaut, axe températures adapté à la gamme
+- **Graphique niveaux d'eau** : courbe « Eau réserve » invisible par défaut (comme les courbes de tendance), réaffichable via la légende
+- **Graphique paramètres physiques** : axe Y températures avec `min: null`, `max: null` pour une échelle adaptée à la gamme des données (sans forcer 0)
+- Fichiers modifiés : `templates/aquaponie.twig`, `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.90] - 2026-03-04
 
 ### Changement - Inversion pages de suivi : vue paysage = principale, vue classique = alternative

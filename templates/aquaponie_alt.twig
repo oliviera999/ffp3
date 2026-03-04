@@ -442,7 +442,7 @@
                 }
                 
                 .stats-grid {
-                    grid-template-columns: 1fr;
+                    grid-template-columns: repeat(2, 1fr);
                     gap: 20px;
                 }
                 
@@ -466,6 +466,11 @@
                 
                 .quick-stats {
                     grid-template-columns: 1fr;
+                }
+                
+                .stats-grid,
+                .alt-data-chart-row .alt-stats-column .stats-grid {
+                    grid-template-columns: repeat(2, 1fr);
                 }
                 
                 .system-status-badge {
@@ -834,7 +839,7 @@
                     grid-template-columns: 1fr;
                 }
                 .alt-data-chart-row .alt-stats-column .stats-grid {
-                    grid-template-columns: 1fr;
+                    grid-template-columns: repeat(2, 1fr);
                 }
                 .alt-data-chart-row .alt-stats-column .stats-grid .stat-card:last-child:nth-child(odd) {
                     grid-column: auto;
@@ -2697,6 +2702,7 @@
                                         },
                                         dashStyle: 'ShortDot',
                                         lineWidth: 2,
+                                        visible: false,
                                         tooltip: { valueSuffix: ' cm' } 
                                     },
                                     { 
@@ -2911,7 +2917,9 @@
                                                     style: { fontSize: '11px' }
                                                 },
                                                 height: '50%',
-                                                lineWidth: 2
+                                                lineWidth: 2,
+                                                min: null,
+                                                max: null
                                             }, {
                                                 labels: { 
                                                     format: '{value}%',
@@ -2979,7 +2987,9 @@
                                             },
                                             yAxis: [{
                                                 labels: { style: { fontSize: '11px' } },
-                                                title: { text: 'Températures (°C)', style: { fontSize: '12px' } }
+                                                title: { text: 'Températures (°C)', style: { fontSize: '12px' } },
+                                                min: null,
+                                                max: null
                                             }, {
                                                 labels: { style: { fontSize: '11px' } },
                                                 title: { text: 'Humidité (%)', style: { fontSize: '12px' } },
@@ -3040,7 +3050,9 @@
                                     labels: { format: '{value}°C' },
                                     title: { text: 'Températures (°C)', enabled: true },
                                     height: '50%',
-                                    lineWidth: 2
+                                    lineWidth: 2,
+                                    min: null,
+                                    max: null
                                 }, {
                                     labels: { format: '{value}%' },
                                     title: { text: 'Humidité (%)', enabled: true },

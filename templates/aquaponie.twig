@@ -394,7 +394,7 @@
                 }
                 
                 .stats-grid {
-                    grid-template-columns: 1fr;
+                    grid-template-columns: repeat(2, 1fr);
                     gap: 20px;
                 }
                 
@@ -413,6 +413,10 @@
                 
                 .quick-stats {
                     grid-template-columns: 1fr;
+                }
+                
+                .stats-grid {
+                    grid-template-columns: repeat(2, 1fr);
                 }
                 
                 .system-status-badge {
@@ -2338,6 +2342,7 @@
                                         },
                                         dashStyle: 'ShortDot',
                                         lineWidth: 2,
+                                        visible: false,
                                         tooltip: { valueSuffix: ' cm' } 
                                     },
                                     { 
@@ -2550,7 +2555,9 @@
                                                     style: { fontSize: '11px' }
                                                 },
                                                 height: '25%',
-                                                lineWidth: 2
+                                                lineWidth: 2,
+                                                min: null,
+                                                max: null
                                             }, {
                                                 labels: { 
                                                     format: '{value}%',
@@ -2624,7 +2631,9 @@
                                                 },
                                                 title: { 
                                                     style: { fontSize: '12px' }
-                                                }
+                                                },
+                                                min: null,
+                                                max: null
                                             }, {
                                                 labels: { 
                                                     style: { fontSize: '11px' }
@@ -2679,7 +2688,9 @@
                                     labels: { format: '{value}°C' },
                                     title: { text: 'Températures (°C)' },
                                     height: '25%',
-                                    lineWidth: 2
+                                    lineWidth: 2,
+                                    min: null,
+                                    max: null
                                 }, {
                                     labels: { format: '{value}%' },
                                     title: { text: 'Humidité (%)' },
