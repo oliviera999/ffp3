@@ -7,6 +7,13 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.87] - 2026-03-04
+
+### Divers
+- Incrément de version
+
+---
+
 ## [4.9.86] - 2026-03-04
 
 ### Changement - Audit page aquaponie-description (contenu et mise en page)
