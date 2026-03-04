@@ -7,6 +7,14 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.84] - 2026-03-04
+
+### Changement - Fond de page
+- Nouvelle image de fond (jeunes plantes, lumière naturelle) en remplacement de l'ancienne, affichée en fondu sur toutes les pages via `public/assets/bg-aquaponie.png`
+- Animation fondu inchangée (bgFadeIn 1.2s) dans `realtime-styles.css`
+
+---
+
 ## [4.9.83] - 2026-03-04
 
 ### Changement - Audit webdesign aquaponie-alt (implémentation)
