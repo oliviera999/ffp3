@@ -207,17 +207,18 @@
 
         <!-- Main -->
         <div id="main">
-            <article class="post featured">
-                <header class="major">
-                    <h2>
-                        <i class="icon solid fa-water"></i>
+            <div class="modern-header">
+                <div class="header-content">
+                    <div class="header-title">
+                        <i class="fas fa-water" aria-hidden="true"></i>
                         Statistiques avancées des marées
-                        <i class="icon solid fa-water"></i>
-                    </h2>
-                    <p>Analyse des cycles de marée du système aquaponique</p>
-                    <hr />
-                </header>
+                        <i class="fas fa-water" aria-hidden="true"></i>
+                    </div>
+                    <p class="header-subtitle">Analyse des cycles de marée du système aquaponique</p>
+                </div>
+            </div>
 
+            <article class="post featured">
                 <!-- Bannière période -->
                 <div class="info-banner">
                     <div class="info-banner-title">📊 Période analysée</div>
@@ -543,9 +544,9 @@
             </article>
         </div>
         
-        <!-- Footer avec version -->
-        <footer id="footer" style="text-align: center; padding: 20px 0; color: #999; font-size: 0.9em;">
-            <p>{{ version }} | Système d'aquaponie FFP3 | © 2025 olution</p>
+        <!-- Footer (aligné aquaponie-alt) -->
+        <footer id="footer">
+            <p class="footer-copyright">{{ version }} | Système d'aquaponie FFP3 | © 2025 olution</p>
         </footer>
     </div>
 

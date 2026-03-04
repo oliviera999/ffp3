@@ -940,3 +940,157 @@ body.is-preload #wrapper.fade-in::before {
     }
 }
 
+/* =================================================================
+   HERO MODERNE (modern-header) – cohérent sur toutes les pages
+   Référence : aquaponie-alt
+================================================================= */
+.modern-header {
+    background: linear-gradient(145deg, #008B74 0%, #007A61 25%, #00B794 50%, #008B74 100%);
+    color: white;
+    padding: 58px 0;
+    margin: -20px -20px 20px -20px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0 0 16px 16px;
+}
+.modern-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.2;
+}
+.header-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.header-title {
+    font-size: 3.5em;
+    font-weight: bold;
+    margin: 0 0 15px 0;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+.header-title i {
+    font-size: 0.8em;
+}
+.header-title i.header-icon-float {
+    animation: headerFloat 3s ease-in-out infinite;
+}
+@keyframes headerFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+.header-subtitle {
+    font-size: 1.3em;
+    margin: 0 0 1.25rem 0;
+    opacity: 0.9;
+    font-weight: 300;
+    line-height: 1.6;
+    text-align: center;
+}
+.header-more {
+    margin-top: 1rem;
+    opacity: 0.95;
+    text-align: center;
+}
+.header-more a {
+    display: inline-block;
+    color: white;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+.header-more a:hover {
+    color: #FF6300 !important;
+    background: rgba(255,255,255,0.2);
+    border-color: #FF6300;
+    opacity: 1;
+}
+
+/* =================================================================
+   FOOTER – cohérent sur toutes les pages (référence aquaponie-alt)
+================================================================= */
+#footer {
+    text-align: center;
+    padding: 1.5rem 2rem 2rem;
+    margin-top: 2rem;
+    color: #6c757d;
+    font-size: 0.9em;
+    line-height: 1.5;
+    border-top: 1px solid rgba(0,139,116,0.15);
+    background: rgba(255,255,255,0.92);
+}
+#footer .context-badges {
+    margin: 0 auto 1rem;
+    flex-wrap: nowrap;
+    max-width: 100%;
+    padding: 0 15px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+#footer .footer-copyright {
+    margin-top: 1rem;
+    margin-bottom: 0;
+    font-size: 0.9em;
+    color: #6c757d;
+}
+#footer .context-badge {
+    background: rgba(0, 0, 0, 0.05);
+    color: #666;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    backdrop-filter: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 0.82em;
+    font-weight: 600;
+}
+#footer .context-badge i {
+    font-size: 0.95em;
+}
+#footer .context-badge-test {
+    background: rgba(255, 159, 67, 0.15);
+    border-color: rgba(255, 159, 67, 0.3);
+    color: #cc6600;
+}
+#footer .context-badge-prod {
+    background: rgba(46, 213, 115, 0.15);
+    border-color: rgba(46, 213, 115, 0.3);
+    color: #2d8659;
+}
+@media (max-width: 768px) {
+    #footer .context-badge {
+        font-size: 0.75em;
+        padding: 6px 8px;
+        gap: 6px;
+    }
+    #footer .context-badge i {
+        font-size: 0.9em;
+    }
+}
+@media (max-width: 480px) {
+    #footer .context-badge {
+        font-size: 0.7em;
+        padding: 5px 6px;
+        gap: 4px;
+    }
+}
+
