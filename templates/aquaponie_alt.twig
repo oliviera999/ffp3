@@ -482,11 +482,28 @@
                 max-width: 760px;
             }
 
+            /* Footer : bloc aligné sur la charte (typo, espacements, couleurs) */
+            #footer {
+                text-align: center;
+                padding: 1.5rem 2rem 2rem;
+                margin-top: 2rem;
+                color: #6c757d;
+                font-size: 0.9em;
+                line-height: 1.5;
+                border-top: 1px solid rgba(0,139,116,0.15);
+                background: rgba(255,255,255,0.4);
+            }
             #footer .context-badges {
-                margin: 0 auto 15px;
+                margin: 0 auto 1rem;
                 flex-wrap: nowrap;
                 max-width: 100%;
                 padding: 0 15px;
+            }
+            #footer .footer-copyright {
+                margin-top: 1rem;
+                margin-bottom: 0;
+                font-size: 0.9em;
+                color: #6c757d;
             }
 
             .context-badge {
@@ -632,13 +649,14 @@
             }
             .stat-card-secondary {
                 font-size: 0.75em;
-                color: #7f8c8d;
+                color: #6c757d;
                 margin-top: 8px;
                 line-height: 1.4;
             }
             .alt-data-chart-row .alt-stats-column .stat-card-secondary {
-                font-size: 0.65em;
+                font-size: 0.7em;
                 margin-top: 2px;
+                color: #6c757d;
             }
             /* Bilan hydrique : Réserve d'eau et Cycles de marée sous le graphique, 2 colonnes de largeur similaire */
             .alt-balance-below-chart {
@@ -935,7 +953,7 @@
                                     </div>
                                     <div class="balance-stat">
                                         <span class="balance-stat-label">
-                                            <i class="fas fa-arrow-down" style="color: #e74c3c;"></i>
+                                            <i class="fas fa-arrow-down balance-icon-negative" aria-hidden="true"></i>
                                             Consommation totale
                                         </span>
                                         <span class="balance-stat-value negative">
@@ -945,7 +963,7 @@
                                     </div>
                                     <div class="balance-stat">
                                         <span class="balance-stat-label">
-                                            <i class="fas fa-arrow-up" style="color: #27ae60;"></i>
+                                            <i class="fas fa-arrow-up balance-icon-positive" aria-hidden="true"></i>
                                             Ravitaillement total
                                         </span>
                                         <span class="balance-stat-value positive">
@@ -955,7 +973,7 @@
                                     </div>
                                     <div class="balance-stat">
                                         <span class="balance-stat-label">
-                                            <i class="fas fa-balance-scale" style="color: #3498db;"></i>
+                                            <i class="fas fa-balance-scale balance-icon-neutral" aria-hidden="true"></i>
                                             Bilan net
                                         </span>
                                         <span class="balance-stat-value {% if reserve_balance|default(0) > 0 %}positive{% elseif reserve_balance|default(0) < 0 %}negative{% else %}neutral{% endif %}">
@@ -983,8 +1001,7 @@
                                             {{ tide_marnage|default(0)|round(2) }}
                                             <span class="balance-stat-unit">cm</span>
                                             {% if tide_marnage_stddev is not null %}
-                                                <span style="font-size: 0.7em; color: #95a5a6;">
-                                                    ± {{ tide_marnage_stddev|round(2) }}</span>
+                                                <span class="balance-stat-stddev">± {{ tide_marnage_stddev|round(2) }}</span>
                                             {% endif %}
                                         </span>
                                     </div>
@@ -997,8 +1014,7 @@
                                             {{ tide_frequency|default(0)|round(2) }}
                                             <span class="balance-stat-unit">/heure</span>
                                             {% if tide_frequency_stddev is not null %}
-                                                <span style="font-size: 0.7em; color: #95a5a6;">
-                                                    ± {{ tide_frequency_stddev|round(2) }}</span>
+                                                <span class="balance-stat-stddev">± {{ tide_frequency_stddev|round(2) }}</span>
                                             {% endif %}
                                         </span>
                                     </div>
@@ -1169,6 +1185,10 @@
                             align-items: center;
                             gap: 8px;
                         }
+                        .balance-stat-label .balance-icon-negative { color: #e74c3c; }
+                        .balance-stat-label .balance-icon-positive { color: #27ae60; }
+                        .balance-stat-label .balance-icon-neutral { color: #3498db; }
+                        .balance-stat-stddev { font-size: 0.7em; color: #95a5a6; }
                         
                         .balance-stat-value {
                             font-size: 1.2em;
@@ -1366,10 +1386,11 @@
                         }
                         
                         .period-stat-label {
-                            font-size: 0.75em;
-                            opacity: 0.9;
+                            font-size: 0.78em;
+                            opacity: 0.95;
                             margin-top: 1px;
                             line-height: 1.2;
+                            color: rgba(255,255,255,0.95);
                         }
                         
                         .quick-filters {
@@ -1380,24 +1401,24 @@
                         }
                         
                         .quick-filter-btn {
-                            padding: 2px 5px;
-                            font-size: 0.7em;
+                            padding: 4px 8px;
+                            font-size: 0.8em;
                             background: white;
-                            color: #008B74;
+                            color: #007A61;
                             border: 1px solid #008B74;
-                            border-radius: 5px;
+                            border-radius: 6px;
                             cursor: pointer;
                             transition: all 0.3s;
-                            font-weight: 500;
+                            font-weight: 600;
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            gap: 2px;
+                            gap: 4px;
                             min-width: 0;
                             overflow: hidden;
                             text-overflow: ellipsis;
                             white-space: nowrap;
-                            line-height: 1.2;
+                            line-height: 1.3;
                         }
                         
                         .quick-filter-btn:hover {
@@ -1567,8 +1588,8 @@
                                 gap: 6px;
                             }
                             .quick-filter-btn {
-                                padding: 6px 8px;
-                                font-size: 0.78em;
+                                padding: 6px 10px;
+                                font-size: 0.82em;
                             }
                             .datetime-grid {
                                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3358,8 +3379,8 @@
                 </article>
             </div>
             
-            <!-- Footer avec badges (déplacés depuis le header) -->
-            <footer id="footer" style="text-align: center; padding: 20px 0; color: #999; font-size: 0.9em;">
+            <!-- Footer avec badges -->
+            <footer id="footer">
                 <div class="context-badges">
                     <span class="context-badge {{ environment == 'test' or environment == 'test3' ? 'context-badge-test' : 'context-badge-prod' }}">
                         <i class="fas fa-globe"></i>
@@ -3380,8 +3401,7 @@
                     </span>
                     {% endif %}
                 </div>
-                <p style="margin-top: 15px;">Système d'aquaponie FFP3 | © 2025 olution</p>
-                <!-- DEBUG: Badges déplacés dans le footer le 2026-02-12 -->
+                <p class="footer-copyright">Système d'aquaponie FFP3 | © 2025 olution</p>
             </footer>
         </div>
 

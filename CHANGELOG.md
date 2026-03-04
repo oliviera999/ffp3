@@ -7,6 +7,16 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.83] - 2026-03-04
+
+### Changement - Audit webdesign aquaponie-alt (implémentation)
+- **Cohérence** : icônes bilan hydrique en classes CSS (balance-icon-negative/positive/neutral), stddev en .balance-stat-stddev ; footer et copyright en classes, commentaire DEBUG retiré
+- **Lisibilité** : boutons filtres rapides (padding, font-size 0.8em, contraste) ; textes secondaires en #6c757d ; labels période en rgba blanc
+- **Footer** : bloc dédié (border-top teal, fond semi-transparent, espacements en rem, typo alignée charte)
+- Fichier modifié : `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.82] - 2026-03-04
 
 ### Changement - Vue paysage (aquaponie-alt)
