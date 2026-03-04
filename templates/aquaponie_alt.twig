@@ -1186,7 +1186,7 @@
                         .filter-section {
                             background: white;
                             border-radius: 16px;
-                            padding: 12px;
+                            padding: 12px 12px 4px 12px;
                             margin: 0;
                             max-width: 100%;
                             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -1318,23 +1318,24 @@
                         }
                         
                         .quick-filter-btn {
-                            padding: 4px 6px;
-                            font-size: 0.72em;
+                            padding: 2px 5px;
+                            font-size: 0.7em;
                             background: white;
                             color: #008B74;
                             border: 1px solid #008B74;
-                            border-radius: 6px;
+                            border-radius: 5px;
                             cursor: pointer;
                             transition: all 0.3s;
                             font-weight: 500;
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            gap: 3px;
+                            gap: 2px;
                             min-width: 0;
                             overflow: hidden;
                             text-overflow: ellipsis;
                             white-space: nowrap;
+                            line-height: 1.2;
                         }
                         
                         .quick-filter-btn:hover {
@@ -1413,6 +1414,7 @@
                             grid-template-columns: repeat(2, minmax(0, 1fr));
                             gap: 4px;
                             margin-top: 4px;
+                            margin-bottom: 0;
                         }
                         
                         .btn-primary,
@@ -1465,7 +1467,7 @@
                         
                         @media (max-width: 768px) {
                             .filter-section {
-                                padding: 20px;
+                                padding: 20px 20px 8px 20px;
                                 margin: 20px 10px;
                             }
                             

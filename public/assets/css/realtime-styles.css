@@ -12,6 +12,7 @@
 /* =================================================================
    FOND DE PAGE : IMAGE AQUAPONIE AVEC APPARITION EN FONDU
    Remplace le fond noir (main.css externe) sur toutes les pages.
+   Règles renforcées pour aquaponie, aquaponie-alt, control, etc.
 ================================================================= */
 html {
     min-height: 100%;
@@ -28,25 +29,36 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('../bg-aquaponie.png') center/cover no-repeat;
+    background-color: #e8f4f2; /* fallback si l’image ne charge pas (évite le noir) */
+    background-image: url('../bg-aquaponie.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     z-index: -1;
     opacity: 0;
-    animation: bgFadeIn 1.2s ease-out forwards;
+    animation: bgFadeIn 1.2s ease-out forwards !important; /* priorité sur body.is-preload *:before { animation: none } */
 }
 @keyframes bgFadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
+/* Avec is-preload, le body::before doit quand même animer (pas un descendant de body pour le sélecteur *) */
+body.is-preload::before {
+    animation: bgFadeIn 1.2s ease-out forwards !important;
+}
+
 /* Wrapper semi-transparent pour laisser voir l’image de fond (fondu) sur les pages type contrôle */
-/* Neutraliser le fond opaque de main.css pour que body::before (image fondu) soit visible */
+/* Neutraliser le fond opaque et le calque sombre de main.css (#wrapper.fade-in:before { background: #1e252d }) */
 #wrapper > .bg {
     background: none !important;
     background-color: transparent !important;
     background-image: none !important;
 }
-#wrapper.fade-in::before {
+#wrapper.fade-in::before,
+body.is-preload #wrapper.fade-in::before {
     background: transparent !important;
+    background-color: transparent !important;
 }
 
 #wrapper.control-wrapper {
