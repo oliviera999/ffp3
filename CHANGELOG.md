@@ -7,6 +7,18 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.88] - 2026-03-04
+
+### Changement - Page aquaponie-description : hero et esthétique alignés sur aquaponie-alt
+- **Listes** : texte repoussé à gauche (margin-left supprimé, padding-left 1.25em)
+- **Hero** : structure modern-header comme aquaponie-alt (gradient 145deg, border-radius 0 0 16px, motif ::before, header-title 3.5em, lien en bouton avec bordure et survol orange)
+- **Fond de page** : image bg-aquaponie.png + animation pageBgFadeIn, aligné aquaponie-alt
+- **Sections** : style carte (fond blanc semi-transparent, border-radius 12px, ombre, bordure teal) ; figcaption en #6c757d
+- **Footer** : border-top teal, fond semi-transparent, couleur #6c757d, classe footer-copyright
+- Fichier modifié : `templates/aquaponie_description.twig`
+
+---
+
 ## [4.9.87] - 2026-03-04
 
 ### Divers
