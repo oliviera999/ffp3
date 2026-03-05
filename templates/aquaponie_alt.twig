@@ -3487,38 +3487,30 @@
         document.addEventListener('DOMContentLoaded', function() {
             const prefs = loadLivePreferences();
             
-            // Initialiser ChartUpdater
             chartUpdater = new ChartUpdater({
                 maxPoints: prefs.maxPoints,
                 autoScroll: prefs.autoScroll
             });
-            
-            // Attendre que les graphiques soient créés (après createVersionD())
-            setTimeout(() => {
-                const initialized = chartUpdater.init();
-                if (initialized) {
-                    console.log('[Aquaponie] ChartUpdater initialized successfully');
-                } else {
-                    console.warn('[Aquaponie] ChartUpdater initialization failed');
-                }
-            }, 500);
-            
-            // Initialiser StatsUpdater
             statsUpdater = new StatsUpdater({
                 sensors: ['EauAquarium', 'EauReserve', 'EauPotager', 'TempEau', 'TempAir', 'Humidite', 'Luminosite']
             });
             
+            // Délai 800ms : laisser le temps aux graphiques Highcharts d'être créés (createVersionD : 100ms desktop, 600ms mobile)
+            // puis initialiser chartUpdater/statsUpdater et démarrer le polling pour éviter une race condition au premier poll
+            const initDelayMs = 800;
             setTimeout(() => {
-                const initialized = statsUpdater.init();
-                if (initialized) {
+                const chartOk = chartUpdater.init();
+                if (chartOk) {
+                    console.log('[Aquaponie] ChartUpdater initialized successfully');
+                } else {
+                    console.warn('[Aquaponie] ChartUpdater initialization failed');
+                }
+                
+                const statsOk = statsUpdater.init();
+                if (statsOk) {
                     console.log('[Aquaponie] StatsUpdater initialized successfully');
-                    
-                    // Initialiser les timestamps de période depuis les données PHP
-                    // Note: reading_time contient des timestamps en millisecondes (format Highcharts)
-                    // On les convertit en secondes Unix pour StatsUpdater
                     const initialStartTimestamp = reading_time && reading_time.length > 0 ? reading_time[0] / 1000 : null;
                     const initialEndTimestamp = reading_time && reading_time.length > 0 ? reading_time[reading_time.length - 1] / 1000 : null;
-                    
                     if (initialStartTimestamp && initialEndTimestamp) {
                         statsUpdater.startTimestamp = initialStartTimestamp;
                         statsUpdater.endTimestamp = initialEndTimestamp;
@@ -3528,11 +3520,7 @@
                         statsUpdater.initialReadingCount = reading_time.length;
                         statsUpdater.liveReadingCount = 0;
                         statsUpdater.updateModeBadge('historical');
-                        
-                        // Mettre à jour immédiatement les dates affichées avec le bon timezone (Africa/Casablanca)
-                        // Cela remplace les dates PHP initiales (Europe/Paris) par les dates JavaScript correctes
                         statsUpdater.updateSummaryDates(initialStartTimestamp, initialEndTimestamp);
-                        
                         console.log('[Aquaponie] Initial period set:', {
                             start: new Date(initialStartTimestamp * 1000),
                             end: new Date(initialEndTimestamp * 1000),
@@ -3542,17 +3530,12 @@
                 } else {
                     console.warn('[Aquaponie] StatsUpdater initialization failed');
                 }
-            }, 500);
-            
-            // Exposer globalement
-            window.chartUpdater = chartUpdater;
-            window.statsUpdater = statsUpdater;
-            
-            // Utiliser le bon path API selon l'environnement
-            const apiBasePath = '{{ environment == "test" ? "/ffp3/api/realtime-test" : (environment == "test3" ? "/ffp3/api/realtime3-test" : (environment == "s3" ? "/ffp3/api/realtime3" : "/ffp3/api/realtime")) }}';
-            
-            // Initialiser RealtimeUpdater (la variable est déjà globale via realtime-updater.js)
-            initRealtimeUpdater({
+                
+                window.chartUpdater = chartUpdater;
+                window.statsUpdater = statsUpdater;
+                
+                const apiBasePath = '{{ environment == "test" ? "/ffp3/api/realtime-test" : (environment == "test3" ? "/ffp3/api/realtime3-test" : (environment == "s3" ? "/ffp3/api/realtime3" : "/ffp3/api/realtime")) }}';
+                initRealtimeUpdater({
                 apiBasePath: apiBasePath,
                 pollInterval: prefs.interval,
                 enabled: prefs.enabled,
@@ -3564,7 +3547,8 @@
                 onHealthUpdate: function(health) {
                     console.log('[Aquaponie] System health updated:', health);
                 }
-            });
+                });
+            }, initDelayMs);
             
             // Appliquer les préférences aux contrôles UI
             document.getElementById('live-mode-toggle').checked = prefs.enabled;

@@ -7,6 +7,15 @@ et ce projet adhère à [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [4.9.93] - 2026-03-05
+
+### Correctif - Mise à jour temps réel : graphiques et badges après init
+- **Race condition** : le polling (RealtimeUpdater) démarre désormais après l'initialisation de ChartUpdater et StatsUpdater (délai 800 ms), pour que le premier poll mette bien à jour graphiques et cartes de stats
+- **Mobile** : délai porté à 800 ms pour couvrir la création des graphiques Highcharts à 600 ms sur mobile (createVersionD)
+- Fichiers modifiés : `templates/aquaponie.twig`, `templates/aquaponie_alt.twig`
+
+---
+
 ## [4.9.92] - 2026-03-04
 
 ### Correctif - Tuile Eau potager : même largeur que les autres et centrée sur la 2e ligne
