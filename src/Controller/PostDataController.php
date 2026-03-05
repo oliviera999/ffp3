@@ -155,6 +155,16 @@ class PostDataController
         $mailNotif = $sanitize('mailNotif');
         $mailNotif = $mailNotif !== null ? substr($mailNotif, 0, $mailMaxLen) : null;
 
+        // Déduplication par post_id : si fourni et déjà inséré, retourner 200 sans doublon
+        $postId = $sanitize('post_id');
+        if ($postId !== null) {
+            $postId = substr($postId, 0, 64);
+            if ($this->sensorRepo->existsByPostId($postId)) {
+                $this->logger->info('PostData duplicate skipped post_id={pid}', ['pid' => $postId]);
+                return ResponseHelper::textClose($response, 'Données déjà enregistrées', 200);
+            }
+        }
+
         // Construction de l'objet transférant les données capteurs -------------
         $data = new SensorData(
             sensor: $sensor,
@@ -188,8 +198,8 @@ class PostDataController
             limFlood: $toInt('limFlood'),
             wakeUp: $toInt('WakeUp'),
             freqWakeUp: $toInt('FreqWakeUp'),
-            // v11.168: Flag configSynced pour éviter écrasement config par valeurs par défaut
-            configSynced: $toInt('configSynced')
+            configSynced: $toInt('configSynced'),
+            postId: $postId
         );
 
         try {

@@ -25,21 +25,26 @@ class SensorRepository extends AbstractRepository
     public function insert(SensorData $data): void
     {
         $table = TableConfig::getDataTable();
-        // v11.36: Format compatible avec structure BDD actuelle (sans colonnes tempsGros, etc.)
-        // Ces valeurs sont mises à jour dans ffp3Outputs uniquement
-        $sql = "INSERT INTO {$table} (
-            sensor, version, TempAir, Humidite, TempEau, EauPotager, EauAquarium, EauReserve,
+
+        $hasPostId = ($data->postId !== null) && $this->columnExists($table, 'post_id');
+
+        $columns = 'sensor, version, TempAir, Humidite, TempEau, EauPotager, EauAquarium, EauReserve,
             diffMaree, Luminosite, etatPompeAqua, etatPompeTank, etatHeat, etatUV,
             bouffeMatin, bouffeMidi, bouffePetits, bouffeGros,
-            aqThreshold, tankThreshold, chauffageThreshold, mail, mailNotif, resetMode, bouffeSoir
-        ) VALUES (
-            :sensor, :version, :tempAir, :humidite, :tempEau, :eauPotager, :eauAquarium, :eauReserve,
+            aqThreshold, tankThreshold, chauffageThreshold, mail, mailNotif, resetMode, bouffeSoir';
+        $placeholders = ':sensor, :version, :tempAir, :humidite, :tempEau, :eauPotager, :eauAquarium, :eauReserve,
             :diffMaree, :luminosite, :etatPompeAqua, :etatPompeTank, :etatHeat, :etatUV,
             :bouffeMatin, :bouffeMidi, :bouffePetits, :bouffeGros,
-            :aqThreshold, :tankThreshold, :chauffageThreshold, :mail, :mailNotif, :resetMode, :bouffeSoir
-        )";
+            :aqThreshold, :tankThreshold, :chauffageThreshold, :mail, :mailNotif, :resetMode, :bouffeSoir';
 
-        $this->execute($sql, [
+        if ($hasPostId) {
+            $columns .= ', post_id';
+            $placeholders .= ', :postId';
+        }
+
+        $sql = "INSERT INTO {$table} ({$columns}) VALUES ({$placeholders})";
+
+        $params = [
             ':sensor' => $data->sensor,
             ':version' => $data->version,
             ':tempAir' => $data->tempAir,
@@ -65,9 +70,47 @@ class SensorRepository extends AbstractRepository
             ':mailNotif' => $data->mailNotif,
             ':resetMode' => $data->resetMode,
             ':bouffeSoir' => $data->bouffeSoir,
-        ]);
-        
-        // Note: tempsGros, tempsPetits, tempsRemplissageSec, limFlood, WakeUp, FreqWakeUp
-        // sont mis à jour dans ffp3Outputs uniquement (pas dans historique Data)
+        ];
+
+        if ($hasPostId) {
+            $params[':postId'] = $data->postId;
+        }
+
+        $this->execute($sql, $params);
+    }
+
+    /**
+     * Vérifie si un enregistrement avec ce post_id existe déjà (déduplication replay SD).
+     * Retourne false si la colonne post_id n'existe pas encore en BDD.
+     */
+    public function existsByPostId(string $postId): bool
+    {
+        $table = TableConfig::getDataTable();
+        if (!$this->columnExists($table, 'post_id')) {
+            return false;
+        }
+        $sql = "SELECT 1 FROM {$table} WHERE post_id = :pid LIMIT 1";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':pid' => $postId]);
+        return $stmt->fetch() !== false;
+    }
+
+    private function columnExists(string $table, string $column): bool
+    {
+        static $cache = [];
+        $key = "{$table}.{$column}";
+        if (isset($cache[$key])) {
+            return $cache[$key];
+        }
+        try {
+            $stmt = $this->pdo->prepare(
+                "SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = :t AND COLUMN_NAME = :c LIMIT 1"
+            );
+            $stmt->execute([':t' => $table, ':c' => $column]);
+            $cache[$key] = ($stmt->fetch() !== false);
+        } catch (\Throwable) {
+            $cache[$key] = false;
+        }
+        return $cache[$key];
     }
 }

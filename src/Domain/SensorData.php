@@ -80,7 +80,8 @@ class SensorData
         public ?int    $limFlood = null,
         public ?int    $wakeUp = null,
         public ?int    $freqWakeUp = null,
-        public ?int    $configSynced = null
+        public ?int    $configSynced = null,
+        public ?string $postId = null
     ) {
     }
 }
